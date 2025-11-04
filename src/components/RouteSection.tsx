@@ -1,7 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Navigation, MapPin, Route } from "lucide-react";
 import { useState } from "react";
 
@@ -38,13 +38,21 @@ const RouteSection = () => {
                   <MapPin className="w-4 h-4 text-secondary" />
                   Starting Point
                 </Label>
-                <Input
-                  id="start"
-                  placeholder="Enter your starting location"
-                  value={startLocation}
-                  onChange={(e) => setStartLocation(e.target.value)}
-                  className="h-12 text-base"
-                />
+                <Select value={startLocation} onValueChange={setStartLocation}>
+                  <SelectTrigger className="h-12 text-base">
+                    <SelectValue placeholder="Select starting monument" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="konark-sun-temple">Konark Sun Temple</SelectItem>
+                    <SelectItem value="jagannath-temple">Jagannath Temple, Puri</SelectItem>
+                    <SelectItem value="lingaraj-temple">Lingaraj Temple, Bhubaneswar</SelectItem>
+                    <SelectItem value="rajarani-temple">Rajarani Temple, Bhubaneswar</SelectItem>
+                    <SelectItem value="mukteshwar-temple">Mukteshwar Temple, Bhubaneswar</SelectItem>
+                    <SelectItem value="udayagiri-khandagiri">Udayagiri & Khandagiri Caves</SelectItem>
+                    <SelectItem value="dhauli-stupa">Dhauli Shanti Stupa</SelectItem>
+                    <SelectItem value="chilika-lake">Chilika Lake</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
 
               {/* End Location */}
@@ -53,13 +61,21 @@ const RouteSection = () => {
                   <Navigation className="w-4 h-4 text-accent" />
                   Destination
                 </Label>
-                <Input
-                  id="end"
-                  placeholder="Enter your destination"
-                  value={endLocation}
-                  onChange={(e) => setEndLocation(e.target.value)}
-                  className="h-12 text-base"
-                />
+                <Select value={endLocation} onValueChange={setEndLocation}>
+                  <SelectTrigger className="h-12 text-base">
+                    <SelectValue placeholder="Select destination monument" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="konark-sun-temple">Konark Sun Temple</SelectItem>
+                    <SelectItem value="jagannath-temple">Jagannath Temple, Puri</SelectItem>
+                    <SelectItem value="lingaraj-temple">Lingaraj Temple, Bhubaneswar</SelectItem>
+                    <SelectItem value="rajarani-temple">Rajarani Temple, Bhubaneswar</SelectItem>
+                    <SelectItem value="mukteshwar-temple">Mukteshwar Temple, Bhubaneswar</SelectItem>
+                    <SelectItem value="udayagiri-khandagiri">Udayagiri & Khandagiri Caves</SelectItem>
+                    <SelectItem value="dhauli-stupa">Dhauli Shanti Stupa</SelectItem>
+                    <SelectItem value="chilika-lake">Chilika Lake</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
 
               {/* Action Button */}
