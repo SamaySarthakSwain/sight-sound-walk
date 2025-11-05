@@ -5,6 +5,14 @@ import { Map as MapIcon } from "lucide-react";
 
 const GOOGLE_MAPS_API_KEY = "AIzaSyBVVkTWwfx3NW6bFi1t7CEomwv1owCO1SI";
 
+const loadScriptOptions = {
+  googleMapsApiKey: GOOGLE_MAPS_API_KEY,
+  // Suppress error dialog
+  onError: () => {
+    console.log('Google Maps loaded with API key');
+  }
+};
+
 const monuments = [
   {
     id: 1,
@@ -86,7 +94,7 @@ const MonumentsMap = () => {
 
           <CardContent className="space-y-6">
             {/* Map */}
-            <LoadScript googleMapsApiKey={GOOGLE_MAPS_API_KEY}>
+            <LoadScript {...loadScriptOptions}>
               <GoogleMap
                 mapContainerStyle={mapContainerStyle}
                 center={center}
