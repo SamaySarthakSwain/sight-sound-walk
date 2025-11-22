@@ -117,11 +117,7 @@ const RouteSection: React.FC<RouteSectionProps> = ({ onRouteSelected }) => {
         });
         setShowResults(true);
         
-        // Open Google Maps with directions
-        const url = `https://www.google.com/maps/dir/?api=1&origin=${start.lat},${start.lng}&destination=${end.lat},${end.lng}&travelmode=driving`;
-        window.open(url, '_blank');
-        
-        // Also notify parent component if callback provided
+        // Notify parent component to display route on embedded map
         if (onRouteSelected) {
           onRouteSelected(start, end);
         }
