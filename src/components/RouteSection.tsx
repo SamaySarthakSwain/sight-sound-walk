@@ -2,30 +2,100 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Navigation, MapPin, Route } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Navigation, MapPin, Route, Clock, Landmark } from "lucide-react";
 import { useState } from "react";
 
 interface RouteSectionProps {
   onRouteSelected?: (start: string, end: string) => void;
 }
 
+interface Monument {
+  id: string;
+  name: string;
+  lat: number;
+  lng: number;
+  description: string;
+}
+
+interface RouteInfo {
+  distance: number;
+  duration: number;
+  monumentsOnRoute: Monument[];
+}
+
 const locations = {
-  "konark-sun-temple": { lat: 19.8876, lng: 86.0945, name: "Konark Sun Temple" },
-  "jagannath-temple": { lat: 19.8048, lng: 85.8182, name: "Jagannath Temple, Puri" },
-  "lingaraj-temple": { lat: 20.2379, lng: 85.8338, name: "Lingaraj Temple, Bhubaneswar" },
-  "rajarani-temple": { lat: 20.2524, lng: 85.8229, name: "Rajarani Temple, Bhubaneswar" },
-  "mukteshwar-temple": { lat: 20.2508, lng: 85.8271, name: "Mukteshwar Temple, Bhubaneswar" },
-  "udayagiri-khandagiri": { lat: 20.2644, lng: 85.7787, name: "Udayagiri & Khandagiri Caves" },
-  "dhauli-stupa": { lat: 20.1895, lng: 85.8609, name: "Dhauli Shanti Stupa" },
-  "chilika-lake": { lat: 19.7166, lng: 85.3206, name: "Chilika Lake" },
-  "nist-university": { lat: 19.2950, lng: 84.8108, name: "NIST University, Berhampur" },
-  "budhi-thakurani": { lat: 19.3149, lng: 84.7941, name: "Maa Budhi Thakurani Temple" },
-  "tara-tarini": { lat: 19.2905, lng: 84.9567, name: "Tara Tarini Temple" }
+  "konark-sun-temple": { lat: 19.8876, lng: 86.0945, name: "Konark Sun Temple", description: "13th century Sun Temple - UNESCO World Heritage Site" },
+  "jagannath-temple": { lat: 19.8048, lng: 85.8182, name: "Jagannath Temple, Puri", description: "Famous temple of Lord Jagannath with annual Rath Yatra" },
+  "lingaraj-temple": { lat: 20.2379, lng: 85.8338, name: "Lingaraj Temple, Bhubaneswar", description: "11th century temple dedicated to Lord Shiva" },
+  "rajarani-temple": { lat: 20.2524, lng: 85.8229, name: "Rajarani Temple, Bhubaneswar", description: "11th century temple known for exquisite carvings" },
+  "mukteshwar-temple": { lat: 20.2508, lng: 85.8271, name: "Mukteshwar Temple, Bhubaneswar", description: "10th century gem of Odishan architecture" },
+  "udayagiri-khandagiri": { lat: 20.2644, lng: 85.7787, name: "Udayagiri & Khandagiri Caves", description: "Ancient Jain rock-cut caves from 2nd century BCE" },
+  "dhauli-stupa": { lat: 20.1895, lng: 85.8609, name: "Dhauli Shanti Stupa", description: "Buddhist peace pagoda at historic Kalinga War site" },
+  "chilika-lake": { lat: 19.7166, lng: 85.3206, name: "Chilika Lake", description: "Asia's largest brackish water lagoon" },
+  "nist-university": { lat: 19.2950, lng: 84.8108, name: "NIST University, Berhampur", description: "Premier educational institution in Berhampur" },
+  "budhi-thakurani": { lat: 19.3149, lng: 84.7941, name: "Maa Budhi Thakurani Temple", description: "Presiding deity of Berhampur" },
+  "tara-tarini": { lat: 19.2905, lng: 84.9567, name: "Tara Tarini Temple", description: "Ancient Shakti Peetha on Kumari Hills" },
+  "gopalpur-beach": { lat: 19.2590, lng: 84.9090, name: "Gopalpur-on-Sea", description: "Serene beach town with colonial heritage" },
+  "taptapani": { lat: 19.4833, lng: 84.4167, name: "Taptapani Hot Springs", description: "Natural sulfur hot springs with medicinal properties" },
+  "barabati-fort": { lat: 20.4625, lng: 85.8830, name: "Barabati Fort, Cuttack", description: "14th century fort with moat and ramparts" },
+  "ratnagiri": { lat: 20.6167, lng: 86.3333, name: "Ratnagiri Buddhist Site", description: "Buddhist Diamond Triangle monastery site" }
 };
 
 const RouteSection: React.FC<RouteSectionProps> = ({ onRouteSelected }) => {
   const [startLocation, setStartLocation] = useState("");
   const [endLocation, setEndLocation] = useState("");
+  const [availableTime, setAvailableTime] = useState("");
+  const [routeInfo, setRouteInfo] = useState<RouteInfo | null>(null);
+  const [showResults, setShowResults] = useState(false);
+
+  // Calculate distance between two points (Haversine formula)
+  const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
+    const R = 6371; // Earth's radius in km
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a = 
+      Math.sin(dLat/2) * Math.sin(dLat/2) +
+      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+      Math.sin(dLon/2) * Math.sin(dLon/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    return R * c;
+  };
+
+  // Calculate if a point is near the route
+  const isNearRoute = (pointLat: number, pointLng: number, startLat: number, startLng: number, endLat: number, endLng: number): boolean => {
+    const distanceToStart = calculateDistance(pointLat, pointLng, startLat, startLng);
+    const distanceToEnd = calculateDistance(pointLat, pointLng, endLat, endLng);
+    const routeDistance = calculateDistance(startLat, startLng, endLat, endLng);
+    
+    // Point is on route if: distance to start + distance to end ≈ route distance (with 20% tolerance)
+    const totalDistance = distanceToStart + distanceToEnd;
+    return totalDistance <= routeDistance * 1.2;
+  };
+
+  // Find monuments along the route
+  const findMonumentsOnRoute = (startKey: string, endKey: string): Monument[] => {
+    const start = locations[startKey as keyof typeof locations];
+    const end = locations[endKey as keyof typeof locations];
+    
+    const monumentsOnRoute: Monument[] = [];
+    
+    Object.entries(locations).forEach(([key, location]) => {
+      if (key !== startKey && key !== endKey) {
+        if (isNearRoute(location.lat, location.lng, start.lat, start.lng, end.lat, end.lng)) {
+          monumentsOnRoute.push({
+            id: key,
+            name: location.name,
+            lat: location.lat,
+            lng: location.lng,
+            description: location.description
+          });
+        }
+      }
+    });
+    
+    return monumentsOnRoute;
+  };
 
   const handlePlanRoute = () => {
     if (startLocation && endLocation) {
@@ -33,6 +103,20 @@ const RouteSection: React.FC<RouteSectionProps> = ({ onRouteSelected }) => {
       const end = locations[endLocation as keyof typeof locations];
       
       if (start && end) {
+        // Calculate distance and estimated time
+        const distance = calculateDistance(start.lat, start.lng, end.lat, end.lng);
+        const duration = distance / 50; // Assuming average speed of 50 km/h
+        
+        // Find monuments along the route
+        const monumentsOnRoute = findMonumentsOnRoute(startLocation, endLocation);
+        
+        setRouteInfo({
+          distance,
+          duration,
+          monumentsOnRoute
+        });
+        setShowResults(true);
+        
         // Open Google Maps with directions
         const url = `https://www.google.com/maps/dir/?api=1&origin=${start.lat},${start.lng}&destination=${end.lat},${end.lng}&travelmode=driving`;
         window.open(url, '_blank');
@@ -43,6 +127,19 @@ const RouteSection: React.FC<RouteSectionProps> = ({ onRouteSelected }) => {
         }
       }
     }
+  };
+
+  const getRecommendedMonuments = (): Monument[] => {
+    if (!routeInfo || !availableTime) return routeInfo?.monumentsOnRoute || [];
+    
+    const timeInHours = parseFloat(availableTime);
+    const travelTime = routeInfo.duration;
+    const availableForVisits = timeInHours - travelTime;
+    
+    // Assume 1 hour per monument visit
+    const maxMonuments = Math.floor(availableForVisits);
+    
+    return routeInfo.monumentsOnRoute.slice(0, Math.max(0, maxMonuments));
   };
 
   return (
@@ -113,6 +210,24 @@ const RouteSection: React.FC<RouteSectionProps> = ({ onRouteSelected }) => {
                 </Select>
               </div>
 
+              {/* Available Time Input */}
+              <div className="space-y-2">
+                <Label htmlFor="time" className="text-base font-semibold flex items-center gap-2">
+                  <Clock className="w-4 h-4 text-primary" />
+                  How much time do you have? (in hours)
+                </Label>
+                <Input
+                  id="time"
+                  type="number"
+                  min="1"
+                  step="0.5"
+                  placeholder="e.g., 4"
+                  value={availableTime}
+                  onChange={(e) => setAvailableTime(e.target.value)}
+                  className="h-12 text-base"
+                />
+              </div>
+
               {/* Action Button */}
               <Button
                 onClick={handlePlanRoute}
@@ -135,6 +250,107 @@ const RouteSection: React.FC<RouteSectionProps> = ({ onRouteSelected }) => {
               </div>
             </CardContent>
           </Card>
+
+          {/* Route Results */}
+          {showResults && routeInfo && (
+            <Card className="mt-6 shadow-medium animate-in fade-in slide-in-from-bottom-4">
+              <CardHeader>
+                <CardTitle className="text-2xl flex items-center gap-3">
+                  <Route className="w-7 h-7 text-primary" />
+                  Your Educational Journey
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {/* Journey Stats */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="p-4 rounded-lg bg-primary/10 border border-primary/20">
+                    <div className="text-sm text-muted-foreground mb-1">Total Distance</div>
+                    <div className="text-2xl font-bold text-primary">
+                      {routeInfo.distance.toFixed(1)} km
+                    </div>
+                  </div>
+                  <div className="p-4 rounded-lg bg-secondary/10 border border-secondary/20">
+                    <div className="text-sm text-muted-foreground mb-1">Travel Time</div>
+                    <div className="text-2xl font-bold text-secondary">
+                      {Math.floor(routeInfo.duration)}h {Math.round((routeInfo.duration % 1) * 60)}m
+                    </div>
+                  </div>
+                </div>
+
+                {/* Monuments on Route */}
+                {routeInfo.monumentsOnRoute.length > 0 && (
+                  <div className="space-y-3">
+                    <h3 className="text-xl font-semibold flex items-center gap-2">
+                      <Landmark className="w-5 h-5 text-accent" />
+                      Monuments Along Your Route ({routeInfo.monumentsOnRoute.length})
+                    </h3>
+                    <div className="space-y-3">
+                      {routeInfo.monumentsOnRoute.map((monument, index) => (
+                        <div
+                          key={monument.id}
+                          className="p-4 rounded-lg bg-background border border-border hover:border-primary/50 transition-colors"
+                        >
+                          <div className="flex items-start gap-3">
+                            <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold flex-shrink-0">
+                              {index + 1}
+                            </div>
+                            <div className="flex-1">
+                              <h4 className="font-semibold text-lg mb-1">{monument.name}</h4>
+                              <p className="text-sm text-muted-foreground">{monument.description}</p>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Recommended Itinerary */}
+                {availableTime && (
+                  <div className="p-5 rounded-lg bg-gradient-subtle border border-primary/30">
+                    <h3 className="text-xl font-semibold mb-3 flex items-center gap-2">
+                      <Clock className="w-5 h-5 text-primary" />
+                      Recommended Itinerary for {availableTime} hours
+                    </h3>
+                    {getRecommendedMonuments().length > 0 ? (
+                      <div className="space-y-2">
+                        <p className="text-sm text-muted-foreground mb-3">
+                          Based on your available time, we recommend visiting these monuments:
+                        </p>
+                        <ul className="space-y-2">
+                          {getRecommendedMonuments().map((monument) => (
+                            <li key={monument.id} className="flex items-start gap-2">
+                              <span className="text-primary mt-1">✓</span>
+                              <div>
+                                <span className="font-medium">{monument.name}</span>
+                                <span className="text-sm text-muted-foreground ml-2">(~1 hour visit)</span>
+                              </div>
+                            </li>
+                          ))}
+                        </ul>
+                        <p className="text-sm text-muted-foreground mt-4">
+                          Total journey time: ~{(routeInfo.duration + getRecommendedMonuments().length).toFixed(1)} hours
+                        </p>
+                      </div>
+                    ) : (
+                      <p className="text-sm text-muted-foreground">
+                        Your available time ({availableTime}h) covers the travel time ({routeInfo.duration.toFixed(1)}h). 
+                        Consider adding more time to visit monuments along the way!
+                      </p>
+                    )}
+                  </div>
+                )}
+
+                {!availableTime && routeInfo.monumentsOnRoute.length > 0 && (
+                  <div className="p-4 rounded-lg bg-accent/10 border border-accent/20">
+                    <p className="text-sm text-muted-foreground">
+                      💡 Enter your available time above to get a personalized itinerary!
+                    </p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          )}
         </div>
       </div>
     </section>
