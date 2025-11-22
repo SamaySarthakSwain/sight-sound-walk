@@ -1,7 +1,16 @@
-import { GoogleMap, LoadScript, Marker, InfoWindow } from '@react-google-maps/api';
-import { useState } from 'react';
+import { GoogleMap, LoadScript, Marker, InfoWindow, DirectionsRenderer } from '@react-google-maps/api';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Map as MapIcon } from "lucide-react";
+
+interface RouteData {
+  start: { lat: number; lng: number };
+  end: { lat: number; lng: number };
+}
+
+interface MonumentsMapProps {
+  routeData?: RouteData | null;
+}
 
 const GOOGLE_MAPS_API_KEY = "AIzaSyBVVkTWwfx3NW6bFi1t7CEomwv1owCO1SI";
 
@@ -75,8 +84,41 @@ const center = {
   lng: 85.8245
 };
 
-const MonumentsMap = () => {
+const MonumentsMap: React.FC<MonumentsMapProps> = ({ routeData }) => {
   const [selectedMonument, setSelectedMonument] = useState<typeof monuments[0] | null>(null);
+  const [directions, setDirections] = useState<google.maps.DirectionsResult | null>(null);
+  const [mapCenter, setMapCenter] = useState(center);
+  const [mapZoom, setMapZoom] = useState(9);
+
+  useEffect(() => {
+    if (routeData && window.google) {
+      const directionsService = new google.maps.DirectionsService();
+      
+      directionsService.route(
+        {
+          origin: routeData.start,
+          destination: routeData.end,
+          travelMode: google.maps.TravelMode.DRIVING,
+        },
+        (result, status) => {
+          if (status === google.maps.DirectionsStatus.OK && result) {
+            setDirections(result);
+            // Center map on the route
+            const bounds = new google.maps.LatLngBounds();
+            bounds.extend(routeData.start);
+            bounds.extend(routeData.end);
+            setMapCenter({
+              lat: (routeData.start.lat + routeData.end.lat) / 2,
+              lng: (routeData.start.lng + routeData.end.lng) / 2
+            });
+            setMapZoom(8);
+          } else {
+            console.error('Directions request failed:', status);
+          }
+        }
+      );
+    }
+  }, [routeData]);
 
   return (
     <section className="py-20 bg-background">
@@ -97,8 +139,8 @@ const MonumentsMap = () => {
             <LoadScript {...loadScriptOptions}>
               <GoogleMap
                 mapContainerStyle={mapContainerStyle}
-                center={center}
-                zoom={9}
+                center={mapCenter}
+                zoom={mapZoom}
                 options={{
                   styles: [
                     {
@@ -109,27 +151,47 @@ const MonumentsMap = () => {
                   ]
                 }}
               >
-                {monuments.map((monument) => (
-                  <Marker
-                    key={monument.id}
-                    position={monument.position}
-                    onClick={() => setSelectedMonument(monument)}
-                    icon={{
-                      url: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 24 24' fill='%23e07a3f'%3E%3Cpath d='M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z'/%3E%3C/svg%3E"
+                {/* Display route if available */}
+                {directions && (
+                  <DirectionsRenderer
+                    directions={directions}
+                    options={{
+                      polylineOptions: {
+                        strokeColor: '#e07a3f',
+                        strokeWeight: 5,
+                        strokeOpacity: 0.8
+                      },
+                      suppressMarkers: false
                     }}
                   />
-                ))}
+                )}
+                
+                {/* Only show monument markers if no route is displayed */}
+                {!directions && (
+                  <>
+                    {monuments.map((monument) => (
+                      <Marker
+                        key={monument.id}
+                        position={monument.position}
+                        onClick={() => setSelectedMonument(monument)}
+                        icon={{
+                          url: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 24 24' fill='%23e07a3f'%3E%3Cpath d='M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z'/%3E%3C/svg%3E"
+                        }}
+                      />
+                    ))}
 
-                {selectedMonument && (
-                  <InfoWindow
-                    position={selectedMonument.position}
-                    onCloseClick={() => setSelectedMonument(null)}
-                  >
-                    <div className="p-2">
-                      <h3 className="font-bold text-base mb-1">{selectedMonument.name}</h3>
-                      <p className="text-sm text-gray-600">{selectedMonument.description}</p>
-                    </div>
-                  </InfoWindow>
+                    {selectedMonument && (
+                      <InfoWindow
+                        position={selectedMonument.position}
+                        onCloseClick={() => setSelectedMonument(null)}
+                      >
+                        <div className="p-2">
+                          <h3 className="font-bold text-base mb-1">{selectedMonument.name}</h3>
+                          <p className="text-sm text-gray-600">{selectedMonument.description}</p>
+                        </div>
+                      </InfoWindow>
+                    )}
+                  </>
                 )}
               </GoogleMap>
             </LoadScript>
