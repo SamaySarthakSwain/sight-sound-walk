@@ -7,7 +7,7 @@ import { Navigation, MapPin, Route, Clock, Landmark } from "lucide-react";
 import { useState } from "react";
 
 interface RouteSectionProps {
-  onRouteSelected?: (start: string, end: string) => void;
+  onRouteSelected?: (start: { lat: number; lng: number }, end: { lat: number; lng: number }) => void;
 }
 
 interface Monument {
@@ -123,7 +123,7 @@ const RouteSection: React.FC<RouteSectionProps> = ({ onRouteSelected }) => {
         
         // Also notify parent component if callback provided
         if (onRouteSelected) {
-          onRouteSelected(startLocation, endLocation);
+          onRouteSelected(start, end);
         }
       }
     }
