@@ -418,15 +418,20 @@ const RouteSection: React.FC<RouteSectionProps> = ({ onRouteSelected }) => {
                 )}
 
                 {/* Open in Google Maps Button */}
-                <Button
-                  onClick={openInGoogleMaps}
-                  className="w-full h-12 text-base"
-                  variant="outline"
-                >
-                  <Navigation className="w-5 h-5 mr-2" />
-                  Open in Google Maps
-                  {selectedWaypoints.length > 0 && ` (${selectedWaypoints.length} stops)`}
-                </Button>
+                <div className="space-y-2">
+                  <Button
+                    onClick={openInGoogleMaps}
+                    className="w-full h-12 text-base"
+                    variant="outline"
+                  >
+                    <Navigation className="w-5 h-5 mr-2" />
+                    Open in Google Maps
+                    {selectedWaypoints.length > 0 && ` (${selectedWaypoints.length} stops)`}
+                  </Button>
+                  <p className="text-xs text-muted-foreground text-center">
+                    Note: External links may be blocked in preview. This will work when you publish your app.
+                  </p>
+                </div>
               </CardContent>
             </Card>
           )}
