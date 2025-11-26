@@ -7,13 +7,18 @@ import { useState } from "react";
 interface RouteData {
   start: { lat: number; lng: number };
   end: { lat: number; lng: number };
+  waypoints?: { lat: number; lng: number }[];
 }
 
 const Explore = () => {
   const [routeData, setRouteData] = useState<RouteData | null>(null);
 
-  const handleRouteSelected = (start: { lat: number; lng: number }, end: { lat: number; lng: number }) => {
-    setRouteData({ start, end });
+  const handleRouteSelected = (
+    start: { lat: number; lng: number }, 
+    end: { lat: number; lng: number },
+    waypoints?: { lat: number; lng: number }[]
+  ) => {
+    setRouteData({ start, end, waypoints });
   };
 
   return (

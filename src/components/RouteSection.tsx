@@ -7,7 +7,11 @@ import { Navigation, MapPin, Route, Clock, Landmark } from "lucide-react";
 import { useState } from "react";
 
 interface RouteSectionProps {
-  onRouteSelected?: (start: { lat: number; lng: number }, end: { lat: number; lng: number }) => void;
+  onRouteSelected?: (
+    start: { lat: number; lng: number }, 
+    end: { lat: number; lng: number },
+    waypoints?: { lat: number; lng: number }[]
+  ) => void;
 }
 
 interface Monument {
@@ -48,6 +52,7 @@ const RouteSection: React.FC<RouteSectionProps> = ({ onRouteSelected }) => {
   const [availableTime, setAvailableTime] = useState("");
   const [routeInfo, setRouteInfo] = useState<RouteInfo | null>(null);
   const [showResults, setShowResults] = useState(false);
+  const [selectedWaypoints, setSelectedWaypoints] = useState<Monument[]>([]);
 
   // Calculate distance between two points (Haversine formula)
   const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
@@ -116,6 +121,7 @@ const RouteSection: React.FC<RouteSectionProps> = ({ onRouteSelected }) => {
           monumentsOnRoute
         });
         setShowResults(true);
+        setSelectedWaypoints([]);
         
         // Notify parent component to display route on embedded map
         if (onRouteSelected) {
@@ -123,6 +129,50 @@ const RouteSection: React.FC<RouteSectionProps> = ({ onRouteSelected }) => {
         }
       }
     }
+  };
+
+  const handleAddStop = (monument: Monument) => {
+    if (selectedWaypoints.find(w => w.id === monument.id)) {
+      // Remove waypoint if already added
+      const newWaypoints = selectedWaypoints.filter(w => w.id !== monument.id);
+      setSelectedWaypoints(newWaypoints);
+      
+      // Update route with new waypoints
+      if (startLocation && endLocation && onRouteSelected) {
+        const start = locations[startLocation as keyof typeof locations];
+        const end = locations[endLocation as keyof typeof locations];
+        const waypoints = newWaypoints.map(w => ({ lat: w.lat, lng: w.lng }));
+        onRouteSelected(start, end, waypoints);
+      }
+    } else {
+      // Add waypoint
+      const newWaypoints = [...selectedWaypoints, monument];
+      setSelectedWaypoints(newWaypoints);
+      
+      // Update route with new waypoints
+      if (startLocation && endLocation && onRouteSelected) {
+        const start = locations[startLocation as keyof typeof locations];
+        const end = locations[endLocation as keyof typeof locations];
+        const waypoints = newWaypoints.map(w => ({ lat: w.lat, lng: w.lng }));
+        onRouteSelected(start, end, waypoints);
+      }
+    }
+  };
+
+  const openInGoogleMaps = () => {
+    if (!startLocation || !endLocation) return;
+    
+    const start = locations[startLocation as keyof typeof locations];
+    const end = locations[endLocation as keyof typeof locations];
+    
+    let url = `https://www.google.com/maps/dir/?api=1&origin=${start.lat},${start.lng}&destination=${end.lat},${end.lng}`;
+    
+    if (selectedWaypoints.length > 0) {
+      const waypoints = selectedWaypoints.map(w => `${w.lat},${w.lng}`).join('|');
+      url += `&waypoints=${waypoints}`;
+    }
+    
+    window.open(url, '_blank');
   };
 
   const getRecommendedMonuments = (): Monument[] => {
@@ -280,23 +330,38 @@ const RouteSection: React.FC<RouteSectionProps> = ({ onRouteSelected }) => {
                       <Landmark className="w-5 h-5 text-accent" />
                       Monuments Along Your Route ({routeInfo.monumentsOnRoute.length})
                     </h3>
-                    <div className="space-y-3">
-                      {routeInfo.monumentsOnRoute.map((monument, index) => (
-                        <div
-                          key={monument.id}
-                          className="p-4 rounded-lg bg-background border border-border hover:border-primary/50 transition-colors"
-                        >
-                          <div className="flex items-start gap-3">
-                            <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold flex-shrink-0">
-                              {index + 1}
-                            </div>
-                            <div className="flex-1">
-                              <h4 className="font-semibold text-lg mb-1">{monument.name}</h4>
-                              <p className="text-sm text-muted-foreground">{monument.description}</p>
+                     <div className="space-y-3">
+                      {routeInfo.monumentsOnRoute.map((monument, index) => {
+                        const isAdded = selectedWaypoints.find(w => w.id === monument.id);
+                        return (
+                          <div
+                            key={monument.id}
+                            className={`p-4 rounded-lg border transition-colors ${
+                              isAdded 
+                                ? 'bg-primary/10 border-primary' 
+                                : 'bg-background border-border hover:border-primary/50'
+                            }`}
+                          >
+                            <div className="flex items-start gap-3">
+                              <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold flex-shrink-0">
+                                {index + 1}
+                              </div>
+                              <div className="flex-1">
+                                <h4 className="font-semibold text-lg mb-1">{monument.name}</h4>
+                                <p className="text-sm text-muted-foreground mb-3">{monument.description}</p>
+                                <Button
+                                  onClick={() => handleAddStop(monument)}
+                                  size="sm"
+                                  variant={isAdded ? "secondary" : "outline"}
+                                  className="w-full"
+                                >
+                                  {isAdded ? "✓ Added to Route" : "+ Add Stop"}
+                                </Button>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   </div>
                 )}
@@ -344,6 +409,17 @@ const RouteSection: React.FC<RouteSectionProps> = ({ onRouteSelected }) => {
                     </p>
                   </div>
                 )}
+
+                {/* Open in Google Maps Button */}
+                <Button
+                  onClick={openInGoogleMaps}
+                  className="w-full h-12 text-base"
+                  variant="outline"
+                >
+                  <Navigation className="w-5 h-5 mr-2" />
+                  Open in Google Maps
+                  {selectedWaypoints.length > 0 && ` (${selectedWaypoints.length} stops)`}
+                </Button>
               </CardContent>
             </Card>
           )}
