@@ -6,6 +6,7 @@ import { Map as MapIcon } from "lucide-react";
 interface RouteData {
   start: { lat: number; lng: number };
   end: { lat: number; lng: number };
+  waypoints?: { lat: number; lng: number }[];
 }
 
 interface MonumentsMapProps {
@@ -89,15 +90,32 @@ const MonumentsMap: React.FC<MonumentsMapProps> = ({ routeData }) => {
   const [directions, setDirections] = useState<google.maps.DirectionsResult | null>(null);
   const [mapCenter, setMapCenter] = useState(center);
   const [mapZoom, setMapZoom] = useState(9);
+  const [trafficLayer, setTrafficLayer] = useState<google.maps.TrafficLayer | null>(null);
+  const [map, setMap] = useState<google.maps.Map | null>(null);
+
+  // Enable traffic layer
+  useEffect(() => {
+    if (map && window.google && !trafficLayer) {
+      const traffic = new google.maps.TrafficLayer();
+      traffic.setMap(map);
+      setTrafficLayer(traffic);
+    }
+  }, [map, trafficLayer]);
 
   useEffect(() => {
     if (routeData && window.google) {
       const directionsService = new google.maps.DirectionsService();
       
+      const waypoints = routeData.waypoints?.map(wp => ({
+        location: { lat: wp.lat, lng: wp.lng },
+        stopover: true
+      })) || [];
+
       directionsService.route(
         {
           origin: routeData.start,
           destination: routeData.end,
+          waypoints: waypoints,
           travelMode: google.maps.TravelMode.DRIVING,
         },
         (result, status) => {
@@ -107,6 +125,7 @@ const MonumentsMap: React.FC<MonumentsMapProps> = ({ routeData }) => {
             const bounds = new google.maps.LatLngBounds();
             bounds.extend(routeData.start);
             bounds.extend(routeData.end);
+            routeData.waypoints?.forEach(wp => bounds.extend(wp));
             setMapCenter({
               lat: (routeData.start.lat + routeData.end.lat) / 2,
               lng: (routeData.start.lng + routeData.end.lng) / 2
@@ -117,6 +136,8 @@ const MonumentsMap: React.FC<MonumentsMapProps> = ({ routeData }) => {
           }
         }
       );
+    } else if (!routeData) {
+      setDirections(null);
     }
   }, [routeData]);
 
@@ -141,6 +162,7 @@ const MonumentsMap: React.FC<MonumentsMapProps> = ({ routeData }) => {
                 mapContainerStyle={mapContainerStyle}
                 center={mapCenter}
                 zoom={mapZoom}
+                onLoad={(map) => setMap(map)}
                 options={{
                   styles: [
                     {
@@ -166,32 +188,28 @@ const MonumentsMap: React.FC<MonumentsMapProps> = ({ routeData }) => {
                   />
                 )}
                 
-                {/* Only show monument markers if no route is displayed */}
-                {!directions && (
-                  <>
-                    {monuments.map((monument) => (
-                      <Marker
-                        key={monument.id}
-                        position={monument.position}
-                        onClick={() => setSelectedMonument(monument)}
-                        icon={{
-                          url: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 24 24' fill='%23e07a3f'%3E%3Cpath d='M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z'/%3E%3C/svg%3E"
-                        }}
-                      />
-                    ))}
+                {/* Show monument markers always */}
+                {monuments.map((monument) => (
+                  <Marker
+                    key={monument.id}
+                    position={monument.position}
+                    onClick={() => setSelectedMonument(monument)}
+                    icon={{
+                      url: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 24 24' fill='%23e07a3f'%3E%3Cpath d='M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z'/%3E%3C/svg%3E"
+                    }}
+                  />
+                ))}
 
-                    {selectedMonument && (
-                      <InfoWindow
-                        position={selectedMonument.position}
-                        onCloseClick={() => setSelectedMonument(null)}
-                      >
-                        <div className="p-2">
-                          <h3 className="font-bold text-base mb-1">{selectedMonument.name}</h3>
-                          <p className="text-sm text-gray-600">{selectedMonument.description}</p>
-                        </div>
-                      </InfoWindow>
-                    )}
-                  </>
+                {selectedMonument && !directions && (
+                  <InfoWindow
+                    position={selectedMonument.position}
+                    onCloseClick={() => setSelectedMonument(null)}
+                  >
+                    <div className="p-2">
+                      <h3 className="font-bold text-base mb-1">{selectedMonument.name}</h3>
+                      <p className="text-sm text-gray-600">{selectedMonument.description}</p>
+                    </div>
+                  </InfoWindow>
                 )}
               </GoogleMap>
             </LoadScript>
