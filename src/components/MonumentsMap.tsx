@@ -92,6 +92,8 @@ const MonumentsMap: React.FC<MonumentsMapProps> = ({ routeData }) => {
   const [mapZoom, setMapZoom] = useState(9);
   const [trafficLayer, setTrafficLayer] = useState<google.maps.TrafficLayer | null>(null);
   const [map, setMap] = useState<google.maps.Map | null>(null);
+  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const [watchId, setWatchId] = useState<number | null>(null);
 
   // Enable traffic layer
   useEffect(() => {
@@ -101,6 +103,36 @@ const MonumentsMap: React.FC<MonumentsMapProps> = ({ routeData }) => {
       setTrafficLayer(traffic);
     }
   }, [map, trafficLayer]);
+
+  // Track user's real-time location
+  useEffect(() => {
+    if (navigator.geolocation) {
+      const id = navigator.geolocation.watchPosition(
+        (position) => {
+          const newLocation = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          };
+          setUserLocation(newLocation);
+        },
+        (error) => {
+          console.error('Error getting location:', error);
+        },
+        {
+          enableHighAccuracy: true,
+          maximumAge: 0,
+          timeout: 5000
+        }
+      );
+      setWatchId(id);
+
+      return () => {
+        if (id) {
+          navigator.geolocation.clearWatch(id);
+        }
+      };
+    }
+  }, []);
 
   useEffect(() => {
     if (routeData && window.google) {
@@ -199,6 +231,17 @@ const MonumentsMap: React.FC<MonumentsMapProps> = ({ routeData }) => {
                     }}
                   />
                 ))}
+
+                {/* User's current location marker */}
+                {userLocation && (
+                  <Marker
+                    position={userLocation}
+                    icon={{
+                      url: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='%234285F4'%3E%3Ccircle cx='12' cy='12' r='8' fill='%234285F4' stroke='white' stroke-width='3'/%3E%3C/svg%3E"
+                    }}
+                    title="Your Location"
+                  />
+                )}
 
                 {selectedMonument && !directions && (
                   <InfoWindow
