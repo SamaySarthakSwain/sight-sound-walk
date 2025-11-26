@@ -80,10 +80,10 @@ const mapContainerStyle = {
   borderRadius: '0.5rem'
 };
 
-// Berhampur, Odisha coordinates
+// NIST University, Berhampur coordinates
 const center = {
-  lat: 19.3150,
-  lng: 84.7941
+  lat: 19.2950,
+  lng: 84.8108
 };
 
 const MonumentsMap: React.FC<MonumentsMapProps> = ({ routeData }) => {
@@ -107,8 +107,8 @@ const MonumentsMap: React.FC<MonumentsMapProps> = ({ routeData }) => {
 
   // Track user's real-time location
   useEffect(() => {
-    // Set default location to Berhampur for testing
-    setUserLocation({ lat: 19.3150, lng: 84.7941 });
+    // Set default location to NIST University, Berhampur
+    setUserLocation({ lat: 19.2950, lng: 84.8108 });
 
     if (navigator.geolocation) {
       const id = navigator.geolocation.watchPosition(
@@ -121,7 +121,7 @@ const MonumentsMap: React.FC<MonumentsMapProps> = ({ routeData }) => {
         },
         (error) => {
           console.error('Error getting location:', error);
-          // Keep Berhampur as fallback
+          // Keep NIST University as fallback
         },
         {
           enableHighAccuracy: true,
