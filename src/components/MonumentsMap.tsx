@@ -80,9 +80,10 @@ const mapContainerStyle = {
   borderRadius: '0.5rem'
 };
 
+// Berhampur, Odisha coordinates
 const center = {
-  lat: 20.2961,
-  lng: 85.8245
+  lat: 19.3150,
+  lng: 84.7941
 };
 
 const MonumentsMap: React.FC<MonumentsMapProps> = ({ routeData }) => {
@@ -106,6 +107,9 @@ const MonumentsMap: React.FC<MonumentsMapProps> = ({ routeData }) => {
 
   // Track user's real-time location
   useEffect(() => {
+    // Set default location to Berhampur for testing
+    setUserLocation({ lat: 19.3150, lng: 84.7941 });
+
     if (navigator.geolocation) {
       const id = navigator.geolocation.watchPosition(
         (position) => {
@@ -117,6 +121,7 @@ const MonumentsMap: React.FC<MonumentsMapProps> = ({ routeData }) => {
         },
         (error) => {
           console.error('Error getting location:', error);
+          // Keep Berhampur as fallback
         },
         {
           enableHighAccuracy: true,
