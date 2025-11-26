@@ -165,14 +165,21 @@ const RouteSection: React.FC<RouteSectionProps> = ({ onRouteSelected }) => {
     const start = locations[startLocation as keyof typeof locations];
     const end = locations[endLocation as keyof typeof locations];
     
-    let url = `https://www.google.com/maps/dir/?api=1&origin=${start.lat},${start.lng}&destination=${end.lat},${end.lng}`;
+    let url = `https://www.google.com/maps/dir/?api=1&origin=${start.lat},${start.lng}&destination=${end.lat},${end.lng}&travelmode=driving`;
     
     if (selectedWaypoints.length > 0) {
       const waypoints = selectedWaypoints.map(w => `${w.lat},${w.lng}`).join('|');
       url += `&waypoints=${waypoints}`;
     }
     
-    window.open(url, '_blank');
+    // Create a temporary link element to trigger download/navigation
+    const link = document.createElement('a');
+    link.href = url;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   const getRecommendedMonuments = (): Monument[] => {
