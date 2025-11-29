@@ -43,7 +43,7 @@ const Navigation = () => {
             <div className="w-10 h-10 rounded-full bg-gradient-hero flex items-center justify-center">
               <Map className="w-6 h-6 text-white" />
             </div>
-            <span className="text-xl font-bold text-primary">Walk & Learn</span>
+            <span className="text-xl font-bold text-primary">Lets Explore</span>
           </Link>
 
           <div className="flex items-center gap-2">

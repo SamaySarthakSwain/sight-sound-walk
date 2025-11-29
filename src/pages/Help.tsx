@@ -60,11 +60,11 @@ const Help = () => {
 
           <Card>
             <CardHeader>
-              <CardTitle>About Walk & Learn</CardTitle>
+              <CardTitle>About Lets Explore</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <p className="text-muted-foreground">
-                Walk & Learn is an educational tourism app designed for Odisha that combines GPS location tracking with text-to-speech narration to create location-based learning experiences.
+                Lets Explore is an educational tourism app designed for Odisha that combines GPS location tracking with text-to-speech narration to create location-based learning experiences.
               </p>
               <div className="space-y-2">
                 <h4 className="font-semibold">Key Features:</h4>
