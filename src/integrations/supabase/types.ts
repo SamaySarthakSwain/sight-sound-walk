@@ -16,19 +16,28 @@ export type Database = {
     Tables: {
       profiles: {
         Row: {
+          avatar_url: string | null
           created_at: string
+          email: string | null
+          full_name: string | null
           id: string
           phone_number: string | null
           updated_at: string
         }
         Insert: {
+          avatar_url?: string | null
           created_at?: string
+          email?: string | null
+          full_name?: string | null
           id: string
           phone_number?: string | null
           updated_at?: string
         }
         Update: {
+          avatar_url?: string | null
           created_at?: string
+          email?: string | null
+          full_name?: string | null
           id?: string
           phone_number?: string | null
           updated_at?: string
@@ -56,6 +65,33 @@ export type Database = {
           searched_at?: string
           start_location?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      visit_history: {
+        Row: {
+          id: string
+          place_category: string | null
+          place_image: string | null
+          place_name: string
+          user_id: string
+          visited_at: string
+        }
+        Insert: {
+          id?: string
+          place_category?: string | null
+          place_image?: string | null
+          place_name: string
+          user_id: string
+          visited_at?: string
+        }
+        Update: {
+          id?: string
+          place_category?: string | null
+          place_image?: string | null
+          place_name?: string
+          user_id?: string
+          visited_at?: string
         }
         Relationships: []
       }

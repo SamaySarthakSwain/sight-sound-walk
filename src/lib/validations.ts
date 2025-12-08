@@ -1,0 +1,25 @@
+import { z } from "zod";
+
+export const emailAuthSchema = z.object({
+  email: z.string().email("Please enter a valid email address"),
+  password: z
+    .string()
+    .min(8, "Password must be at least 8 characters")
+    .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
+    .regex(/[0-9]/, "Password must contain at least one number"),
+});
+
+export const phoneAuthSchema = z.object({
+  phone: z
+    .string()
+    .min(10, "Phone number must be at least 10 digits")
+    .regex(/^\+?[1-9]\d{9,14}$/, "Please enter a valid phone number (e.g., +911234567890)"),
+  password: z
+    .string()
+    .min(8, "Password must be at least 8 characters")
+    .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
+    .regex(/[0-9]/, "Password must contain at least one number"),
+});
+
+export type EmailAuthInput = z.infer<typeof emailAuthSchema>;
+export type PhoneAuthInput = z.infer<typeof phoneAuthSchema>;
