@@ -2,28 +2,21 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Home, Map, HelpCircle, LogIn, LogOut, User as UserIcon } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import type { User } from "@supabase/supabase-js";
+import { useAuth } from "@/hooks/useAuth";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const Navigation = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const [user, setUser] = useState<User | null>(null);
-
-  useEffect(() => {
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
-    });
-
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      setUser(session?.user ?? null);
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
+  const { user } = useAuth();
 
   const handleLogout = async () => {
     const { error } = await supabase.auth.signOut();
@@ -33,6 +26,22 @@ const Navigation = () => {
       toast.success("Logged out successfully");
       navigate("/");
     }
+  };
+
+  const getInitials = () => {
+    const name = user?.user_metadata?.full_name || user?.user_metadata?.name;
+    if (name) {
+      return name
+        .split(" ")
+        .map((n: string) => n[0])
+        .join("")
+        .toUpperCase()
+        .slice(0, 2);
+    }
+    if (user?.email) {
+      return user.email[0].toUpperCase();
+    }
+    return "U";
   };
 
   return (
@@ -75,16 +84,46 @@ const Navigation = () => {
               </Button>
             </Link>
             {user ? (
-              <>
-                <Button variant="ghost" className="gap-2">
-                  <UserIcon className="w-4 h-4" />
-                  {user.email || user.phone}
-                </Button>
-                <Button variant="outline" onClick={handleLogout} className="gap-2">
-                  <LogOut className="w-4 h-4" />
-                  Logout
-                </Button>
-              </>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="relative h-10 w-10 rounded-full">
+                    <Avatar className="h-9 w-9">
+                      <AvatarImage src={user.user_metadata?.avatar_url} />
+                      <AvatarFallback className="bg-primary text-primary-foreground">
+                        {getInitials()}
+                      </AvatarFallback>
+                    </Avatar>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  <div className="flex items-center gap-2 p-2">
+                    <Avatar className="h-8 w-8">
+                      <AvatarImage src={user.user_metadata?.avatar_url} />
+                      <AvatarFallback className="bg-primary text-primary-foreground text-xs">
+                        {getInitials()}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="flex flex-col">
+                      <span className="text-sm font-medium">
+                        {user.user_metadata?.full_name || user.user_metadata?.name || "Explorer"}
+                      </span>
+                      <span className="text-xs text-muted-foreground truncate max-w-[150px]">
+                        {user.email || user.phone}
+                      </span>
+                    </div>
+                  </div>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => navigate("/profile")}>
+                    <UserIcon className="w-4 h-4 mr-2" />
+                    Profile
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleLogout} className="text-destructive">
+                    <LogOut className="w-4 h-4 mr-2" />
+                    Logout
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             ) : (
               <Link to="/auth">
                 <Button variant="default" className="gap-2">

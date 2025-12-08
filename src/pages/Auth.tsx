@@ -7,7 +7,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
-import { Chrome, Phone, Mail } from "lucide-react";
+import { Chrome, Phone, Mail, AlertCircle } from "lucide-react";
+import { emailAuthSchema, phoneAuthSchema } from "@/lib/validations";
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -15,6 +16,7 @@ const Auth = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [errors, setErrors] = useState<{ email?: string; password?: string; phone?: string }>({});
 
   useEffect(() => {
     // Check if user is already logged in
@@ -34,12 +36,39 @@ const Auth = () => {
     return () => subscription.unsubscribe();
   }, [navigate]);
 
+  const validateEmailAuth = () => {
+    const result = emailAuthSchema.safeParse({ email, password });
+    if (!result.success) {
+      const fieldErrors: { email?: string; password?: string } = {};
+      result.error.errors.forEach((err) => {
+        if (err.path[0] === "email") fieldErrors.email = err.message;
+        if (err.path[0] === "password") fieldErrors.password = err.message;
+      });
+      setErrors(fieldErrors);
+      return false;
+    }
+    setErrors({});
+    return true;
+  };
+
+  const validatePhoneAuth = () => {
+    const result = phoneAuthSchema.safeParse({ phone: phoneNumber, password });
+    if (!result.success) {
+      const fieldErrors: { phone?: string; password?: string } = {};
+      result.error.errors.forEach((err) => {
+        if (err.path[0] === "phone") fieldErrors.phone = err.message;
+        if (err.path[0] === "password") fieldErrors.password = err.message;
+      });
+      setErrors(fieldErrors);
+      return false;
+    }
+    setErrors({});
+    return true;
+  };
+
   const handleEmailSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email || !password) {
-      toast.error("Please fill in all fields");
-      return;
-    }
+    if (!validateEmailAuth()) return;
 
     setLoading(true);
     const { error } = await supabase.auth.signUp({
@@ -52,7 +81,11 @@ const Auth = () => {
 
     setLoading(false);
     if (error) {
-      toast.error(error.message);
+      if (error.message.includes("already registered")) {
+        toast.error("This email is already registered. Please log in instead.");
+      } else {
+        toast.error(error.message);
+      }
     } else {
       toast.success("Account created! Please check your email to verify.");
     }
@@ -73,7 +106,11 @@ const Auth = () => {
 
     setLoading(false);
     if (error) {
-      toast.error(error.message);
+      if (error.message.includes("Invalid login credentials")) {
+        toast.error("Invalid email or password. Please try again.");
+      } else {
+        toast.error(error.message);
+      }
     } else {
       toast.success("Logged in successfully!");
       navigate("/");
@@ -97,10 +134,7 @@ const Auth = () => {
 
   const handlePhoneSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!phoneNumber || !password) {
-      toast.error("Please fill in all fields");
-      return;
-    }
+    if (!validatePhoneAuth()) return;
 
     setLoading(true);
     const { error } = await supabase.auth.signUp({
@@ -121,11 +155,27 @@ const Auth = () => {
     }
   };
 
+  const PasswordRequirements = () => (
+    <p className="text-xs text-muted-foreground mt-1">
+      Min 8 characters, 1 uppercase letter, 1 number
+    </p>
+  );
+
+  const ErrorMessage = ({ message }: { message?: string }) => {
+    if (!message) return null;
+    return (
+      <p className="text-xs text-destructive flex items-center gap-1 mt-1">
+        <AlertCircle className="w-3 h-3" />
+        {message}
+      </p>
+    );
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/20 via-background to-secondary/20 p-4">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle className="text-2xl text-center">Walk & Learn</CardTitle>
+          <CardTitle className="text-2xl text-center">Lets Explore</CardTitle>
           <CardDescription className="text-center">
             Sign in to track your journey and save your preferences
           </CardDescription>
@@ -184,7 +234,7 @@ const Auth = () => {
                 disabled={loading}
               >
                 <Chrome className="w-4 h-4 mr-2" />
-                Sign in with Google
+                Continue with Google
               </Button>
             </TabsContent>
 
@@ -204,9 +254,14 @@ const Auth = () => {
                         type="email"
                         placeholder="you@example.com"
                         value={email}
-                        onChange={(e) => setEmail(e.target.value)}
+                        onChange={(e) => {
+                          setEmail(e.target.value);
+                          setErrors((prev) => ({ ...prev, email: undefined }));
+                        }}
                         disabled={loading}
+                        className={errors.email ? "border-destructive" : ""}
                       />
+                      <ErrorMessage message={errors.email} />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="password-signup">Password</Label>
@@ -215,9 +270,15 @@ const Auth = () => {
                         type="password"
                         placeholder="••••••••"
                         value={password}
-                        onChange={(e) => setPassword(e.target.value)}
+                        onChange={(e) => {
+                          setPassword(e.target.value);
+                          setErrors((prev) => ({ ...prev, password: undefined }));
+                        }}
                         disabled={loading}
+                        className={errors.password ? "border-destructive" : ""}
                       />
+                      <ErrorMessage message={errors.password} />
+                      <PasswordRequirements />
                     </div>
                     <Button type="submit" className="w-full" disabled={loading}>
                       <Mail className="w-4 h-4 mr-2" />
@@ -235,9 +296,14 @@ const Auth = () => {
                         type="tel"
                         placeholder="+91 1234567890"
                         value={phoneNumber}
-                        onChange={(e) => setPhoneNumber(e.target.value)}
+                        onChange={(e) => {
+                          setPhoneNumber(e.target.value);
+                          setErrors((prev) => ({ ...prev, phone: undefined }));
+                        }}
                         disabled={loading}
+                        className={errors.phone ? "border-destructive" : ""}
                       />
+                      <ErrorMessage message={errors.phone} />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="password-phone">Password</Label>
@@ -246,9 +312,15 @@ const Auth = () => {
                         type="password"
                         placeholder="••••••••"
                         value={password}
-                        onChange={(e) => setPassword(e.target.value)}
+                        onChange={(e) => {
+                          setPassword(e.target.value);
+                          setErrors((prev) => ({ ...prev, password: undefined }));
+                        }}
                         disabled={loading}
+                        className={errors.password ? "border-destructive" : ""}
                       />
+                      <ErrorMessage message={errors.password} />
+                      <PasswordRequirements />
                     </div>
                     <Button type="submit" className="w-full" disabled={loading}>
                       <Phone className="w-4 h-4 mr-2" />
@@ -275,7 +347,7 @@ const Auth = () => {
                 disabled={loading}
               >
                 <Chrome className="w-4 h-4 mr-2" />
-                Sign up with Google
+                Continue with Google
               </Button>
             </TabsContent>
           </Tabs>
