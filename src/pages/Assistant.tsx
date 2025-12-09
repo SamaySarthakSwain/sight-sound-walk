@@ -1,0 +1,157 @@
+import { useState, useRef, useEffect } from "react";
+import { Send, Trash2, Bot, Sparkles } from "lucide-react";
+import Navigation from "@/components/Navigation";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import ChatMessage from "@/components/ChatMessage";
+import { useTravelChat } from "@/hooks/useTravelChat";
+import { toast } from "sonner";
+
+const suggestedQuestions = [
+  "What are the must-visit temples in Odisha?",
+  "Best time to visit Chilika Lake?",
+  "Tell me about Konark Sun Temple",
+  "What local food should I try?",
+];
+
+const Assistant = () => {
+  const [input, setInput] = useState("");
+  const { messages, isLoading, error, sendMessage, clearChat } = useTravelChat();
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, [messages]);
+
+  useEffect(() => {
+    if (error) {
+      toast.error(error);
+    }
+  }, [error]);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!input.trim() || isLoading) return;
+    sendMessage(input.trim());
+    setInput("");
+  };
+
+  const handleSuggestionClick = (question: string) => {
+    if (isLoading) return;
+    sendMessage(question);
+  };
+
+  return (
+    <div className="min-h-screen bg-background flex flex-col">
+      <Navigation />
+      <div className="pt-16 flex-1 flex flex-col max-w-4xl mx-auto w-full">
+        {/* Header */}
+        <div className="p-6 border-b border-border">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center">
+                <Bot className="w-7 h-7 text-primary-foreground" />
+              </div>
+              <div>
+                <h1 className="text-xl font-bold text-foreground">Odisha Explorer</h1>
+                <p className="text-sm text-muted-foreground">Your AI travel companion</p>
+              </div>
+            </div>
+            {messages.length > 0 && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={clearChat}
+                className="text-muted-foreground hover:text-destructive"
+              >
+                <Trash2 className="w-4 h-4 mr-2" />
+                Clear
+              </Button>
+            )}
+          </div>
+        </div>
+
+        {/* Chat Area */}
+        <ScrollArea className="flex-1 h-[calc(100vh-280px)]" ref={scrollRef}>
+          {messages.length === 0 ? (
+            <div className="p-6 space-y-6">
+              <div className="text-center space-y-4">
+                <div className="w-20 h-20 mx-auto rounded-full bg-primary/10 flex items-center justify-center">
+                  <Sparkles className="w-10 h-10 text-primary" />
+                </div>
+                <div>
+                  <h2 className="text-lg font-semibold text-foreground">
+                    Welcome to Odisha Explorer!
+                  </h2>
+                  <p className="text-muted-foreground mt-1">
+                    Ask me anything about traveling in Odisha - destinations, weather, local tips, and more.
+                  </p>
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <p className="text-sm font-medium text-muted-foreground text-center">
+                  Try asking:
+                </p>
+                <div className="grid gap-2">
+                  {suggestedQuestions.map((question, i) => (
+                    <button
+                      key={i}
+                      onClick={() => handleSuggestionClick(question)}
+                      className="text-left p-3 rounded-lg border border-border bg-card hover:bg-muted transition-colors text-sm text-foreground"
+                    >
+                      {question}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="divide-y divide-border/50">
+              {messages.map((msg, i) => (
+                <ChatMessage key={i} role={msg.role} content={msg.content} />
+              ))}
+              {isLoading && messages[messages.length - 1]?.role === "user" && (
+                <div className="flex gap-3 p-4">
+                  <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
+                    <Bot className="w-5 h-5 text-primary-foreground" />
+                  </div>
+                  <div className="bg-muted rounded-2xl rounded-bl-sm px-4 py-3">
+                    <div className="flex gap-1">
+                      <span className="w-2 h-2 bg-muted-foreground/50 rounded-full animate-bounce" />
+                      <span className="w-2 h-2 bg-muted-foreground/50 rounded-full animate-bounce [animation-delay:0.1s]" />
+                      <span className="w-2 h-2 bg-muted-foreground/50 rounded-full animate-bounce [animation-delay:0.2s]" />
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </ScrollArea>
+
+        {/* Input Area */}
+        <div className="p-4 border-t border-border bg-background">
+          <form onSubmit={handleSubmit} className="flex gap-2">
+            <Input
+              ref={inputRef}
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Ask about Odisha destinations, weather, tips..."
+              disabled={isLoading}
+              className="flex-1"
+            />
+            <Button type="submit" disabled={!input.trim() || isLoading}>
+              <Send className="w-4 h-4" />
+            </Button>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Assistant;
