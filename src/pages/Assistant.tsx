@@ -1,23 +1,30 @@
 import { useState, useRef, useEffect } from "react";
-import { Send, Trash2, Bot, Sparkles } from "lucide-react";
+import { Send, Trash2, Bot, Sparkles, Globe, CloudSun } from "lucide-react";
 import Navigation from "@/components/Navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import ChatMessage from "@/components/ChatMessage";
-import { useTravelChat } from "@/hooks/useTravelChat";
+import { useTravelChat, languageLabels, type SupportedLanguage } from "@/hooks/useTravelChat";
 import { toast } from "sonner";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const suggestedQuestions = [
   "What are the must-visit temples in Odisha?",
-  "Best time to visit Chilika Lake?",
+  "What's the weather like in Puri today?",
   "Tell me about Konark Sun Temple",
-  "What local food should I try?",
+  "What local food should I try in Berhampur?",
 ];
 
 const Assistant = () => {
   const [input, setInput] = useState("");
-  const { messages, isLoading, error, sendMessage, clearChat } = useTravelChat();
+  const { messages, isLoading, error, sendMessage, clearChat, language, setLanguage } = useTravelChat();
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -51,32 +58,53 @@ const Assistant = () => {
       <div className="pt-16 flex-1 flex flex-col max-w-4xl mx-auto w-full">
         {/* Header */}
         <div className="p-6 border-b border-border">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between flex-wrap gap-4">
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center">
                 <Bot className="w-7 h-7 text-primary-foreground" />
               </div>
               <div>
                 <h1 className="text-xl font-bold text-foreground">Odisha Explorer</h1>
-                <p className="text-sm text-muted-foreground">Your AI travel companion</p>
+                <p className="text-sm text-muted-foreground flex items-center gap-1">
+                  <CloudSun className="w-3.5 h-3.5" />
+                  AI travel companion with live weather
+                </p>
               </div>
             </div>
-            {messages.length > 0 && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={clearChat}
-                className="text-muted-foreground hover:text-destructive"
-              >
-                <Trash2 className="w-4 h-4 mr-2" />
-                Clear
-              </Button>
-            )}
+            <div className="flex items-center gap-2">
+              {/* Language Selector */}
+              <div className="flex items-center gap-2">
+                <Globe className="w-4 h-4 text-muted-foreground" />
+                <Select value={language} onValueChange={(val) => setLanguage(val as SupportedLanguage)}>
+                  <SelectTrigger className="w-[140px] h-9">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.entries(languageLabels).map(([code, label]) => (
+                      <SelectItem key={code} value={code}>
+                        {label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              {messages.length > 0 && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={clearChat}
+                  className="text-muted-foreground hover:text-destructive"
+                >
+                  <Trash2 className="w-4 h-4 mr-2" />
+                  Clear
+                </Button>
+              )}
+            </div>
           </div>
         </div>
 
         {/* Chat Area */}
-        <ScrollArea className="flex-1 h-[calc(100vh-280px)]" ref={scrollRef}>
+        <ScrollArea className="flex-1 h-[calc(100vh-300px)]" ref={scrollRef}>
           {messages.length === 0 ? (
             <div className="p-6 space-y-6">
               <div className="text-center space-y-4">
@@ -89,6 +117,10 @@ const Assistant = () => {
                   </h2>
                   <p className="text-muted-foreground mt-1">
                     Ask me anything about traveling in Odisha - destinations, weather, local tips, and more.
+                  </p>
+                  <p className="text-sm text-muted-foreground mt-2 flex items-center justify-center gap-2">
+                    <CloudSun className="w-4 h-4" />
+                    Real-time weather data included
                   </p>
                 </div>
               </div>
@@ -109,11 +141,15 @@ const Assistant = () => {
                   ))}
                 </div>
               </div>
+
+              <div className="text-center text-xs text-muted-foreground">
+                Select your preferred language above. Responses and narration will be in your chosen language.
+              </div>
             </div>
           ) : (
             <div className="divide-y divide-border/50">
               {messages.map((msg, i) => (
-                <ChatMessage key={i} role={msg.role} content={msg.content} />
+                <ChatMessage key={i} role={msg.role} content={msg.content} language={language} />
               ))}
               {isLoading && messages[messages.length - 1]?.role === "user" && (
                 <div className="flex gap-3 p-4">

@@ -5,12 +5,27 @@ export interface ChatMessage {
   content: string;
 }
 
+export type SupportedLanguage = "en" | "hi" | "or" | "te" | "bn";
+
+export const languageLabels: Record<SupportedLanguage, string> = {
+  en: "English",
+  hi: "हिंदी (Hindi)",
+  or: "ଓଡ଼ିଆ (Odia)",
+  te: "తెలుగు (Telugu)",
+  bn: "বাংলা (Bengali)",
+};
+
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/travel-assistant`;
+
+// Keywords that might indicate weather-related queries
+const weatherKeywords = ["weather", "temperature", "rain", "hot", "cold", "humid", "monsoon", "climate", "forecast"];
+const locationKeywords = ["bhubaneswar", "puri", "konark", "cuttack", "berhampur", "gopalpur", "chilika", "sambalpur", "rourkela", "taptapani", "odisha"];
 
 export const useTravelChat = () => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [language, setLanguage] = useState<SupportedLanguage>("en");
 
   const sendMessage = useCallback(async (input: string) => {
     const userMsg: ChatMessage = { role: "user", content: input };
@@ -33,6 +48,23 @@ export const useTravelChat = () => {
       });
     };
 
+    // Detect if weather info is needed
+    const lowerInput = input.toLowerCase();
+    const includeWeather = weatherKeywords.some(kw => lowerInput.includes(kw));
+    
+    // Extract location from query
+    let weatherLocation = "";
+    for (const loc of locationKeywords) {
+      if (lowerInput.includes(loc)) {
+        weatherLocation = loc;
+        break;
+      }
+    }
+    // Default to Bhubaneswar if asking about weather but no specific location
+    if (includeWeather && !weatherLocation) {
+      weatherLocation = "bhubaneswar";
+    }
+
     try {
       const resp = await fetch(CHAT_URL, {
         method: "POST",
@@ -40,7 +72,12 @@ export const useTravelChat = () => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
         },
-        body: JSON.stringify({ messages: [...messages, userMsg] }),
+        body: JSON.stringify({ 
+          messages: [...messages, userMsg],
+          language,
+          includeWeather,
+          weatherLocation,
+        }),
       });
 
       if (!resp.ok) {
@@ -87,17 +124,16 @@ export const useTravelChat = () => {
     } catch (err) {
       console.error("Chat error:", err);
       setError(err instanceof Error ? err.message : "Failed to send message");
-      // Remove the user message if there was an error
       setMessages(prev => prev.slice(0, -1));
     } finally {
       setIsLoading(false);
     }
-  }, [messages]);
+  }, [messages, language]);
 
   const clearChat = useCallback(() => {
     setMessages([]);
     setError(null);
   }, []);
 
-  return { messages, isLoading, error, sendMessage, clearChat };
+  return { messages, isLoading, error, sendMessage, clearChat, language, setLanguage };
 };
