@@ -1,6 +1,6 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Home, Map, HelpCircle, LogIn, LogOut, User as UserIcon } from "lucide-react";
+import { Home, Map, HelpCircle, LogIn, LogOut, User as UserIcon, Bot } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
@@ -72,6 +72,15 @@ const Navigation = () => {
               >
                 <Map className="w-4 h-4" />
                 Explore
+              </Button>
+            </Link>
+            <Link to="/assistant">
+              <Button 
+                variant={location.pathname === "/assistant" ? "default" : "ghost"}
+                className="gap-2"
+              >
+                <Bot className="w-4 h-4" />
+                Assistant
               </Button>
             </Link>
             <Link to="/help">

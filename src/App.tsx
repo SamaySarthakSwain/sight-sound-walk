@@ -8,6 +8,7 @@ import Explore from "./pages/Explore";
 import Auth from "./pages/Auth";
 import Help from "./pages/Help";
 import Profile from "./pages/Profile";
+import Assistant from "./pages/Assistant";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -21,6 +22,7 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/explore" element={<Explore />} />
+          <Route path="/assistant" element={<Assistant />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/help" element={<Help />} />
           <Route path="/profile" element={<Profile />} />
