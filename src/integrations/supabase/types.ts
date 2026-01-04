@@ -14,6 +14,60 @@ export type Database = {
   }
   public: {
     Tables: {
+      monuments: {
+        Row: {
+          category: string
+          created_at: string
+          description: string
+          distance_from_berhampur: string | null
+          facts: string[] | null
+          id: string
+          image_url: string | null
+          is_featured: boolean | null
+          latitude: number | null
+          location: string
+          longitude: number | null
+          region: string | null
+          state: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          description: string
+          distance_from_berhampur?: string | null
+          facts?: string[] | null
+          id?: string
+          image_url?: string | null
+          is_featured?: boolean | null
+          latitude?: number | null
+          location: string
+          longitude?: number | null
+          region?: string | null
+          state: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string
+          distance_from_berhampur?: string | null
+          facts?: string[] | null
+          id?: string
+          image_url?: string | null
+          is_featured?: boolean | null
+          latitude?: number | null
+          location?: string
+          longitude?: number | null
+          region?: string | null
+          state?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
