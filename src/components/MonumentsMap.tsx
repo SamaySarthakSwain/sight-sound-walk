@@ -1,7 +1,8 @@
 import { GoogleMap, LoadScript, Marker, InfoWindow, DirectionsRenderer } from '@react-google-maps/api';
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Map as MapIcon } from "lucide-react";
+import { Map as MapIcon, Loader2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 interface RouteData {
   start: { lat: number; lng: number };
@@ -13,66 +14,21 @@ interface MonumentsMapProps {
   routeData?: RouteData | null;
 }
 
+interface Monument {
+  id: string;
+  name: string;
+  position: { lat: number; lng: number };
+  description: string;
+}
+
 const GOOGLE_MAPS_API_KEY = "AIzaSyBVVkTWwfx3NW6bFi1t7CEomwv1owCO1SI";
 
 const loadScriptOptions = {
   googleMapsApiKey: GOOGLE_MAPS_API_KEY,
-  // Suppress error dialog
   onError: () => {
     console.log('Google Maps loaded with API key');
   }
 };
-
-const monuments = [
-  {
-    id: 1,
-    name: "Konark Sun Temple",
-    position: { lat: 19.8876, lng: 86.0945 },
-    description: "UNESCO World Heritage Site, 13th century sun temple"
-  },
-  {
-    id: 2,
-    name: "Jagannath Temple",
-    position: { lat: 19.8048, lng: 85.8182 },
-    description: "Sacred Hindu temple in Puri, one of Char Dham pilgrimage sites"
-  },
-  {
-    id: 3,
-    name: "Lingaraj Temple",
-    position: { lat: 20.2379, lng: 85.8338 },
-    description: "11th century temple dedicated to Lord Shiva in Bhubaneswar"
-  },
-  {
-    id: 4,
-    name: "Rajarani Temple",
-    position: { lat: 20.2524, lng: 85.8229 },
-    description: "Famous for intricate carvings and sculptures"
-  },
-  {
-    id: 5,
-    name: "Mukteshwar Temple",
-    position: { lat: 20.2508, lng: 85.8271 },
-    description: "10th century temple known as 'Gem of Odishan architecture'"
-  },
-  {
-    id: 6,
-    name: "Udayagiri & Khandagiri Caves",
-    position: { lat: 20.2644, lng: 85.7787 },
-    description: "Ancient Jain rock-cut shelters dating back to 2nd century BCE"
-  },
-  {
-    id: 7,
-    name: "Dhauli Shanti Stupa",
-    position: { lat: 20.1895, lng: 85.8609 },
-    description: "Peace pagoda built at the site of Kalinga War"
-  },
-  {
-    id: 8,
-    name: "Chilika Lake",
-    position: { lat: 19.7166, lng: 85.3206 },
-    description: "Asia's largest brackish water lagoon, biodiversity hotspot"
-  }
-];
 
 const mapContainerStyle = {
   width: '100%',
@@ -87,7 +43,9 @@ const center = {
 };
 
 const MonumentsMap: React.FC<MonumentsMapProps> = ({ routeData }) => {
-  const [selectedMonument, setSelectedMonument] = useState<typeof monuments[0] | null>(null);
+  const [monuments, setMonuments] = useState<Monument[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedMonument, setSelectedMonument] = useState<Monument | null>(null);
   const [directions, setDirections] = useState<google.maps.DirectionsResult | null>(null);
   const [mapCenter, setMapCenter] = useState(center);
   const [mapZoom, setMapZoom] = useState(9);
@@ -95,6 +53,37 @@ const MonumentsMap: React.FC<MonumentsMapProps> = ({ routeData }) => {
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [watchId, setWatchId] = useState<number | null>(null);
+
+  // Fetch Odisha monuments from database
+  useEffect(() => {
+    const fetchMonuments = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('monuments')
+          .select('id, title, description, latitude, longitude')
+          .eq('region', 'odisha')
+          .not('latitude', 'is', null)
+          .not('longitude', 'is', null);
+
+        if (error) throw error;
+
+        const formattedMonuments: Monument[] = (data || []).map(m => ({
+          id: m.id,
+          name: m.title,
+          position: { lat: Number(m.latitude), lng: Number(m.longitude) },
+          description: m.description
+        }));
+
+        setMonuments(formattedMonuments);
+      } catch (error) {
+        console.error('Error fetching monuments:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMonuments();
+  }, []);
 
   // Enable traffic layer
   useEffect(() => {
@@ -188,11 +177,17 @@ const MonumentsMap: React.FC<MonumentsMapProps> = ({ routeData }) => {
               Monuments Map of Odisha
             </CardTitle>
             <CardDescription className="text-base">
-              Explore all famous monuments and historical sites across Odisha
+              Explore all {monuments.length} famous monuments and historical sites across Odisha
             </CardDescription>
           </CardHeader>
 
           <CardContent className="space-y-6">
+            {loading ? (
+              <div className="flex items-center justify-center h-[600px]">
+                <Loader2 className="w-8 h-8 animate-spin text-primary" />
+              </div>
+            ) : (
+              <>
             {/* Map */}
             <LoadScript {...loadScriptOptions}>
               <GoogleMap
@@ -275,6 +270,8 @@ const MonumentsMap: React.FC<MonumentsMapProps> = ({ routeData }) => {
                 </div>
               ))}
             </div>
+              </>
+            )}
           </CardContent>
         </Card>
       </div>
