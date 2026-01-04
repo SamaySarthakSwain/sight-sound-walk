@@ -35,159 +35,59 @@ interface Monument {
 }
 
 const monumentsByCategory = {
-  bhubaneswar: [
+  berhampur: [
     {
-      title: "Lingaraja Temple",
-      description: "A masterpiece of Kalinga architecture with a 180-ft high tower, this 11th century temple is dedicated to Lord Shiva in his Harihara form (half Vishnu, half Shiva). The most prominent landmark of Bhubaneswar.",
-      location: "Bhubaneswar, Odisha",
+      title: "Tara Tarini Temple",
+      description: "Ancient Shakti Peetha dedicated to Goddess Tara Tarini, located on Kumari Hills near Berhampur. One of the four major Adi Shakti shrines in India with panoramic views of Rushikulya River.",
+      location: "Berhampur, Ganjam, Odisha",
       category: "Temple",
-      imageUrl: lingarajaImage,
+      imageUrl: taraTariniImage,
       facts: [
-        "Built in 11th century by Somavamsi dynasty",
-        "180-feet high tower dominating Bhubaneswar skyline",
-        "Dedicated to Harihara (half Vishnu, half Shiva)",
-        "Features sacred Bindu Sagar pond",
-        "Masterpiece of Kalinga architecture"
+        "One of four Adi Shakti Peethas in India",
+        "Located on Kumari Hills",
+        "Panoramic views of Rushikulya River",
+        "Ancient Shakti Peetha shrine",
+        "Popular pilgrimage destination"
       ]
     },
     {
-      title: "Mukteswara Temple",
-      description: "Built in 10th century, known as the 'Gem of Odishan architecture'. Famous for its exquisite torana (arched gateway) and detailed carvings depicting stories from Hindu mythology.",
-      location: "Bhubaneswar, Odisha",
+      title: "Bhairabi Temple",
+      description: "Historic temple dedicated to Goddess Bhairabi, situated in the heart of Berhampur. Known for its religious significance and annual festivals drawing devotees from across the region.",
+      location: "Berhampur, Ganjam, Odisha",
       category: "Temple",
-      imageUrl: mukteswaraImage,
+      imageUrl: bhairabiImage,
       facts: [
-        "Built in 10th century",
-        "Called 'Gem of Odishan architecture'",
-        "Famous for exquisite torana (arched gateway)",
-        "Detailed carvings from Hindu mythology",
-        "Small but architecturally significant temple"
+        "Dedicated to Goddess Bhairabi",
+        "Located in heart of Berhampur",
+        "Annual festivals attract many devotees",
+        "Important religious site",
+        "Historic temple architecture"
       ]
     },
     {
-      title: "Rajarani Temple",
-      description: "11th century temple built from red and golden sandstone (Rajarani stone). Famous for its intricate carvings depicting celestial nymphs and musicians. Unique for having no presiding deity.",
-      location: "Bhubaneswar, Odisha",
+      title: "Budhi Thakurani Temple",
+      description: "Temple dedicated to Goddess Budhi Thakurani, the presiding deity of Berhampur. Famous for the grand Budhi Thakurani Yatra held every two years with elaborate processions.",
+      location: "Berhampur, Ganjam, Odisha",
       category: "Temple",
-      imageUrl: rajaraniImage,
+      imageUrl: budhiThakuraniImage,
       facts: [
-        "Built in 11th century",
-        "Constructed from red and golden 'Rajarani' sandstone",
-        "Famous for celestial nymphs and musician carvings",
-        "No presiding deity inside",
-        "Believed to be connected to Lord Shiva"
+        "Presiding deity of Berhampur",
+        "Grand Yatra every two years",
+        "Elaborate festival processions",
+        "Cultural importance to locals",
+        "Historic temple tradition"
       ]
     }
   ],
   nearby: [
     {
-      title: "Udayagiri & Khandagiri Caves",
-      description: "Ancient Jain rock-cut shelters dating back to 2nd century BCE, built by King Kharavela. These caves feature inscriptions and sculptures with Rani Gumpha being the largest and most ornate cave.",
-      location: "8 km from Bhubaneswar, Odisha",
-      category: "Cave",
-      imageUrl: udayagiriImage,
-      facts: [
-        "8 km from Bhubaneswar",
-        "Dating back to 2nd century BCE",
-        "Built by King Kharavela",
-        "Rani Gumpha is the largest cave",
-        "Important Jain heritage site"
-      ]
-    },
-    {
-      title: "Dhauli Shanti Stupa",
-      description: "Peace pagoda built at the historic site of the Kalinga War near Daya River. Features 3rd century BCE Ashokan rock edicts where Emperor Ashoka embraced Buddhism after witnessing the war's devastation.",
-      location: "8 km from Bhubaneswar, Odisha",
-      category: "Stupa",
-      imageUrl: dhauliImage,
-      facts: [
-        "8 km from Bhubaneswar",
-        "Site of the historic Kalinga War",
-        "3rd century BCE Ashokan rock edicts",
-        "Where Emperor Ashoka embraced Buddhism",
-        "Modern peace pagoda built in 1972"
-      ]
-    },
-    {
-      title: "Konark Sun Temple",
-      description: "UNESCO World Heritage Site built in 13th century by King Narasimhadeva I. This architectural marvel is dedicated to Surya (Sun God) and built in the form of a colossal stone chariot with 24 wheels.",
-      location: "65 km from Bhubaneswar, Puri District",
-      category: "Temple",
-      imageUrl: konarkImage,
-      facts: [
-        "65 km from Bhubaneswar",
-        "UNESCO World Heritage Site",
-        "Built by King Narasimhadeva I in 13th century",
-        "Designed as colossal chariot with 24 wheels",
-        "Famous for intricate stone carvings"
-      ]
-    },
-    {
-      title: "Jagannath Temple, Puri",
-      description: "Sacred Hindu temple in Puri, one of the Char Dham pilgrimage sites. Built in 12th century, famous for the annual Rath Yatra (Chariot Festival) and houses the world's largest temple kitchen.",
-      location: "60 km from Bhubaneswar, Puri",
-      category: "Temple",
-      imageUrl: jagannathImage,
-      facts: [
-        "60 km from Bhubaneswar",
-        "One of the four sacred Char Dham sites",
-        "Built in 12th century",
-        "Famous for annual Rath Yatra",
-        "World's largest temple kitchen"
-      ]
-    },
-    {
-      title: "Chilika Lake",
-      description: "Asia's largest brackish water lagoon, about 100 km from Bhubaneswar. Home to migratory birds and famous Irrawaddy dolphins. OTDC offers lake cruises from Satapada and Rambha.",
-      location: "100 km from Bhubaneswar, Odisha",
-      category: "Lake",
-      imageUrl: chilikaImage,
-      facts: [
-        "100 km from Bhubaneswar",
-        "Asia's largest brackish water lagoon",
-        "Home to Irrawaddy dolphins",
-        "Migratory bird sanctuary",
-        "OTDC lake cruises available"
-      ]
-    },
-    {
-      title: "Barabati Fort",
-      description: "14th century fort built by the Ganga dynasty in Cuttack, just 30 km from Bhubaneswar. Features moat, earthen ramparts, and once housed a 9-storey palace.",
-      location: "30 km from Bhubaneswar, Cuttack",
-      category: "Fort",
-      imageUrl: barabatiImage,
-      facts: [
-        "30 km from Bhubaneswar in Cuttack",
-        "Built in 14th century by Ganga dynasty",
-        "Once housed a 9-storey palace",
-        "Features moat and earthen ramparts",
-        "Near Mahanadi River"
-      ]
-    }
-  ],
-  beaches: [
-    {
-      title: "Puri Beach",
-      description: "One of the most famous beaches in India, located 60 km from Bhubaneswar. Known for its golden sands, the annual Sand Art Festival, and proximity to the sacred Jagannath Temple.",
-      location: "60 km from Bhubaneswar, Puri",
-      category: "Beach",
-      imageUrl: jagannathImage,
-      facts: [
-        "60 km from Bhubaneswar",
-        "One of India's most famous beaches",
-        "Golden sands and vibrant atmosphere",
-        "Annual International Sand Art Festival",
-        "Near sacred Jagannath Temple"
-      ]
-    },
-    {
       title: "Gopalpur-on-Sea",
-      description: "One of the cleanest and most scenic beaches on the eastern coast, 170 km from Bhubaneswar. This serene beach town features an old lighthouse, sea-view resorts, and was once a busy colonial port.",
-      location: "170 km from Bhubaneswar, Ganjam",
+      description: "One of the cleanest and most scenic beaches on the eastern coast, just 16 km from Berhampur. This serene beach town features an old lighthouse, sea-view resorts, and was once a busy colonial port.",
+      location: "16 km from Berhampur, Ganjam",
       category: "Beach",
       imageUrl: gopalpurImage,
       facts: [
-        "170 km from Bhubaneswar",
+        "16 km from Berhampur",
         "One of cleanest beaches on east coast",
         "Old lighthouse and colonial heritage",
         "Once a busy British-era port",
@@ -195,21 +95,135 @@ const monumentsByCategory = {
       ]
     },
     {
-      title: "Chandipur Beach",
-      description: "Unique beach 200 km from Bhubaneswar where the sea recedes up to 5 km during low tide. Known as the 'Hide and Seek' beach and located near the DRDO missile testing range.",
-      location: "200 km from Bhubaneswar, Balasore",
+      title: "Taptapani Hot Springs",
+      description: "Natural hot water springs with therapeutic sulfur water, about 50 km from Berhampur. The water temperature remains around 56°C and is believed to cure skin ailments.",
+      location: "50 km from Berhampur, Ganjam",
+      category: "Natural",
+      imageUrl: taptapaniImage,
+      facts: [
+        "50 km from Berhampur",
+        "Natural hot water springs",
+        "Water temperature around 56°C",
+        "Therapeutic sulfur water",
+        "Believed to cure skin ailments"
+      ]
+    },
+    {
+      title: "Chilika Lake",
+      description: "Asia's largest brackish water lagoon, about 90 km from Berhampur (Rambha entry). Home to migratory birds and famous Irrawaddy dolphins. OTDC offers lake cruises from Rambha and Satapada.",
+      location: "90 km from Berhampur, Odisha",
+      category: "Lake",
+      imageUrl: chilikaImage,
+      facts: [
+        "90 km from Berhampur (Rambha entry)",
+        "Asia's largest brackish water lagoon",
+        "Home to Irrawaddy dolphins",
+        "Migratory bird sanctuary",
+        "OTDC lake cruises available"
+      ]
+    },
+    {
+      title: "Mahendragiri Hills",
+      description: "Second highest peak in Odisha at 1,501 meters, about 95 km from Berhampur. Sacred mountain associated with Parashurama and rich biodiversity with medicinal plants.",
+      location: "95 km from Berhampur, Gajapati",
+      category: "Hill",
+      imageUrl: mahendragiriImage,
+      facts: [
+        "95 km from Berhampur",
+        "Second highest peak in Odisha (1,501m)",
+        "Associated with Parashurama legend",
+        "Rich biodiversity",
+        "Home to medicinal plants"
+      ]
+    },
+    {
+      title: "Tampara Lake",
+      description: "Picturesque freshwater lake near Chatrapur, about 45 km from Berhampur. Ideal for boating and picnics with scenic surroundings and rich birdlife.",
+      location: "45 km from Berhampur, Ganjam",
+      category: "Lake",
+      imageUrl: tamparaImage,
+      facts: [
+        "45 km from Berhampur",
+        "Freshwater lake near Chatrapur",
+        "Boating facilities available",
+        "Scenic picnic spot",
+        "Rich birdlife"
+      ]
+    },
+    {
+      title: "Potagarh Fort",
+      description: "Also known as the 'Buried Fort', located near Rushikulya River mouth, about 25 km from Berhampur. Features combination of natural and man-made defenses with historical significance.",
+      location: "25 km from Berhampur, Ganjam",
+      category: "Fort",
+      imageUrl: potagarhImage,
+      facts: [
+        "25 km from Berhampur",
+        "Known as the 'Buried Fort'",
+        "Near Rushikulya River mouth",
+        "Combination of natural and man-made defenses",
+        "Historical significance"
+      ]
+    }
+  ],
+  beaches: [
+    {
+      title: "Gopalpur-on-Sea",
+      description: "One of the cleanest and most scenic beaches on the eastern coast, just 16 km from Berhampur. This serene beach town features an old lighthouse, sea-view resorts, and was once a busy colonial port.",
+      location: "16 km from Berhampur, Ganjam",
+      category: "Beach",
+      imageUrl: gopalpurImage,
+      facts: [
+        "16 km from Berhampur",
+        "One of cleanest beaches on east coast",
+        "Old lighthouse and colonial heritage",
+        "Once a busy British-era port",
+        "Ideal for water sports and seafood"
+      ]
+    },
+    {
+      title: "Aryapalli Beach",
+      description: "A serene and less crowded beach about 25 km from Berhampur. Known for its clean golden sands, calm waters, and beautiful sunrise views.",
+      location: "25 km from Berhampur, Ganjam",
       category: "Beach",
       imageUrl: aryapalliImage,
       facts: [
-        "200 km from Bhubaneswar",
-        "Sea recedes up to 5 km during low tide",
-        "Known as 'Hide and Seek' beach",
-        "Near DRDO missile testing range",
-        "Unique natural phenomenon"
+        "25 km from Berhampur",
+        "Less crowded and serene",
+        "Clean golden sands",
+        "Beautiful sunrise views",
+        "Ideal for peaceful getaway"
+      ]
+    },
+    {
+      title: "Puri Beach",
+      description: "One of the most famous beaches in India, about 170 km from Berhampur. Known for its golden sands, the annual Sand Art Festival, and proximity to the sacred Jagannath Temple.",
+      location: "170 km from Berhampur, Puri",
+      category: "Beach",
+      imageUrl: jagannathImage,
+      facts: [
+        "170 km from Berhampur",
+        "One of India's most famous beaches",
+        "Golden sands and vibrant atmosphere",
+        "Annual International Sand Art Festival",
+        "Near sacred Jagannath Temple"
       ]
     }
   ],
   forts: [
+    {
+      title: "Potagarh Fort",
+      description: "Also known as the 'Buried Fort', built near Rushikulya River mouth in Ganjam, just 25 km from Berhampur. Features combination of natural and man-made defenses with historical significance.",
+      location: "25 km from Berhampur, Ganjam",
+      category: "Fort",
+      imageUrl: potagarhImage,
+      facts: [
+        "25 km from Berhampur",
+        "Known as the 'Buried Fort'",
+        "Near Rushikulya River mouth",
+        "Combination of natural and man-made defenses",
+        "Historical significance"
+      ]
+    },
     {
       title: "Barabati Fort",
       description: "14th century fort built by the Ganga dynasty in Cuttack. Features moat, earthen ramparts, and once housed a 9-storey palace. Strategic location near Mahanadi River showcases medieval military architecture.",
@@ -222,20 +236,6 @@ const monumentsByCategory = {
         "Features moat and earthen ramparts",
         "Near Mahanadi River barrage",
         "Important medieval military architecture"
-      ]
-    },
-    {
-      title: "Potagarh Fort",
-      description: "Also known as the 'Buried Fort', built during British period near Rushikulya River mouth in Ganjam, about 180 km from Bhubaneswar. Features combination of natural and man-made defenses.",
-      location: "180 km from Bhubaneswar, Ganjam",
-      category: "Fort",
-      imageUrl: potagarhImage,
-      facts: [
-        "180 km from Bhubaneswar in Ganjam",
-        "Known as the 'Buried Fort'",
-        "Built during British period",
-        "Near Rushikulya River mouth",
-        "Combination of natural and man-made defenses"
       ]
     }
   ],
@@ -382,13 +382,13 @@ const monumentsByCategory = {
     },
     {
       title: "Chilika Lake",
-      description: "Asia's largest brackish water lagoon, about 100 km from Bhubaneswar (Satapada entry). Home to migratory birds and famous Irrawaddy dolphins. OTDC offers lake cruises from Satapada and Rambha.",
+      description: "Asia's largest brackish water lagoon, about 90 km from Berhampur (Rambha entry). Home to migratory birds and famous Irrawaddy dolphins. OTDC offers lake cruises from Rambha and Satapada.",
       location: "Puri-Ganjam-Khurda, Odisha",
       category: "Lake",
       imageUrl: chilikaImage,
       facts: [
         "Asia's largest brackish water lagoon",
-        "100 km from Bhubaneswar (Satapada entry)",
+        "90 km from Berhampur (Rambha entry)",
         "Home to Irrawaddy dolphins",
         "Migratory bird sanctuary",
         "OTDC lake cruises available"
@@ -425,7 +425,7 @@ const FeaturedMonuments = () => {
           </p>
         </div>
         
-        {renderSection("Places in Bhubaneswar", monumentsByCategory.bhubaneswar)}
+        {renderSection("Places in Berhampur", monumentsByCategory.berhampur)}
         {renderSection("Nearby Monuments & Places", monumentsByCategory.nearby)}
         {renderSection("Beaches", monumentsByCategory.beaches)}
         {renderSection("Forts", monumentsByCategory.forts)}

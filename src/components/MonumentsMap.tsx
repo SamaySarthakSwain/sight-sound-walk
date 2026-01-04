@@ -80,10 +80,10 @@ const mapContainerStyle = {
   borderRadius: '0.5rem'
 };
 
-// Bhubaneswar coordinates
+// NIST University, Berhampur coordinates
 const center = {
-  lat: 20.2961,
-  lng: 85.8245
+  lat: 19.2950,
+  lng: 84.8108
 };
 
 const MonumentsMap: React.FC<MonumentsMapProps> = ({ routeData }) => {
@@ -107,8 +107,8 @@ const MonumentsMap: React.FC<MonumentsMapProps> = ({ routeData }) => {
 
   // Track user's real-time location
   useEffect(() => {
-    // Set default location to Bhubaneswar
-    setUserLocation({ lat: 20.2961, lng: 85.8245 });
+    // Set default location to NIST University, Berhampur
+    setUserLocation({ lat: 19.2950, lng: 84.8108 });
 
     if (navigator.geolocation) {
       const id = navigator.geolocation.watchPosition(
@@ -121,7 +121,7 @@ const MonumentsMap: React.FC<MonumentsMapProps> = ({ routeData }) => {
         },
         (error) => {
           console.error('Error getting location:', error);
-          // Keep Bhubaneswar as fallback
+          // Keep Berhampur as fallback
         },
         {
           enableHighAccuracy: true,
