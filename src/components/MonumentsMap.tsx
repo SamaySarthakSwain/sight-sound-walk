@@ -36,10 +36,10 @@ const mapContainerStyle = {
   borderRadius: '0.5rem'
 };
 
-// NIST University, Berhampur coordinates
+// Bhubaneswar coordinates
 const center = {
-  lat: 19.2950,
-  lng: 84.8108
+  lat: 20.2961,
+  lng: 85.8245
 };
 
 const MonumentsMap: React.FC<MonumentsMapProps> = ({ routeData }) => {
