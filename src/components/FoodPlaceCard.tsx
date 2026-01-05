@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Star, MapPin, Utensils, Sparkles, Shield, Heart } from "lucide-react";
+import { Star, MapPin, Utensils, Sparkles, Shield, Heart, ExternalLink } from "lucide-react";
 import { FoodPlace } from "@/hooks/useFoodPlaces";
 import FoodRatingForm from "./FoodRatingForm";
 
@@ -126,7 +126,27 @@ const FoodPlaceCard = ({ place, onRate, isLoggedIn }: FoodPlaceCardProps) => {
           </p>
         )}
 
-        <div className="grid grid-cols-2 gap-2 pt-2 border-t">
+        {/* Google Rating */}
+        {place.google_rating && (
+          <div className="flex items-center gap-2 p-2 rounded-md bg-muted/50">
+            <div className="flex items-center gap-1">
+              <img src="https://www.google.com/favicon.ico" alt="Google" className="w-4 h-4" />
+              <span className="text-xs font-medium">Google</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+              <span className="text-sm font-semibold">{place.google_rating.toFixed(1)}</span>
+              <span className="text-xs text-muted-foreground">
+                ({place.google_total_ratings} reviews)
+              </span>
+            </div>
+          </div>
+        )}
+
+        {/* User Ratings */}
+        <div className="pt-2 border-t">
+          <p className="text-xs font-medium mb-2 text-muted-foreground">Community Ratings</p>
+          <div className="grid grid-cols-2 gap-2">
           <div>
             <span className="text-xs text-muted-foreground">Overall</span>
             {renderStars(place.avg_overall)}
@@ -142,6 +162,7 @@ const FoodPlaceCard = ({ place, onRate, isLoggedIn }: FoodPlaceCardProps) => {
           <div>
             <span className="text-xs text-muted-foreground">Value</span>
             {renderStars(place.avg_value)}
+          </div>
           </div>
         </div>
 
