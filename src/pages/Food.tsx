@@ -1,15 +1,30 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Navigation from "@/components/Navigation";
 import FoodPlaceCard from "@/components/FoodPlaceCard";
 import { useFoodPlaces } from "@/hooks/useFoodPlaces";
 import { useAuth } from "@/hooks/useAuth";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2, UtensilsCrossed } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 const Food = () => {
-  const { foodPlaces, loading, submitRating } = useFoodPlaces();
+  const { foodPlaces, loading, submitRating, refetch } = useFoodPlaces();
   const { user } = useAuth();
   const [activeCategory, setActiveCategory] = useState("all");
+
+  // Fetch Google ratings on mount (runs once in background)
+  useEffect(() => {
+    const fetchGoogleRatings = async () => {
+      try {
+        await supabase.functions.invoke("fetch-google-ratings");
+        // Refetch to get updated Google ratings
+        setTimeout(() => refetch(), 2000);
+      } catch (error) {
+        console.error("Failed to fetch Google ratings:", error);
+      }
+    };
+    fetchGoogleRatings();
+  }, []);
 
   const filteredPlaces =
     activeCategory === "all"

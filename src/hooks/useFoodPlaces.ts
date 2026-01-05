@@ -22,6 +22,8 @@ export interface FoodPlace {
   avg_value: number;
   total_ratings: number;
   user_rating: FoodRating | null;
+  google_rating: number | null;
+  google_total_ratings: number | null;
 }
 
 export interface FoodRating {
@@ -106,6 +108,8 @@ export const useFoodPlaces = () => {
         avg_hygiene: avgHygiene,
         avg_value: avgValue,
         total_ratings: totalRatings,
+        google_rating: place.google_rating ? Number(place.google_rating) : null,
+        google_total_ratings: place.google_total_ratings,
         user_rating: userRating
           ? {
               id: userRating.id,

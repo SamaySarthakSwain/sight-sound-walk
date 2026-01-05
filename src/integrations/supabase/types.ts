@@ -22,6 +22,10 @@ export type Database = {
           created_at: string
           description: string | null
           famous_dishes: string[] | null
+          google_last_updated: string | null
+          google_place_id: string | null
+          google_rating: number | null
+          google_total_ratings: number | null
           id: string
           image_url: string | null
           is_food_street: boolean | null
@@ -38,6 +42,10 @@ export type Database = {
           created_at?: string
           description?: string | null
           famous_dishes?: string[] | null
+          google_last_updated?: string | null
+          google_place_id?: string | null
+          google_rating?: number | null
+          google_total_ratings?: number | null
           id?: string
           image_url?: string | null
           is_food_street?: boolean | null
@@ -54,6 +62,10 @@ export type Database = {
           created_at?: string
           description?: string | null
           famous_dishes?: string[] | null
+          google_last_updated?: string | null
+          google_place_id?: string | null
+          google_rating?: number | null
+          google_total_ratings?: number | null
           id?: string
           image_url?: string | null
           is_food_street?: boolean | null
