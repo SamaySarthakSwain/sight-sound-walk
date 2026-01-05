@@ -14,6 +14,104 @@ export type Database = {
   }
   public: {
     Tables: {
+      food_places: {
+        Row: {
+          avg_price_max: number | null
+          avg_price_min: number | null
+          category: string
+          created_at: string
+          description: string | null
+          famous_dishes: string[] | null
+          id: string
+          image_url: string | null
+          is_food_street: boolean | null
+          latitude: number | null
+          location: string
+          longitude: number | null
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          avg_price_max?: number | null
+          avg_price_min?: number | null
+          category: string
+          created_at?: string
+          description?: string | null
+          famous_dishes?: string[] | null
+          id?: string
+          image_url?: string | null
+          is_food_street?: boolean | null
+          latitude?: number | null
+          location: string
+          longitude?: number | null
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          avg_price_max?: number | null
+          avg_price_min?: number | null
+          category?: string
+          created_at?: string
+          description?: string | null
+          famous_dishes?: string[] | null
+          id?: string
+          image_url?: string | null
+          is_food_street?: boolean | null
+          latitude?: number | null
+          location?: string
+          longitude?: number | null
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      food_ratings: {
+        Row: {
+          ate_here: boolean
+          comment: string | null
+          created_at: string
+          food_place_id: string
+          hygiene_rating: number
+          id: string
+          overall_rating: number
+          taste_rating: number
+          user_id: string
+          value_rating: number
+        }
+        Insert: {
+          ate_here?: boolean
+          comment?: string | null
+          created_at?: string
+          food_place_id: string
+          hygiene_rating: number
+          id?: string
+          overall_rating: number
+          taste_rating: number
+          user_id: string
+          value_rating: number
+        }
+        Update: {
+          ate_here?: boolean
+          comment?: string | null
+          created_at?: string
+          food_place_id?: string
+          hygiene_rating?: number
+          id?: string
+          overall_rating?: number
+          taste_rating?: number
+          user_id?: string
+          value_rating?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "food_ratings_food_place_id_fkey"
+            columns: ["food_place_id"]
+            isOneToOne: false
+            referencedRelation: "food_places"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       monuments: {
         Row: {
           category: string
