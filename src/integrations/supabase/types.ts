@@ -14,6 +14,66 @@ export type Database = {
   }
   public: {
     Tables: {
+      cab_services: {
+        Row: {
+          avg_wait_time_mins: number | null
+          base_fare_2w: number | null
+          base_fare_3w: number | null
+          base_fare_4w: number | null
+          created_at: string
+          eco_rating: number | null
+          has_2_wheeler: boolean | null
+          has_3_wheeler: boolean | null
+          has_4_wheeler: boolean | null
+          id: string
+          is_local: boolean | null
+          logo_url: string | null
+          name: string
+          per_km_2w: number | null
+          per_km_3w: number | null
+          per_km_4w: number | null
+          updated_at: string
+        }
+        Insert: {
+          avg_wait_time_mins?: number | null
+          base_fare_2w?: number | null
+          base_fare_3w?: number | null
+          base_fare_4w?: number | null
+          created_at?: string
+          eco_rating?: number | null
+          has_2_wheeler?: boolean | null
+          has_3_wheeler?: boolean | null
+          has_4_wheeler?: boolean | null
+          id?: string
+          is_local?: boolean | null
+          logo_url?: string | null
+          name: string
+          per_km_2w?: number | null
+          per_km_3w?: number | null
+          per_km_4w?: number | null
+          updated_at?: string
+        }
+        Update: {
+          avg_wait_time_mins?: number | null
+          base_fare_2w?: number | null
+          base_fare_3w?: number | null
+          base_fare_4w?: number | null
+          created_at?: string
+          eco_rating?: number | null
+          has_2_wheeler?: boolean | null
+          has_3_wheeler?: boolean | null
+          has_4_wheeler?: boolean | null
+          id?: string
+          is_local?: boolean | null
+          logo_url?: string | null
+          name?: string
+          per_km_2w?: number | null
+          per_km_3w?: number | null
+          per_km_4w?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       food_places: {
         Row: {
           avg_price_max: number | null
@@ -231,6 +291,175 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      trip_feedback: {
+        Row: {
+          comment: string | null
+          created_at: string
+          driver_rating: number | null
+          id: string
+          punctuality: number | null
+          rating: number
+          trip_id: string | null
+          user_id: string
+          vehicle_condition: number | null
+          would_recommend: boolean | null
+        }
+        Insert: {
+          comment?: string | null
+          created_at?: string
+          driver_rating?: number | null
+          id?: string
+          punctuality?: number | null
+          rating: number
+          trip_id?: string | null
+          user_id: string
+          vehicle_condition?: number | null
+          would_recommend?: boolean | null
+        }
+        Update: {
+          comment?: string | null
+          created_at?: string
+          driver_rating?: number | null
+          id?: string
+          punctuality?: number | null
+          rating?: number
+          trip_id?: string | null
+          user_id?: string
+          vehicle_condition?: number | null
+          would_recommend?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trip_feedback_trip_id_fkey"
+            columns: ["trip_id"]
+            isOneToOne: false
+            referencedRelation: "trip_history"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      trip_history: {
+        Row: {
+          actual_fare: number | null
+          cab_service_id: string | null
+          created_at: string
+          distance_km: number | null
+          duration_mins: number | null
+          end_lat: number | null
+          end_lng: number | null
+          end_location: string
+          estimated_fare: number | null
+          id: string
+          passengers: number | null
+          start_lat: number | null
+          start_lng: number | null
+          start_location: string
+          stops: Json | null
+          user_id: string
+          vehicle_type_id: string | null
+        }
+        Insert: {
+          actual_fare?: number | null
+          cab_service_id?: string | null
+          created_at?: string
+          distance_km?: number | null
+          duration_mins?: number | null
+          end_lat?: number | null
+          end_lng?: number | null
+          end_location: string
+          estimated_fare?: number | null
+          id?: string
+          passengers?: number | null
+          start_lat?: number | null
+          start_lng?: number | null
+          start_location: string
+          stops?: Json | null
+          user_id: string
+          vehicle_type_id?: string | null
+        }
+        Update: {
+          actual_fare?: number | null
+          cab_service_id?: string | null
+          created_at?: string
+          distance_km?: number | null
+          duration_mins?: number | null
+          end_lat?: number | null
+          end_lng?: number | null
+          end_location?: string
+          estimated_fare?: number | null
+          id?: string
+          passengers?: number | null
+          start_lat?: number | null
+          start_lng?: number | null
+          start_location?: string
+          stops?: Json | null
+          user_id?: string
+          vehicle_type_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trip_history_cab_service_id_fkey"
+            columns: ["cab_service_id"]
+            isOneToOne: false
+            referencedRelation: "cab_services"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "trip_history_vehicle_type_id_fkey"
+            columns: ["vehicle_type_id"]
+            isOneToOne: false
+            referencedRelation: "vehicle_types"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      vehicle_types: {
+        Row: {
+          base_fare: number | null
+          cab_service_id: string | null
+          capacity: number
+          created_at: string
+          id: string
+          is_eco_friendly: boolean | null
+          per_km_rate: number | null
+          per_min_rate: number | null
+          vehicle_name: string
+          vehicle_type: string
+        }
+        Insert: {
+          base_fare?: number | null
+          cab_service_id?: string | null
+          capacity: number
+          created_at?: string
+          id?: string
+          is_eco_friendly?: boolean | null
+          per_km_rate?: number | null
+          per_min_rate?: number | null
+          vehicle_name: string
+          vehicle_type: string
+        }
+        Update: {
+          base_fare?: number | null
+          cab_service_id?: string | null
+          capacity?: number
+          created_at?: string
+          id?: string
+          is_eco_friendly?: boolean | null
+          per_km_rate?: number | null
+          per_min_rate?: number | null
+          vehicle_name?: string
+          vehicle_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vehicle_types_cab_service_id_fkey"
+            columns: ["cab_service_id"]
+            isOneToOne: false
+            referencedRelation: "cab_services"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       visit_history: {
         Row: {
