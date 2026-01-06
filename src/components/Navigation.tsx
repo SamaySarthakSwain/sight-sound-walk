@@ -1,6 +1,6 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Home, Map, HelpCircle, LogIn, LogOut, User as UserIcon, Bot, UtensilsCrossed } from "lucide-react";
+import { Home, Map, HelpCircle, LogIn, LogOut, User as UserIcon, Bot, UtensilsCrossed, Car } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
@@ -81,6 +81,15 @@ const Navigation = () => {
               >
                 <UtensilsCrossed className="w-4 h-4" />
                 Food
+              </Button>
+            </Link>
+            <Link to="/cabs">
+              <Button 
+                variant={location.pathname === "/cabs" ? "default" : "ghost"}
+                className="gap-2"
+              >
+                <Car className="w-4 h-4" />
+                Cabs
               </Button>
             </Link>
             <Link to="/assistant">
