@@ -184,6 +184,81 @@ export type Database = {
           },
         ]
       }
+      hotels: {
+        Row: {
+          address: string | null
+          amenities: string[] | null
+          available_rooms: number | null
+          contact_email: string | null
+          contact_phone: string | null
+          created_at: string
+          description: string | null
+          google_place_id: string | null
+          google_rating: number | null
+          google_total_ratings: number | null
+          id: string
+          image_url: string | null
+          latitude: number | null
+          location: string
+          longitude: number | null
+          name: string
+          price_per_night_max: number | null
+          price_per_night_min: number | null
+          star_rating: number | null
+          total_rooms: number | null
+          updated_at: string
+          website: string | null
+        }
+        Insert: {
+          address?: string | null
+          amenities?: string[] | null
+          available_rooms?: number | null
+          contact_email?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          description?: string | null
+          google_place_id?: string | null
+          google_rating?: number | null
+          google_total_ratings?: number | null
+          id?: string
+          image_url?: string | null
+          latitude?: number | null
+          location: string
+          longitude?: number | null
+          name: string
+          price_per_night_max?: number | null
+          price_per_night_min?: number | null
+          star_rating?: number | null
+          total_rooms?: number | null
+          updated_at?: string
+          website?: string | null
+        }
+        Update: {
+          address?: string | null
+          amenities?: string[] | null
+          available_rooms?: number | null
+          contact_email?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          description?: string | null
+          google_place_id?: string | null
+          google_rating?: number | null
+          google_total_ratings?: number | null
+          id?: string
+          image_url?: string | null
+          latitude?: number | null
+          location?: string
+          longitude?: number | null
+          name?: string
+          price_per_night_max?: number | null
+          price_per_night_min?: number | null
+          star_rating?: number | null
+          total_rooms?: number | null
+          updated_at?: string
+          website?: string | null
+        }
+        Relationships: []
+      }
       monuments: {
         Row: {
           category: string
