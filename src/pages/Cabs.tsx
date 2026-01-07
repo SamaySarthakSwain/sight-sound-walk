@@ -6,6 +6,9 @@ import CabComparisonCard from "@/components/CabComparisonCard";
 import VehicleTypeFilter from "@/components/VehicleTypeFilter";
 import FareHistoryChart from "@/components/FareHistoryChart";
 import TripFeedbackForm from "@/components/TripFeedbackForm";
+import { HotelCard } from "@/components/HotelCard";
+import { HotelFilters } from "@/components/HotelFilters";
+import { useHotels } from "@/hooks/useHotels";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,6 +29,14 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import {
   useCabServices,
   useVehicleTypes,
@@ -49,6 +60,10 @@ import {
   Route,
   History,
   MessageSquare,
+  Building2,
+  Search,
+  SlidersHorizontal,
+  Star,
 } from "lucide-react";
 
 const libraries: ("places" | "geometry" | "drawing")[] = ["places", "geometry"];
@@ -67,6 +82,7 @@ const Cabs = () => {
   const { data: vehicleTypes, isLoading: loadingVehicles } = useVehicleTypes();
   const { data: tripHistory } = useTripHistory();
   const saveTrip = useSaveTrip();
+  const { hotels, loading: loadingHotels } = useHotels();
 
   const [routeInfo, setRouteInfo] = useState<RouteInfo | null>(null);
   const [estimates, setEstimates] = useState<FareEstimate[]>([]);
@@ -86,6 +102,44 @@ const Cabs = () => {
   const [isLoadingAi, setIsLoadingAi] = useState(false);
   const [selectedTrip, setSelectedTrip] = useState<TripHistory | null>(null);
   const [showFeedback, setShowFeedback] = useState(false);
+
+  // Hotel filters state
+  const [hotelSearch, setHotelSearch] = useState("");
+  const [starFilter, setStarFilter] = useState<number[]>([]);
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 30000]);
+  const [amenityFilter, setAmenityFilter] = useState<string[]>([]);
+
+  const maxHotelPrice = useMemo(() => {
+    return Math.max(...hotels.map((h) => h.price_per_night_max || 0), 30000);
+  }, [hotels]);
+
+  const filteredHotels = useMemo(() => {
+    return hotels.filter((hotel) => {
+      if (
+        hotelSearch &&
+        !hotel.name.toLowerCase().includes(hotelSearch.toLowerCase()) &&
+        !hotel.address?.toLowerCase().includes(hotelSearch.toLowerCase())
+      ) {
+        return false;
+      }
+      if (starFilter.length > 0 && hotel.star_rating && !starFilter.includes(hotel.star_rating)) {
+        return false;
+      }
+      if (hotel.price_per_night_min && hotel.price_per_night_min < priceRange[0]) {
+        return false;
+      }
+      if (hotel.price_per_night_min && hotel.price_per_night_min > priceRange[1]) {
+        return false;
+      }
+      if (amenityFilter.length > 0) {
+        const hotelAmenities = hotel.amenities || [];
+        if (!amenityFilter.some((a) => hotelAmenities.includes(a))) {
+          return false;
+        }
+      }
+      return true;
+    });
+  }, [hotels, hotelSearch, starFilter, priceRange, amenityFilter]);
 
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: "AIzaSyBs1TWwX2FkIWnVliKvTWxNK_mOedq5e5c",
@@ -229,7 +283,7 @@ const Cabs = () => {
           </div>
 
           <Tabs defaultValue="compare" className="space-y-6">
-            <TabsList className="grid w-full max-w-md grid-cols-3">
+            <TabsList className="grid w-full max-w-2xl grid-cols-4">
               <TabsTrigger value="compare" className="gap-2">
                 <Route className="w-4 h-4" />
                 Compare
@@ -237,6 +291,10 @@ const Cabs = () => {
               <TabsTrigger value="map" className="gap-2">
                 <MapPin className="w-4 h-4" />
                 Map Select
+              </TabsTrigger>
+              <TabsTrigger value="hotels" className="gap-2">
+                <Building2 className="w-4 h-4" />
+                Hotels
               </TabsTrigger>
               <TabsTrigger value="history" className="gap-2">
                 <History className="w-4 h-4" />
@@ -495,6 +553,110 @@ const Cabs = () => {
                   ))}
                 </div>
               )}
+            </TabsContent>
+
+            {/* Hotels Tab */}
+            <TabsContent value="hotels" className="space-y-6">
+              {/* Hotel Search & Filter Header */}
+              <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
+                <div>
+                  <h2 className="text-2xl font-bold flex items-center gap-2">
+                    <Building2 className="w-6 h-6 text-primary" />
+                    Hotels in Bhubaneswar
+                  </h2>
+                  <p className="text-muted-foreground text-sm">
+                    Find the perfect stay with real Google ratings
+                  </p>
+                </div>
+                <div className="flex gap-2 w-full md:w-auto">
+                  <div className="relative flex-1 md:w-64">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      placeholder="Search hotels..."
+                      value={hotelSearch}
+                      onChange={(e) => setHotelSearch(e.target.value)}
+                      className="pl-10"
+                    />
+                  </div>
+                  <Sheet>
+                    <SheetTrigger asChild>
+                      <Button variant="outline" size="icon" className="md:hidden">
+                        <SlidersHorizontal className="h-4 w-4" />
+                      </Button>
+                    </SheetTrigger>
+                    <SheetContent side="right" className="w-80">
+                      <SheetHeader>
+                        <SheetTitle>Filters</SheetTitle>
+                        <SheetDescription>
+                          Narrow down your hotel search
+                        </SheetDescription>
+                      </SheetHeader>
+                      <div className="mt-4">
+                        <HotelFilters
+                          starFilter={starFilter}
+                          setStarFilter={setStarFilter}
+                          priceRange={priceRange}
+                          setPriceRange={setPriceRange}
+                          amenityFilter={amenityFilter}
+                          setAmenityFilter={setAmenityFilter}
+                          maxPrice={maxHotelPrice}
+                        />
+                      </div>
+                    </SheetContent>
+                  </Sheet>
+                </div>
+              </div>
+
+              {/* Hotel Content with Sidebar */}
+              <div className="flex gap-6">
+                {/* Sidebar Filters - Desktop */}
+                <aside className="hidden md:block w-64 flex-shrink-0">
+                  <HotelFilters
+                    starFilter={starFilter}
+                    setStarFilter={setStarFilter}
+                    priceRange={priceRange}
+                    setPriceRange={setPriceRange}
+                    amenityFilter={amenityFilter}
+                    setAmenityFilter={setAmenityFilter}
+                    maxPrice={maxHotelPrice}
+                  />
+                </aside>
+
+                {/* Hotels Grid */}
+                <div className="flex-1">
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Showing {filteredHotels.length} of {hotels.length} hotels
+                  </p>
+
+                  {loadingHotels ? (
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                      {Array.from({ length: 4 }).map((_, i) => (
+                        <div key={i} className="space-y-3">
+                          <Skeleton className="h-48 w-full rounded-lg" />
+                          <Skeleton className="h-4 w-3/4" />
+                          <Skeleton className="h-4 w-1/2" />
+                        </div>
+                      ))}
+                    </div>
+                  ) : filteredHotels.length === 0 ? (
+                    <Card>
+                      <CardContent className="p-8 text-center">
+                        <Building2 className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+                        <h3 className="text-lg font-semibold mb-2">No hotels found</h3>
+                        <p className="text-muted-foreground">
+                          Try adjusting your filters or search query
+                        </p>
+                      </CardContent>
+                    </Card>
+                  ) : (
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                      {filteredHotels.map((hotel) => (
+                        <HotelCard key={hotel.id} hotel={hotel} />
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
             </TabsContent>
 
             {/* History Tab */}
