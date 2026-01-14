@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { MapPin, Volume2 } from "lucide-react";
 import heroImage from "@/assets/hero-monument.jpg";
+import CitySearchBox from "./CitySearchBox";
 
 const Hero = () => {
   return (
@@ -16,6 +17,15 @@ const Hero = () => {
       {/* Content */}
       <div className="relative z-10 container mx-auto px-4 text-center">
         <div className="max-w-4xl mx-auto space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-1000">
+          {/* City Search Box */}
+          <div className="flex justify-center">
+            <CitySearchBox 
+              onCitySelect={(city, lat, lng) => {
+                console.log("Selected city:", city, lat, lng);
+              }}
+            />
+          </div>
+          
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 backdrop-blur-sm">
             <MapPin className="w-4 h-4 text-primary" />
             <span className="text-sm font-medium text-foreground">Educational Tourism Experience</span>
