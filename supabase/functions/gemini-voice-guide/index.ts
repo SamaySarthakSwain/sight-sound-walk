@@ -11,7 +11,7 @@ serve(async (req) => {
   }
 
   try {
-    const { message, image, language = "en" } = await req.json();
+    const { message, image, language = "en", conversationHistory = [] } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     
     if (!LOVABLE_API_KEY) {
@@ -29,30 +29,28 @@ serve(async (req) => {
     const systemPrompt = `You are a friendly, knowledgeable local travel guide for Odisha, India. Your name is "Odisha Explorer".
 
 PERSONALITY:
-- Speak warmly and enthusiastically like a local guide who loves their homeland
+- Speak warmly and enthusiastically like a local guide
 - Use simple, conversational language
-- Share interesting local stories and insider tips
-- Be helpful and caring about the traveler's experience
+- Be concise - keep responses to 1-2 sentences for quick voice playback
 
 KNOWLEDGE AREAS:
-- Tourist destinations, temples, beaches, and historical sites in Odisha
-- Local cuisine, restaurants, and street food
-- Cultural practices, festivals, and traditions
-- Transportation options and travel tips
-- Safety advice and emergency information
-- Current weather conditions and best times to visit
+- Tourist destinations, temples, beaches, historical sites in Odisha
+- Local cuisine, restaurants, street food
+- Cultural practices, festivals, traditions
+- Transportation and travel tips
+- Weather conditions and best times to visit
 
 SPECIAL CAPABILITIES:
-- When shown an image of a monument or place, identify it and provide detailed information
-- Share historical significance, architectural details, and visitor tips
-- Suggest nearby attractions and food options
+- When shown an image, identify the monument/place and give brief info
+- Suggest nearby attractions
 
 ${languageInstructions[language] || languageInstructions.en}
 
-Keep responses concise (2-3 sentences for voice), engaging, and helpful. Never mention AI, models, or technology - you're a local guide!`;
+IMPORTANT: Keep responses SHORT (1-2 sentences max) for faster voice playback. Be direct and helpful. Never mention AI or technology.`;
 
     const messages: any[] = [
       { role: "system", content: systemPrompt },
+      ...conversationHistory,
     ];
 
     // If image is provided, create a multimodal message
@@ -62,13 +60,11 @@ Keep responses concise (2-3 sentences for voice), engaging, and helpful. Never m
         content: [
           {
             type: "image_url",
-            image_url: {
-              url: image, // base64 data URL
-            },
+            image_url: { url: image },
           },
           {
             type: "text",
-            text: message || "What monument or place is this? Tell me about it.",
+            text: message || "What is this place? Brief info please.",
           },
         ],
       });
@@ -86,45 +82,38 @@ Keep responses concise (2-3 sentences for voice), engaging, and helpful. Never m
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "google/gemini-2.5-flash", // Fast and good for multimodal
+        model: "google/gemini-2.5-flash-lite", // Fastest model for quick responses
         messages,
-        max_tokens: 500,
+        max_tokens: 150, // Shorter responses for faster TTS
+        stream: true,
       }),
     });
 
     if (!response.ok) {
       if (response.status === 429) {
-        return new Response(JSON.stringify({ error: "Rate limits exceeded, please try again later." }), {
+        return new Response(JSON.stringify({ error: "Rate limited, please wait." }), {
           status: 429,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
       if (response.status === 402) {
-        return new Response(JSON.stringify({ error: "Usage limit reached, please add credits." }), {
+        return new Response(JSON.stringify({ error: "Usage limit reached." }), {
           status: 402,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
-      const errorText = await response.text();
-      console.error("AI gateway error:", response.status, errorText);
       throw new Error("Failed to get AI response");
     }
 
-    const data = await response.json();
-    const assistantMessage = data.choices?.[0]?.message?.content || "I'm sorry, I couldn't understand that. Could you please try again?";
-
-    return new Response(JSON.stringify({ response: assistantMessage }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    // Stream the response back
+    return new Response(response.body, {
+      headers: { ...corsHeaders, "Content-Type": "text/event-stream" },
     });
   } catch (error) {
     console.error("Voice guide error:", error);
-    const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
     return new Response(
-      JSON.stringify({ error: errorMessage }),
-      {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      }
+      JSON.stringify({ error: error instanceof Error ? error.message : "Unknown error" }),
+      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
 });
