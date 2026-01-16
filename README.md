@@ -6,13 +6,8 @@
 
 ## How can I edit this code?
 
-There are several ways of editing your application.
-
-**Use Lovable**
-
 Simply visit the [Lovable Project](https://lovable.dev/projects/31b4df35-e9aa-4d85-ae89-d8c29e0a0d52) and start prompting.
 
-Changes made via Lovable will be committed automatically to this repo.
 
 **Use your preferred IDE**
 
@@ -53,7 +48,7 @@ npm run dev
 ## What technologies are used for this project?
 
 This project is built with:
-
+- HTML,CSS,JS
 - Vite
 - TypeScript
 - React
