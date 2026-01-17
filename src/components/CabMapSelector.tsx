@@ -1,10 +1,11 @@
-import { useState, useCallback, useRef, useEffect } from "react";
+import { useState, useCallback, useRef, useEffect, useMemo } from "react";
 import { GoogleMap, Marker, DirectionsRenderer, Autocomplete } from "@react-google-maps/api";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { MapPin, Plus, X, Navigation, Locate } from "lucide-react";
 import { toast } from "sonner";
+import { useCity } from "@/contexts/CityContext";
 
 interface Location {
   lat: number;
@@ -27,12 +28,14 @@ const mapContainerStyle = {
   height: "400px",
 };
 
-const defaultCenter = {
-  lat: 19.3149,
-  lng: 84.7941,
-};
-
 const CabMapSelector = ({ onRouteCalculated }: CabMapSelectorProps) => {
+  const { cityLat, cityLng } = useCity();
+  
+  const defaultCenter = useMemo(() => ({
+    lat: cityLat,
+    lng: cityLng,
+  }), [cityLat, cityLng]);
+
   const [startLocation, setStartLocation] = useState<Location | null>(null);
   const [endLocation, setEndLocation] = useState<Location | null>(null);
   const [stops, setStops] = useState<Location[]>([]);
