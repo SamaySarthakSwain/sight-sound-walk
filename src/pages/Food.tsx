@@ -3,6 +3,7 @@ import Navigation from "@/components/Navigation";
 import FoodPlaceCard from "@/components/FoodPlaceCard";
 import { useFoodPlaces } from "@/hooks/useFoodPlaces";
 import { useAuth } from "@/hooks/useAuth";
+import { useCity } from "@/contexts/CityContext";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2, UtensilsCrossed } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -10,7 +11,10 @@ import { supabase } from "@/integrations/supabase/client";
 const Food = () => {
   const { foodPlaces, loading, submitRating, refetch } = useFoodPlaces();
   const { user } = useAuth();
+  const { selectedCity } = useCity();
   const [activeCategory, setActiveCategory] = useState("all");
+
+  const cityDisplayName = selectedCity.split(",")[0] || "Odisha";
 
   // Fetch Google ratings on mount (runs once in background)
   useEffect(() => {
@@ -46,11 +50,11 @@ const Food = () => {
             <div className="flex items-center justify-center gap-2 mb-2">
               <UtensilsCrossed className="w-8 h-8 text-primary" />
               <h1 className="text-3xl font-bold text-foreground">
-                Food Near You
+                Food in {cityDisplayName}
               </h1>
             </div>
             <p className="text-muted-foreground">
-              Discover local flavors and authentic Odia cuisine in Bhubaneswar
+              Discover local flavors and authentic cuisine in {cityDisplayName}
             </p>
           </div>
 
