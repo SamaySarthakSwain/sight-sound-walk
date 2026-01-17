@@ -4,6 +4,7 @@ import Navigation from '@/components/Navigation';
 import { HotelCard } from '@/components/HotelCard';
 import { HotelFilters } from '@/components/HotelFilters';
 import { useHotels } from '@/hooks/useHotels';
+import { useCity } from '@/contexts/CityContext';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -18,10 +19,13 @@ import {
 
 const Hotels = () => {
   const { hotels, loading, error } = useHotels();
+  const { selectedCity } = useCity();
   const [searchQuery, setSearchQuery] = useState('');
   const [starFilter, setStarFilter] = useState<number[]>([]);
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 30000]);
   const [amenityFilter, setAmenityFilter] = useState<string[]>([]);
+
+  const cityDisplayName = selectedCity.split(",")[0] || "Odisha";
 
   const maxPrice = useMemo(() => {
     return Math.max(...hotels.map((h) => h.price_per_night_max || 0), 30000);
@@ -73,13 +77,13 @@ const Hotels = () => {
           <div className="text-center max-w-3xl mx-auto">
             <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full mb-4">
               <Building2 className="h-5 w-5" />
-              <span className="text-sm font-medium">Hotels in Bhubaneswar</span>
+              <span className="text-sm font-medium">Hotels in {cityDisplayName}</span>
             </div>
             <h1 className="text-4xl md:text-5xl font-bold mb-4">
-              Find Your Perfect Stay
+              Find Your Perfect Stay in {cityDisplayName}
             </h1>
             <p className="text-lg text-muted-foreground mb-8">
-              Discover the best hotels in Bhubaneswar with real Google ratings, amenities, and instant room availability
+              Discover the best hotels in {cityDisplayName} with real Google ratings, amenities, and instant room availability
             </p>
 
             {/* Search Bar */}

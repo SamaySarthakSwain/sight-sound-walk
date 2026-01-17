@@ -1,19 +1,16 @@
 import Hero from "@/components/Hero";
-import FeaturedMonuments from "@/components/FeaturedMonuments";
+import DatabaseMonuments from "@/components/DatabaseMonuments";
 import Navigation from "@/components/Navigation";
-import { CityProvider } from "@/contexts/CityContext";
 
 const Index = () => {
   return (
-    <CityProvider>
-      <div className="min-h-screen">
-        <Navigation />
-        <div className="pt-16">
-          <Hero />
-          <FeaturedMonuments />
-        </div>
+    <div className="min-h-screen">
+      <Navigation />
+      <div className="pt-16">
+        <Hero />
+        <DatabaseMonuments />
       </div>
-    </CityProvider>
+    </div>
   );
 };
 

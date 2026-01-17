@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { useCity } from '@/contexts/CityContext';
 
 export interface Hotel {
   id: string;
@@ -25,17 +26,58 @@ export const useHotels = () => {
   const [hotels, setHotels] = useState<Hotel[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { selectedCity } = useCity();
 
   const fetchHotels = async () => {
     try {
       setLoading(true);
+      
+      // Get the city name for filtering
+      const cityName = selectedCity.split(",")[0].toLowerCase().trim();
+      
       const { data, error } = await supabase
         .from('hotels')
         .select('*')
         .order('star_rating', { ascending: false });
 
       if (error) throw error;
-      setHotels(data || []);
+      
+      // Filter hotels based on selected city
+      let filteredHotels = data || [];
+      
+      if (cityName === "berhampur" || cityName === "brahmapur") {
+        filteredHotels = (data || []).filter((h) => {
+          const loc = h.location.toLowerCase();
+          return (
+            loc.includes("berhampur") ||
+            loc.includes("brahmapur") ||
+            loc.includes("gopalpur") ||
+            loc.includes("taptapani") ||
+            loc.includes("chilika") ||
+            loc.includes("rambha") ||
+            loc.includes("satpada") ||
+            loc.includes("barkul")
+          );
+        });
+      } else if (cityName === "bhubaneswar" || cityName === "bbsr") {
+        filteredHotels = (data || []).filter((h) => {
+          const loc = h.location.toLowerCase();
+          return loc.includes("bhubaneswar") || loc.includes("bbsr");
+        });
+      } else if (cityName === "puri") {
+        filteredHotels = (data || []).filter((h) => {
+          const loc = h.location.toLowerCase();
+          return loc.includes("puri") || loc.includes("konark");
+        });
+      } else if (cityName === "cuttack") {
+        filteredHotels = (data || []).filter((h) => {
+          const loc = h.location.toLowerCase();
+          return loc.includes("cuttack");
+        });
+      }
+      // For other cities, show all hotels
+      
+      setHotels(filteredHotels);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch hotels');
     } finally {
@@ -45,7 +87,7 @@ export const useHotels = () => {
 
   useEffect(() => {
     fetchHotels();
-  }, []);
+  }, [selectedCity]);
 
   return { hotels, loading, error, refetch: fetchHotels };
 };

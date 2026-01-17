@@ -20,6 +20,7 @@ import {
   calculateFareEstimates,
   FareEstimate,
 } from "@/hooks/useCabServices";
+import { useCity } from "@/contexts/CityContext";
 import {
   Car,
   Bike,
@@ -38,6 +39,9 @@ import {
 const Cabs = () => {
   const { data: cabServices, isLoading: loadingServices } = useCabServices();
   const { data: vehicleTypes, isLoading: loadingVehicles } = useVehicleTypes();
+  const { selectedCity } = useCity();
+
+  const cityDisplayName = selectedCity.split(",")[0] || "Odisha";
 
   const [startLocation, setStartLocation] = useState("");
   const [endLocation, setEndLocation] = useState("");
@@ -156,10 +160,10 @@ const Cabs = () => {
           <div className="mb-8 text-center">
             <h1 className="text-3xl md:text-4xl font-bold mb-2 flex items-center justify-center gap-3">
               <Car className="w-8 h-8 text-primary" />
-              Compare Cab Fares
+              Compare Cab Fares in {cityDisplayName}
             </h1>
             <p className="text-muted-foreground">
-              Compare prices across Ola, Uber, Rapido, and local services in Bhubaneswar
+              Compare prices across Ola, Uber, Rapido, and local services in {cityDisplayName}
             </p>
           </div>
 
@@ -179,7 +183,7 @@ const Cabs = () => {
                   Starting Point
                 </Label>
                 <Input
-                  placeholder="e.g., Patia Square, Bhubaneswar"
+                  placeholder={`e.g., City Center, ${cityDisplayName}`}
                   value={startLocation}
                   onChange={(e) => setStartLocation(e.target.value)}
                 />

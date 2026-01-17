@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { useCity } from "@/contexts/CityContext";
 import { toast } from "sonner";
 
 export interface FoodPlace {
@@ -39,9 +40,13 @@ export const useFoodPlaces = () => {
   const [foodPlaces, setFoodPlaces] = useState<FoodPlace[]>([]);
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
+  const { selectedCity } = useCity();
 
   const fetchFoodPlaces = async () => {
     setLoading(true);
+    
+    // Get the city name for filtering
+    const cityName = selectedCity.split(",")[0].toLowerCase().trim();
     
     // Fetch food places
     const { data: places, error: placesError } = await supabase
@@ -66,8 +71,39 @@ export const useFoodPlaces = () => {
       return;
     }
 
+    // Filter places based on selected city
+    let filteredPlaces = places || [];
+    
+    if (cityName === "berhampur" || cityName === "brahmapur") {
+      filteredPlaces = (places || []).filter((p) => {
+        const loc = p.location.toLowerCase();
+        return (
+          loc.includes("berhampur") ||
+          loc.includes("brahmapur") ||
+          loc.includes("gopalpur") ||
+          loc.includes("ganjam")
+        );
+      });
+    } else if (cityName === "bhubaneswar" || cityName === "bbsr") {
+      filteredPlaces = (places || []).filter((p) => {
+        const loc = p.location.toLowerCase();
+        return loc.includes("bhubaneswar") || loc.includes("bbsr");
+      });
+    } else if (cityName === "puri") {
+      filteredPlaces = (places || []).filter((p) => {
+        const loc = p.location.toLowerCase();
+        return loc.includes("puri");
+      });
+    } else if (cityName === "cuttack") {
+      filteredPlaces = (places || []).filter((p) => {
+        const loc = p.location.toLowerCase();
+        return loc.includes("cuttack");
+      });
+    }
+    // For other cities, show all food places
+
     // Calculate averages and map user ratings
-    const enrichedPlaces: FoodPlace[] = (places || []).map((place) => {
+    const enrichedPlaces: FoodPlace[] = filteredPlaces.map((place) => {
       const placeRatings = (ratings || []).filter(
         (r) => r.food_place_id === place.id
       );
@@ -187,7 +223,7 @@ export const useFoodPlaces = () => {
     return true;
   };
 
-  // Subscribe to realtime updates
+  // Subscribe to realtime updates and refetch on city change
   useEffect(() => {
     fetchFoodPlaces();
 
@@ -209,7 +245,7 @@ export const useFoodPlaces = () => {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [user]);
+  }, [user, selectedCity]);
 
   return { foodPlaces, loading, submitRating, refetch: fetchFoodPlaces };
 };
