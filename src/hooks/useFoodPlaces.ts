@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useCity } from "@/contexts/CityContext";
 import { toast } from "sonner";
+import { berhampur_restaurants } from "@/data/berhampur_restaurants";
 
 export interface FoodPlace {
   id: string;
@@ -48,7 +49,38 @@ export const useFoodPlaces = () => {
     // Get the city name for filtering
     const cityName = selectedCity.split(",")[0].toLowerCase().trim();
     
-    // Fetch food places
+    // For Berhampur, use local data
+    if (cityName === "berhampur" || cityName === "brahmapur") {
+      // Use local Berhampur data
+      const enrichedPlaces: FoodPlace[] = berhampur_restaurants.map((place) => ({
+        id: place.id,
+        name: place.name,
+        description: place.description,
+        location: place.location,
+        latitude: place.latitude,
+        longitude: place.longitude,
+        category: place.category,
+        famous_dishes: place.famous_dishes || [],
+        avg_price_min: place.avg_price_min,
+        avg_price_max: place.avg_price_max,
+        image_url: place.image_url,
+        is_food_street: place.is_food_street || false,
+        avg_overall: place.google_rating || place.avg_overall || 0,
+        avg_taste: place.avg_taste || 0,
+        avg_hygiene: place.avg_hygiene || 0,
+        avg_value: place.avg_value || 0,
+        total_ratings: place.total_ratings || 0,
+        google_rating: place.google_rating,
+        google_total_ratings: place.google_total_ratings,
+        user_rating: null,
+      }));
+      
+      setFoodPlaces(enrichedPlaces.sort((a, b) => a.name.localeCompare(b.name)));
+      setLoading(false);
+      return;
+    }
+
+    // For other cities, fetch from Supabase
     const { data: places, error: placesError } = await supabase
       .from("food_places")
       .select("*")
@@ -74,17 +106,7 @@ export const useFoodPlaces = () => {
     // Filter places based on selected city
     let filteredPlaces = places || [];
     
-    if (cityName === "berhampur" || cityName === "brahmapur") {
-      filteredPlaces = (places || []).filter((p) => {
-        const loc = p.location.toLowerCase();
-        return (
-          loc.includes("berhampur") ||
-          loc.includes("brahmapur") ||
-          loc.includes("gopalpur") ||
-          loc.includes("ganjam")
-        );
-      });
-    } else if (cityName === "bhubaneswar" || cityName === "bbsr") {
+    if (cityName === "bhubaneswar" || cityName === "bbsr") {
       filteredPlaces = (places || []).filter((p) => {
         const loc = p.location.toLowerCase();
         return loc.includes("bhubaneswar") || loc.includes("bbsr");
