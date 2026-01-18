@@ -6,6 +6,18 @@ import { Star, MapPin, Utensils, Sparkles, Shield, Heart, ExternalLink } from "l
 import { FoodPlace } from "@/hooks/useFoodPlaces";
 import FoodRatingForm from "./FoodRatingForm";
 
+// Import fallback images
+import restaurantGeneric from "@/assets/restaurant-generic.jpg";
+import streetFoodGeneric from "@/assets/street-food-generic.jpg";
+
+// Get fallback image based on category
+const getFoodFallbackImage = (place: FoodPlace) => {
+  if (place.is_food_street || place.category?.toLowerCase().includes("street")) {
+    return streetFoodGeneric;
+  }
+  return restaurantGeneric;
+};
+
 interface FoodPlaceCardProps {
   place: FoodPlace;
   onRate: (
@@ -79,8 +91,23 @@ const FoodPlaceCard = ({ place, onRate, isLoggedIn }: FoodPlaceCardProps) => {
     }
   };
 
+  const imageUrl = place.image_url || getFoodFallbackImage(place);
+
   return (
     <Card className="overflow-hidden">
+      {/* Food Place Image */}
+      <div className="relative h-40 overflow-hidden">
+        <img
+          src={imageUrl}
+          alt={place.name}
+          className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-background/60 to-transparent" />
+        <Badge className="absolute top-3 right-3 bg-primary/90 text-primary-foreground text-xs">
+          {place.is_food_street ? "Food Street" : place.category}
+        </Badge>
+      </div>
+      
       <CardHeader className="pb-2">
         <div className="flex items-start justify-between gap-2">
           <div>
@@ -90,9 +117,6 @@ const FoodPlaceCard = ({ place, onRate, isLoggedIn }: FoodPlaceCardProps) => {
               {place.location}
             </div>
           </div>
-          <Badge variant="secondary" className="text-xs">
-            {place.is_food_street ? "Food Street" : place.category}
-          </Badge>
         </div>
         {badges.length > 0 && (
           <div className="flex flex-wrap gap-1.5 mt-2">
