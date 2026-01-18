@@ -1,8 +1,7 @@
 # Lets Explore
 
 ## Project info
-
-**URL**: https://lovable.dev/projects/31b4df35-e9aa-4d85-ae89-d8c29e0a0d52
+MVP LINK:https://letsexploreit.netlify.app/
 
 **Use your preferred IDE**
 
@@ -39,9 +38,7 @@ This project is built with:
 - shadcn-ui
 - Tailwind CSS
 
-Simply open [Lovable](https://lovable.dev/projects/31b4df35-e9aa-4d85-ae89-d8c29e0a0d52) 
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+**URL**: https://lovable.dev/projects/31b4df35-e9aa-4d85-ae89-d8c29e0a0d52
 
