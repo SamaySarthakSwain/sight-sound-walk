@@ -72,17 +72,17 @@ const Hotels = () => {
       <Navigation />
 
       {/* Hero Section */}
-      <section className="relative py-16 bg-gradient-to-br from-primary/10 via-background to-secondary/10">
+      <section className="relative pt-20 md:pt-24 pb-8 md:py-16 bg-gradient-to-br from-primary/10 via-background to-secondary/10">
         <div className="container mx-auto px-4">
           <div className="text-center max-w-3xl mx-auto">
-            <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full mb-4">
-              <Building2 className="h-5 w-5" />
-              <span className="text-sm font-medium">Hotels in {cityDisplayName}</span>
+            <div className="inline-flex items-center gap-1.5 md:gap-2 bg-primary/10 text-primary px-3 py-1.5 md:px-4 md:py-2 rounded-full mb-3 md:mb-4">
+              <Building2 className="h-4 w-4 md:h-5 md:w-5" />
+              <span className="text-xs md:text-sm font-medium">Hotels in {cityDisplayName}</span>
             </div>
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">
+            <h1 className="text-2xl sm:text-3xl md:text-5xl font-bold mb-3 md:mb-4">
               Find Your Perfect Stay in {cityDisplayName}
             </h1>
-            <p className="text-lg text-muted-foreground mb-8">
+            <p className="text-sm md:text-lg text-muted-foreground mb-6 md:mb-8 px-2">
               Discover the best hotels in {cityDisplayName} with real Google ratings, amenities, and instant room availability
             </p>
 
@@ -129,12 +129,12 @@ const Hotels = () => {
       </section>
 
       {/* Main Content */}
-      <section className="py-12">
+      <section className="py-6 md:py-12">
         <div className="container mx-auto px-4">
-          <div className="flex gap-8">
+          <div className="flex gap-4 md:gap-8">
             {/* Sidebar Filters - Desktop */}
-            <aside className="hidden md:block w-72 flex-shrink-0">
-              <div className="sticky top-24">
+            <aside className="hidden md:block w-64 lg:w-72 flex-shrink-0">
+              <div className="sticky top-20 lg:top-24">
                 <HotelFilters
                   starFilter={starFilter}
                   setStarFilter={setStarFilter}
