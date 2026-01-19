@@ -119,15 +119,15 @@ export const HotelCard = ({ hotel }: HotelCardProps) => {
               <span className="text-xs font-normal text-muted-foreground">/night</span>
             </p>
           </div>
-          <div className="flex gap-2">
-            {hotel.contact_phone && (
-              <Button variant="outline" size="sm" asChild>
-                <a href={`tel:${hotel.contact_phone}`}>
-                  <Phone className="h-4 w-4" />
-                </a>
-              </Button>
-            )}
-            <Button size="sm">Book Now</Button>
+        <div className="flex gap-2">
+            <Button variant="outline" size="sm" asChild>
+              <a href="tel:8327780375">
+                <Phone className="h-4 w-4" />
+              </a>
+            </Button>
+            <Button size="sm" asChild>
+              <a href="tel:8327780375">Book Now</a>
+            </Button>
           </div>
         </div>
       </CardContent>
