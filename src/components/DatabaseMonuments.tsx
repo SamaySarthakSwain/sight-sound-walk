@@ -151,32 +151,32 @@ const DatabaseMonuments = () => {
   }
 
   return (
-    <section className="py-20 bg-background">
+    <section className="py-12 md:py-20 bg-background">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-16 space-y-4">
-          <h1 className="text-4xl md:text-5xl font-bold">
+        <div className="text-center mb-8 md:mb-16 space-y-3 md:space-y-4">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold">
             Discover{" "}
             <span className="bg-gradient-hero bg-clip-text text-transparent">
               {cityDisplayName}'s Heritage
             </span>
           </h1>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-base md:text-xl text-muted-foreground max-w-2xl mx-auto px-2">
             Explore {monuments.length} magnificent historical sites and natural wonders
           </p>
-          <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
-            <Volume2 className="w-4 h-4 text-primary" />
+          <div className="flex items-center justify-center gap-2 text-xs md:text-sm text-muted-foreground">
+            <Volume2 className="w-3.5 h-3.5 md:w-4 md:h-4 text-primary" />
             <span>Listen to audio narrations for each monument</span>
           </div>
         </div>
 
         {Object.entries(groupedMonuments).map(([category, categoryMonuments]) => (
-          <div key={category} className="mb-16">
-            <h2 className="text-3xl font-bold mb-8 text-center">
+          <div key={category} className="mb-10 md:mb-16">
+            <h2 className="text-2xl md:text-3xl font-bold mb-4 md:mb-8 text-center">
               <span className="bg-gradient-hero bg-clip-text text-transparent">
                 {category}s ({categoryMonuments.length})
               </span>
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
               {categoryMonuments.map((monument) => {
                 const state = getCardState(monument.id);
                 const imageUrl = monument.image_url || getFallbackImage(monument);
@@ -186,44 +186,45 @@ const DatabaseMonuments = () => {
                     key={monument.id}
                     className="group overflow-hidden border-0 shadow-soft hover:shadow-medium transition-all duration-300 bg-card"
                   >
-                    <div className="relative h-48 overflow-hidden">
+                    <div className="relative h-40 sm:h-48 overflow-hidden">
                       <img
                         src={imageUrl}
                         alt={monument.title}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        loading="lazy"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent" />
-                      <div className="absolute top-3 left-3">
-                        <Badge className="bg-primary/90 text-primary-foreground">
+                      <div className="absolute top-2 left-2 sm:top-3 sm:left-3">
+                        <Badge className="bg-primary/90 text-primary-foreground text-xs">
                           {monument.category}
                         </Badge>
                       </div>
                       {monument.is_featured && (
-                        <div className="absolute top-3 right-3">
-                          <Badge variant="secondary" className="bg-secondary/90">
+                        <div className="absolute top-2 right-2 sm:top-3 sm:right-3">
+                          <Badge variant="secondary" className="bg-secondary/90 text-xs">
                             Featured
                           </Badge>
                         </div>
                       )}
                     </div>
-                    <CardContent className="p-5 space-y-3">
-                      <h3 className="text-xl font-bold text-foreground group-hover:text-primary transition-colors">
+                    <CardContent className="p-4 sm:p-5 space-y-2 sm:space-y-3">
+                      <h3 className="text-lg sm:text-xl font-bold text-foreground group-hover:text-primary transition-colors line-clamp-1">
                         {monument.title}
                       </h3>
-                      <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                        <MapPin className="w-4 h-4" />
-                        <span>{monument.location}</span>
+                      <div className="flex items-center gap-1 text-xs sm:text-sm text-muted-foreground">
+                        <MapPin className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
+                        <span className="line-clamp-1">{monument.location}</span>
                       </div>
-                      <p className="text-muted-foreground text-sm line-clamp-3">
+                      <p className="text-muted-foreground text-xs sm:text-sm line-clamp-2 sm:line-clamp-3">
                         {monument.description}
                       </p>
                       
                       {/* Audio and Summary Controls */}
-                      <div className="flex gap-2 pt-2">
+                      <div className="flex gap-2 pt-1 sm:pt-2">
                         <Button
                           variant={state.isReading ? "destructive" : "secondary"}
                           size="sm"
-                          className="flex-1"
+                          className="flex-1 h-8 sm:h-9 text-xs sm:text-sm"
                           onClick={() => 
                             state.isReading 
                               ? handleStopSpeaking(monument.id)
@@ -232,12 +233,12 @@ const DatabaseMonuments = () => {
                         >
                           {state.isReading ? (
                             <>
-                              <VolumeX className="w-4 h-4 mr-1" />
+                              <VolumeX className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1" />
                               Stop
                             </>
                           ) : (
                             <>
-                              <Volume2 className="w-4 h-4 mr-1" />
+                              <Volume2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1" />
                               Listen
                             </>
                           )}
@@ -245,15 +246,15 @@ const DatabaseMonuments = () => {
                         <Button
                           variant="outline"
                           size="sm"
-                          className="flex-1"
+                          className="flex-1 h-8 sm:h-9 text-xs sm:text-sm"
                           onClick={() => toggleSummary(monument.id)}
                         >
-                          <FileText className="w-4 h-4 mr-1" />
+                          <FileText className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1" />
                           {state.showSummary ? "Hide" : "Facts"}
                           {state.showSummary ? (
-                            <ChevronUp className="w-3 h-3 ml-1" />
+                            <ChevronUp className="w-3 h-3 ml-0.5 sm:ml-1" />
                           ) : (
-                            <ChevronDown className="w-3 h-3 ml-1" />
+                            <ChevronDown className="w-3 h-3 ml-0.5 sm:ml-1" />
                           )}
                         </Button>
                       </div>

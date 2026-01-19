@@ -44,27 +44,27 @@ const Food = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
-      <main className="pt-20 pb-12">
+      <main className="pt-16 md:pt-20 pb-8 md:pb-12">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-8">
+          <div className="text-center mb-6 md:mb-8 pt-4">
             <div className="flex items-center justify-center gap-2 mb-2">
-              <UtensilsCrossed className="w-8 h-8 text-primary" />
-              <h1 className="text-3xl font-bold text-foreground">
+              <UtensilsCrossed className="w-6 h-6 md:w-8 md:h-8 text-primary" />
+              <h1 className="text-2xl md:text-3xl font-bold text-foreground">
                 Food in {cityDisplayName}
               </h1>
             </div>
-            <p className="text-muted-foreground">
+            <p className="text-sm md:text-base text-muted-foreground">
               Discover local flavors and authentic cuisine in {cityDisplayName}
             </p>
           </div>
 
           {/* Food Streets Section */}
           {foodStreets.length > 0 && (
-            <section className="mb-10">
-              <h2 className="text-xl font-semibold mb-4">
+            <section className="mb-8 md:mb-10">
+              <h2 className="text-lg md:text-xl font-semibold mb-3 md:mb-4">
                 Famous Food Streets & Hubs
               </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
                 {foodStreets.map((place) => (
                   <FoodPlaceCard
                     key={place.id}
@@ -81,13 +81,13 @@ const Food = () => {
           <Tabs
             value={activeCategory}
             onValueChange={setActiveCategory}
-            className="mb-6"
+            className="mb-4 md:mb-6"
           >
-            <TabsList className="w-full justify-start overflow-x-auto">
-              <TabsTrigger value="all">All</TabsTrigger>
-              <TabsTrigger value="restaurant">Restaurants</TabsTrigger>
-              <TabsTrigger value="street_food">Street Food</TabsTrigger>
-              <TabsTrigger value="food_street">Food Hubs</TabsTrigger>
+            <TabsList className="w-full justify-start overflow-x-auto flex-nowrap">
+              <TabsTrigger value="all" className="text-xs md:text-sm">All</TabsTrigger>
+              <TabsTrigger value="restaurant" className="text-xs md:text-sm">Restaurants</TabsTrigger>
+              <TabsTrigger value="street_food" className="text-xs md:text-sm">Street Food</TabsTrigger>
+              <TabsTrigger value="food_street" className="text-xs md:text-sm">Food Hubs</TabsTrigger>
             </TabsList>
           </Tabs>
 
@@ -100,7 +100,7 @@ const Food = () => {
               <p className="text-muted-foreground">No food places found</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
               {filteredPlaces.map((place) => (
                 <FoodPlaceCard
                   key={place.id}
