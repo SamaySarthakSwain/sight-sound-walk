@@ -222,7 +222,10 @@ const Auth = () => {
             </div>
             <h1 className="text-2xl md:text-3xl font-bold text-primary">Lets Explore</h1>
             <p className="text-muted-foreground text-sm md:text-base">
-              Sign in to track your journey and save your preferences
+              Sign in to save travel history & get personalized suggestions
+            </p>
+            <p className="text-xs text-muted-foreground mt-1">
+              You can explore everything without signing in too!
             </p>
           </div>
 
