@@ -1,6 +1,7 @@
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { useOfflineData } from "@/hooks/useOfflineData";
+import OfflineBanner from "@/components/OfflineBanner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
@@ -24,6 +25,7 @@ const App = () => {
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <CityProvider>
+        <OfflineBanner />
         <Toaster />
         <Sonner />
         <BrowserRouter>
