@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Map as MapIcon, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import DownloadMapButton from "./DownloadMapButton";
 
 interface RouteData {
   start: { lat: number; lng: number };
@@ -172,13 +173,18 @@ const MonumentsMap: React.FC<MonumentsMapProps> = ({ routeData }) => {
       <div className="container mx-auto px-4">
         <Card className="shadow-medium">
           <CardHeader>
-            <CardTitle className="text-3xl flex items-center gap-3">
-              <MapIcon className="w-8 h-8 text-primary" />
-              Monuments Map of Odisha
-            </CardTitle>
-            <CardDescription className="text-base">
-              Explore all {monuments.length} famous monuments and historical sites across Odisha
-            </CardDescription>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+              <div>
+                <CardTitle className="text-3xl flex items-center gap-3">
+                  <MapIcon className="w-8 h-8 text-primary" />
+                  Monuments Map of Odisha
+                </CardTitle>
+                <CardDescription className="text-base mt-1">
+                  Explore all {monuments.length} famous monuments and historical sites across Odisha
+                </CardDescription>
+              </div>
+              <DownloadMapButton />
+            </div>
           </CardHeader>
 
           <CardContent className="space-y-6">
