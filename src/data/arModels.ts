@@ -1,0 +1,115 @@
+export interface ARModel {
+  id: string;
+  name: string;
+  location: string;
+  state: string;
+  description: string;
+  embedUrl: string;
+  categories: string[];
+  credit: { author: string; authorUrl: string; modelUrl: string };
+}
+
+export const arModels: ARModel[] = [
+  {
+    id: "konark-sun-temple",
+    name: "Sun Temple, Konark",
+    location: "Konark, Odisha",
+    state: "Odisha",
+    description: "A 13th-century CE Sun temple at Konark, a UNESCO World Heritage Site known for its intricate chariot-shaped architecture.",
+    embedUrl: "https://sketchfab.com/models/6cc905be2ae34e8091eb1eaa84a17738/embed?ui_theme=dark",
+    categories: ["Odisha", "Temples"],
+    credit: { author: "moniln", authorUrl: "https://sketchfab.com/moniln9", modelUrl: "https://sketchfab.com/3d-models/sun-temple-konark-6cc905be2ae34e8091eb1eaa84a17738" },
+  },
+  {
+    id: "rajarani-temple",
+    name: "Rajarani Temple",
+    location: "Bhubaneswar, Odisha",
+    state: "Odisha",
+    description: "An 11th-century Hindu temple in Bhubaneswar, famous for its ornamental sculptures and lack of a presiding deity.",
+    embedUrl: "https://sketchfab.com/models/ba3a034848f240be95983fc07ef5f072/embed?ui_theme=dark",
+    categories: ["Odisha", "Temples"],
+    credit: { author: "SCAN3DTECH", authorUrl: "https://sketchfab.com/SCAN3DTECH", modelUrl: "https://sketchfab.com/3d-models/rajarani-temple-bhubneshwar-odisha-ba3a034848f240be95983fc07ef5f072" },
+  },
+  {
+    id: "bhrameshwar-temple",
+    name: "Bhrameshwar Temple",
+    location: "Bhubaneswar, Odisha",
+    state: "Odisha",
+    description: "A 9th-century Shiva temple in Bhubaneswar showcasing classic Kalinga architecture with pancharatha plan.",
+    embedUrl: "https://sketchfab.com/models/76c3ed8d9a594d7c8a4cb50f3d6001fe/embed?ui_theme=dark",
+    categories: ["Odisha", "Temples"],
+    credit: { author: "moniln", authorUrl: "https://sketchfab.com/moniln9", modelUrl: "https://sketchfab.com/3d-models/bhrameshwar-76c3ed8d9a594d7c8a4cb50f3d6001fe" },
+  },
+  {
+    id: "taj-mahal",
+    name: "Taj Mahal",
+    location: "Agra, Uttar Pradesh",
+    state: "Uttar Pradesh",
+    description: "An ivory-white marble mausoleum and UNESCO World Heritage Site, widely regarded as a jewel of Muslim art in India.",
+    embedUrl: "https://sketchfab.com/models/33149233cefd492b9abdd50fe5a8c921/embed?ui_theme=dark",
+    categories: ["India", "Historical Monuments"],
+    credit: { author: "Sketchfab", authorUrl: "https://sketchfab.com", modelUrl: "https://sketchfab.com/models/33149233cefd492b9abdd50fe5a8c921" },
+  },
+  {
+    id: "india-gate",
+    name: "India Gate",
+    location: "New Delhi",
+    state: "Delhi",
+    description: "A war memorial located astride the Rajpath, dedicated to soldiers of British India who died in World War I.",
+    embedUrl: "https://sketchfab.com/models/549cc0862a184db2b48e518bb6beedbd/embed?ui_theme=dark",
+    categories: ["India", "Historical Monuments"],
+    credit: { author: "Karan Sahu", authorUrl: "https://sketchfab.com/cgkaran", modelUrl: "https://sketchfab.com/3d-models/india-gate-high-poly-model-549cc0862a184db2b48e518bb6beedbd" },
+  },
+  {
+    id: "lotus-temple",
+    name: "Lotus Temple",
+    location: "New Delhi",
+    state: "Delhi",
+    description: "A Bahá'í House of Worship notable for its flowerlike shape, open to all regardless of religion.",
+    embedUrl: "https://sketchfab.com/models/a03fcedd65514da2a0235511e882160d/embed?ui_theme=dark",
+    categories: ["India", "Temples"],
+    credit: { author: "ryan", authorUrl: "https://sketchfab.com/ra_yen", modelUrl: "https://sketchfab.com/3d-models/lotus-temple-india-a03fcedd65514da2a0235511e882160d" },
+  },
+  {
+    id: "charminar",
+    name: "Charminar",
+    location: "Hyderabad, Telangana",
+    state: "Telangana",
+    description: "A monument and mosque constructed in 1591, an iconic landmark and global heritage structure.",
+    embedUrl: "https://sketchfab.com/models/82603f1fe3ed4c31b37786e2bc2b63b0/embed?ui_theme=dark",
+    categories: ["India", "Historical Monuments"],
+    credit: { author: "Dolores", authorUrl: "https://sketchfab.com/upto21", modelUrl: "https://sketchfab.com/3d-models/charminar-hyderabad-82603f1fe3ed4c31b37786e2bc2b63b0" },
+  },
+  {
+    id: "aam-khas-bagh",
+    name: "Aam Khas Bagh",
+    location: "India",
+    state: "India",
+    description: "A historic Mughal garden complex preserved through digital heritage documentation by CyArk.",
+    embedUrl: "https://sketchfab.com/models/8d6d2b6dde4d41a191b71f5bbc0c4b01/embed?ui_theme=dark",
+    categories: ["India", "Historical Monuments"],
+    credit: { author: "CyArk", authorUrl: "https://sketchfab.com/CyArk", modelUrl: "https://sketchfab.com/3d-models/aam-khas-bagh-india-8d6d2b6dde4d41a191b71f5bbc0c4b01" },
+  },
+  {
+    id: "sanchi-stupa",
+    name: "Sanchi Stupa",
+    location: "Sanchi, Madhya Pradesh",
+    state: "Madhya Pradesh",
+    description: "The oldest stone structure in India, commissioned by Emperor Ashoka in the 3rd century BCE. A UNESCO World Heritage Site.",
+    embedUrl: "https://sketchfab.com/models/26664b49ca744378b6591b8a71bb8825/embed?ui_theme=dark",
+    categories: ["India", "Historical Monuments"],
+    credit: { author: "Stanislas Dolcini", authorUrl: "https://sketchfab.com/StanislasDolcini", modelUrl: "https://sketchfab.com/3d-models/mauryan-great-stupa-26664b49ca744378b6591b8a71bb8825" },
+  },
+  {
+    id: "mysore-palace",
+    name: "Mysore Palace",
+    location: "Mysore, Karnataka",
+    state: "Karnataka",
+    description: "The official residence of the Wadiyar dynasty, a stunning blend of Hindu, Muslim, Rajput, and Gothic architectural styles.",
+    embedUrl: "https://sketchfab.com/models/0439ee6964c94a10bf9767088469bb94/embed?ui_theme=dark",
+    categories: ["India", "Historical Monuments"],
+    credit: { author: "ryangarnett", authorUrl: "https://sketchfab.com/ryangarnett", modelUrl: "https://sketchfab.com/3d-models/mysore-palace-0439ee6964c94a10bf9767088469bb94" },
+  },
+];
+
+export const arCategories = ["All", "Odisha", "India", "Temples", "Historical Monuments"] as const;
