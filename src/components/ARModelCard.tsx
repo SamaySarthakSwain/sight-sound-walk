@@ -120,13 +120,6 @@ const ARModelCard = ({ model }: ARModelCardProps) => {
           </Button>
         </div>
 
-        <p className="text-xs text-muted-foreground/70">
-          Model by{" "}
-          <a href={model.credit.authorUrl} target="_blank" rel="noopener noreferrer" className="underline hover:text-primary">
-            {model.credit.author}
-          </a>{" "}
-          on Sketchfab
-        </p>
       </CardContent>
     </Card>
   );
