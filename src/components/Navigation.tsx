@@ -1,6 +1,6 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Home, Map, HelpCircle, LogIn, LogOut, User as UserIcon, Bot, UtensilsCrossed, Car, Building2, Menu, X } from "lucide-react";
+import { Home, Map, HelpCircle, LogIn, LogOut, User as UserIcon, Bot, UtensilsCrossed, Car, Building2, Menu, X, Box } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
@@ -29,6 +29,7 @@ const navItems = [
   { path: "/cabs", label: "Cabs", icon: Car },
   { path: "/hotels", label: "Hotels", icon: Building2 },
   { path: "/assistant", label: "Assistant", icon: Bot },
+  { path: "/ar", label: "AR", icon: Box },
   { path: "/help", label: "Help", icon: HelpCircle },
 ];
 
