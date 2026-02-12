@@ -97,3 +97,131 @@ All colors MUST be HSL.
     @apply bg-background text-foreground;
   }
 }
+
+/* Monument Card Animations */
+@keyframes scanMove {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100%); }
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%) rotate(25deg); }
+  100% { transform: translateX(100%) rotate(25deg); }
+}
+
+@keyframes glowPulse {
+  0%, 100% { opacity: 0.4; box-shadow: 0 0 5px hsl(var(--primary) / 0.3); }
+  50% { opacity: 1; box-shadow: 0 0 15px hsl(var(--primary) / 0.6); }
+}
+
+@keyframes scrollLeft {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes scrollRight {
+  0% { transform: translateX(-50%); }
+  100% { transform: translateX(0); }
+}
+
+@keyframes particleFloat {
+  0% { transform: translate(0, 0); opacity: 0; }
+  50% { opacity: 0.8; }
+  100% { transform: translate(calc(var(--x, 0) * 30px), calc(var(--y, 0) * 30px)); opacity: 0; }
+}
+
+.monument-carousel-track {
+  display: flex;
+  gap: 1.5rem;
+  width: max-content;
+}
+
+.monument-carousel-track.scroll-left {
+  animation: scrollLeft 40s linear infinite;
+}
+
+.monument-carousel-track.scroll-right {
+  animation: scrollRight 40s linear infinite;
+}
+
+.monument-carousel-track:hover {
+  animation-play-state: paused;
+}
+
+.monument-card-3d {
+  perspective: 800px;
+  transform-style: preserve-3d;
+}
+
+.monument-card-inner {
+  transition: transform 0.15s ease-out;
+  transform-style: preserve-3d;
+}
+
+.monument-scan-line {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, transparent, hsl(var(--primary) / 0.08), transparent);
+  transform: translateY(-100%);
+  animation: scanMove 3s linear infinite;
+  pointer-events: none;
+  z-index: 1;
+  border-radius: inherit;
+}
+
+.monument-glare {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(125deg, transparent 0%, hsl(0 0% 100% / 0.03) 45%, hsl(0 0% 100% / 0.08) 50%, hsl(0 0% 100% / 0.03) 55%, transparent 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  z-index: 2;
+  border-radius: inherit;
+}
+
+.monument-card-inner:hover .monument-glare {
+  opacity: 1;
+}
+
+.monument-corner {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border: 2px solid hsl(var(--primary) / 0.3);
+  z-index: 3;
+  pointer-events: none;
+  transition: all 0.3s ease;
+}
+
+.monument-corner.tl { top: 8px; left: 8px; border-right: 0; border-bottom: 0; border-radius: 4px 0 0 0; }
+.monument-corner.tr { top: 8px; right: 8px; border-left: 0; border-bottom: 0; border-radius: 0 4px 0 0; }
+.monument-corner.bl { bottom: 8px; left: 8px; border-right: 0; border-top: 0; border-radius: 0 0 0 4px; }
+.monument-corner.br { bottom: 8px; right: 8px; border-left: 0; border-top: 0; border-radius: 0 0 4px 0; }
+
+.monument-card-inner:hover .monument-corner {
+  border-color: hsl(var(--primary) / 0.9);
+  animation: glowPulse 2s ease-in-out infinite;
+}
+
+.monument-particle {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  background: hsl(var(--primary));
+  border-radius: 50%;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.monument-card-inner:hover .monument-particle {
+  animation: particleFloat 2.5s infinite;
+}
+
+@media (hover: none) {
+  .monument-card-inner { transform: none !important; }
+  .monument-scan-line { display: none; }
+  .monument-corner { display: none; }
+  .monument-particle { display: none; }
+}
