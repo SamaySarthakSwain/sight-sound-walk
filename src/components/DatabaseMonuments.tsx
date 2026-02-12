@@ -128,10 +128,12 @@ const DatabaseMonuments = () => {
           </div>
         </div>
 
-        {Object.entries(groupedMonuments).map(([category, categoryMonuments], catIndex) => {
-          // Duplicate cards for infinite scroll effect
-          const duplicated = [...categoryMonuments, ...categoryMonuments];
-          const direction = catIndex % 2 === 0 ? "scroll-left" : "scroll-right";
+        {Object.entries(groupedMonuments).map(([category, categoryMonuments]) => {
+          // Chunk into groups of 6
+          const chunks: (typeof categoryMonuments)[] = [];
+          for (let i = 0; i < categoryMonuments.length; i += 6) {
+            chunks.push(categoryMonuments.slice(i, i + 6));
+          }
 
           return (
             <div key={category} className="mb-10 md:mb-16">
@@ -140,25 +142,31 @@ const DatabaseMonuments = () => {
                   {category}s ({categoryMonuments.length})
                 </span>
               </h2>
-              <div className="overflow-hidden py-4">
-                <div className={`monument-carousel-track ${direction}`}>
-                  {duplicated.map((monument, idx) => {
-                    const state = getState(monument.id);
-                    return (
-                      <AnimatedMonumentCard
-                        key={`${monument.id}-${idx}`}
-                        monument={monument}
-                        fallbackImage={getFallbackImage(monument)}
-                        isReading={state.isReading}
-                        showSummary={state.showSummary}
-                        onSpeak={handleSpeak}
-                        onStopSpeaking={handleStopSpeaking}
-                        onToggleSummary={toggleSummary}
-                      />
-                    );
-                  })}
-                </div>
-              </div>
+              {chunks.map((chunk, chunkIdx) => {
+                const duplicated = [...chunk, ...chunk];
+                const direction = chunkIdx % 2 === 0 ? "scroll-left" : "scroll-right";
+                return (
+                  <div key={chunkIdx} className="overflow-hidden py-4">
+                    <div className={`monument-carousel-track ${direction}`}>
+                      {duplicated.map((monument, idx) => {
+                        const state = getState(monument.id);
+                        return (
+                          <AnimatedMonumentCard
+                            key={`${monument.id}-${chunkIdx}-${idx}`}
+                            monument={monument}
+                            fallbackImage={getFallbackImage(monument)}
+                            isReading={state.isReading}
+                            showSummary={state.showSummary}
+                            onSpeak={handleSpeak}
+                            onStopSpeaking={handleStopSpeaking}
+                            onToggleSummary={toggleSummary}
+                          />
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           );
         })}
