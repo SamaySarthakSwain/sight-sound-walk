@@ -1,13 +1,15 @@
-import { useEffect } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useMonuments } from "@/hooks/useMonuments";
 import { useCity } from "@/contexts/CityContext";
-import { Loader2, Landmark, Volume2 } from "lucide-react";
+import { Loader2, Landmark, Volume2, Search, X } from "lucide-react";
 import MonumentFlashCard from "@/components/MonumentFlashCard";
 import { getMonumentImage, resetImageCounters } from "@/data/monumentImages";
+import { Input } from "@/components/ui/input";
 
 const DatabaseMonuments = () => {
   const { monuments, loading, error } = useMonuments();
   const { selectedCity } = useCity();
+  const [searchQuery, setSearchQuery] = useState("");
 
   const cityDisplayName = selectedCity.split(",")[0] || "Odisha";
 
@@ -16,8 +18,19 @@ const DatabaseMonuments = () => {
     resetImageCounters();
   }, [monuments]);
 
+  const filteredMonuments = useMemo(() => {
+    if (!searchQuery.trim()) return monuments;
+    const q = searchQuery.toLowerCase();
+    return monuments.filter(
+      (m) =>
+        m.title.toLowerCase().includes(q) ||
+        m.category.toLowerCase().includes(q) ||
+        m.location.toLowerCase().includes(q)
+    );
+  }, [monuments, searchQuery]);
+
   // Group monuments by category
-  const groupedMonuments = monuments.reduce((acc, monument) => {
+  const groupedMonuments = filteredMonuments.reduce((acc, monument) => {
     const category = monument.category || "Other";
     if (!acc[category]) acc[category] = [];
     acc[category].push(monument);
@@ -82,8 +95,32 @@ const DatabaseMonuments = () => {
             <Volume2 className="w-3.5 h-3.5 md:w-4 md:h-4 text-primary" />
             <span>Listen to audio narrations for each monument</span>
           </div>
+          <div className="relative max-w-md mx-auto mt-6">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Input
+              type="text"
+              placeholder="Search monuments, temples, beaches..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10 pr-10 rounded-full border-border/60 bg-card/80 backdrop-blur-sm"
+            />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery("")}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            )}
+          </div>
         </div>
 
+        {filteredMonuments.length === 0 && searchQuery && (
+          <div className="text-center py-12">
+            <Search className="w-10 h-10 mx-auto text-muted-foreground mb-3" />
+            <p className="text-muted-foreground">No monuments found for "{searchQuery}"</p>
+          </div>
+        )}
         {Object.entries(groupedMonuments).map(([category, categoryMonuments]) => (
           <div key={category} className="mb-10 md:mb-16">
             <h2 className="text-2xl md:text-3xl font-bold mb-4 md:mb-8 text-center">
