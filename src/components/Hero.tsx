@@ -6,11 +6,15 @@ import CitySearchBox from "./CitySearchBox";
 const Hero = () => {
   return (
     <section className="relative min-h-[80vh] md:min-h-[90vh] flex items-center justify-center overflow-hidden pt-14 md:pt-16">
-      {/* Background Image with Overlay */}
-      <div 
-        className="absolute inset-0 bg-cover bg-center"
-        style={{ backgroundImage: `url(${heroImage})` }}
-      >
+      {/* Background Image with Overlay - use <img> with fetchpriority for fast LCP */}
+      <div className="absolute inset-0">
+        <img
+          src={heroImage}
+          alt=""
+          fetchPriority="high"
+          decoding="async"
+          className="w-full h-full object-cover"
+        />
         <div className="absolute inset-0 bg-gradient-to-b from-background/95 via-background/80 to-background/95" />
       </div>
 

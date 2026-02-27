@@ -12,27 +12,36 @@ const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours
 
 export const useOfflineData = () => {
   useEffect(() => {
-    const cacheData = async () => {
-      const lastCached = localStorage.getItem(CACHE_KEYS.timestamp);
-      if (lastCached && Date.now() - Number(lastCached) < CACHE_DURATION) return;
+    // Defer offline caching to after initial render using requestIdleCallback
+    const scheduleCache = () => {
+      const cacheData = async () => {
+        const lastCached = localStorage.getItem(CACHE_KEYS.timestamp);
+        if (lastCached && Date.now() - Number(lastCached) < CACHE_DURATION) return;
 
-      try {
-        const [monuments, foodPlaces, hotels] = await Promise.all([
-          supabase.from("monuments").select("*"),
-          supabase.from("food_places").select("*"),
-          supabase.from("hotels").select("*"),
-        ]);
+        try {
+          const [monuments, foodPlaces, hotels] = await Promise.all([
+            supabase.from("monuments").select("*"),
+            supabase.from("food_places").select("*"),
+            supabase.from("hotels").select("*"),
+          ]);
 
-        if (monuments.data) localStorage.setItem(CACHE_KEYS.monuments, JSON.stringify(monuments.data));
-        if (foodPlaces.data) localStorage.setItem(CACHE_KEYS.foodPlaces, JSON.stringify(foodPlaces.data));
-        if (hotels.data) localStorage.setItem(CACHE_KEYS.hotels, JSON.stringify(hotels.data));
-        localStorage.setItem(CACHE_KEYS.timestamp, String(Date.now()));
-      } catch (e) {
-        console.log("Offline cache update skipped (offline?)");
+          if (monuments.data) localStorage.setItem(CACHE_KEYS.monuments, JSON.stringify(monuments.data));
+          if (foodPlaces.data) localStorage.setItem(CACHE_KEYS.foodPlaces, JSON.stringify(foodPlaces.data));
+          if (hotels.data) localStorage.setItem(CACHE_KEYS.hotels, JSON.stringify(hotels.data));
+          localStorage.setItem(CACHE_KEYS.timestamp, String(Date.now()));
+        } catch (e) {
+          console.log("Offline cache update skipped (offline?)");
+        }
+      };
+
+      if ("requestIdleCallback" in window) {
+        (window as any).requestIdleCallback(() => cacheData());
+      } else {
+        setTimeout(cacheData, 3000);
       }
     };
 
-    cacheData();
+    scheduleCache();
   }, []);
 };
 
