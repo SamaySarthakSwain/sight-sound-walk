@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { lovable } from "@/integrations/lovable/index";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -142,23 +143,18 @@ const Auth = () => {
   const handleGoogleSignIn = async () => {
     setGoogleLoading(true);
     try {
-      const { error, data } = await supabase.auth.signInWithOAuth({
-        provider: "google",
-        options: {
-          redirectTo: `${window.location.origin}/`,
-        },
+      const { error } = await lovable.auth.signInWithOAuth("google", {
+        redirect_uri: window.location.origin,
       });
 
       if (error) {
         console.error("Google OAuth Error:", error);
         toast.error(error.message || "Failed to sign in with Google");
-        setGoogleLoading(false);
-      } else if (data) {
-        // The browser will redirect automatically
       }
     } catch (err) {
       console.error("Google Sign In Exception:", err);
       toast.error(err instanceof Error ? err.message : "An error occurred");
+    } finally {
       setGoogleLoading(false);
     }
   };
