@@ -7,6 +7,8 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { CityProvider } from "@/contexts/CityContext";
+import { ThemeProvider } from "next-themes";
+import FloatingParticles from "@/components/FloatingParticles";
 import Index from "./pages/Index";
 
 // Lazy load all non-home pages
@@ -32,33 +34,36 @@ const PageLoader = () => (
 const App = () => {
   useOfflineData();
   return (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <CityProvider>
-        <OfflineBanner />
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Suspense fallback={<PageLoader />}>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/explore" element={<Explore />} />
-              <Route path="/food" element={<Food />} />
-              <Route path="/cabs" element={<Cabs />} />
-              <Route path="/hotels" element={<Hotels />} />
-              <Route path="/assistant" element={<Assistant />} />
-              <Route path="/auth" element={<Auth />} />
-              <Route path="/help" element={<Help />} />
-              <Route path="/ar" element={<ARExperience />} />
-              <Route path="/profile" element={<Profile />} />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </Suspense>
-        </BrowserRouter>
-      </CityProvider>
-    </TooltipProvider>
-  </QueryClientProvider>
+  <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <CityProvider>
+          <FloatingParticles />
+          <OfflineBanner />
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Suspense fallback={<PageLoader />}>
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/explore" element={<Explore />} />
+                <Route path="/food" element={<Food />} />
+                <Route path="/cabs" element={<Cabs />} />
+                <Route path="/hotels" element={<Hotels />} />
+                <Route path="/assistant" element={<Assistant />} />
+                <Route path="/auth" element={<Auth />} />
+                <Route path="/help" element={<Help />} />
+                <Route path="/ar" element={<ARExperience />} />
+                <Route path="/profile" element={<Profile />} />
+                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </Suspense>
+          </BrowserRouter>
+        </CityProvider>
+      </TooltipProvider>
+    </QueryClientProvider>
+  </ThemeProvider>
   );
 };
 

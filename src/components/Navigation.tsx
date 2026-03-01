@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import ThemeToggle from "./ThemeToggle";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -81,7 +82,7 @@ const Navigation = () => {
   };
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border/50">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-14 md:h-16">
           {/* Logo */}
@@ -97,6 +98,7 @@ const Navigation = () => {
             {navItems.map((item) => (
               <NavLink key={item.path} item={item} />
             ))}
+            <ThemeToggle />
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -150,6 +152,7 @@ const Navigation = () => {
 
           {/* Mobile Navigation */}
           <div className="flex items-center gap-2 lg:hidden">
+            <ThemeToggle />
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>

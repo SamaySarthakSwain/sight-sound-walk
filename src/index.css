@@ -47,44 +47,50 @@ All colors MUST be HSL.
     --shadow-glow: 0 0 40px hsl(25 95% 53% / 0.15);
 
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    --glow-primary: 25 95% 53%;
+    --glow-secondary: 170 80% 50%;
   }
 
   .dark {
-    --background: 25 25% 8%;
-    --foreground: 35 15% 90%;
+    --background: 220 20% 4%;
+    --foreground: 210 20% 90%;
 
-    --card: 25 20% 12%;
-    --card-foreground: 35 15% 90%;
+    --card: 220 18% 8%;
+    --card-foreground: 210 20% 90%;
 
-    --popover: 25 20% 12%;
-    --popover-foreground: 35 15% 90%;
+    --popover: 220 18% 8%;
+    --popover-foreground: 210 20% 90%;
 
-    --primary: 25 95% 53%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 165 80% 50%;
+    --primary-foreground: 220 20% 4%;
 
-    --secondary: 180 40% 35%;
+    --secondary: 260 60% 60%;
     --secondary-foreground: 0 0% 100%;
 
-    --muted: 25 15% 20%;
-    --muted-foreground: 35 10% 60%;
+    --muted: 220 15% 14%;
+    --muted-foreground: 210 10% 55%;
 
-    --accent: 15 75% 60%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 165 80% 50%;
+    --accent-foreground: 220 20% 4%;
 
-    --destructive: 0 62.8% 30.6%;
+    --destructive: 0 62.8% 50%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 25 15% 20%;
-    --input: 25 15% 20%;
-    --ring: 25 95% 53%;
+    --border: 220 15% 16%;
+    --input: 220 15% 16%;
+    --ring: 165 80% 50%;
 
-    --gradient-hero: linear-gradient(135deg, hsl(25 95% 53%) 0%, hsl(15 75% 60%) 100%);
-    --gradient-card: linear-gradient(145deg, hsl(25 20% 12%) 0%, hsl(25 15% 18%) 100%);
-    --gradient-subtle: linear-gradient(180deg, hsl(25 25% 8%) 0%, hsl(25 20% 12%) 100%);
+    --gradient-hero: linear-gradient(135deg, hsl(260 60% 60%) 0%, hsl(165 80% 50%) 100%);
+    --gradient-card: linear-gradient(145deg, hsl(220 18% 8%) 0%, hsl(220 15% 12%) 100%);
+    --gradient-subtle: linear-gradient(180deg, hsl(220 20% 4%) 0%, hsl(220 18% 8%) 100%);
     
-    --shadow-soft: 0 4px 20px -2px hsl(0 0% 0% / 0.3);
-    --shadow-medium: 0 8px 30px -4px hsl(0 0% 0% / 0.4);
-    --shadow-glow: 0 0 40px hsl(25 95% 53% / 0.2);
+    --shadow-soft: 0 4px 20px -2px hsl(0 0% 0% / 0.5);
+    --shadow-medium: 0 8px 30px -4px hsl(0 0% 0% / 0.6);
+    --shadow-glow: 0 0 40px hsl(165 80% 50% / 0.15);
+
+    --glow-primary: 165 80% 50%;
+    --glow-secondary: 260 60% 60%;
   }
 }
 
@@ -96,6 +102,52 @@ All colors MUST be HSL.
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* Floating Particles */
+@keyframes float-particle {
+  0%, 100% { 
+    transform: translateY(0) translateX(0) scale(1); 
+    opacity: 0.3; 
+  }
+  25% { 
+    transform: translateY(-30px) translateX(10px) scale(1.2); 
+    opacity: 0.6; 
+  }
+  50% { 
+    transform: translateY(-15px) translateX(-5px) scale(0.8); 
+    opacity: 0.4; 
+  }
+  75% { 
+    transform: translateY(-40px) translateX(15px) scale(1.1); 
+    opacity: 0.5; 
+  }
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.1; }
+  50% { opacity: 0.8; }
+}
+
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 20px hsl(var(--glow-primary) / 0.1); }
+  50% { box-shadow: 0 0 40px hsl(var(--glow-primary) / 0.3); }
+}
+
+@keyframes border-glow {
+  0%, 100% { border-color: hsl(var(--glow-primary) / 0.2); }
+  50% { border-color: hsl(var(--glow-primary) / 0.5); }
+}
+
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes scroll-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(8px); }
 }
 
 /* Monument Flash Card Animations */
@@ -166,4 +218,66 @@ All colors MUST be HSL.
   .monument-flash-card > div {
     transform: none !important;
   }
+}
+
+/* Glow card effect */
+.glow-card {
+  position: relative;
+}
+
+.glow-card::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, hsl(var(--glow-primary) / 0.3), transparent 50%, hsl(var(--glow-secondary) / 0.3));
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+}
+
+.glow-card:hover::before {
+  opacity: 1;
+}
+
+/* Starfield background for dark mode */
+.dark .starfield {
+  background-image: 
+    radial-gradient(1px 1px at 10% 20%, hsl(210 20% 50% / 0.4), transparent),
+    radial-gradient(1px 1px at 30% 40%, hsl(210 20% 60% / 0.3), transparent),
+    radial-gradient(1.5px 1.5px at 50% 10%, hsl(210 20% 70% / 0.5), transparent),
+    radial-gradient(1px 1px at 70% 60%, hsl(210 20% 50% / 0.3), transparent),
+    radial-gradient(1px 1px at 90% 30%, hsl(210 20% 60% / 0.4), transparent),
+    radial-gradient(1.5px 1.5px at 20% 80%, hsl(165 80% 50% / 0.2), transparent),
+    radial-gradient(1px 1px at 60% 90%, hsl(210 20% 50% / 0.3), transparent),
+    radial-gradient(1px 1px at 80% 70%, hsl(260 60% 60% / 0.2), transparent),
+    radial-gradient(1px 1px at 15% 55%, hsl(210 20% 60% / 0.3), transparent),
+    radial-gradient(1px 1px at 45% 75%, hsl(210 20% 50% / 0.4), transparent),
+    radial-gradient(1.5px 1.5px at 75% 15%, hsl(165 80% 50% / 0.15), transparent),
+    radial-gradient(1px 1px at 35% 95%, hsl(210 20% 60% / 0.3), transparent),
+    radial-gradient(1px 1px at 85% 85%, hsl(210 20% 50% / 0.35), transparent),
+    radial-gradient(1px 1px at 55% 45%, hsl(260 60% 60% / 0.15), transparent),
+    radial-gradient(1px 1px at 5% 70%, hsl(210 20% 60% / 0.3), transparent),
+    radial-gradient(1.5px 1.5px at 95% 50%, hsl(210 20% 50% / 0.4), transparent);
+}
+
+/* Smooth scroll reveal animation */
+.reveal-up {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal-up.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Text gradient animation */
+.animate-gradient-text {
+  background-size: 200% 200%;
+  animation: gradient-shift 4s ease infinite;
 }
