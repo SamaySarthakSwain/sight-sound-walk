@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.3";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -11,11 +12,51 @@ serve(async (req) => {
   }
 
   try {
-    const { message, image, language = "en", conversationHistory = [] } = await req.json();
+    const { message, image, language = "en", conversationHistory = [], isProactive = false, monumentName = "" } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+    const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
+    const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
 
     if (!LOVABLE_API_KEY) {
       throw new Error("LOVABLE_API_KEY is not configured");
+    }
+
+    // Check for expert lore if user is authorized
+    let hiddenLore = null;
+    let isExpert = false;
+
+    if (SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY) {
+      const authHeader = req.headers.get("Authorization");
+      if (authHeader) {
+        const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+        const { data: { user }, error: authError } = await supabase.auth.getUser(authHeader.replace("Bearer ", ""));
+
+        if (user && !authError) {
+          // Check if user has "Odisha Expert" achievement
+          const { data: achievement } = await supabase
+            .from("user_achievements")
+            .select("achievement_id, achievements!inner(title)")
+            .eq("user_id", user.id)
+            .eq("achievements.title", "Odisha Expert")
+            .maybeSingle();
+
+          if (achievement) {
+            isExpert = true;
+            // Fetch lore for the monument
+            if (monumentName) {
+              const { data: monument } = await supabase
+                .from("monuments")
+                .select("hidden_lore")
+                .ilike("title", `%${monumentName}%`)
+                .maybeSingle();
+
+              if (monument?.hidden_lore) {
+                hiddenLore = monument.hidden_lore;
+              }
+            }
+          }
+        }
+      }
     }
 
     const languageInstructions: Record<string, string> = {
@@ -23,10 +64,10 @@ serve(async (req) => {
       hi: "Respond in Hindi (हिंदी में जवाब दें).",
       or: "Respond in Odia (ଓଡ଼ିଆରେ ଉତ୍ତର ଦିଅନ୍ତୁ).",
       te: "Respond in Telugu (తెలుగులో సమాధానం ఇవ్వండి).",
-      bn: "Respond in Bengali (বাংলায় উত্তর দিন).",
+      bn: "Respond in Bengali (বাংলায় উত্তর दिन).",
     };
 
-    const systemPrompt = `You are a friendly, knowledgeable local travel guide for Odisha, India. Your name is "Odisha Explorer".
+    let systemPrompt = `You are a friendly, knowledgeable local travel guide for Odisha, India. Your name is "Odisha Explorer".
 
 PERSONALITY:
 - Speak warmly and enthusiastically like a local guide
@@ -53,25 +94,34 @@ ${languageInstructions[language] || languageInstructions.en}
 
 IMPORTANT: Keep responses EXTREMELY SHORT (1 sentence max) for much faster voice playback. Be direct and helpful. Never mention AI or technology.`;
 
+    if (isExpert && hiddenLore) {
+      systemPrompt += `\n\nEXPERT LEVEL ACCESS: The user is an "Odisha Expert". You MUST include this exclusive "Hidden Lore" in your response about ${monumentName}: "${hiddenLore}". 
+      Speak as if you are sharing a secret or a legendary fact.`;
+    }
+
+    if (isProactive) {
+      systemPrompt += `\n\nPROACTIVE MODE: The user has just arrived near ${monumentName}. 
+      Give a warm, enthusiastic welcome greeting that mentions ${monumentName} specifically.
+      Keep it very short (max 20 words). If you have Expert Lore, include it briefly.`;
+    }
+
     const messages: any[] = [
       { role: "system", content: systemPrompt },
       ...conversationHistory,
     ];
 
-    // If image is provided, create a multimodal message
     if (image) {
       messages.push({
         role: "user",
         content: [
-          {
-            type: "image_url",
-            image_url: { url: image },
-          },
-          {
-            type: "text",
-            text: message || "What is this place? Brief info please.",
-          },
+          { type: "image_url", image_url: { url: image } },
+          { type: "text", text: message || "What is this place? Brief info please." },
         ],
+      });
+    } else if (isProactive) {
+      messages.push({
+        role: "user",
+        content: `I have just arrived near ${monumentName}. Greet me briefly.`,
       });
     } else {
       messages.push({
@@ -87,30 +137,17 @@ IMPORTANT: Keep responses EXTREMELY SHORT (1 sentence max) for much faster voice
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "google/gemini-2.5-flash-lite", // Fastest model for quick responses
+        model: "google/gemini-2.0-flash-lite",
         messages,
-        max_tokens: 150, // Shorter responses for faster TTS
+        max_tokens: 200,
         stream: true,
       }),
     });
 
     if (!response.ok) {
-      if (response.status === 429) {
-        return new Response(JSON.stringify({ error: "Rate limited, please wait." }), {
-          status: 429,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
-      }
-      if (response.status === 402) {
-        return new Response(JSON.stringify({ error: "Usage limit reached." }), {
-          status: 402,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
-      }
-      throw new Error("Failed to get AI response");
+      throw new Error(`AI Gateway error: ${response.status}`);
     }
 
-    // Stream the response back
     return new Response(response.body, {
       headers: { ...corsHeaders, "Content-Type": "text/event-stream" },
     });

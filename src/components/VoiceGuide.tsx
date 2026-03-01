@@ -99,12 +99,23 @@ const VoiceGuide = () => {
   const { toast } = useToast();
 
   useEffect(() => {
+    const handleNudge = (event: any) => {
+      const { monument } = event.detail;
+      if (!isConversationActive) {
+        setIsConversationActive(true);
+        shouldRestartRef.current = true;
+      }
+      handleProactiveNudge(monument.title);
+    };
+
+    window.addEventListener("proactive-nudge", handleNudge);
     return () => {
+      window.removeEventListener("proactive-nudge", handleNudge);
       stopCamera();
       stopConversation();
       if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
     };
-  }, []);
+  }, [isConversationActive, language]);
 
   // Create speech recognition instance
   const createRecognition = useCallback(() => {
@@ -308,6 +319,79 @@ const VoiceGuide = () => {
       if (isConversationActive) {
         setTimeout(() => startListening(), 500);
       }
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const handleProactiveNudge = async (monumentName: string) => {
+    setIsProcessing(true);
+    setResponse("");
+    let fullResponse = "";
+
+    try {
+      const resp = await fetch(CHAT_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+        },
+        body: JSON.stringify({
+          isProactive: true,
+          monumentName,
+          language,
+          conversationHistory: conversationHistory.slice(-6),
+        }),
+      });
+
+      if (!resp.ok) throw new Error("Failed to get response");
+
+      const reader = resp.body?.getReader();
+      const decoder = new TextDecoder();
+      let buffer = "";
+
+      while (reader) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+
+        let newlineIndex: number;
+        while ((newlineIndex = buffer.indexOf("\n")) !== -1) {
+          let line = buffer.slice(0, newlineIndex);
+          buffer = buffer.slice(newlineIndex + 1);
+
+          if (line.endsWith("\r")) line = line.slice(0, -1);
+          if (line.startsWith(":") || line.trim() === "") continue;
+          if (!line.startsWith("data: ")) continue;
+
+          const jsonStr = line.slice(6).trim();
+          if (jsonStr === "[DONE]") break;
+
+          try {
+            const parsed = JSON.parse(jsonStr);
+            const content = parsed.choices?.[0]?.delta?.content;
+            if (content) {
+              fullResponse += content;
+              setResponse(fullResponse);
+            }
+          } catch {
+            buffer = line + "\n" + buffer;
+            break;
+          }
+        }
+      }
+
+      setConversationHistory(prev => [
+        ...prev,
+        { role: "assistant", content: fullResponse },
+      ]);
+
+      if (fullResponse) {
+        speakWithElevenLabs(fullResponse);
+      }
+    } catch (err) {
+      console.error("Proactive API error:", err);
     } finally {
       setIsProcessing(false);
     }

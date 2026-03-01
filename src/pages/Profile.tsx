@@ -8,7 +8,9 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
-import { User, MapPin, Search, Trash2, Clock, Compass, LogIn, Sparkles } from "lucide-react";
+import { User, MapPin, Search, Trash2, Clock, Compass, LogIn, Sparkles, Trophy } from "lucide-react";
+import { DigitalPassport } from "@/components/DigitalPassport";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -175,7 +177,7 @@ const Profile = () => {
       if (visits && visits.length > 0) {
         const visitedCategories = [...new Set(visits.map(v => v.place_category).filter(Boolean))];
         const visitedNames = visits.map(v => v.place_name);
-        
+
         if (visitedCategories.length > 0) {
           const { data: suggestions } = await supabase
             .from("monuments")
@@ -249,204 +251,189 @@ const Profile = () => {
       <div className="pt-24 pb-12 container mx-auto px-4 max-w-4xl">
         <h1 className="text-3xl font-bold text-foreground mb-8">My Profile</h1>
 
-        {/* User Info Section */}
-        <Card className="mb-8">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <User className="w-5 h-5" />
-              Profile Information
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {loading ? (
-              <div className="flex items-center gap-4">
-                <Skeleton className="h-16 w-16 rounded-full" />
-                <div className="space-y-2">
-                  <Skeleton className="h-4 w-48" />
-                  <Skeleton className="h-4 w-32" />
-                </div>
-              </div>
-            ) : (
-              <div className="flex items-center gap-4">
-                <Avatar className="h-16 w-16">
-                  <AvatarImage src={profile?.avatar_url || user?.user_metadata?.avatar_url} />
-                  <AvatarFallback className="bg-primary text-primary-foreground text-lg">
-                    {getInitials(profile?.full_name, profile?.email || user?.email)}
-                  </AvatarFallback>
-                </Avatar>
-                <div>
-                  <h3 className="text-xl font-semibold text-foreground">
-                    {profile?.full_name || user?.user_metadata?.name || "Explorer"}
-                  </h3>
-                  <p className="text-muted-foreground">
-                    {profile?.email || user?.email || profile?.phone_number || user?.phone}
-                  </p>
-                </div>
-              </div>
-            )}
-          </CardContent>
-        </Card>
+        <Tabs defaultValue="overview" className="space-y-8">
+          <TabsList className="grid w-full grid-cols-3 max-w-md bg-muted/30">
+            <TabsTrigger value="overview">Overview</TabsTrigger>
+            <TabsTrigger value="passport">Travel Passport</TabsTrigger>
+            <TabsTrigger value="history">Visit History</TabsTrigger>
+          </TabsList>
 
-        {/* Suggested Places */}
-        {suggestedPlaces.length > 0 && (
-          <Card className="mb-8 border-primary/20">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Sparkles className="w-5 h-5 text-primary" />
-                Suggested For You
-              </CardTitle>
-              <CardDescription>Based on your travel history</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-                {suggestedPlaces.slice(0, 6).map((place) => (
-                  <div
-                    key={place.id}
-                    className="p-3 bg-secondary/20 rounded-lg cursor-pointer hover:bg-secondary/40 transition-colors"
-                    onClick={() => navigate("/explore")}
-                  >
-                    {place.image_url && (
-                      <img src={place.image_url} alt={place.title} className="w-full h-24 object-cover rounded mb-2" />
-                    )}
-                    <p className="font-medium text-foreground text-sm">{place.title}</p>
-                    <p className="text-xs text-muted-foreground capitalize">{place.category}</p>
+          <TabsContent value="overview" className="space-y-8">
+            {/* User Info Section */}
+            <Card className="mb-8">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <User className="w-5 h-5" />
+                  Profile Information
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {loading ? (
+                  <div className="flex items-center gap-4">
+                    <Skeleton className="h-16 w-16 rounded-full" />
+                    <div className="space-y-2">
+                      <Skeleton className="h-4 w-48" />
+                      <Skeleton className="h-4 w-32" />
+                    </div>
                   </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Last Visited Place */}
-        <Card className="mb-8">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <MapPin className="w-5 h-5" />
-              Last Visited Place
-            </CardTitle>
-            <CardDescription>Your most recent exploration</CardDescription>
-          </CardHeader>
-          <CardContent>
-            {loading ? (
-              <Skeleton className="h-24 w-full" />
-            ) : visitHistory.length > 0 ? (
-              <div className="flex items-center gap-4 p-4 bg-secondary/30 rounded-lg">
-                {visitHistory[0].place_image && (
-                  <img src={visitHistory[0].place_image} alt={visitHistory[0].place_name} className="w-20 h-20 object-cover rounded-lg" />
+                ) : (
+                  <div className="flex items-center gap-4">
+                    <Avatar className="h-16 w-16">
+                      <AvatarImage src={profile?.avatar_url || user?.user_metadata?.avatar_url} />
+                      <AvatarFallback className="bg-primary text-primary-foreground text-lg">
+                        {getInitials(profile?.full_name, profile?.email || user?.email)}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <h3 className="text-xl font-semibold text-foreground">
+                        {profile?.full_name || user?.user_metadata?.name || "Explorer"}
+                      </h3>
+                      <p className="text-muted-foreground">
+                        {profile?.email || user?.email || profile?.phone_number || user?.phone}
+                      </p>
+                    </div>
+                  </div>
                 )}
-                <div className="flex-1">
-                  <h4 className="font-semibold text-foreground">{visitHistory[0].place_name}</h4>
-                  {visitHistory[0].place_category && (
-                    <p className="text-sm text-muted-foreground capitalize">{visitHistory[0].place_category}</p>
-                  )}
-                  <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
-                    <Clock className="w-3 h-3" />
-                    {formatDate(visitHistory[0].visited_at)}
-                  </p>
-                </div>
-              </div>
-            ) : (
-              <div className="text-center py-8">
-                <Compass className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
-                <p className="text-muted-foreground mb-4">You haven't visited any places yet. Start exploring now!</p>
-                <Button onClick={() => navigate("/explore")}>Start Exploring</Button>
-              </div>
-            )}
-          </CardContent>
-        </Card>
+              </CardContent>
+            </Card>
 
-        {/* Visit History */}
-        {visitHistory.length > 1 && (
-          <Card className="mb-8">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <MapPin className="w-5 h-5" />
-                Recent Visits
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                {visitHistory.slice(1).map((visit) => (
-                  <div key={visit.id} className="flex items-center justify-between p-3 bg-secondary/20 rounded-lg">
-                    <div className="flex items-center gap-3">
-                      {visit.place_image && (
-                        <img src={visit.place_image} alt={visit.place_name} className="w-12 h-12 object-cover rounded" />
-                      )}
-                      <div>
-                        <p className="font-medium text-foreground">{visit.place_name}</p>
-                        {visit.place_category && (
-                          <p className="text-xs text-muted-foreground capitalize">{visit.place_category}</p>
+            {/* Suggested Places */}
+            {suggestedPlaces.length > 0 && (
+              <Card className="mb-8 border-primary/20">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Sparkles className="w-5 h-5 text-primary" />
+                    Suggested For You
+                  </CardTitle>
+                  <CardDescription>Based on your travel history</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                    {suggestedPlaces.slice(0, 6).map((place) => (
+                      <div
+                        key={place.id}
+                        className="p-3 bg-secondary/20 rounded-lg cursor-pointer hover:bg-secondary/40 transition-colors"
+                        onClick={() => navigate("/explore")}
+                      >
+                        {place.image_url && (
+                          <img src={place.image_url} alt={place.title} className="w-full h-24 object-cover rounded mb-2" />
                         )}
+                        <p className="font-medium text-foreground text-sm">{place.title}</p>
+                        <p className="text-xs text-muted-foreground capitalize">{place.category}</p>
                       </div>
-                    </div>
-                    <span className="text-xs text-muted-foreground">{formatDate(visit.visited_at)}</span>
+                    ))}
                   </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Search History */}
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between">
-            <div>
-              <CardTitle className="flex items-center gap-2">
-                <Search className="w-5 h-5" />
-                Search History
-              </CardTitle>
-              <CardDescription>Your recent route searches</CardDescription>
-            </div>
-            {searchHistory.length > 0 && (
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <Button variant="outline" size="sm" className="text-destructive">
-                    <Trash2 className="w-4 h-4 mr-2" />
-                    Clear All
-                  </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Clear Search History?</AlertDialogTitle>
-                    <AlertDialogDescription>This will permanently delete all your search history. This action cannot be undone.</AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={clearSearchHistory}>Clear All</AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
+                </CardContent>
+              </Card>
             )}
-          </CardHeader>
-          <CardContent>
-            {loading ? (
-              <div className="space-y-3">
-                <Skeleton className="h-12 w-full" />
-                <Skeleton className="h-12 w-full" />
-                <Skeleton className="h-12 w-full" />
-              </div>
-            ) : searchHistory.length > 0 ? (
-              <div className="space-y-3">
-                {searchHistory.map((search) => (
-                  <div key={search.id} className="flex items-center justify-between p-3 bg-secondary/20 rounded-lg">
-                    <div className="flex items-center gap-2">
-                      <MapPin className="w-4 h-4 text-primary" />
-                      <span className="text-foreground">{search.start_location}</span>
-                      <span className="text-muted-foreground">→</span>
-                      <span className="text-foreground">{search.end_location}</span>
+
+            {/* Last Visited Place */}
+            <Card className="mb-8">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <MapPin className="w-5 h-5" />
+                  Last Visited Place
+                </CardTitle>
+                <CardDescription>Your most recent exploration</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {loading ? (
+                  <Skeleton className="h-24 w-full" />
+                ) : visitHistory.length > 0 ? (
+                  <div className="flex items-center gap-4 p-4 bg-secondary/30 rounded-lg">
+                    {visitHistory[0].place_image && (
+                      <img src={visitHistory[0].place_image} alt={visitHistory[0].place_name} className="w-20 h-20 object-cover rounded-lg" />
+                    )}
+                    <div className="flex-1">
+                      <h4 className="font-semibold text-foreground">{visitHistory[0].place_name}</h4>
+                      {visitHistory[0].place_category && (
+                        <p className="text-sm text-muted-foreground capitalize">{visitHistory[0].place_category}</p>
+                      )}
+                      <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
+                        <Clock className="w-3 h-3" />
+                        {formatDate(visitHistory[0].visited_at)}
+                      </p>
                     </div>
-                    <span className="text-xs text-muted-foreground">{formatDate(search.searched_at)}</span>
                   </div>
+                ) : (
+                  <div className="text-center py-8">
+                    <Compass className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
+                    <p className="text-muted-foreground mb-4">You haven't visited any places yet. Start exploring now!</p>
+                    <Button onClick={() => navigate("/explore")}>Start Exploring</Button>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+          </TabsContent>
+
+          <TabsContent value="passport">
+            <DigitalPassport user={user} visitCount={visitHistory.length} />
+          </TabsContent>
+
+          <TabsContent value="history" className="space-y-8">
+            {/* Visit History from existing content */}
+            {visitHistory.length > 0 ? (
+              <div className="space-y-3">
+                {visitHistory.map((visit) => (
+                  <Card key={visit.id} className="border-border/40 hover:border-primary/20 transition-all cursor-pointer">
+                    <CardContent className="flex items-center justify-between p-4">
+                      <div className="flex items-center gap-4">
+                        {visit.place_image && (
+                          <img src={visit.place_image} alt={visit.place_name} className="w-14 h-14 object-cover rounded-md" />
+                        )}
+                        <div>
+                          <p className="font-semibold text-foreground">{visit.place_name}</p>
+                          <p className="text-xs text-muted-foreground capitalize">{visit.place_category}</p>
+                        </div>
+                      </div>
+                      <span className="text-xs text-muted-foreground bg-muted/50 px-2 py-1 rounded-full">{formatDate(visit.visited_at)}</span>
+                    </CardContent>
+                  </Card>
                 ))}
               </div>
             ) : (
-              <div className="text-center py-8">
-                <Search className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
-                <p className="text-muted-foreground">No search history yet</p>
-              </div>
+              <Card>
+                <CardContent className="p-8 text-center">
+                  <Compass className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
+                  <p className="text-muted-foreground">No visits recorded yet.</p>
+                </CardContent>
+              </Card>
             )}
-          </CardContent>
-        </Card>
+
+            {/* Search History */}
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between">
+                <div>
+                  <CardTitle className="flex items-center gap-2 text-lg">
+                    <Search className="w-4 h-4" />
+                    Search History
+                  </CardTitle>
+                  <CardDescription className="text-xs">Your recent route searches</CardDescription>
+                </div>
+              </CardHeader>
+              <CardContent>
+                {searchHistory.length > 0 ? (
+                  <div className="space-y-3">
+                    {searchHistory.map((search) => (
+                      <div key={search.id} className="flex items-center justify-between p-3 bg-secondary/10 rounded-lg text-sm border border-border/10">
+                        <div className="flex items-center gap-2 truncate pr-4">
+                          <MapPin className="w-3.5 h-3.5 text-primary shrink-0" />
+                          <span className="truncate">{search.start_location}</span>
+                          <span className="text-muted-foreground mx-1">→</span>
+                          <span className="truncate">{search.end_location}</span>
+                        </div>
+                        <span className="text-[10px] text-muted-foreground whitespace-nowrap opacity-70">{formatDate(search.searched_at)}</span>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-center text-xs text-muted-foreground pt-2">No history</p>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );

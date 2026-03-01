@@ -10,6 +10,7 @@ import { CityProvider } from "@/contexts/CityContext";
 import { ThemeProvider } from "next-themes";
 import FloatingParticles from "@/components/FloatingParticles";
 import Index from "./pages/Index";
+import ProactiveNudgeTrigger from "@/components/ProactiveNudgeTrigger";
 
 // Lazy load all non-home pages
 const Explore = lazy(() => import("./pages/Explore"));
@@ -34,36 +35,37 @@ const PageLoader = () => (
 const App = () => {
   useOfflineData();
   return (
-  <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <CityProvider>
-          <FloatingParticles />
-          <OfflineBanner />
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <Suspense fallback={<PageLoader />}>
-              <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/explore" element={<Explore />} />
-                <Route path="/food" element={<Food />} />
-                <Route path="/cabs" element={<Cabs />} />
-                <Route path="/hotels" element={<Hotels />} />
-                <Route path="/assistant" element={<Assistant />} />
-                <Route path="/auth" element={<Auth />} />
-                <Route path="/help" element={<Help />} />
-                <Route path="/ar" element={<ARExperience />} />
-                <Route path="/profile" element={<Profile />} />
-                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </Suspense>
-          </BrowserRouter>
-        </CityProvider>
-      </TooltipProvider>
-    </QueryClientProvider>
-  </ThemeProvider>
+    <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider>
+          <CityProvider>
+            <FloatingParticles />
+            <ProactiveNudgeTrigger />
+            <OfflineBanner />
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <Suspense fallback={<PageLoader />}>
+                <Routes>
+                  <Route path="/" element={<Index />} />
+                  <Route path="/explore" element={<Explore />} />
+                  <Route path="/food" element={<Food />} />
+                  <Route path="/cabs" element={<Cabs />} />
+                  <Route path="/hotels" element={<Hotels />} />
+                  <Route path="/assistant" element={<Assistant />} />
+                  <Route path="/auth" element={<Auth />} />
+                  <Route path="/help" element={<Help />} />
+                  <Route path="/ar" element={<ARExperience />} />
+                  <Route path="/profile" element={<Profile />} />
+                  {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </Suspense>
+            </BrowserRouter>
+          </CityProvider>
+        </TooltipProvider>
+      </QueryClientProvider>
+    </ThemeProvider>
   );
 };
 
