@@ -54,7 +54,7 @@ const ARModelCard = ({ model }: ARModelCardProps) => {
         (cardRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
         observerRef(node);
       }}
-      className="group overflow-hidden border-border/50 bg-card hover:shadow-medium transition-all duration-300"
+      className="group overflow-hidden glass-card glass-card-hover border-transparent transition-all duration-300"
     >
       {/* 3D Viewer */}
       <div className="relative w-full aspect-[4/3] bg-muted">

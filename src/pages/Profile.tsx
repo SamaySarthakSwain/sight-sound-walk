@@ -56,7 +56,7 @@ const GuestProfileView = () => {
         <h1 className="text-3xl font-bold text-foreground mb-8">My Profile</h1>
 
         {/* Login Prompt */}
-        <Card className="mb-8 border-primary/20 bg-gradient-to-br from-primary/5 to-secondary/5">
+        <Card className="mb-8 border-none glass-card">
           <CardContent className="p-8 text-center">
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-4">
               <LogIn className="w-8 h-8 text-primary" />
@@ -96,7 +96,7 @@ const GuestProfileView = () => {
         </Card>
 
         {/* Explore CTA */}
-        <Card>
+        <Card className="glass-card border-none">
           <CardContent className="p-8 text-center">
             <Compass className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
             <h3 className="text-lg font-semibold text-foreground mb-2">Start Exploring</h3>
@@ -260,7 +260,7 @@ const Profile = () => {
 
           <TabsContent value="overview" className="space-y-8">
             {/* User Info Section */}
-            <Card className="mb-8">
+            <Card className="mb-8 glass-card border-none">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <User className="w-5 h-5" />
@@ -299,7 +299,7 @@ const Profile = () => {
 
             {/* Suggested Places */}
             {suggestedPlaces.length > 0 && (
-              <Card className="mb-8 border-primary/20">
+              <Card className="mb-8 glass-card border-none">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Sparkles className="w-5 h-5 text-primary" />
@@ -328,7 +328,7 @@ const Profile = () => {
             )}
 
             {/* Last Visited Place */}
-            <Card className="mb-8">
+            <Card className="mb-8 glass-card border-none">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <MapPin className="w-5 h-5" />
@@ -376,7 +376,7 @@ const Profile = () => {
             {visitHistory.length > 0 ? (
               <div className="space-y-3">
                 {visitHistory.map((visit) => (
-                  <Card key={visit.id} className="border-border/40 hover:border-primary/20 transition-all cursor-pointer">
+                  <Card key={visit.id} className="glass-card glass-card-hover border-transparent cursor-pointer">
                     <CardContent className="flex items-center justify-between p-4">
                       <div className="flex items-center gap-4">
                         {visit.place_image && (
@@ -393,7 +393,7 @@ const Profile = () => {
                 ))}
               </div>
             ) : (
-              <Card>
+              <Card className="glass-card border-none">
                 <CardContent className="p-8 text-center">
                   <Compass className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
                   <p className="text-muted-foreground">No visits recorded yet.</p>
@@ -402,7 +402,7 @@ const Profile = () => {
             )}
 
             {/* Search History */}
-            <Card>
+            <Card className="glass-card border-none">
               <CardHeader className="flex flex-row items-center justify-between">
                 <div>
                   <CardTitle className="flex items-center gap-2 text-lg">

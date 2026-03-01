@@ -156,7 +156,7 @@ const Assistant = () => {
                         <button
                           key={i}
                           onClick={() => handleSuggestionClick(question)}
-                          className="text-left p-3 rounded-lg border border-border bg-card hover:bg-muted transition-colors text-sm text-foreground"
+                          className="text-left p-3 rounded-xl glass-panel glass-card-hover transition-colors text-sm text-foreground border-transparent"
                         >
                           {question}
                         </button>

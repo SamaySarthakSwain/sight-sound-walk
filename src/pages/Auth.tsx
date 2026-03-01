@@ -253,7 +253,7 @@ const Auth = () => {
           </div>
 
           {/* Auth Card */}
-          <Card className="border-0 shadow-lg">
+          <Card className="border-0 shadow-lg glass-card">
             <CardContent className="p-4 md:p-6">
               <Tabs defaultValue="login" className="w-full">
                 <TabsList className="grid w-full grid-cols-2 mb-4">

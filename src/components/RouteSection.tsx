@@ -10,7 +10,7 @@ import { toast } from "sonner";
 
 interface RouteSectionProps {
   onRouteSelected?: (
-    start: { lat: number; lng: number }, 
+    start: { lat: number; lng: number },
     end: { lat: number; lng: number },
     waypoints?: { lat: number; lng: number }[]
   ) => void;
@@ -61,11 +61,11 @@ const RouteSection: React.FC<RouteSectionProps> = ({ onRouteSelected }) => {
     const R = 6371; // Earth's radius in km
     const dLat = (lat2 - lat1) * Math.PI / 180;
     const dLon = (lon2 - lon1) * Math.PI / 180;
-    const a = 
-      Math.sin(dLat/2) * Math.sin(dLat/2) +
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
       Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-      Math.sin(dLon/2) * Math.sin(dLon/2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     return R * c;
   };
 
@@ -74,7 +74,7 @@ const RouteSection: React.FC<RouteSectionProps> = ({ onRouteSelected }) => {
     const distanceToStart = calculateDistance(pointLat, pointLng, startLat, startLng);
     const distanceToEnd = calculateDistance(pointLat, pointLng, endLat, endLng);
     const routeDistance = calculateDistance(startLat, startLng, endLat, endLng);
-    
+
     // Point is on route if: distance to start + distance to end ≈ route distance (with 20% tolerance)
     const totalDistance = distanceToStart + distanceToEnd;
     return totalDistance <= routeDistance * 1.2;
@@ -84,9 +84,9 @@ const RouteSection: React.FC<RouteSectionProps> = ({ onRouteSelected }) => {
   const findMonumentsOnRoute = (startKey: string, endKey: string): Monument[] => {
     const start = locations[startKey as keyof typeof locations];
     const end = locations[endKey as keyof typeof locations];
-    
+
     const monumentsOnRoute: Monument[] = [];
-    
+
     Object.entries(locations).forEach(([key, location]) => {
       if (key !== startKey && key !== endKey) {
         if (isNearRoute(location.lat, location.lng, start.lat, start.lng, end.lat, end.lng)) {
@@ -100,7 +100,7 @@ const RouteSection: React.FC<RouteSectionProps> = ({ onRouteSelected }) => {
         }
       }
     });
-    
+
     return monumentsOnRoute;
   };
 
@@ -108,15 +108,15 @@ const RouteSection: React.FC<RouteSectionProps> = ({ onRouteSelected }) => {
     if (startLocation && endLocation) {
       const start = locations[startLocation as keyof typeof locations];
       const end = locations[endLocation as keyof typeof locations];
-      
+
       if (start && end) {
         // Calculate distance and estimated time
         const distance = calculateDistance(start.lat, start.lng, end.lat, end.lng);
         const duration = distance / 50; // Assuming average speed of 50 km/h
-        
+
         // Find monuments along the route
         const monumentsOnRoute = findMonumentsOnRoute(startLocation, endLocation);
-        
+
         setRouteInfo({
           distance,
           duration,
@@ -124,7 +124,7 @@ const RouteSection: React.FC<RouteSectionProps> = ({ onRouteSelected }) => {
         });
         setShowResults(true);
         setSelectedWaypoints([]);
-        
+
         // Save search history if user is logged in
         const { data: { user } } = await supabase.auth.getUser();
         if (user) {
@@ -135,12 +135,12 @@ const RouteSection: React.FC<RouteSectionProps> = ({ onRouteSelected }) => {
               start_location: start.name,
               end_location: end.name,
             });
-          
+
           if (error) {
             console.error('Error saving search history:', error);
           }
         }
-        
+
         // Notify parent component to display route on embedded map
         if (onRouteSelected) {
           onRouteSelected(start, end);
@@ -154,7 +154,7 @@ const RouteSection: React.FC<RouteSectionProps> = ({ onRouteSelected }) => {
       // Remove waypoint if already added
       const newWaypoints = selectedWaypoints.filter(w => w.id !== monument.id);
       setSelectedWaypoints(newWaypoints);
-      
+
       // Update route with new waypoints
       if (startLocation && endLocation && onRouteSelected) {
         const start = locations[startLocation as keyof typeof locations];
@@ -166,7 +166,7 @@ const RouteSection: React.FC<RouteSectionProps> = ({ onRouteSelected }) => {
       // Add waypoint
       const newWaypoints = [...selectedWaypoints, monument];
       setSelectedWaypoints(newWaypoints);
-      
+
       // Update route with new waypoints
       if (startLocation && endLocation && onRouteSelected) {
         const start = locations[startLocation as keyof typeof locations];
@@ -179,17 +179,17 @@ const RouteSection: React.FC<RouteSectionProps> = ({ onRouteSelected }) => {
 
   const openInGoogleMaps = () => {
     if (!startLocation || !endLocation) return;
-    
+
     const start = locations[startLocation as keyof typeof locations];
     const end = locations[endLocation as keyof typeof locations];
-    
+
     let url = `https://www.google.com/maps/dir/?api=1&origin=${start.lat},${start.lng}&destination=${end.lat},${end.lng}&travelmode=driving`;
-    
+
     if (selectedWaypoints.length > 0) {
       const waypoints = selectedWaypoints.map(w => `${w.lat},${w.lng}`).join('|');
       url += `&waypoints=${waypoints}`;
     }
-    
+
     // Create a temporary link element to trigger download/navigation
     const link = document.createElement('a');
     link.href = url;
@@ -202,14 +202,14 @@ const RouteSection: React.FC<RouteSectionProps> = ({ onRouteSelected }) => {
 
   const getRecommendedMonuments = (): Monument[] => {
     if (!routeInfo || !availableTime) return routeInfo?.monumentsOnRoute || [];
-    
+
     const timeInHours = parseFloat(availableTime);
     const travelTime = routeInfo.duration;
     const availableForVisits = timeInHours - travelTime;
-    
+
     // Assume 1 hour per monument visit
     const maxMonuments = Math.floor(availableForVisits);
-    
+
     return routeInfo.monumentsOnRoute.slice(0, Math.max(0, maxMonuments));
   };
 
@@ -217,7 +217,7 @@ const RouteSection: React.FC<RouteSectionProps> = ({ onRouteSelected }) => {
     <section className="py-20 bg-gradient-subtle">
       <div className="container mx-auto px-4">
         <div className="max-w-3xl mx-auto">
-          <Card className="shadow-medium">
+          <Card className="shadow-medium glass-card border-none">
             <CardHeader>
               <CardTitle className="text-3xl flex items-center gap-3">
                 <Route className="w-8 h-8 text-primary" />
@@ -310,7 +310,7 @@ const RouteSection: React.FC<RouteSectionProps> = ({ onRouteSelected }) => {
               </Button>
 
               {/* Info Box */}
-              <div className="p-4 rounded-lg bg-secondary/10 border border-secondary/20 space-y-2">
+              <div className="p-4 rounded-lg glass-panel space-y-2 border-transparent">
                 <h4 className="font-semibold text-secondary">What happens next?</h4>
                 <ul className="text-sm text-muted-foreground space-y-1">
                   <li>• Route displays monuments along your path</li>
@@ -324,7 +324,7 @@ const RouteSection: React.FC<RouteSectionProps> = ({ onRouteSelected }) => {
 
           {/* Route Results */}
           {showResults && routeInfo && (
-            <Card className="mt-6 shadow-medium animate-in fade-in slide-in-from-bottom-4">
+            <Card className="mt-6 shadow-medium animate-in fade-in slide-in-from-bottom-4 glass-card border-none">
               <CardHeader>
                 <CardTitle className="text-2xl flex items-center gap-3">
                   <Route className="w-7 h-7 text-primary" />
@@ -334,13 +334,13 @@ const RouteSection: React.FC<RouteSectionProps> = ({ onRouteSelected }) => {
               <CardContent className="space-y-6">
                 {/* Journey Stats */}
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="p-4 rounded-lg bg-primary/10 border border-primary/20">
+                  <div className="p-4 rounded-lg glass-panel border-transparent">
                     <div className="text-sm text-muted-foreground mb-1">Total Distance</div>
                     <div className="text-2xl font-bold text-primary">
                       {routeInfo.distance.toFixed(1)} km
                     </div>
                   </div>
-                  <div className="p-4 rounded-lg bg-secondary/10 border border-secondary/20">
+                  <div className="p-4 rounded-lg glass-panel border-transparent">
                     <div className="text-sm text-muted-foreground mb-1">Travel Time</div>
                     <div className="text-2xl font-bold text-secondary">
                       {Math.floor(routeInfo.duration)}h {Math.round((routeInfo.duration % 1) * 60)}m
@@ -355,17 +355,16 @@ const RouteSection: React.FC<RouteSectionProps> = ({ onRouteSelected }) => {
                       <Landmark className="w-5 h-5 text-accent" />
                       Monuments Along Your Route ({routeInfo.monumentsOnRoute.length})
                     </h3>
-                     <div className="space-y-3">
+                    <div className="space-y-3">
                       {routeInfo.monumentsOnRoute.map((monument, index) => {
                         const isAdded = selectedWaypoints.find(w => w.id === monument.id);
                         return (
                           <div
                             key={monument.id}
-                            className={`p-4 rounded-lg border transition-colors ${
-                              isAdded 
-                                ? 'bg-primary/10 border-primary' 
-                                : 'bg-background border-border hover:border-primary/50'
-                            }`}
+                            className={`p-4 rounded-xl glass-panel transition-all hover:-translate-y-1 ${isAdded
+                                ? 'ring-2 ring-primary border-transparent'
+                                : 'border-white/10 hover:border-primary/50 text-foreground'
+                              }`}
                           >
                             <div className="flex items-start gap-3">
                               <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold flex-shrink-0">
@@ -393,7 +392,7 @@ const RouteSection: React.FC<RouteSectionProps> = ({ onRouteSelected }) => {
 
                 {/* Recommended Itinerary */}
                 {availableTime && (
-                  <div className="p-5 rounded-lg bg-gradient-subtle border border-primary/30">
+                  <div className="p-5 rounded-xl glass-panel border-white/20">
                     <h3 className="text-xl font-semibold mb-3 flex items-center gap-2">
                       <Clock className="w-5 h-5 text-primary" />
                       Recommended Itinerary for {availableTime} hours
@@ -420,7 +419,7 @@ const RouteSection: React.FC<RouteSectionProps> = ({ onRouteSelected }) => {
                       </div>
                     ) : (
                       <p className="text-sm text-muted-foreground">
-                        Your available time ({availableTime}h) covers the travel time ({routeInfo.duration.toFixed(1)}h). 
+                        Your available time ({availableTime}h) covers the travel time ({routeInfo.duration.toFixed(1)}h).
                         Consider adding more time to visit monuments along the way!
                       </p>
                     )}
@@ -428,7 +427,7 @@ const RouteSection: React.FC<RouteSectionProps> = ({ onRouteSelected }) => {
                 )}
 
                 {!availableTime && routeInfo.monumentsOnRoute.length > 0 && (
-                  <div className="p-4 rounded-lg bg-accent/10 border border-accent/20">
+                  <div className="p-4 rounded-xl glass-panel border-white/20">
                     <p className="text-sm text-muted-foreground">
                       💡 Enter your available time above to get a personalized itinerary!
                     </p>

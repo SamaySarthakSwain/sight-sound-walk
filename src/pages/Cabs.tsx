@@ -226,7 +226,7 @@ const Cabs = () => {
           </div>
 
           {/* Route Input Card */}
-          <Card className="mb-8">
+          <Card className="mb-8 glass-card border-none">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <NavIcon className="w-5 h-5 text-primary" />
@@ -337,7 +337,7 @@ const Cabs = () => {
           {showResults && estimates.length > 0 && (
             <div className="space-y-6">
               {/* Route Summary */}
-              <Card className="bg-muted/50">
+              <Card className="glass-panel border-none">
                 <CardContent className="p-4">
                   <div className="flex flex-wrap items-center gap-2 text-sm">
                     <Badge variant="secondary" className="gap-1">
@@ -450,7 +450,7 @@ interface FareCardProps {
 
 const FareCard = ({ estimate, isCheapest, driverRating }: FareCardProps) => {
   return (
-    <Card className={`overflow-hidden transition-all hover:shadow-lg ${isCheapest ? "ring-2 ring-primary bg-primary/5" : ""}`}>
+    <Card className={`overflow-hidden glass-card glass-card-hover border-none ${isCheapest ? "ring-2 ring-primary" : ""}`}>
       <CardContent className="p-4">
         <div className="flex items-center gap-4">
           {/* Logo/Icon */}

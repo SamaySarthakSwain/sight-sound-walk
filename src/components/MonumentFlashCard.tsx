@@ -90,7 +90,7 @@ const MonumentFlashCard = ({ monument, imageUrl }: Props) => {
         }}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
-        className="group relative rounded-3xl overflow-hidden bg-white/5 dark:bg-black/40 backdrop-blur-2xl border border-white/20 dark:border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.12)] hover:shadow-[0_0_40px_rgba(var(--primary),0.2)] transition-shadow duration-500"
+        className="group relative rounded-3xl overflow-hidden glass-card glass-card-hover"
       >
         {/* Neon Edge Glow (Visible on Hover) */}
         <div className="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none shadow-[inset_0_0_20px_rgba(var(--primary),0.3)] z-0" />
@@ -122,14 +122,14 @@ const MonumentFlashCard = ({ monument, imageUrl }: Props) => {
 
             {/* Category badge */}
             <div className="absolute top-3 left-3 z-10" style={{ transform: "translateZ(40px)" }}>
-              <Badge className="bg-white/20 hover:bg-white/30 text-white backdrop-blur-md border border-white/30 font-medium shadow-sm">
+              <Badge className="bg-white/30 hover:bg-white/40 text-white backdrop-blur-xl border border-white/40 font-medium shadow-md">
                 {monument.category}
               </Badge>
             </div>
 
             {monument.is_featured && (
               <div className="absolute top-3 right-3 z-10" style={{ transform: "translateZ(40px)" }}>
-                <Badge variant="secondary" className="bg-amber-500/80 hover:bg-amber-500 text-white backdrop-blur-md border border-amber-300/50 shadow-sm font-medium">
+                <Badge variant="secondary" className="bg-gradient-to-r from-amber-500/80 to-orange-500/80 hover:from-amber-500 hover:to-orange-500 text-white backdrop-blur-xl border border-amber-300/50 shadow-md font-medium">
                   Featured
                 </Badge>
               </div>
@@ -137,7 +137,7 @@ const MonumentFlashCard = ({ monument, imageUrl }: Props) => {
 
             {monument.distance_from_berhampur && (
               <div className="absolute bottom-3 left-3 z-10" style={{ transform: "translateZ(20px)" }}>
-                <p className="text-xs text-white/90 font-medium drop-shadow-md bg-black/40 px-2 py-1 rounded-full backdrop-blur-sm border border-white/10">
+                <p className="text-xs text-white/95 font-medium drop-shadow-lg bg-black/50 px-2 py-1 rounded-full backdrop-blur-md border border-white/20">
                   📍 {monument.distance_from_berhampur}
                 </p>
               </div>
@@ -172,13 +172,11 @@ const MonumentFlashCard = ({ monument, imageUrl }: Props) => {
               <button
                 type="button"
                 onClick={isReading ? handleStop : handleSpeak}
-                className="flex-1 inline-flex items-center justify-center gap-2 rounded-xl h-11 text-sm font-medium transition-all duration-300 active:scale-95 shadow-lg overflow-hidden relative"
+                className="flex-1 inline-flex items-center justify-center gap-2 rounded-xl h-11 text-sm font-medium transition-all duration-300 active:scale-95 shadow-lg overflow-hidden relative glass-button"
                 style={{
-                  backgroundColor: isReading ? "hsl(var(--destructive))" : "hsl(var(--primary))",
-                  color: "hsl(var(--primary-foreground))",
+                  backgroundColor: isReading ? "hsl(var(--destructive)/0.8)" : "",
                 }}
               >
-                <div className="absolute inset-0 bg-white/20 opacity-0 hover:opacity-100 transition-opacity" />
                 {isReading ? (
                   <><VolumeX className="w-4 h-4" /> Stop</>
                 ) : (
@@ -189,7 +187,7 @@ const MonumentFlashCard = ({ monument, imageUrl }: Props) => {
               <button
                 type="button"
                 onClick={toggleSummary}
-                className="flex-[0.6] inline-flex items-center justify-center gap-1.5 rounded-xl h-11 text-sm font-medium border border-border/50 bg-background/50 hover:bg-background/80 text-foreground transition-all duration-300 active:scale-95 shadow-sm backdrop-blur-sm"
+                className="flex-[0.6] inline-flex items-center justify-center gap-1.5 rounded-xl h-11 text-sm font-medium glass-panel hover:bg-white/20 dark:hover:bg-white/10 text-foreground transition-all duration-300 active:scale-95 border-white/20"
               >
                 <FileText className="w-4 h-4" />
                 {showSummary ? "Hide" : "Facts"}
@@ -204,7 +202,7 @@ const MonumentFlashCard = ({ monument, imageUrl }: Props) => {
                 className="overflow-hidden"
               >
                 {monument.facts && monument.facts.length > 0 ? (
-                  <div className="p-4 rounded-xl bg-black/5 dark:bg-white/5 backdrop-blur-sm border border-black/5 dark:border-white/5 space-y-3 mt-3 shadow-inner">
+                  <div className="p-4 rounded-xl glass-panel space-y-3 mt-3 shadow-inner">
                     <h4 className="font-semibold text-sm flex items-center gap-1.5 text-foreground">
                       <FileText className="w-4 h-4 text-primary" />
                       Historical Facts
@@ -216,7 +214,7 @@ const MonumentFlashCard = ({ monument, imageUrl }: Props) => {
                     </ul>
                   </div>
                 ) : (
-                  <div className="p-4 rounded-xl bg-black/5 dark:bg-white/5 backdrop-blur-sm border border-black/5 dark:border-white/5 mt-3 shadow-inner">
+                  <div className="p-4 rounded-xl glass-panel mt-3 shadow-inner">
                     <p className="text-sm text-foreground/70 italic text-center">
                       No additional facts available for this monument yet.
                     </p>

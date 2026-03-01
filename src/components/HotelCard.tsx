@@ -23,9 +23,8 @@ export const HotelCard = ({ hotel }: HotelCardProps) => {
         {Array.from({ length: 5 }).map((_, i) => (
           <Star
             key={i}
-            className={`h-4 w-4 ${
-              i < rating ? 'fill-yellow-400 text-yellow-400' : 'text-muted-foreground/30'
-            }`}
+            className={`h-4 w-4 ${i < rating ? 'fill-yellow-400 text-yellow-400' : 'text-muted-foreground/30'
+              }`}
           />
         ))}
       </div>
@@ -41,7 +40,7 @@ export const HotelCard = ({ hotel }: HotelCardProps) => {
   };
 
   return (
-    <Card className="overflow-hidden hover:shadow-lg transition-all duration-300 group">
+    <Card className="overflow-hidden glass-card glass-card-hover group border-transparent">
       <div className="relative h-48 overflow-hidden">
         <img
           src={hotel.image_url || 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800'}
@@ -56,8 +55,8 @@ export const HotelCard = ({ hotel }: HotelCardProps) => {
           )}
         </div>
         <div className="absolute top-3 right-3">
-          <Badge 
-            variant="outline" 
+          <Badge
+            variant="outline"
             className={`${getAvailabilityColor(hotel.available_rooms, hotel.total_rooms)} backdrop-blur-sm`}
           >
             <Users className="h-3 w-3 mr-1" />
@@ -119,7 +118,7 @@ export const HotelCard = ({ hotel }: HotelCardProps) => {
               <span className="text-xs font-normal text-muted-foreground">/night</span>
             </p>
           </div>
-        <div className="flex gap-2">
+          <div className="flex gap-2">
             <Button variant="outline" size="sm" asChild>
               <a href="tel:8327780375">
                 <Phone className="h-4 w-4" />

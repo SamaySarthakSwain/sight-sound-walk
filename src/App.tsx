@@ -39,12 +39,12 @@ const App = () => {
       <QueryClientProvider client={queryClient}>
         <TooltipProvider>
           <CityProvider>
-            <FloatingParticles />
-            <ProactiveNudgeTrigger />
-            <OfflineBanner />
-            <Toaster />
-            <Sonner />
             <BrowserRouter>
+              <FloatingParticles />
+              <ProactiveNudgeTrigger />
+              <OfflineBanner />
+              <Toaster />
+              <Sonner />
               <Suspense fallback={<PageLoader />}>
                 <Routes>
                   <Route path="/" element={<Index />} />

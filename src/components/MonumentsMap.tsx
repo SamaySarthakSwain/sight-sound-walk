@@ -110,7 +110,7 @@ const MonumentsMap: React.FC<MonumentsMapProps> = ({ routeData }) => {
             lng: position.coords.longitude
           };
           setUserLocation(newLocation);
-          
+
           if (isFirstLocation) {
             setMapCenter(newLocation);
             setMapZoom(14);
@@ -140,7 +140,7 @@ const MonumentsMap: React.FC<MonumentsMapProps> = ({ routeData }) => {
   useEffect(() => {
     if (routeData && window.google) {
       const directionsService = new google.maps.DirectionsService();
-      
+
       const waypoints = routeData.waypoints?.map(wp => ({
         location: { lat: wp.lat, lng: wp.lng },
         stopover: true
@@ -179,7 +179,7 @@ const MonumentsMap: React.FC<MonumentsMapProps> = ({ routeData }) => {
   return (
     <section className="py-20 bg-background">
       <div className="container mx-auto px-4">
-        <Card className="shadow-medium">
+        <Card className="shadow-medium glass-card border-none">
           <CardHeader>
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
               <div>
@@ -192,19 +192,19 @@ const MonumentsMap: React.FC<MonumentsMapProps> = ({ routeData }) => {
                 </CardDescription>
               </div>
               <div className="flex gap-2">
-                <Button 
-                    variant="outline" 
-                    onClick={() => {
-                        if (userLocation) {
-                            setMapCenter(userLocation);
-                            setMapZoom(14);
-                        }
-                    }}
-                    disabled={!userLocation}
-                    className="gap-2"
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    if (userLocation) {
+                      setMapCenter(userLocation);
+                      setMapZoom(14);
+                    }
+                  }}
+                  disabled={!userLocation}
+                  className="gap-2"
                 >
-                    <NavButtonIcon className="w-4 h-4" />
-                    My Location
+                  <NavButtonIcon className="w-4 h-4" />
+                  My Location
                 </Button>
                 <DownloadMapButton />
               </div>
@@ -218,88 +218,88 @@ const MonumentsMap: React.FC<MonumentsMapProps> = ({ routeData }) => {
               </div>
             ) : (
               <>
-            {/* Map */}
-            <LoadScript {...loadScriptOptions}>
-              <GoogleMap
-                mapContainerStyle={mapContainerStyle}
-                center={mapCenter}
-                zoom={mapZoom}
-                onLoad={(map) => setMap(map)}
-                options={{
-                  styles: [
-                    {
-                      featureType: "poi",
-                      elementType: "labels",
-                      stylers: [{ visibility: "off" }]
-                    }
-                  ]
-                }}
-              >
-                {/* Display route if available */}
-                {directions && (
-                  <DirectionsRenderer
-                    directions={directions}
+                {/* Map */}
+                <LoadScript {...loadScriptOptions}>
+                  <GoogleMap
+                    mapContainerStyle={mapContainerStyle}
+                    center={mapCenter}
+                    zoom={mapZoom}
+                    onLoad={(map) => setMap(map)}
                     options={{
-                      polylineOptions: {
-                        strokeColor: '#e07a3f',
-                        strokeWeight: 5,
-                        strokeOpacity: 0.8
-                      },
-                      suppressMarkers: false
+                      styles: [
+                        {
+                          featureType: "poi",
+                          elementType: "labels",
+                          stylers: [{ visibility: "off" }]
+                        }
+                      ]
                     }}
-                  />
-                )}
-                
-                {/* Show monument markers always */}
-                {monuments.map((monument) => (
-                  <Marker
-                    key={monument.id}
-                    position={monument.position}
-                    onClick={() => setSelectedMonument(monument)}
-                    icon={{
-                      url: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 24 24' fill='%23e07a3f'%3E%3Cpath d='M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z'/%3E%3C/svg%3E"
-                    }}
-                  />
-                ))}
-
-                {/* User's current location marker */}
-                {userLocation && (
-                  <Marker
-                    position={userLocation}
-                    icon={{
-                      url: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='%234285F4'%3E%3Ccircle cx='12' cy='12' r='8' fill='%234285F4' stroke='white' stroke-width='3'/%3E%3C/svg%3E"
-                    }}
-                    title="Your Location"
-                  />
-                )}
-
-                {selectedMonument && !directions && (
-                  <InfoWindow
-                    position={selectedMonument.position}
-                    onCloseClick={() => setSelectedMonument(null)}
                   >
-                    <div className="p-2">
-                      <h3 className="font-bold text-base mb-1">{selectedMonument.name}</h3>
-                      <p className="text-sm text-gray-600">{selectedMonument.description}</p>
-                    </div>
-                  </InfoWindow>
-                )}
-              </GoogleMap>
-            </LoadScript>
+                    {/* Display route if available */}
+                    {directions && (
+                      <DirectionsRenderer
+                        directions={directions}
+                        options={{
+                          polylineOptions: {
+                            strokeColor: '#e07a3f',
+                            strokeWeight: 5,
+                            strokeOpacity: 0.8
+                          },
+                          suppressMarkers: false
+                        }}
+                      />
+                    )}
 
-            {/* Monument List */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {monuments.map((monument) => (
-                <div
-                  key={monument.id}
-                  className="p-4 rounded-lg border bg-card hover:bg-accent/5 transition-smooth cursor-pointer"
-                  onClick={() => setSelectedMonument(monument)}
-                >
-                  <h4 className="font-semibold text-base">{monument.name}</h4>
-                  <p className="text-sm text-muted-foreground mt-1">{monument.description}</p>
+                    {/* Show monument markers always */}
+                    {monuments.map((monument) => (
+                      <Marker
+                        key={monument.id}
+                        position={monument.position}
+                        onClick={() => setSelectedMonument(monument)}
+                        icon={{
+                          url: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 24 24' fill='%23e07a3f'%3E%3Cpath d='M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z'/%3E%3C/svg%3E"
+                        }}
+                      />
+                    ))}
+
+                    {/* User's current location marker */}
+                    {userLocation && (
+                      <Marker
+                        position={userLocation}
+                        icon={{
+                          url: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='%234285F4'%3E%3Ccircle cx='12' cy='12' r='8' fill='%234285F4' stroke='white' stroke-width='3'/%3E%3C/svg%3E"
+                        }}
+                        title="Your Location"
+                      />
+                    )}
+
+                    {selectedMonument && !directions && (
+                      <InfoWindow
+                        position={selectedMonument.position}
+                        onCloseClick={() => setSelectedMonument(null)}
+                      >
+                        <div className="p-2">
+                          <h3 className="font-bold text-base mb-1">{selectedMonument.name}</h3>
+                          <p className="text-sm text-gray-600">{selectedMonument.description}</p>
+                        </div>
+                      </InfoWindow>
+                    )}
+                  </GoogleMap>
+                </LoadScript>
+
+                {/* Monument List */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {monuments.map((monument) => (
+                    <div
+                      key={monument.id}
+                      className="p-4 rounded-xl glass-panel glass-card-hover cursor-pointer border-transparent"
+                      onClick={() => setSelectedMonument(monument)}
+                    >
+                      <h4 className="font-semibold text-base">{monument.name}</h4>
+                      <p className="text-sm text-muted-foreground mt-1">{monument.description}</p>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
               </>
             )}
           </CardContent>

@@ -43,7 +43,7 @@ export const HotelFilters = ({
   };
 
   return (
-    <Card>
+    <Card className="glass-card border-none">
       <CardHeader className="pb-4">
         <CardTitle className="text-lg">Filters</CardTitle>
       </CardHeader>

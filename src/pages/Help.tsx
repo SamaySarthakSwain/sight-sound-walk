@@ -127,7 +127,7 @@ const Help = () => {
           </p>
 
           {/* SOS Emergency Section */}
-          <Card className="mb-8 border-red-200 bg-gradient-to-r from-red-50 to-orange-50 dark:from-red-950/20 dark:to-orange-950/20">
+          <Card className="mb-8 border-none glass-card bg-gradient-to-r from-red-50/10 to-orange-50/10 dark:from-red-950/20 dark:to-orange-950/20">
             <CardHeader>
               <div className="flex items-center gap-3">
                 <div className="w-12 h-12 rounded-full bg-red-500 flex items-center justify-center animate-pulse">
@@ -175,7 +175,7 @@ const Help = () => {
           </Card>
 
           {/* Nearby Facilities Section */}
-          <Card className="mb-8">
+          <Card className="mb-8 glass-card border-none">
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div>
@@ -234,7 +234,7 @@ const Help = () => {
           </Card>
 
           {/* Quick Actions */}
-          <Card className="mb-8">
+          <Card className="mb-8 glass-card border-none">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Car className="w-5 h-5 text-primary" />
@@ -284,7 +284,7 @@ const Help = () => {
           </Card>
 
           {/* Contact Information */}
-          <Card className="mb-8">
+          <Card className="mb-8 glass-card border-none">
             <CardHeader>
               <CardTitle>App Support Contact</CardTitle>
               <CardDescription>
@@ -298,8 +298,8 @@ const Help = () => {
                 </div>
                 <div>
                   <h3 className="font-semibold mb-1">Phone Number</h3>
-                  <a 
-                    href="tel:+918327780375" 
+                  <a
+                    href="tel:+918327780375"
                     className="text-primary hover:underline"
                   >
                     +91 83277 80375
@@ -330,7 +330,7 @@ const Help = () => {
           </Card>
 
           {/* About Section */}
-          <Card>
+          <Card className="glass-card border-none">
             <CardHeader>
               <CardTitle>About Lets Explore</CardTitle>
             </CardHeader>

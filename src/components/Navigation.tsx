@@ -70,7 +70,7 @@ const Navigation = () => {
     const Icon = item.icon;
     return (
       <Link to={item.path} onClick={onClick}>
-        <Button 
+        <Button
           variant={location.pathname === item.path ? "default" : "ghost"}
           className="gap-2 w-full justify-start md:w-auto md:justify-center"
         >
@@ -82,7 +82,7 @@ const Navigation = () => {
   };
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border/50">
+    <nav className="fixed top-0 left-0 right-0 z-50 glass-navbar">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-14 md:h-16">
           {/* Logo */}
@@ -202,7 +202,7 @@ const Navigation = () => {
                 </Button>
               </Link>
             )}
-            
+
             <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
               <SheetTrigger asChild>
                 <Button variant="ghost" size="icon" className="h-9 w-9">

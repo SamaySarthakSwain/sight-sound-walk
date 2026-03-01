@@ -102,7 +102,7 @@ const DatabaseMonuments = () => {
                 placeholder="Search monuments, temples, beaches..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 pr-10 rounded-full border-border/60 bg-card/80 backdrop-blur-sm focus:border-primary/50 transition-colors"
+                className="pl-10 pr-10 rounded-full glass-input h-12 text-base shadow-lg"
               />
               {searchQuery && (
                 <button

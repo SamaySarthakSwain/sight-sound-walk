@@ -28,7 +28,7 @@ const PreferencesSection = () => {
     <section className="py-20">
       <div className="container mx-auto px-4">
         <div className="max-w-3xl mx-auto">
-          <Card className="shadow-medium">
+          <Card className="shadow-medium glass-card border-none">
             <CardHeader>
               <CardTitle className="text-3xl flex items-center gap-3">
                 <Bell className="w-8 h-8 text-primary" />
@@ -41,7 +41,7 @@ const PreferencesSection = () => {
 
             <CardContent className="space-y-8">
               {/* Notification Toggle */}
-              <div className="flex items-center justify-between p-4 rounded-lg bg-muted/50">
+              <div className="flex items-center justify-between p-4 rounded-xl glass-panel">
                 <div className="space-y-1">
                   <Label htmlFor="notifications" className="text-base font-semibold">
                     Location Notifications
@@ -64,11 +64,10 @@ const PreferencesSection = () => {
                   {monumentTypes.map(({ id, label, icon: Icon }) => (
                     <div
                       key={id}
-                      className={`flex items-center space-x-3 p-4 rounded-lg border-2 cursor-pointer transition-smooth ${
-                        selectedTypes.includes(id)
-                          ? "border-primary bg-primary/5"
-                          : "border-border hover:border-primary/50"
-                      }`}
+                      className={`flex items-center space-x-3 p-4 rounded-xl glass-panel cursor-pointer transition-all hover:-translate-y-1 ${selectedTypes.includes(id)
+                          ? "ring-2 ring-primary border-transparent"
+                          : "border-white/10 hover:border-primary/50"
+                        }`}
                       onClick={() => toggleType(id)}
                     >
                       <Checkbox
@@ -86,7 +85,7 @@ const PreferencesSection = () => {
               </div>
 
               {/* Summary */}
-              <div className="p-4 rounded-lg bg-gradient-card border border-border/50">
+              <div className="p-4 rounded-xl glass-panel border-white/10">
                 <p className="text-sm text-muted-foreground">
                   You will receive {notificationsEnabled ? "notifications" : "no notifications"} about{" "}
                   <span className="font-semibold text-foreground">

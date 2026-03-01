@@ -59,11 +59,10 @@ const FoodPlaceCard = ({ place, onRate, isLoggedIn }: FoodPlaceCardProps) => {
         {[1, 2, 3, 4, 5].map((star) => (
           <Star
             key={star}
-            className={`w-3.5 h-3.5 ${
-              star <= Math.round(rating)
+            className={`w-3.5 h-3.5 ${star <= Math.round(rating)
                 ? "fill-amber-400 text-amber-400"
                 : "text-muted-foreground"
-            }`}
+              }`}
           />
         ))}
         <span className="ml-1 text-sm font-medium">
@@ -94,7 +93,7 @@ const FoodPlaceCard = ({ place, onRate, isLoggedIn }: FoodPlaceCardProps) => {
   const imageUrl = place.image_url || getFoodFallbackImage(place);
 
   return (
-    <Card className="overflow-hidden">
+    <Card className="overflow-hidden glass-card glass-card-hover">
       {/* Food Place Image */}
       <div className="relative h-40 overflow-hidden">
         <img
@@ -107,7 +106,7 @@ const FoodPlaceCard = ({ place, onRate, isLoggedIn }: FoodPlaceCardProps) => {
           {place.is_food_street ? "Food Street" : place.category}
         </Badge>
       </div>
-      
+
       <CardHeader className="pb-2">
         <div className="flex items-start justify-between gap-2">
           <div>
@@ -152,7 +151,7 @@ const FoodPlaceCard = ({ place, onRate, isLoggedIn }: FoodPlaceCardProps) => {
 
         {/* Google Rating */}
         {place.google_rating && (
-          <div className="flex items-center gap-2 p-2 rounded-md bg-muted/50">
+          <div className="flex items-center gap-2 p-2 rounded-md glass-panel">
             <div className="flex items-center gap-1">
               <img src="https://www.google.com/favicon.ico" alt="Google" className="w-4 h-4" />
               <span className="text-xs font-medium">Google</span>
@@ -171,22 +170,22 @@ const FoodPlaceCard = ({ place, onRate, isLoggedIn }: FoodPlaceCardProps) => {
         <div className="pt-2 border-t">
           <p className="text-xs font-medium mb-2 text-muted-foreground">Community Ratings</p>
           <div className="grid grid-cols-2 gap-2">
-          <div>
-            <span className="text-xs text-muted-foreground">Overall</span>
-            {renderStars(place.avg_overall)}
-          </div>
-          <div>
-            <span className="text-xs text-muted-foreground">Taste</span>
-            {renderStars(place.avg_taste)}
-          </div>
-          <div>
-            <span className="text-xs text-muted-foreground">Hygiene</span>
-            {renderStars(place.avg_hygiene)}
-          </div>
-          <div>
-            <span className="text-xs text-muted-foreground">Value</span>
-            {renderStars(place.avg_value)}
-          </div>
+            <div>
+              <span className="text-xs text-muted-foreground">Overall</span>
+              {renderStars(place.avg_overall)}
+            </div>
+            <div>
+              <span className="text-xs text-muted-foreground">Taste</span>
+              {renderStars(place.avg_taste)}
+            </div>
+            <div>
+              <span className="text-xs text-muted-foreground">Hygiene</span>
+              {renderStars(place.avg_hygiene)}
+            </div>
+            <div>
+              <span className="text-xs text-muted-foreground">Value</span>
+              {renderStars(place.avg_value)}
+            </div>
           </div>
         </div>
 

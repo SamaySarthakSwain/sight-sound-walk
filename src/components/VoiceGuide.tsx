@@ -546,7 +546,7 @@ const VoiceGuide = () => {
 
   return (
     <div className="max-w-2xl mx-auto p-4">
-      <Card className="border-0 shadow-2xl bg-gradient-to-b from-card to-card/95 overflow-hidden">
+      <Card className="glass-card shadow-2xl overflow-hidden border-none text-foreground">
         <CardHeader className="text-center pb-2 pt-6">
           {/* Language Selector */}
           <div className="flex justify-center mb-6">
@@ -650,7 +650,7 @@ const VoiceGuide = () => {
         <CardContent className="space-y-3 pb-6">
           {/* Transcript Display */}
           {transcript && (
-            <div className="bg-muted/40 backdrop-blur-sm rounded-xl p-3 border border-border/30">
+            <div className="glass-panel rounded-xl p-3 border-transparent">
               <p className="text-[10px] uppercase tracking-wider text-muted-foreground/70 mb-1 font-semibold">You said</p>
               <p className="text-sm text-foreground">{transcript}</p>
             </div>
@@ -658,7 +658,7 @@ const VoiceGuide = () => {
 
           {/* Response Display */}
           {response && (
-            <div className="bg-primary/5 backdrop-blur-sm rounded-xl p-3 border border-primary/15">
+            <div className="glass-panel rounded-xl p-3 border-transparent">
               <div className="flex items-center gap-1.5 mb-1">
                 <Sparkles className="w-3 h-3 text-primary" />
                 <p className="text-[10px] uppercase tracking-wider text-primary/70 font-semibold">Guide</p>
