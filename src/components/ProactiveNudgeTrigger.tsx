@@ -1,16 +1,18 @@
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import { toast } from "sonner";
 import { Landmark } from "lucide-react";
 import { useMonuments } from "@/hooks/useMonuments";
 import { useGeofencing } from "@/hooks/useGeofencing";
 import { useVisitHistory } from "@/hooks/useVisitHistory";
 import { useAuth } from "@/hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 
 const ProactiveNudgeTrigger = () => {
-    const { data: monuments } = useMonuments();
+    const { monuments } = useMonuments();
     const { nearbyMonument } = useGeofencing(monuments || []);
     const { trackVisit } = useVisitHistory();
     const { user } = useAuth();
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (nearbyMonument && user) {
@@ -29,14 +31,13 @@ const ProactiveNudgeTrigger = () => {
                 action: {
                     label: "Listen",
                     onClick: () => {
-                        // Navigation or triggering voice interaction would happen here
-                        window.location.href = "/assistant";
+                        navigate("/assistant", { state: { proactiveMonument: nearbyMonument } });
                     },
                 },
                 duration: 8000,
             });
         }
-    }, [nearbyMonument, user, trackVisit]);
+    }, [nearbyMonument, user, trackVisit, navigate]);
 
     return null;
 };

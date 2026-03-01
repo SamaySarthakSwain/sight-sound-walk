@@ -1,8 +1,9 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { MapPin, Volume2, FileText, VolumeX, ChevronDown, ChevronUp } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { Monument } from "@/hooks/useMonuments";
+import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 
 interface Props {
   monument: Monument;
@@ -14,6 +15,36 @@ const MonumentFlashCard = ({ monument, imageUrl }: Props) => {
   const [showSummary, setShowSummary] = useState(false);
   const [imgLoaded, setImgLoaded] = useState(false);
   const [imgError, setImgError] = useState(false);
+
+  // Framer Motion 3D Hover Effect
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+
+  const mouseXSpring = useSpring(x, { stiffness: 300, damping: 20 });
+  const mouseYSpring = useSpring(y, { stiffness: 300, damping: 20 });
+
+  const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["15deg", "-15deg"]);
+  const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-15deg", "15deg"]);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const width = rect.width;
+    const height = rect.height;
+
+    const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
+
+    const xPct = mouseX / width - 0.5;
+    const yPct = mouseY / height - 0.5;
+
+    x.set(xPct);
+    y.set(yPct);
+  };
+
+  const handleMouseLeave = () => {
+    x.set(0);
+    y.set(0);
+  };
 
   const handleSpeak = () => {
     try {
@@ -50,114 +81,152 @@ const MonumentFlashCard = ({ monument, imageUrl }: Props) => {
   const fallbackImg = "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=300&fit=crop&q=70";
 
   return (
-    <div className="group relative rounded-2xl overflow-hidden bg-card border border-border/50 shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-glow)] transition-all duration-500 hover:-translate-y-1">
-      {/* Image */}
-      <div className="relative h-48 sm:h-56 overflow-hidden bg-muted">
-        {!imgLoaded && !imgError && (
-          <Skeleton className="absolute inset-0 rounded-none" />
-        )}
-        <img
-          src={imgError ? fallbackImg : imageUrl}
-          alt={monument.title}
-          className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${imgLoaded ? "opacity-100" : "opacity-0"}`}
-          loading="lazy"
-          onLoad={() => setImgLoaded(true)}
-          onError={() => {
-            setImgError(true);
-            setImgLoaded(true);
-          }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent" />
+    <div className="perspective-[2000px] w-full">
+      <motion.div
+        style={{
+          rotateX,
+          rotateY,
+          transformStyle: "preserve-3d",
+        }}
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
+        className="group relative rounded-3xl overflow-hidden bg-white/5 dark:bg-black/40 backdrop-blur-2xl border border-white/20 dark:border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.12)] hover:shadow-[0_0_40px_rgba(var(--primary),0.2)] transition-shadow duration-500"
+      >
+        {/* Neon Edge Glow (Visible on Hover) */}
+        <div className="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none shadow-[inset_0_0_20px_rgba(var(--primary),0.3)] z-0" />
 
-        {/* Category badge */}
-        <div className="absolute top-3 left-3 z-10">
-          <Badge className="bg-primary/90 text-primary-foreground text-xs backdrop-blur-sm border-0">
-            {monument.category}
-          </Badge>
-        </div>
+        {/* Subtle Gradient Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent dark:from-white/5 opacity-50 z-0" />
 
-        {monument.is_featured && (
-          <div className="absolute top-3 right-3 z-10">
-            <Badge variant="secondary" className="bg-secondary/90 text-secondary-foreground text-xs backdrop-blur-sm border-0">
-              Featured
-            </Badge>
-          </div>
-        )}
-      </div>
-
-      {/* Content */}
-      <div className="p-4 sm:p-5 space-y-3">
-        <h3 className="text-lg sm:text-xl font-bold text-foreground group-hover:text-primary transition-colors duration-300 line-clamp-1">
-          {monument.title}
-        </h3>
-
-        <div className="flex items-center gap-1.5 text-xs sm:text-sm text-muted-foreground">
-          <MapPin className="w-3.5 h-3.5 shrink-0 text-primary/70" />
-          <span className="line-clamp-1">{monument.location}</span>
-        </div>
-
-        <p className="text-muted-foreground text-xs sm:text-sm line-clamp-2 leading-relaxed">
-          {monument.description}
-        </p>
-
-        {/* Buttons */}
-        <div className="flex gap-2.5 pt-1">
-          <button
-            type="button"
-            onClick={isReading ? handleStop : handleSpeak}
-            className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-full h-9 sm:h-10 text-xs sm:text-sm font-semibold transition-all duration-300 active:scale-95"
-            style={{
-              backgroundColor: isReading ? "hsl(var(--destructive))" : "hsl(var(--primary))",
-              color: "hsl(var(--primary-foreground))",
-            }}
-          >
-            {isReading ? (
-              <><VolumeX className="w-3.5 h-3.5" /> Stop</>
-            ) : (
-              <><Volume2 className="w-3.5 h-3.5" /> Listen</>
+        <div
+          className="relative z-10"
+          style={{ transform: "translateZ(30px)" }}
+        >
+          {/* Image */}
+          <div className="relative h-48 sm:h-56 overflow-hidden mt-2 mx-2 rounded-2xl shadow-lg ring-1 ring-black/5 dark:ring-white/10">
+            {!imgLoaded && !imgError && (
+              <Skeleton className="absolute inset-0 rounded-2xl" />
             )}
-          </button>
+            <img
+              src={imgError ? fallbackImg : imageUrl}
+              alt={monument.title}
+              className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 ${imgLoaded ? "opacity-100" : "opacity-0"}`}
+              loading="lazy"
+              onLoad={() => setImgLoaded(true)}
+              onError={() => {
+                setImgError(true);
+                setImgLoaded(true);
+              }}
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-transparent" />
 
-          <button
-            type="button"
-            onClick={toggleSummary}
-            className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-full h-9 sm:h-10 text-xs sm:text-sm font-semibold border border-border bg-card text-foreground hover:bg-primary hover:text-primary-foreground transition-all duration-300 active:scale-95"
-          >
-            <FileText className="w-3.5 h-3.5" />
-            {showSummary ? "Hide" : "Facts"}
-            {showSummary ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
-          </button>
-        </div>
+            {/* Category badge */}
+            <div className="absolute top-3 left-3 z-10" style={{ transform: "translateZ(40px)" }}>
+              <Badge className="bg-white/20 hover:bg-white/30 text-white backdrop-blur-md border border-white/30 font-medium shadow-sm">
+                {monument.category}
+              </Badge>
+            </div>
 
-        {/* Facts Section */}
-        {showSummary && monument.facts && monument.facts.length > 0 && (
-          <div className="p-3 rounded-lg bg-muted/50 space-y-2 animate-fade-in">
-            <h4 className="font-semibold text-sm flex items-center gap-1">
-              <FileText className="w-4 h-4 text-primary" />
-              Historical Facts
-            </h4>
-            <ul className="list-disc list-inside space-y-1 text-xs text-muted-foreground">
-              {monument.facts.map((fact, index) => (
-                <li key={index}>{fact}</li>
-              ))}
-            </ul>
+            {monument.is_featured && (
+              <div className="absolute top-3 right-3 z-10" style={{ transform: "translateZ(40px)" }}>
+                <Badge variant="secondary" className="bg-amber-500/80 hover:bg-amber-500 text-white backdrop-blur-md border border-amber-300/50 shadow-sm font-medium">
+                  Featured
+                </Badge>
+              </div>
+            )}
+
+            {monument.distance_from_berhampur && (
+              <div className="absolute bottom-3 left-3 z-10" style={{ transform: "translateZ(20px)" }}>
+                <p className="text-xs text-white/90 font-medium drop-shadow-md bg-black/40 px-2 py-1 rounded-full backdrop-blur-sm border border-white/10">
+                  📍 {monument.distance_from_berhampur}
+                </p>
+              </div>
+            )}
           </div>
-        )}
 
-        {showSummary && (!monument.facts || monument.facts.length === 0) && (
-          <div className="p-3 rounded-lg bg-muted/50 animate-fade-in">
-            <p className="text-xs text-muted-foreground italic">
-              No additional facts available for this monument yet.
+          {/* Content */}
+          <div className="p-5 space-y-4">
+            <div style={{ transform: "translateZ(50px)" }}>
+              <h3 className="text-xl sm:text-2xl font-bold text-foreground bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70 line-clamp-1 pb-1">
+                {monument.title}
+              </h3>
+
+              <div className="flex items-center gap-1.5 text-xs sm:text-sm text-muted-foreground mt-1">
+                <MapPin className="w-4 h-4 shrink-0 text-primary" />
+                <span className="line-clamp-1">{monument.location}</span>
+              </div>
+            </div>
+
+            <p
+              className="text-foreground/80 text-sm line-clamp-3 leading-relaxed"
+              style={{ transform: "translateZ(20px)" }}
+            >
+              {monument.description}
             </p>
-          </div>
-        )}
 
-        {monument.distance_from_berhampur && (
-          <p className="text-xs text-primary font-medium pt-1">
-            📍 {monument.distance_from_berhampur}
-          </p>
-        )}
-      </div>
+            {/* Buttons */}
+            <div
+              className="flex gap-3 pt-2"
+              style={{ transform: "translateZ(40px)" }}
+            >
+              <button
+                type="button"
+                onClick={isReading ? handleStop : handleSpeak}
+                className="flex-1 inline-flex items-center justify-center gap-2 rounded-xl h-11 text-sm font-medium transition-all duration-300 active:scale-95 shadow-lg overflow-hidden relative"
+                style={{
+                  backgroundColor: isReading ? "hsl(var(--destructive))" : "hsl(var(--primary))",
+                  color: "hsl(var(--primary-foreground))",
+                }}
+              >
+                <div className="absolute inset-0 bg-white/20 opacity-0 hover:opacity-100 transition-opacity" />
+                {isReading ? (
+                  <><VolumeX className="w-4 h-4" /> Stop</>
+                ) : (
+                  <><Volume2 className="w-4 h-4" /> Listen</>
+                )}
+              </button>
+
+              <button
+                type="button"
+                onClick={toggleSummary}
+                className="flex-[0.6] inline-flex items-center justify-center gap-1.5 rounded-xl h-11 text-sm font-medium border border-border/50 bg-background/50 hover:bg-background/80 text-foreground transition-all duration-300 active:scale-95 shadow-sm backdrop-blur-sm"
+              >
+                <FileText className="w-4 h-4" />
+                {showSummary ? "Hide" : "Facts"}
+              </button>
+            </div>
+
+            {/* Facts Section */}
+            {showSummary && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                className="overflow-hidden"
+              >
+                {monument.facts && monument.facts.length > 0 ? (
+                  <div className="p-4 rounded-xl bg-black/5 dark:bg-white/5 backdrop-blur-sm border border-black/5 dark:border-white/5 space-y-3 mt-3 shadow-inner">
+                    <h4 className="font-semibold text-sm flex items-center gap-1.5 text-foreground">
+                      <FileText className="w-4 h-4 text-primary" />
+                      Historical Facts
+                    </h4>
+                    <ul className="list-disc list-inside space-y-1.5 text-sm text-foreground/80 marker:text-primary/50">
+                      {monument.facts.map((fact, index) => (
+                        <li key={index} className="leading-relaxed">{fact}</li>
+                      ))}
+                    </ul>
+                  </div>
+                ) : (
+                  <div className="p-4 rounded-xl bg-black/5 dark:bg-white/5 backdrop-blur-sm border border-black/5 dark:border-white/5 mt-3 shadow-inner">
+                    <p className="text-sm text-foreground/70 italic text-center">
+                      No additional facts available for this monument yet.
+                    </p>
+                  </div>
+                )}
+              </motion.div>
+            )}
+          </div>
+        </div>
+      </motion.div>
     </div>
   );
 };

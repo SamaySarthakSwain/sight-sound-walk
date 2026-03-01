@@ -1,4 +1,5 @@
-import { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { Send, Trash2, Bot, Sparkles, Globe, CloudSun, MessageSquare, Mic } from "lucide-react";
 import Navigation from "@/components/Navigation";
 import { Button } from "@/components/ui/button";
@@ -25,8 +26,9 @@ const suggestedQuestions = [
 ];
 
 const Assistant = () => {
+  const location = useLocation();
   const [input, setInput] = useState("");
-  const [activeTab, setActiveTab] = useState("chat");
+  const [activeTab, setActiveTab] = useState(location.state?.proactiveMonument ? "voice" : "chat");
   const { messages, isLoading, error, sendMessage, clearChat, language, setLanguage } = useTravelChat();
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -107,7 +109,7 @@ const Assistant = () => {
                 </div>
               )}
             </div>
-            
+
             <TabsList className="grid w-full max-w-md grid-cols-2">
               <TabsTrigger value="chat" className="gap-2">
                 <MessageSquare className="h-4 w-4" />

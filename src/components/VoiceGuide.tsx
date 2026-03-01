@@ -13,6 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Globe } from "lucide-react";
+import { useLocation, useNavigate } from "react-router-dom";
 
 // Web Speech API types
 interface SpeechRecognitionEvent extends Event {
@@ -97,6 +98,22 @@ const VoiceGuide = () => {
   const animFrameRef = useRef<number>(0);
 
   const { toast } = useToast();
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (location.state?.proactiveMonument) {
+      const monument = location.state.proactiveMonument;
+      if (!isConversationActive) {
+        setIsConversationActive(true);
+        shouldRestartRef.current = true;
+      }
+      handleProactiveNudge(monument.title);
+
+      // Clear the state so it doesn't re-trigger on remount
+      navigate(location.pathname, { replace: true, state: {} });
+    }
+  }, [location.state?.proactiveMonument, isConversationActive, navigate]);
 
   useEffect(() => {
     const handleNudge = (event: any) => {
