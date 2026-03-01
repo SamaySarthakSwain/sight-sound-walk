@@ -21,7 +21,7 @@ const odishaLocations: Record<string, { lat: number; lon: number; name: string }
 
 async function fetchWeatherData(location: string): Promise<string | null> {
   const locationKey = location.toLowerCase().replace(/[^a-z]/g, '');
-  
+
   // Find matching location
   let coords = null;
   for (const [key, value] of Object.entries(odishaLocations)) {
@@ -30,7 +30,7 @@ async function fetchWeatherData(location: string): Promise<string | null> {
       break;
     }
   }
-  
+
   // Default to Bhubaneswar if no match
   if (!coords) {
     coords = odishaLocations["bhubaneswar"];
@@ -38,17 +38,17 @@ async function fetchWeatherData(location: string): Promise<string | null> {
 
   try {
     const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${coords.lat}&longitude=${coords.lon}&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=Asia%2FKolkata&forecast_days=3`;
-    
+
     const response = await fetch(weatherUrl);
     if (!response.ok) {
       console.error("Weather API error:", response.status);
       return null;
     }
-    
+
     const data = await response.json();
     const current = data.current;
     const daily = data.daily;
-    
+
     const weatherCodes: Record<number, string> = {
       0: "Clear sky",
       1: "Mainly clear",
@@ -72,9 +72,9 @@ async function fetchWeatherData(location: string): Promise<string | null> {
       96: "Thunderstorm with slight hail",
       99: "Thunderstorm with heavy hail",
     };
-    
+
     const currentCondition = weatherCodes[current.weather_code] || "Unknown";
-    
+
     return `
 **Current Weather in ${coords.name}:**
 - Temperature: ${current.temperature_2m}°C
@@ -109,16 +109,16 @@ serve(async (req) => {
   try {
     const { messages, language = "en", includeWeather = false, weatherLocation = "" } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    
+
     if (!LOVABLE_API_KEY) {
       throw new Error("LOVABLE_API_KEY is not configured");
     }
 
-    console.log("Processing travel assistant request:", { 
-      messageCount: messages.length, 
-      language, 
+    console.log("Processing travel assistant request:", {
+      messageCount: messages.length,
+      language,
       includeWeather,
-      weatherLocation 
+      weatherLocation
     });
 
     // Fetch weather data if requested
@@ -139,6 +139,11 @@ serve(async (req) => {
 - **Local Tips**: Culture, etiquette at temples, local cuisine (like Pakhala, Chhena Poda), transportation, and safety.
 - **Itinerary Planning**: Suggest routes between destinations, travel times, must-see spots.
 - **History & Culture**: Share fascinating stories about Odisha's rich heritage, Kalinga architecture, and traditions.
+
+PRONUNCIATION & STYLE:
+- Pronounce Indian names, deities, and places with a natural, clear Indian English accent.
+- Ensure words like "Bhubaneswar", "Jagannath", "Rasagola", "Konark", and "Odisha" are pronounced naturally for a local audience.
+- Maintain a warm, welcoming, and helpful local guide persona.
 
 ${langInstruction}
 
@@ -163,7 +168,7 @@ Keep responses concise, friendly, and helpful. Use emojis sparingly to add warmt
     if (!response.ok) {
       const errorText = await response.text();
       console.error("AI gateway error:", response.status, errorText);
-      
+
       if (response.status === 429) {
         return new Response(
           JSON.stringify({ error: "Rate limit exceeded. Please try again in a moment." }),
@@ -176,7 +181,7 @@ Keep responses concise, friendly, and helpful. Use emojis sparingly to add warmt
           { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
-      
+
       return new Response(
         JSON.stringify({ error: "Failed to get AI response" }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }

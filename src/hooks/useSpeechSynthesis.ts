@@ -28,7 +28,7 @@ export const useSpeechSynthesis = () => {
   useEffect(() => {
     if (typeof window !== "undefined" && "speechSynthesis" in window) {
       setIsSupported(true);
-      
+
       const loadVoices = () => {
         const voices = window.speechSynthesis.getVoices();
         setAvailableVoices(voices);
@@ -60,7 +60,7 @@ export const useSpeechSynthesis = () => {
 
     // Last resort: find any voice that includes the language code
     voice = availableVoices.find(v => v.lang.toLowerCase().includes(lang));
-    
+
     return voice || availableVoices[0] || null;
   }, [availableVoices]);
 
@@ -91,7 +91,7 @@ export const useSpeechSynthesis = () => {
       utterance.lang = speechLanguageCodes[lang];
     }
 
-    utterance.rate = 0.9;
+    utterance.rate = 1.1;
     utterance.pitch = 1;
 
     utterance.onstart = () => setIsSpeaking(true);
