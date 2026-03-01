@@ -21,6 +21,7 @@ import {
   FareEstimate,
 } from "@/hooks/useCabServices";
 import { useCity } from "@/contexts/CityContext";
+import { useJsApiLoader } from "@react-google-maps/api";
 import {
   Car,
   Bike,
@@ -42,6 +43,11 @@ const Cabs = () => {
   const { selectedCity } = useCity();
 
   const cityDisplayName = selectedCity.split(",")[0] || "Odisha";
+
+  const { isLoaded } = useJsApiLoader({
+    id: 'google-map-script',
+    googleMapsApiKey: "AIzaSyBVVkTWwfx3NW6bFi1t7CEomwv1owCO1SI",
+  });
 
   const [startLocation, setStartLocation] = useState("");
   const [endLocation, setEndLocation] = useState("");
@@ -74,11 +80,7 @@ const Cabs = () => {
     setStops(newStops);
   };
 
-  const handleGo = () => {
-    if (!startLocation.trim() || !endLocation.trim()) {
-      return;
-    }
-
+  const fallbackGo = () => {
     const distanceKm = calculateMockDistance();
     const durationMins = Math.round(distanceKm * 3); // ~3 min per km
 
@@ -92,6 +94,62 @@ const Cabs = () => {
       );
       setEstimates(newEstimates);
       setShowResults(true);
+    }
+  };
+
+  const handleGo = () => {
+    if (!startLocation.trim() || !endLocation.trim()) {
+      return;
+    }
+
+    if (isLoaded && window.google && window.google.maps) {
+      const directionsService = new window.google.maps.DirectionsService();
+
+      const waypoints = stops.filter(s => s.trim()).map(stop => ({
+        location: stop,
+        stopover: true
+      }));
+
+      directionsService.route(
+        {
+          origin: startLocation + ", " + selectedCity,
+          destination: endLocation + ", " + selectedCity,
+          waypoints,
+          travelMode: window.google.maps.TravelMode.DRIVING,
+        },
+        (result, status) => {
+          if (status === window.google.maps.DirectionsStatus.OK && result) {
+            let totalDistanceMeters = 0;
+            let totalDurationSeconds = 0;
+
+            const route = result.routes[0];
+            route.legs.forEach(leg => {
+              totalDistanceMeters += leg?.distance?.value || 0;
+              totalDurationSeconds += leg?.duration?.value || 0;
+            });
+
+            const distanceKm = +(totalDistanceMeters / 1000).toFixed(1);
+            const durationMins = Math.round(totalDurationSeconds / 60);
+
+            if (cabServices && vehicleTypes) {
+              const newEstimates = calculateFareEstimates(
+                cabServices,
+                vehicleTypes,
+                distanceKm,
+                durationMins,
+                passengers
+              );
+              setEstimates(newEstimates);
+              setShowResults(true);
+            }
+          } else {
+            console.error('Directions request failed:', status);
+            fallbackGo();
+          }
+        }
+      );
+    } else {
+      fallbackGo();
     }
   };
 

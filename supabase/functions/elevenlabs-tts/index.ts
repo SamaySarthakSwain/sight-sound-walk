@@ -6,8 +6,8 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-// Sam voice from ElevenLabs — warm, clear tourism guide voice
-const DEFAULT_VOICE_ID = "EXAVITQu4vr4xnSDxMaL"; // Sarah - clear female voice as fallback
+// Aria voice from ElevenLabs — expressive and fast, clear for Indian English users
+const DEFAULT_VOICE_ID = "9BWtsMINqrJLrRacOk9x";
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -20,7 +20,8 @@ serve(async (req) => {
     // Try the original key first (likely paid), then connector key
     const ELEVENLABS_API_KEY =
       Deno.env.get("ELEVENLABS_API_KEY") ||
-      Deno.env.get("ELEVENLABS_API_KEY_1");
+      Deno.env.get("ELEVENLABS_API_KEY_1") ||
+      "sk_5f627b66b505cd37ffcf58932ce711fed703cbea51b5a400";
 
     if (!ELEVENLABS_API_KEY) {
       throw new Error("ELEVENLABS_API_KEY is not configured");
@@ -43,7 +44,7 @@ serve(async (req) => {
     const selectedVoice = voiceId || DEFAULT_VOICE_ID;
 
     const response = await fetch(
-      `https://api.elevenlabs.io/v1/text-to-speech/${selectedVoice}?output_format=mp3_44100_128`,
+      `https://api.elevenlabs.io/v1/text-to-speech/${selectedVoice}?output_format=mp3_44100_128&optimize_streaming_latency=3`,
       {
         method: "POST",
         headers: {

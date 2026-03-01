@@ -1,7 +1,8 @@
 import { GoogleMap, LoadScript, Marker, InfoWindow, DirectionsRenderer } from '@react-google-maps/api';
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Map as MapIcon, Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Map as MapIcon, Loader2, Navigation as NavButtonIcon } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import DownloadMapButton from "./DownloadMapButton";
 
@@ -97,10 +98,11 @@ const MonumentsMap: React.FC<MonumentsMapProps> = ({ routeData }) => {
 
   // Track user's real-time location
   useEffect(() => {
-    // Set default location to NIST University, Berhampur
+    // Set default location to NIST University, Berhampur as fallback
     setUserLocation({ lat: 19.2950, lng: 84.8108 });
 
     if (navigator.geolocation) {
+      let isFirstLocation = true;
       const id = navigator.geolocation.watchPosition(
         (position) => {
           const newLocation = {
@@ -108,6 +110,12 @@ const MonumentsMap: React.FC<MonumentsMapProps> = ({ routeData }) => {
             lng: position.coords.longitude
           };
           setUserLocation(newLocation);
+          
+          if (isFirstLocation) {
+            setMapCenter(newLocation);
+            setMapZoom(14);
+            isFirstLocation = false;
+          }
         },
         (error) => {
           console.error('Error getting location:', error);
@@ -183,7 +191,23 @@ const MonumentsMap: React.FC<MonumentsMapProps> = ({ routeData }) => {
                   Explore all {monuments.length} famous monuments and historical sites across Odisha
                 </CardDescription>
               </div>
-              <DownloadMapButton />
+              <div className="flex gap-2">
+                <Button 
+                    variant="outline" 
+                    onClick={() => {
+                        if (userLocation) {
+                            setMapCenter(userLocation);
+                            setMapZoom(14);
+                        }
+                    }}
+                    disabled={!userLocation}
+                    className="gap-2"
+                >
+                    <NavButtonIcon className="w-4 h-4" />
+                    My Location
+                </Button>
+                <DownloadMapButton />
+              </div>
             </div>
           </CardHeader>
 

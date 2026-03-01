@@ -13,7 +13,7 @@ serve(async (req) => {
   try {
     const { message, image, language = "en", conversationHistory = [] } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    
+
     if (!LOVABLE_API_KEY) {
       throw new Error("LOVABLE_API_KEY is not configured");
     }
@@ -46,7 +46,7 @@ SPECIAL CAPABILITIES:
 
 ${languageInstructions[language] || languageInstructions.en}
 
-IMPORTANT: Keep responses SHORT (1-2 sentences max) for faster voice playback. Be direct and helpful. Never mention AI or technology.`;
+IMPORTANT: Keep responses EXTREMELY SHORT (1 sentence max) for much faster voice playback. Be direct and helpful. Never mention AI or technology.`;
 
     const messages: any[] = [
       { role: "system", content: systemPrompt },
