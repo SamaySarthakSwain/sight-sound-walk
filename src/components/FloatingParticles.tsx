@@ -36,7 +36,7 @@ const FloatingParticles = ({ count = 40 }: { count?: number }) => {
       speedX: (Math.random() - 0.5) * 0.3,
       speedY: (Math.random() - 0.5) * 0.3,
       opacity: Math.random() * 0.5 + 0.1,
-      hue: Math.random() > 0.7 ? 165 : Math.random() > 0.5 ? 260 : 210,
+      hue: Math.random() > 0.7 ? 18 : Math.random() > 0.5 ? 25 : 35,
     }));
 
     const animate = () => {

@@ -91,7 +91,7 @@ export const useSpeechSynthesis = () => {
       utterance.lang = speechLanguageCodes[lang];
     }
 
-    utterance.rate = 1.1;
+    utterance.rate = 1.35;
     utterance.pitch = 1;
 
     utterance.onstart = () => setIsSpeaking(true);
