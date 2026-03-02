@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useCity } from "@/contexts/CityContext";
 
@@ -18,21 +18,65 @@ export interface Monument {
   region: string | null;
 }
 
+// In-memory cache to avoid redundant fetches across hook instances
+let monumentCache: { data: Monument[]; city: string; timestamp: number } | null = null;
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
 export const useMonuments = () => {
-  const [monuments, setMonuments] = useState<Monument[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [monuments, setMonuments] = useState<Monument[]>(monumentCache?.data || []);
+  const [loading, setLoading] = useState(!monumentCache);
   const [error, setError] = useState<string | null>(null);
   const { selectedCity } = useCity();
+  const abortRef = useRef<AbortController | null>(null);
 
-  const fetchMonuments = async () => {
+  const filterMonuments = useCallback((data: Monument[], cityName: string): Monument[] => {
+    const cn = cityName.toLowerCase().trim();
+
+    if (cn === "berhampur" || cn === "brahmapur") {
+      return data.filter((m) => {
+        const loc = m.location.toLowerCase();
+        return (
+          loc.includes("berhampur") || loc.includes("brahmapur") || loc.includes("ganjam") ||
+          loc.includes("gopalpur") || loc.includes("taptapani") || loc.includes("chilika") ||
+          loc.includes("gajapati") || loc.includes("aryapalli") || m.region?.toLowerCase() === "berhampur"
+        );
+      });
+    }
+    if (cn === "bhubaneswar" || cn === "bbsr") {
+      return data.filter((m) => {
+        const loc = m.location.toLowerCase();
+        return loc.includes("bhubaneswar") || loc.includes("bbsr") || loc.includes("konark") || loc.includes("puri") || m.region?.toLowerCase() === "bhubaneswar";
+      });
+    }
+    if (cn === "puri") {
+      return data.filter((m) => {
+        const loc = m.location.toLowerCase();
+        return loc.includes("puri") || loc.includes("konark") || loc.includes("chilika");
+      });
+    }
+    if (cn === "cuttack") {
+      return data.filter((m) => {
+        const loc = m.location.toLowerCase();
+        return loc.includes("cuttack") || loc.includes("jajpur") || loc.includes("angul");
+      });
+    }
+    return data;
+  }, []);
+
+  const fetchMonuments = useCallback(async () => {
+    const cityName = selectedCity.split(",")[0];
+    
+    // Use cache if fresh
+    if (monumentCache && monumentCache.city === cityName && Date.now() - monumentCache.timestamp < CACHE_TTL) {
+      setMonuments(monumentCache.data);
+      setLoading(false);
+      return;
+    }
+
     try {
       setLoading(true);
       setError(null);
-      
-      // Get the city name for filtering
-      const cityName = selectedCity.split(",")[0].toLowerCase().trim();
-      
-      // Fetch all monuments from database
+
       const { data, error: fetchError } = await supabase
         .from("monuments")
         .select("*")
@@ -40,77 +84,19 @@ export const useMonuments = () => {
 
       if (fetchError) throw fetchError;
 
-      // Filter monuments based on selected city
-      let filteredMonuments = data || [];
-      
-      if (cityName === "berhampur" || cityName === "brahmapur") {
-        // For Berhampur, show monuments in Berhampur area and nearby Ganjam district
-        filteredMonuments = (data || []).filter((m) => {
-          const loc = m.location.toLowerCase();
-          return (
-            loc.includes("berhampur") ||
-            loc.includes("brahmapur") ||
-            loc.includes("ganjam") ||
-            loc.includes("gopalpur") ||
-            loc.includes("taptapani") ||
-            loc.includes("chilika") ||
-            loc.includes("gajapati") ||
-            loc.includes("aryapalli") ||
-            loc.includes("palkadia") ||
-            loc.includes("ramaguda") ||
-            loc.includes("buguda") ||
-            loc.includes("aska") ||
-            loc.includes("khallikote") ||
-            loc.includes("chhatrapur") ||
-            loc.includes("purushottampur") ||
-            m.region?.toLowerCase() === "berhampur"
-          );
-        });
-      } else if (cityName === "bhubaneswar" || cityName === "bbsr") {
-        filteredMonuments = (data || []).filter((m) => {
-          const loc = m.location.toLowerCase();
-          return (
-            loc.includes("bhubaneswar") ||
-            loc.includes("bbsr") ||
-            loc.includes("konark") ||
-            loc.includes("puri") ||
-            m.region?.toLowerCase() === "bhubaneswar"
-          );
-        });
-      } else if (cityName === "puri") {
-        filteredMonuments = (data || []).filter((m) => {
-          const loc = m.location.toLowerCase();
-          return (
-            loc.includes("puri") ||
-            loc.includes("konark") ||
-            loc.includes("chilika")
-          );
-        });
-      } else if (cityName === "cuttack") {
-        filteredMonuments = (data || []).filter((m) => {
-          const loc = m.location.toLowerCase();
-          return (
-            loc.includes("cuttack") ||
-            loc.includes("jajpur") ||
-            loc.includes("angul")
-          );
-        });
-      } else {
-        // For other cities, show all Odisha monuments
-        filteredMonuments = data || [];
-      }
-
-      setMonuments(filteredMonuments);
+      const filtered = filterMonuments(data || [], cityName);
+      monumentCache = { data: filtered, city: cityName, timestamp: Date.now() };
+      setMonuments(filtered);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to fetch monuments");
     } finally {
       setLoading(false);
     }
-  };
+  }, [selectedCity, filterMonuments]);
 
   useEffect(() => {
     fetchMonuments();
-  }, [selectedCity]);
+  }, [fetchMonuments]);
 
   return { monuments, loading, error, refetch: fetchMonuments };
 };

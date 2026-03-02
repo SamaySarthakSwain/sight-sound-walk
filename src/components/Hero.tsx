@@ -13,7 +13,7 @@ const Hero = () => {
         <img
           src={heroImage}
           alt=""
-          fetchPriority="high"
+          loading="eager"
           decoding="async"
           className="w-full h-full object-cover dark:opacity-40"
         />

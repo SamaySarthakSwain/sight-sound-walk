@@ -8,38 +8,34 @@ import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 
 const ProactiveNudgeTrigger = () => {
-    const { monuments } = useMonuments();
-    const { nearbyMonument } = useGeofencing(monuments || []);
-    const { trackVisit } = useVisitHistory();
     const { user } = useAuth();
+    // Only load monuments + geofencing if user is logged in
+    const { monuments } = useMonuments();
+    const { nearbyMonument } = useGeofencing(monuments || [], { enabled: !!user });
+    const { trackVisit } = useVisitHistory();
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (nearbyMonument && user) {
-            console.log("📍 Nearby monument detected, recording visit:", nearbyMonument.title);
+        if (!nearbyMonument || !user) return;
 
-            // Track the visit for gamification
-            trackVisit({
-                place_name: nearbyMonument.title,
-                place_category: nearbyMonument.category,
-                place_image: nearbyMonument.image_url,
-            });
+        trackVisit({
+            place_name: nearbyMonument.title,
+            place_category: nearbyMonument.category,
+            place_image: nearbyMonument.image_url,
+        });
 
-            toast.info(`You're near ${nearbyMonument.title}!`, {
-                description: "Tap the AI Guide to hear a quick story.",
-                icon: <Landmark className="w-4 h-4 text-primary" />,
-                action: {
-                    label: "Listen",
-                    onClick: () => {
-                        navigate("/assistant", { state: { proactiveMonument: nearbyMonument } });
-                    },
-                },
-                duration: 8000,
-            });
-        }
-    }, [nearbyMonument, user, trackVisit, navigate]);
+        toast.info(`You're near ${nearbyMonument.title}!`, {
+            description: "Tap the AI Guide to hear a quick story.",
+            icon: <Landmark className="w-4 h-4 text-primary" />,
+            action: {
+                label: "Listen",
+                onClick: () => navigate("/assistant", { state: { proactiveMonument: nearbyMonument } }),
+            },
+            duration: 8000,
+        });
+    }, [nearbyMonument, user]);
 
     return null;
 };
 
-export default ProactiveNudgeTrigger;
+export default React.memo(ProactiveNudgeTrigger);
