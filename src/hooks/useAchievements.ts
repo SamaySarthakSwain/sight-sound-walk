@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
 import { User } from "@supabase/supabase-js";
 
 export interface Achievement {
@@ -16,36 +15,18 @@ export interface UserAchievement {
     earned_at: string;
 }
 
+// Hardcoded achievements since the table doesn't exist yet
+const defaultAchievements: Achievement[] = [
+  { id: "1", title: "First Steps", description: "Visit your first monument", badge_icon: "MapPin", category_requirement: null, count_requirement: 1 },
+  { id: "2", title: "Explorer", description: "Visit 5 monuments", badge_icon: "Map", category_requirement: null, count_requirement: 5 },
+  { id: "3", title: "Temple Devotee", description: "Visit 3 temples", badge_icon: "Landmark", category_requirement: "temple", count_requirement: 3 },
+  { id: "4", title: "History Buff", description: "Visit 10 monuments", badge_icon: "Trophy", category_requirement: null, count_requirement: 10 },
+];
+
 export const useAchievements = (user: User | null) => {
-    const [achievements, setAchievements] = useState<Achievement[]>([]);
-    const [userAchievements, setUserAchievements] = useState<UserAchievement[]>([]);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        const fetchAchievements = async () => {
-            if (!user) return;
-            setLoading(true);
-            try {
-                const { data: allAchievements } = await supabase
-                    .from("achievements")
-                    .select("*");
-
-                const { data: earned } = await supabase
-                    .from("user_achievements")
-                    .select("achievement_id, earned_at")
-                    .eq("user_id", user.id);
-
-                setAchievements(allAchievements || []);
-                setUserAchievements(earned || []);
-            } catch (error) {
-                console.error("Error fetching achievements:", error);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchAchievements();
-    }, [user]);
+    const [achievements] = useState<Achievement[]>(defaultAchievements);
+    const [userAchievements] = useState<UserAchievement[]>([]);
+    const [loading] = useState(false);
 
     return { achievements, userAchievements, loading };
 };

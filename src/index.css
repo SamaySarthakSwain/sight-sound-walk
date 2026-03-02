@@ -53,44 +53,44 @@ All colors MUST be HSL.
   }
 
   .dark {
-    --background: 220 20% 4%;
-    --foreground: 210 20% 90%;
+    --background: 240 10% 4%;
+    --foreground: 0 0% 88%;
 
-    --card: 220 18% 8%;
-    --card-foreground: 210 20% 90%;
+    --card: 240 8% 7%;
+    --card-foreground: 0 0% 88%;
 
-    --popover: 220 18% 8%;
-    --popover-foreground: 210 20% 90%;
+    --popover: 240 8% 7%;
+    --popover-foreground: 0 0% 88%;
 
-    --primary: 165 80% 50%;
-    --primary-foreground: 220 20% 4%;
+    --primary: 18 100% 60%;
+    --primary-foreground: 240 10% 4%;
 
-    --secondary: 260 60% 60%;
-    --secondary-foreground: 0 0% 100%;
+    --secondary: 240 6% 14%;
+    --secondary-foreground: 0 0% 80%;
 
-    --muted: 220 15% 14%;
-    --muted-foreground: 210 10% 55%;
+    --muted: 240 6% 12%;
+    --muted-foreground: 0 0% 45%;
 
-    --accent: 165 80% 50%;
-    --accent-foreground: 220 20% 4%;
+    --accent: 18 100% 60%;
+    --accent-foreground: 240 10% 4%;
 
     --destructive: 0 62.8% 50%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 220 15% 16%;
-    --input: 220 15% 16%;
-    --ring: 165 80% 50%;
+    --border: 0 0% 12%;
+    --input: 0 0% 12%;
+    --ring: 18 100% 60%;
 
-    --gradient-hero: linear-gradient(135deg, hsl(260 60% 60%) 0%, hsl(165 80% 50%) 100%);
-    --gradient-card: linear-gradient(145deg, hsl(220 18% 6%) 0%, hsl(220 15% 10%) 100%);
-    --gradient-subtle: linear-gradient(180deg, hsl(220 20% 2%) 0%, hsl(220 18% 6%) 100%);
+    --gradient-hero: linear-gradient(135deg, hsl(18 100% 60%) 0%, hsl(25 95% 53%) 100%);
+    --gradient-card: linear-gradient(145deg, hsl(240 8% 6%) 0%, hsl(240 6% 9%) 100%);
+    --gradient-subtle: linear-gradient(180deg, hsl(240 10% 3%) 0%, hsl(240 8% 6%) 100%);
 
-    --shadow-soft: 0 4px 20px -2px hsl(0 0% 0% / 0.5);
-    --shadow-medium: 0 8px 30px -4px hsl(0 0% 0% / 0.6);
-    --shadow-glow: 0 0 40px hsl(165 80% 50% / 0.15);
+    --shadow-soft: 0 4px 20px -2px hsl(0 0% 0% / 0.6);
+    --shadow-medium: 0 8px 30px -4px hsl(0 0% 0% / 0.7);
+    --shadow-glow: 0 0 40px hsl(18 100% 60% / 0.15);
 
-    --glow-primary: 165 80% 50%;
-    --glow-secondary: 260 60% 60%;
+    --glow-primary: 18 100% 60%;
+    --glow-secondary: 25 95% 53%;
   }
 }
 
@@ -106,27 +106,42 @@ All colors MUST be HSL.
 
 /* Premium Glassmorphism Utilities */
 .glass-panel {
-  @apply bg-white/10 dark:bg-black/20 backdrop-blur-xl border border-white/20 dark:border-white/10 shadow-[0_8px_32px_rgba(0, 0, 0, 0.1)] dark:shadow-[0_8px_32px_rgba(0, 0, 0, 0.3)];
+  @apply bg-white/10 dark:bg-white/[0.03] backdrop-blur-xl border border-white/20 dark:border-white/[0.08];
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.dark .glass-panel {
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
 .glass-navbar {
-  @apply bg-white/70 dark:bg-background/40 backdrop-blur-xl border-b border-white/20 dark:border-white/10 shadow-sm transition-all duration-300;
+  @apply bg-white/70 dark:bg-black/60 backdrop-blur-2xl border-b border-white/20 dark:border-white/[0.06] shadow-sm transition-all duration-300;
 }
 
 .glass-card {
-  @apply bg-white/40 dark:bg-black/40 backdrop-blur-xl border border-white/30 dark:border-white/10 shadow-lg hover:shadow-xl dark:shadow-[0_8px_32px_rgba(0, 0, 0, 0.3)] transition-all duration-500 rounded-2xl;
+  @apply bg-white/40 dark:bg-white/[0.03] backdrop-blur-xl border border-white/30 dark:border-white/[0.08] rounded-2xl transition-all duration-500;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+}
+
+.dark .glass-card {
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
 .glass-card-hover {
-  @apply hover:-translate-y-1 hover:border-white/50 dark:hover:border-white/20 hover:shadow-[0_0_40px_rgba(var(--primary), 0.15)] dark:hover:shadow-[0_0_40px_rgba(var(--primary), 0.2)];
+  @apply hover:-translate-y-1 hover:border-white/50 dark:hover:border-white/[0.12];
+}
+
+.dark .glass-card-hover:hover {
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 0 30px hsl(18 100% 60% / 0.08);
 }
 
 .glass-input {
-  @apply bg-white/50 dark:bg-black/30 backdrop-blur-md border border-white/30 dark:border-white/10 shadow-inner focus:border-primary/50 transition-colors;
+  @apply bg-white/50 dark:bg-white/[0.03] backdrop-blur-md border border-white/30 dark:border-white/[0.08] shadow-inner focus:border-primary/50 transition-colors;
 }
 
 .glass-button {
-  @apply relative overflow-hidden bg-primary/90 hover:bg-primary backdrop-blur-md text-primary-foreground shadow-[0_4px_14px_0_rgba(var(--primary), 0.39)] transition-all duration-300;
+  @apply relative overflow-hidden bg-primary/90 hover:bg-primary backdrop-blur-md text-primary-foreground transition-all duration-300;
+  box-shadow: 0 4px 14px 0 hsl(18 100% 60% / 0.3);
 }
 
 .glass-button::before {
@@ -343,22 +358,22 @@ All colors MUST be HSL.
 /* Starfield background for dark mode */
 .dark .starfield {
   background-image:
-    radial-gradient(1px 1px at 10% 20%, hsl(210 20% 50% / 0.4), transparent),
-    radial-gradient(1px 1px at 30% 40%, hsl(210 20% 60% / 0.3), transparent),
-    radial-gradient(1.5px 1.5px at 50% 10%, hsl(210 20% 70% / 0.5), transparent),
-    radial-gradient(1px 1px at 70% 60%, hsl(210 20% 50% / 0.3), transparent),
-    radial-gradient(1px 1px at 90% 30%, hsl(210 20% 60% / 0.4), transparent),
-    radial-gradient(1.5px 1.5px at 20% 80%, hsl(165 80% 50% / 0.2), transparent),
-    radial-gradient(1px 1px at 60% 90%, hsl(210 20% 50% / 0.3), transparent),
-    radial-gradient(1px 1px at 80% 70%, hsl(260 60% 60% / 0.2), transparent),
-    radial-gradient(1px 1px at 15% 55%, hsl(210 20% 60% / 0.3), transparent),
-    radial-gradient(1px 1px at 45% 75%, hsl(210 20% 50% / 0.4), transparent),
-    radial-gradient(1.5px 1.5px at 75% 15%, hsl(165 80% 50% / 0.15), transparent),
-    radial-gradient(1px 1px at 35% 95%, hsl(210 20% 60% / 0.3), transparent),
-    radial-gradient(1px 1px at 85% 85%, hsl(210 20% 50% / 0.35), transparent),
-    radial-gradient(1px 1px at 55% 45%, hsl(260 60% 60% / 0.15), transparent),
-    radial-gradient(1px 1px at 5% 70%, hsl(210 20% 60% / 0.3), transparent),
-    radial-gradient(1.5px 1.5px at 95% 50%, hsl(210 20% 50% / 0.4), transparent);
+    radial-gradient(1px 1px at 10% 20%, hsl(0 0% 40% / 0.3), transparent),
+    radial-gradient(1px 1px at 30% 40%, hsl(0 0% 50% / 0.2), transparent),
+    radial-gradient(1.5px 1.5px at 50% 10%, hsl(18 60% 50% / 0.15), transparent),
+    radial-gradient(1px 1px at 70% 60%, hsl(0 0% 40% / 0.2), transparent),
+    radial-gradient(1px 1px at 90% 30%, hsl(0 0% 50% / 0.25), transparent),
+    radial-gradient(1.5px 1.5px at 20% 80%, hsl(18 100% 60% / 0.1), transparent),
+    radial-gradient(1px 1px at 60% 90%, hsl(0 0% 40% / 0.2), transparent),
+    radial-gradient(1px 1px at 80% 70%, hsl(25 60% 50% / 0.1), transparent),
+    radial-gradient(1px 1px at 15% 55%, hsl(0 0% 50% / 0.2), transparent),
+    radial-gradient(1px 1px at 45% 75%, hsl(0 0% 40% / 0.25), transparent),
+    radial-gradient(1.5px 1.5px at 75% 15%, hsl(18 100% 60% / 0.08), transparent),
+    radial-gradient(1px 1px at 35% 95%, hsl(0 0% 50% / 0.2), transparent),
+    radial-gradient(1px 1px at 85% 85%, hsl(0 0% 40% / 0.2), transparent),
+    radial-gradient(1px 1px at 55% 45%, hsl(25 60% 50% / 0.08), transparent),
+    radial-gradient(1px 1px at 5% 70%, hsl(0 0% 50% / 0.2), transparent),
+    radial-gradient(1.5px 1.5px at 95% 50%, hsl(0 0% 40% / 0.25), transparent);
 }
 
 /* Smooth scroll reveal animation */
