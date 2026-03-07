@@ -6,7 +6,7 @@ import ScrollReveal from "@/components/ScrollReveal";
 
 const CTASection = () => {
   return (
-    <section className="py-24 md:py-32 bg-background relative overflow-hidden border-t border-foreground/5">
+    <section className="py-24 md:py-32 bg-background relative overflow-hidden border-t border-border">
       <div className="container mx-auto px-6 md:px-12">
         <ScrollReveal>
           <div className="text-center max-w-3xl mx-auto">
@@ -21,7 +21,7 @@ const CTASection = () => {
               </span>
             </h2>
 
-            <p className="text-foreground/40 text-sm md:text-lg mb-12 max-w-xl mx-auto">
+            <p className="text-muted-foreground text-sm md:text-lg mb-12 max-w-xl mx-auto">
               Start your GPS-guided journey through India's most magnificent heritage sites.
               Every monument has a story — let us tell it to you.
             </p>
@@ -31,7 +31,7 @@ const CTASection = () => {
               <Link to="/explore">
                 <Button
                   size="lg"
-                  className="glass-button text-base md:text-lg px-8 md:px-12 h-12 md:h-14 hover:scale-105 active:scale-95 border border-primary/50 font-medium tracking-wide"
+                  className="text-base md:text-lg px-8 md:px-12 h-12 md:h-14 hover:scale-105 active:scale-95 font-medium tracking-wide shadow-lg"
                 >
                   <MapPin className="w-5 h-5 mr-2" />
                   Start Exploring
@@ -42,7 +42,7 @@ const CTASection = () => {
                 <Button
                   size="lg"
                   variant="outline"
-                  className="glass-panel hover:bg-primary/5 transition-all duration-500 text-base md:text-lg px-8 md:px-12 h-12 md:h-14 hover:scale-105 active:scale-95 border-foreground/20 hover:border-primary/50 font-medium tracking-wide"
+                  className="transition-all duration-500 text-base md:text-lg px-8 md:px-12 h-12 md:h-14 hover:scale-105 active:scale-95 hover:border-primary/50 font-medium tracking-wide"
                 >
                   Talk to AI Guide
                 </Button>
@@ -63,7 +63,7 @@ const CTASection = () => {
               return (
                 <div
                   key={i}
-                  className="flex items-center gap-2 px-4 py-2 rounded-full border border-foreground/10 text-foreground/40 text-xs font-mono tracking-wider"
+                  className="flex items-center gap-2 px-4 py-2 rounded-full border border-border text-muted-foreground text-xs font-mono tracking-wider"
                 >
                   <Icon className="w-3.5 h-3.5 text-primary/60" />
                   {item.label}
@@ -74,8 +74,8 @@ const CTASection = () => {
         </ScrollReveal>
 
         {/* Footer line */}
-        <div className="mt-24 pt-8 border-t border-foreground/5 text-center">
-          <p className="text-foreground/20 text-xs font-mono tracking-[0.2em] uppercase">
+        <div className="mt-24 pt-8 border-t border-border text-center">
+          <p className="text-muted-foreground/50 text-xs font-mono tracking-[0.2em] uppercase">
             Lets Explore — Educational Tourism Experience
           </p>
         </div>
