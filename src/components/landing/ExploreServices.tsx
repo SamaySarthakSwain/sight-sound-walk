@@ -9,59 +9,53 @@ const services = [
     title: "Heritage Monuments",
     desc: "GPS-triggered audio narrations at 50+ historical sites across India.",
     path: "/explore",
-    color: "from-primary/20 to-primary/5",
   },
   {
     icon: UtensilsCrossed,
     title: "Local Food Guide",
     desc: "Discover authentic street food and restaurants rated by real travelers.",
     path: "/food",
-    color: "from-accent/20 to-accent/5",
   },
   {
     icon: Car,
     title: "Smart Cab Booking",
     desc: "Compare fares across Ola, Uber, Rapido & local providers instantly.",
     path: "/cabs",
-    color: "from-primary/20 to-primary/5",
   },
   {
     icon: Building2,
     title: "Hotel Discovery",
     desc: "Curated stays from budget to luxury with real-time availability.",
     path: "/hotels",
-    color: "from-accent/20 to-accent/5",
   },
   {
     icon: Box,
     title: "AR Experience",
     desc: "Interactive 3D models of monuments with augmented reality overlays.",
     path: "/ar",
-    color: "from-primary/20 to-primary/5",
   },
   {
     icon: Bot,
     title: "AI Travel Guide",
     desc: "Your personal AI companion for route planning and recommendations.",
     path: "/assistant",
-    color: "from-accent/20 to-accent/5",
   },
 ];
 
 const ExploreServices = () => {
   return (
-    <section className="py-24 md:py-32 bg-background relative overflow-hidden border-t border-foreground/5">
+    <section className="py-24 md:py-32 bg-muted/20 dark:bg-background relative overflow-hidden border-t border-border">
       <div className="container mx-auto px-6 md:px-12">
         {/* Header */}
         <ScrollReveal>
           <div className="mb-16 md:mb-24">
             <span className="text-xs font-mono tracking-[0.3em] uppercase text-primary/70 mb-4 block">
-              Fresh from the Lab
+              Everything You Need
             </span>
             <h2 className="text-4xl md:text-6xl font-black tracking-tight text-foreground">
               What We <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">Offer</span>
             </h2>
-            <p className="mt-4 text-foreground/40 text-sm md:text-base max-w-lg">
+            <p className="mt-4 text-muted-foreground text-sm md:text-base max-w-lg">
               Developed with precision, delivered with passion
             </p>
           </div>
@@ -75,12 +69,12 @@ const ExploreServices = () => {
               <ScrollReveal key={i} delay={i * 80}>
                 <Link to={service.path}>
                   <motion.div
-                    className="glass-card p-6 md:p-8 group cursor-pointer relative overflow-hidden h-full"
+                    className="rounded-2xl border border-border bg-card p-6 md:p-8 group cursor-pointer relative overflow-hidden h-full hover:shadow-xl hover:border-primary/30 transition-all duration-500"
                     whileHover={{ y: -8 }}
                     transition={{ duration: 0.4 }}
                   >
                     {/* Background gradient on hover */}
-                    <div className={`absolute inset-0 bg-gradient-to-br ${service.color} opacity-0 group-hover:opacity-100 transition-opacity duration-700`} />
+                    <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
 
                     {/* Content */}
                     <div className="relative z-10">
@@ -97,7 +91,7 @@ const ExploreServices = () => {
                       <h3 className="text-xl md:text-2xl font-bold text-foreground mb-3 group-hover:text-primary transition-colors duration-300">
                         {service.title}
                       </h3>
-                      <p className="text-sm text-foreground/50 leading-relaxed">
+                      <p className="text-sm text-muted-foreground leading-relaxed">
                         {service.desc}
                       </p>
                     </div>
@@ -110,7 +104,7 @@ const ExploreServices = () => {
 
         {/* Bottom note */}
         <ScrollReveal>
-          <p className="text-center mt-16 text-foreground/30 text-sm max-w-2xl mx-auto italic">
+          <p className="text-center mt-16 text-muted-foreground/60 text-sm max-w-2xl mx-auto italic">
             Each feature is carefully crafted to ensure every detail enhances your exploration
             with precision and immersive storytelling.
           </p>

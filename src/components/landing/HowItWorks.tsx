@@ -51,7 +51,7 @@ const HowItWorks = () => {
                 Magic
               </span>
             </h2>
-            <p className="mt-4 text-foreground/40 text-sm md:text-base max-w-lg">
+            <p className="mt-4 text-muted-foreground text-sm md:text-base max-w-lg">
               Watch our process unfold step by step
             </p>
           </div>
@@ -60,13 +60,13 @@ const HowItWorks = () => {
         {/* Timeline */}
         <div className="relative">
           {/* Vertical line */}
-          <div className="absolute left-8 md:left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-primary/50 via-primary/20 to-transparent hidden md:block" />
-          <div className="absolute left-8 top-0 bottom-0 w-px bg-gradient-to-b from-primary/50 via-primary/20 to-transparent md:hidden" />
+          <div className="absolute left-8 md:left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-primary/50 via-border to-transparent hidden md:block" />
+          <div className="absolute left-8 top-0 bottom-0 w-px bg-gradient-to-b from-primary/50 via-border to-transparent md:hidden" />
 
           {/* Start marker */}
           <ScrollReveal>
             <div className="flex items-center gap-3 mb-12 md:justify-center">
-              <div className="w-4 h-4 rounded-full bg-primary shadow-[0_0_20px_hsl(var(--primary)/0.5)] relative z-10" />
+              <div className="w-4 h-4 rounded-full bg-primary shadow-[0_0_20px_hsl(var(--primary)/0.4)] relative z-10" />
               <span className="text-[10px] font-mono tracking-[0.3em] uppercase text-primary">Start</span>
             </div>
           </ScrollReveal>
@@ -79,7 +79,7 @@ const HowItWorks = () => {
                   <div className={`flex items-start gap-6 md:gap-0 ${i % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'}`}>
                     {/* Content */}
                     <div className={`flex-1 ${i % 2 === 0 ? 'md:pr-16 md:text-right' : 'md:pl-16'}`}>
-                      <div className={`glass-card p-6 md:p-8 group hover:border-primary/30 transition-all duration-500 ${i % 2 === 0 ? 'md:ml-auto md:mr-0' : ''} max-w-lg`}>
+                      <div className={`rounded-2xl border border-border bg-card p-6 md:p-8 group hover:border-primary/30 hover:shadow-lg transition-all duration-500 ${i % 2 === 0 ? 'md:ml-auto md:mr-0' : ''} max-w-lg`}>
                         <div className={`flex items-center gap-4 mb-4 ${i % 2 === 0 ? 'md:flex-row-reverse' : ''}`}>
                           <span className="text-3xl md:text-4xl font-black text-primary/20 group-hover:text-primary/40 transition-colors">
                             {step.num}
@@ -89,7 +89,7 @@ const HowItWorks = () => {
                           </div>
                         </div>
                         <h3 className="text-xl md:text-2xl font-bold text-foreground mb-2">{step.title}</h3>
-                        <p className="text-sm text-foreground/50 leading-relaxed">{step.desc}</p>
+                        <p className="text-sm text-muted-foreground leading-relaxed">{step.desc}</p>
                       </div>
                     </div>
 
@@ -109,7 +109,7 @@ const HowItWorks = () => {
           {/* End marker */}
           <ScrollReveal>
             <div className="flex items-center gap-3 mt-12 md:justify-center">
-              <div className="w-4 h-4 rounded-full bg-primary shadow-[0_0_20px_hsl(var(--primary)/0.5)] relative z-10" />
+              <div className="w-4 h-4 rounded-full bg-primary shadow-[0_0_20px_hsl(var(--primary)/0.4)] relative z-10" />
               <span className="text-[10px] font-mono tracking-[0.3em] uppercase text-primary">End</span>
             </div>
           </ScrollReveal>
@@ -125,7 +125,7 @@ const HowItWorks = () => {
             ].map((stat, i) => (
               <div key={i} className="text-center">
                 <span className="text-lg md:text-xl font-bold text-primary">{stat.value}</span>
-                <p className="text-[10px] font-mono tracking-[0.2em] uppercase text-foreground/30 mt-1">{stat.label}</p>
+                <p className="text-[10px] font-mono tracking-[0.2em] uppercase text-muted-foreground mt-1">{stat.label}</p>
               </div>
             ))}
           </div>

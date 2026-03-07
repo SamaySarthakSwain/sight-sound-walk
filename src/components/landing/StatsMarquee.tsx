@@ -11,10 +11,10 @@ const stats = [
 ];
 
 const StatsMarquee = () => {
-  const marqueeItems = [...stats, ...stats]; // Double for seamless loop
+  const marqueeItems = [...stats, ...stats, ...stats]; // Triple for seamless loop
 
   return (
-    <section className="py-16 md:py-24 bg-background relative overflow-hidden border-y border-foreground/5">
+    <section className="py-16 md:py-24 bg-muted/30 dark:bg-background relative overflow-hidden border-y border-border">
       {/* Section label */}
       <ScrollReveal>
         <div className="container mx-auto px-6 md:px-12 mb-12">
@@ -30,8 +30,8 @@ const StatsMarquee = () => {
       {/* Scrolling marquee */}
       <div className="relative">
         {/* Fade edges */}
-        <div className="absolute left-0 top-0 bottom-0 w-24 md:w-40 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none" />
-        <div className="absolute right-0 top-0 bottom-0 w-24 md:w-40 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none" />
+        <div className="absolute left-0 top-0 bottom-0 w-24 md:w-40 bg-gradient-to-r from-muted/30 dark:from-background to-transparent z-10 pointer-events-none" />
+        <div className="absolute right-0 top-0 bottom-0 w-24 md:w-40 bg-gradient-to-l from-muted/30 dark:from-background to-transparent z-10 pointer-events-none" />
 
         <motion.div
           className="flex gap-8 md:gap-16"
@@ -49,7 +49,7 @@ const StatsMarquee = () => {
               <span className="text-4xl md:text-6xl font-black text-primary tracking-tighter">
                 {stat.value}
               </span>
-              <span className="text-xs font-mono tracking-[0.2em] uppercase text-foreground/40 whitespace-nowrap">
+              <span className="text-xs font-mono tracking-[0.2em] uppercase text-muted-foreground whitespace-nowrap">
                 {stat.label}
               </span>
             </div>

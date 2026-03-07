@@ -71,17 +71,17 @@ const FeaturedDestinations = () => {
                   whileHover={{ scale: 1.02 }}
                   transition={{ duration: 0.6 }}
                 >
-                  <div className="relative overflow-hidden rounded-2xl aspect-[4/3]">
+                  <div className="relative overflow-hidden rounded-2xl aspect-[4/3] shadow-medium">
                     <img
                       src={dest.image}
                       alt={dest.title}
                       loading="lazy"
                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                     />
-                    {/* Overlay on hover */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-500" />
+                    {/* Overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-500" />
                     {/* Label badge */}
-                    <div className="absolute top-4 left-4 px-3 py-1 rounded-full text-[10px] font-mono tracking-[0.2em] uppercase bg-primary/20 text-primary border border-primary/30 backdrop-blur-sm">
+                    <div className="absolute top-4 left-4 px-3 py-1 rounded-full text-[10px] font-mono tracking-[0.2em] uppercase bg-primary/90 text-primary-foreground dark:bg-primary/20 dark:text-primary border border-primary/30 backdrop-blur-sm">
                       {dest.label}
                     </div>
                   </div>
@@ -92,14 +92,14 @@ const FeaturedDestinations = () => {
                   <h3 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">
                     {dest.title}
                   </h3>
-                  <p className="text-foreground/50 leading-relaxed text-sm md:text-base">
+                  <p className="text-muted-foreground leading-relaxed text-sm md:text-base">
                     {dest.desc}
                   </p>
                   {/* Tags grid */}
                   <div className="grid grid-cols-2 gap-3">
                     {dest.tags.map((tag, j) => (
                       <div key={j} className="space-y-1">
-                        <span className="text-[10px] font-mono tracking-[0.2em] uppercase text-foreground/30">
+                        <span className="text-[10px] font-mono tracking-[0.2em] uppercase text-muted-foreground/60">
                           {tag.label}
                         </span>
                         <p className="text-sm font-medium text-foreground/80">{tag.value}</p>
@@ -117,7 +117,7 @@ const FeaturedDestinations = () => {
           <div className="text-center mt-20">
             <Link
               to="/explore"
-              className="inline-flex items-center gap-2 px-8 py-4 rounded-full border border-foreground/20 text-foreground/70 hover:text-foreground hover:border-primary/50 transition-all duration-500 text-sm font-mono tracking-wider uppercase hover:bg-primary/5"
+              className="inline-flex items-center gap-2 px-8 py-4 rounded-full border border-border text-muted-foreground hover:text-foreground hover:border-primary/50 transition-all duration-500 text-sm font-mono tracking-wider uppercase hover:bg-primary/5"
             >
               View All Destinations
             </Link>
