@@ -137,9 +137,9 @@ IMPORTANT: Keep responses EXTREMELY SHORT (1 sentence max) for much faster voice
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "google/gemini-2.0-flash-lite",
+        model: image ? "google/gemini-2.5-flash" : "google/gemini-2.5-flash-lite",
         messages,
-        max_tokens: 200,
+        max_tokens: 300,
         stream: true,
       }),
     });
