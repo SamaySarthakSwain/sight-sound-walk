@@ -4,6 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Phone, Mail, MapPin, AlertTriangle, Shield, Flame, Ambulance, Building2, Hospital, Car, HelpCircle } from "lucide-react";
 import { useState } from "react";
+import CrowdDensityScanner from "@/components/CrowdDensityScanner";
+import MonumentDensityList from "@/components/MonumentDensityList";
+import ITOSDashboard from "@/components/ITOSDashboard";
 
 interface EmergencyService {
   name: string;
@@ -353,6 +356,14 @@ const Help = () => {
               </div>
             </CardContent>
           </Card>
+          
+          <CrowdDensityScanner />
+          <div className="mt-16">
+            <MonumentDensityList />
+          </div>
+          <div className="mt-16">
+            <ITOSDashboard />
+          </div>
         </div>
       </div>
     </div>
