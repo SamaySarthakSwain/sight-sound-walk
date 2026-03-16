@@ -8,6 +8,7 @@ import { useCity } from "@/contexts/CityContext";
 import CrowdDensityScanner from "@/components/CrowdDensityScanner";
 import MonumentDensityList from "@/components/MonumentDensityList";
 import ITOSDashboard from "@/components/ITOSDashboard";
+import VirtualTourMap from "@/components/VirtualTourMap";
 
 interface EmergencyService {
   name: string;
@@ -345,6 +346,15 @@ const Help = () => {
           </div>
           <div className="mt-16">
             <ITOSDashboard />
+          </div>
+
+          {/* 3D Virtual Tour Section */}
+          <div className="mt-16 border-t border-border pt-16">
+            <div className="text-center mb-8">
+              <h2 className="text-3xl font-bold mb-2">3D Virtual Tour & Time Travel</h2>
+              <p className="text-muted-foreground">Explore historical monuments of Odisha in fully guided 3D space</p>
+            </div>
+            <VirtualTourMap />
           </div>
         </div>
       </div>
