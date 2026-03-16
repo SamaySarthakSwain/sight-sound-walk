@@ -1,5 +1,5 @@
-import { motion } from "framer-motion";
-import ScrollReveal from "@/components/ScrollReveal";
+import { motion, useInView } from "framer-motion";
+import { useRef } from "react";
 
 const stats = [
   { value: "50+", label: "Heritage Sites" },
@@ -11,21 +11,27 @@ const stats = [
 ];
 
 const StatsMarquee = () => {
-  const marqueeItems = [...stats, ...stats, ...stats]; // Triple for seamless loop
+  const marqueeItems = [...stats, ...stats, ...stats];
+  const headerRef = useRef(null);
+  const headerInView = useInView(headerRef, { once: true, margin: "-40px" });
 
   return (
     <section className="py-16 md:py-24 bg-muted/30 dark:bg-background relative overflow-hidden border-y border-border">
       {/* Section label */}
-      <ScrollReveal>
-        <div className="container mx-auto px-6 md:px-12 mb-12">
-          <span className="text-xs font-mono tracking-[0.3em] uppercase text-primary/70 mb-4 block">
-            Platform at a Glance
-          </span>
-          <h2 className="text-3xl md:text-5xl font-black tracking-tight text-foreground">
-            Numbers That <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">Speak</span>
-          </h2>
-        </div>
-      </ScrollReveal>
+      <motion.div
+        ref={headerRef}
+        className="container mx-auto px-6 md:px-12 mb-12"
+        initial={{ opacity: 0, y: 30 }}
+        animate={headerInView ? { opacity: 1, y: 0 } : {}}
+        transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+      >
+        <span className="text-xs font-mono tracking-[0.3em] uppercase text-primary/70 mb-4 block">
+          Platform at a Glance
+        </span>
+        <h2 className="text-3xl md:text-5xl font-black tracking-tight text-foreground">
+          Numbers That <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">Speak</span>
+        </h2>
+      </motion.div>
 
       {/* Scrolling marquee */}
       <div className="relative">
@@ -42,17 +48,19 @@ const StatsMarquee = () => {
           style={{ width: "fit-content" }}
         >
           {marqueeItems.map((stat, i) => (
-            <div
+            <motion.div
               key={i}
-              className="flex-shrink-0 flex items-center gap-4 px-6 py-4"
+              className="flex-shrink-0 flex items-center gap-4 px-6 py-4 group"
+              whileHover={{ scale: 1.1 }}
+              transition={{ duration: 0.3 }}
             >
-              <span className="text-4xl md:text-6xl font-black text-primary tracking-tighter">
+              <span className="text-4xl md:text-6xl font-black text-primary tracking-tighter group-hover:drop-shadow-[0_0_20px_hsl(var(--primary)/0.4)] transition-all duration-300">
                 {stat.value}
               </span>
               <span className="text-xs font-mono tracking-[0.2em] uppercase text-muted-foreground whitespace-nowrap">
                 {stat.label}
               </span>
-            </div>
+            </motion.div>
           ))}
         </motion.div>
       </div>
