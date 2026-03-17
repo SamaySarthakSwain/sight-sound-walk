@@ -1,0 +1,38 @@
+﻿[ΓêÜ] Flutter (Channel stable, 3.41.4, on Microsoft Windows [Version 10.0.26200.8037], locale en-IN) [405ms]
+    ΓÇó Flutter version 3.41.4 on channel stable at E:\Flutter\flutter
+    ΓÇó Upstream repository https://github.com/flutter/flutter.git
+    ΓÇó Framework revision ff37bef603 (13 days ago), 2026-03-03 16:03:22 -0800
+    ΓÇó Engine revision e4b8dca3f1
+    ΓÇó Dart version 3.11.1
+    ΓÇó DevTools version 2.54.1
+    ΓÇó Feature flags: enable-web, enable-linux-desktop, enable-macos-desktop, enable-windows-desktop, enable-android, enable-ios, cli-animations, enable-native-assets, omit-legacy-version-file, enable-lldb-debugging, enable-uiscene-migration
+
+[ΓêÜ] Windows Version (11 Home Single Language 64-bit, 25H2, 2009) [907ms]
+
+[X] Android toolchain - develop for Android devices [210ms]
+    X Unable to locate Android SDK.
+      Install Android Studio from: https://developer.android.com/studio/index.html
+      On first launch it will assist you in installing the Android SDK components.
+      (or visit https://flutter.dev/to/windows-android-setup for detailed instructions).
+      If the Android SDK has been installed to a custom location, please use
+      `flutter config --android-sdk` to update to that location.
+
+
+[ΓêÜ] Chrome - develop for the web [194ms]
+    ΓÇó Chrome at C:\Program Files\Google\Chrome\Application\chrome.exe
+
+[!] Visual Studio - develop Windows apps (Visual Studio Build Tools 2026 18.4.0) [191ms]
+    ΓÇó Visual Studio at C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools
+    ΓÇó Visual Studio Build Tools 2026 version 18.4.11605.240
+    X The current Visual Studio installation is incomplete.
+      Please use Visual Studio Installer to complete the installation or reinstall Visual Studio.
+
+[ΓêÜ] Connected device (3 available) [73ms]
+    ΓÇó Windows (desktop) ΓÇó windows ΓÇó windows-x64    ΓÇó Microsoft Windows [Version 10.0.26200.8037]
+    ΓÇó Chrome (web)      ΓÇó chrome  ΓÇó web-javascript ΓÇó Google Chrome 146.0.7680.72
+    ΓÇó Edge (web)        ΓÇó edge    ΓÇó web-javascript ΓÇó Microsoft Edge 146.0.3856.59
+
+[ΓêÜ] Network resources [2.6s]
+    ΓÇó All expected network resources are available.
+
+! Doctor found issues in 2 categories.
