@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'core/routing/app_router.dart';
 import 'core/constants/app_colors.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
+  await dotenv.load(fileName: ".env");
+
   // Initialize Supabase. Replace with actual keys via flutter_dotenv later if needed.
   await Supabase.initialize(
     url: 'https://eydofmtdkcshvgehdbyl.supabase.co',

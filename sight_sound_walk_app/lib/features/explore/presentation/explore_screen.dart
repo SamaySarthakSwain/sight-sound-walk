@@ -1,78 +1,106 @@
 import 'package:flutter/material.dart';
-import '../../../../core/constants/app_colors.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'providers/map_controller_provider.dart';
 
-class ExploreScreen extends StatelessWidget {
+class ExploreScreen extends ConsumerStatefulWidget {
   const ExploreScreen({super.key});
 
   @override
+  ConsumerState<ExploreScreen> createState() => _ExploreScreenState();
+}
+
+class _ExploreScreenState extends ConsumerState<ExploreScreen> {
+  // Temporary mock data for testing UI before backend connection
+  final List<Map<String, dynamic>> _mockMonuments = [
+    {
+      'id': 1,
+      'name': 'India Gate',
+      'latitude': 28.6129,
+      'longitude': 77.2295,
+      'description': 'A war memorial located astride the Rajpath.',
+    },
+    {
+      'id': 2,
+      'name': 'Red Fort',
+      'latitude': 28.6562,
+      'longitude': 77.2410,
+      'description': 'A historic fort in the city of Delhi.',
+    }
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    // Load monuments shortly after map init
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(mapControllerProvider.notifier).updateMarkers(_mockMonuments);
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final mapState = ref.watch(mapControllerProvider);
+
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Explore Routes'),
-        centerTitle: true,
-      ),
-      body: Column(
+      body: Stack(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Card(
-              elevation: 4,
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text('Route Preferences', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 16),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: DropdownButtonFormField<String>(
-                            decoration: const InputDecoration(labelText: 'Category', border: OutlineInputBorder()),
-                            items: const [
-                              DropdownMenuItem(value: 'All', child: Text('All')),
-                              DropdownMenuItem(value: 'Heritage', child: Text('Heritage')),
-                              DropdownMenuItem(value: 'Nature', child: Text('Nature')),
-                            ],
-                            onChanged: (val) {},
-                            value: 'All',
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: DropdownButtonFormField<String>(
-                            decoration: const InputDecoration(labelText: 'Distance', border: OutlineInputBorder()),
-                            items: const [
-                              DropdownMenuItem(value: '1km', child: Text('Under 1km')),
-                              DropdownMenuItem(value: '5km', child: Text('Under 5km')),
-                            ],
-                            onChanged: (val) {},
-                            value: '5km',
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
+          GoogleMap(
+            initialCameraPosition: mapState.initialPosition,
+            markers: mapState.markers,
+            mapType: MapType.normal,
+            // Essential settings for the "3D Tour" feel
+            buildingsEnabled: true,
+            tiltGesturesEnabled: true,
+            compassEnabled: true,
+            myLocationEnabled: true,
+            myLocationButtonEnabled: false,
+            onMapCreated: (GoogleMapController controller) {
+              ref.read(mapControllerProvider.notifier).setMapController(controller);
+            },
           ),
-          Expanded(
-            child: Container(
-              color: Colors.grey[200], // Mock Map
-              child: Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
+          
+          // Custom Top App Bar overlay for immersive look
+          Positioned(
+            top: MediaQuery.of(context).padding.top + 16,
+            left: 16,
+            right: 16,
+            child: Card(
+              elevation: 8,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                child: Row(
                   children: [
-                    Icon(Icons.map, size: 64, color: AppColors.primary),
-                    const SizedBox(height: 16),
-                    const Text('Map View Placeholder', style: TextStyle(fontSize: 18)),
+                    const Icon(Icons.search, color: Colors.grey),
+                    const SizedBox(width: 8),
+                    const Expanded(
+                      child: Text(
+                        'Search Monuments...',
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.filter_list),
+                      onPressed: () {
+                        // Filter Logic
+                      },
+                    )
                   ],
                 ),
               ),
             ),
           ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          // Pan camera to India Gate with high 3D tilt
+          ref.read(mapControllerProvider.notifier)
+             .animateTo(const LatLng(28.6129, 77.2295));
+        },
+        label: const Text('Start 3D Tour'),
+        icon: const Icon(Icons.threed_rotation),
       ),
     );
   }
