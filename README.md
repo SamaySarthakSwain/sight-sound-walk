@@ -40,5 +40,21 @@ This project is built with:
 
 
 
+
 **URL**: https://lovable.dev/projects/31b4df35-e9aa-4d85-ae89-d8c29e0a0d52
+
+## 🚀 Deployment to Vercel
+
+To deploy this project to Vercel and ensure smooth operation:
+
+1. **GitHub Integration**: Connect your repository to Vercel.
+2. **Environment Variables**: Add the following from your `.env` (refer to `.env.example`):
+   - `VITE_SUPABASE_PROJECT_ID`
+   - `VITE_SUPABASE_PUBLISHABLE_KEY`
+   - `VITE_SUPABASE_URL`
+3. **Settings**: Vercel should auto-detect:
+   - **Framework Preset**: Vite
+   - **Build Command**: `npm run build`
+   - **Output Directory**: `dist`
+4. **Smooth Routing**: A [`vercel.json`](./vercel.json) has been added to handle SPA routing and prevent 404 errors on sub-routes.
 
