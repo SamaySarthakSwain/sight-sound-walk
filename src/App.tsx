@@ -20,6 +20,8 @@ const Profile = lazy(() => import("./pages/Profile"));
 const Assistant = lazy(() => import("./pages/Assistant"));
 const ARExperience = lazy(() => import("./pages/ARExperience"));
 const NotFound = lazy(() => import("./pages/NotFound"));
+const CrowdDashboard = lazy(() => import("./pages/CrowdDashboard"));
+const LiveRoom = lazy(() => import("./pages/LiveRoom"));
 
 // Lazy load heavy non-critical components
 const FloatingParticles = lazy(() => import("@/components/FloatingParticles"));
@@ -121,6 +123,8 @@ const App = () => {
                     <Route path="/help" element={<Help />} />
                     <Route path="/ar" element={<ARExperience />} />
                     <Route path="/profile" element={<Profile />} />
+                    <Route path="/crowd" element={<CrowdDashboard />} />
+                    <Route path="/crowd/room" element={<LiveRoom />} />
                     <Route path="*" element={<NotFound />} />
                   </Routes>
                 </Suspense>
