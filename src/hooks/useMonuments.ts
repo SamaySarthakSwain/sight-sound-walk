@@ -13,6 +13,9 @@ export interface Monument {
   latitude: number | null;
   longitude: number | null;
   facts: string[] | null;
+  history?: string | null;
+  builtYear?: string | null;
+  longDescription?: string | null;
   is_featured: boolean | null;
   distance_from_berhampur: string | null;
   region: string | null;

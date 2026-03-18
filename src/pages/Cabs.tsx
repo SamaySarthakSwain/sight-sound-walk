@@ -21,7 +21,7 @@ import {
   FareEstimate,
 } from "@/hooks/useCabServices";
 import { useCity } from "@/contexts/CityContext";
-import { useJsApiLoader } from "@react-google-maps/api";
+import { useJsApiLoader, Autocomplete } from "@react-google-maps/api";
 import {
   Car,
   Bike,
@@ -44,10 +44,18 @@ const Cabs = () => {
 
   const cityDisplayName = selectedCity.split(",")[0] || "Odisha";
 
+  // Define places library array outside the component or memoize it to avoid re-renders
+  const [libraries] = useState<("places")[]>(["places"]);
+
   const { isLoaded } = useJsApiLoader({
     id: 'google-map-script',
     googleMapsApiKey: "AIzaSyBVVkTWwfx3NW6bFi1t7CEomwv1owCO1SI",
+    libraries: libraries,
   });
+
+  const [autocompleteStart, setAutocompleteStart] = useState<google.maps.places.Autocomplete | null>(null);
+  const [autocompleteEnd, setAutocompleteEnd] = useState<google.maps.places.Autocomplete | null>(null);
+  const [autocompleteStops, setAutocompleteStops] = useState<Record<number, google.maps.places.Autocomplete>>({});
 
   const [startLocation, setStartLocation] = useState("");
   const [endLocation, setEndLocation] = useState("");
@@ -240,11 +248,29 @@ const Cabs = () => {
                   <MapPin className="w-4 h-4 text-green-500" />
                   Starting Point
                 </Label>
-                <Input
-                  placeholder={`e.g., City Center, ${cityDisplayName}`}
-                  value={startLocation}
-                  onChange={(e) => setStartLocation(e.target.value)}
-                />
+                {isLoaded ? (
+                  <Autocomplete
+                    onLoad={(autocomplete) => setAutocompleteStart(autocomplete)}
+                    onPlaceChanged={() => {
+                      if (autocompleteStart !== null) {
+                        const place = autocompleteStart.getPlace();
+                        setStartLocation(place.formatted_address || place.name || "");
+                      }
+                    }}
+                  >
+                    <Input
+                      placeholder={`e.g., City Center, ${cityDisplayName}`}
+                      value={startLocation}
+                      onChange={(e) => setStartLocation(e.target.value)}
+                    />
+                  </Autocomplete>
+                ) : (
+                  <Input
+                    placeholder={`e.g., City Center, ${cityDisplayName}`}
+                    value={startLocation}
+                    onChange={(e) => setStartLocation(e.target.value)}
+                  />
+                )}
               </div>
 
               {/* Stops */}
@@ -255,12 +281,35 @@ const Cabs = () => {
                     Stop {index + 1}
                   </Label>
                   <div className="flex gap-2">
-                    <Input
-                      placeholder={`e.g., Stop ${index + 1} location`}
-                      value={stop}
-                      onChange={(e) => handleStopChange(index, e.target.value)}
-                      className="flex-1"
-                    />
+                    {isLoaded ? (
+                      <Autocomplete
+                        className="flex-1"
+                        onLoad={(autocomplete) => {
+                          setAutocompleteStops(prev => ({ ...prev, [index]: autocomplete }));
+                        }}
+                        onPlaceChanged={() => {
+                          const act = autocompleteStops[index];
+                          if (act !== null) {
+                            const place = act.getPlace();
+                            handleStopChange(index, place.formatted_address || place.name || "");
+                          }
+                        }}
+                      >
+                        <Input
+                          placeholder={`e.g., Stop ${index + 1} location`}
+                          value={stop}
+                          onChange={(e) => handleStopChange(index, e.target.value)}
+                          className="w-full"
+                        />
+                      </Autocomplete>
+                    ) : (
+                      <Input
+                        placeholder={`e.g., Stop ${index + 1} location`}
+                        value={stop}
+                        onChange={(e) => handleStopChange(index, e.target.value)}
+                        className="flex-1"
+                      />
+                    )}
                     <Button
                       variant="outline"
                       size="icon"
@@ -291,11 +340,29 @@ const Cabs = () => {
                   <MapPin className="w-4 h-4 text-red-500" />
                   Destination
                 </Label>
-                <Input
-                  placeholder="e.g., Kalinga Stadium, Bhubaneswar"
-                  value={endLocation}
-                  onChange={(e) => setEndLocation(e.target.value)}
-                />
+                {isLoaded ? (
+                  <Autocomplete
+                    onLoad={(autocomplete) => setAutocompleteEnd(autocomplete)}
+                    onPlaceChanged={() => {
+                      if (autocompleteEnd !== null) {
+                        const place = autocompleteEnd.getPlace();
+                        setEndLocation(place.formatted_address || place.name || "");
+                      }
+                    }}
+                  >
+                    <Input
+                      placeholder="e.g., Kalinga Stadium, Bhubaneswar"
+                      value={endLocation}
+                      onChange={(e) => setEndLocation(e.target.value)}
+                    />
+                  </Autocomplete>
+                ) : (
+                  <Input
+                    placeholder="e.g., Kalinga Stadium, Bhubaneswar"
+                    value={endLocation}
+                    onChange={(e) => setEndLocation(e.target.value)}
+                  />
+                )}
               </div>
 
               {/* Passengers */}

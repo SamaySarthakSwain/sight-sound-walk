@@ -74,6 +74,36 @@ export type Database = {
         }
         Relationships: []
       }
+      crowd_records: {
+        Row: {
+          id: string
+          session_id: string
+          username: string
+          location: string | null
+          person_count: number
+          vehicle_count: number
+          recorded_at: string
+        }
+        Insert: {
+          id?: string
+          session_id: string
+          username: string
+          location?: string | null
+          person_count?: number
+          vehicle_count?: number
+          recorded_at?: string
+        }
+        Update: {
+          id?: string
+          session_id?: string
+          username?: string
+          location?: string | null
+          person_count?: number
+          vehicle_count?: number
+          recorded_at?: string
+        }
+        Relationships: []
+      }
       food_places: {
         Row: {
           avg_price_max: number | null

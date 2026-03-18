@@ -12,6 +12,7 @@ import { DetectionProvider } from "@/contexts/DetectionContext";
 import { DetectionEngine } from "@/components/dashboard/DetectionEngine";
 import { RefreshCw } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
+import { useCrowdPersistence } from "@/hooks/useCrowdPersistence";
 
 
 const getCrowdDensity = (count: number) => {
@@ -23,8 +24,27 @@ const getCrowdDensity = (count: number) => {
 const LiveRoomContent = () => {
     const navigate = useNavigate();
     const { localStream, setLocalStream, peers, username, location, sessionId } = useWebRTC();
-    const { personCount, vehicleCount } = useDetection();
+    const { personCount, vehicleCount, bboxes } = useDetection();
+    const { saveRecord } = useCrowdPersistence(sessionId);
     const [currentTime, setCurrentTime] = useState(new Date());
+
+    // Auto-save detection data periodically if we are the streamer
+    useEffect(() => {
+        if (!localStream || !sessionId || !username) return;
+
+        const interval = setInterval(() => {
+            if (personCount > 0 || vehicleCount > 0) {
+                saveRecord({
+                    username,
+                    location: location || "Live Room",
+                    person_count: personCount,
+                    vehicle_count: vehicleCount
+                });
+            }
+        }, 15000); // Every 15 seconds save a snapshot
+
+        return () => clearInterval(interval);
+    }, [localStream, sessionId, username, location, personCount, vehicleCount, saveRecord]);
     const [showQR, setShowQR] = useState(false);
     const [copied, setCopied] = useState(false);
 
@@ -91,10 +111,10 @@ const LiveRoomContent = () => {
 
     // Sync detection to WebRTC peers
     useEffect(() => {
-        if (username && (personCount > 0 || vehicleCount > 0)) {
-            handleMetadataUpdate(personCount, vehicleCount);
+        if (username && (personCount > 0 || vehicleCount > 0 || (bboxes && bboxes.length > 0))) {
+            handleMetadataUpdate(personCount, vehicleCount, bboxes);
         }
-    }, [personCount, vehicleCount, username, handleMetadataUpdate]);
+    }, [personCount, vehicleCount, bboxes, username, handleMetadataUpdate]);
 
     useEffect(() => {
         if (username && !localStream && !isStartingCamera) {
@@ -110,6 +130,7 @@ const LiveRoomContent = () => {
             stream: localStream,
             personCount,
             vehicleCount,
+            bboxes,
             isLocal: true,
         },
         ...(Object.values(peers) as PeerData[]),
@@ -248,7 +269,7 @@ const LiveRoomContent = () => {
                                     {/* Video / Camera Off */}
                                     <div className="absolute inset-0">
                                         {peer.stream ? (
-                                            <VideoPlayer stream={peer.stream} showDetection={peer.isLocal} className="w-full h-full object-cover" />
+                                            <VideoPlayer stream={peer.stream} showDetection={true} personCount={peer.personCount} bboxes={peer.bboxes} className="w-full h-full object-cover" />
                                         ) : (
                                             <div className="w-full h-full flex items-center justify-center bg-[#3c4043]">
                                                 <div className="w-16 h-16 rounded-full bg-[#5f6368] flex items-center justify-center">

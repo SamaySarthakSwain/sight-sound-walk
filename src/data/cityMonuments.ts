@@ -27,6 +27,9 @@ import nistImage from "@/assets/nist-university.jpg";
 export interface Monument {
   title: string;
   description: string;
+  longDescription?: string;
+  history?: string;
+  builtYear?: string;
   location: string;
   category: string;
   imageUrl: string;
@@ -51,6 +54,9 @@ const bhubaneswarData: CityData = {
         {
           title: "Lingaraja Temple",
           description: "A masterpiece of Kalinga architecture with a 180-ft high tower, this 11th century temple is dedicated to Lord Shiva in his Harihara form (half Vishnu, half Shiva).",
+          longDescription: "The Lingaraja Temple is the largest temple in Bhubaneswar and represents the quintessence of Kalinga architecture. The temple compound is enclosed by a massive wall measuring 520 ft by 465 ft. The main tower reaches an imposing height of 180 feet, dominating the city's skyline.",
+          history: "Constructed in the 11th century by King Jajati Keshari of the Somavamsi dynasty, though parts of it might date back to the 6th century.",
+          builtYear: "11th Century (approx. 1090-1104 CE)",
           location: "Bhubaneswar, Odisha",
           category: "Temple",
           imageUrl: lingarajaImage,
@@ -96,6 +102,9 @@ const bhubaneswarData: CityData = {
         {
           title: "Konark Sun Temple",
           description: "UNESCO World Heritage Site built in 13th century. Designed as a colossal chariot with 24 wheels.",
+          longDescription: "Konark Sun Temple is designed in the shape of a colossal chariot depicting the conveyance of the Sun God, Surya. It is drawn by seven horses and features 24 exquisitely carved wheels that act as sundials, which can be used to calculate time accurately to the minute.",
+          history: "Built by King Narasimhadeva I of the Eastern Ganga Dynasty in 1250 CE to commemorate his victory over Muslim invaders. Much of the main shikhara collapsed in the 19th century.",
+          builtYear: "1250 CE",
           location: "65 km from Bhubaneswar",
           category: "Temple",
           imageUrl: konarkImage,
@@ -124,6 +133,9 @@ const puriData: CityData = {
         {
           title: "Jagannath Temple",
           description: "Sacred Hindu temple, one of the Char Dham pilgrimage sites. Built in 12th century, famous for annual Rath Yatra and world's largest temple kitchen.",
+          longDescription: "The Shri Jagannath Temple is an important Hindu temple dedicated to Jagannath, a form of Vishnu. It is one of the Char Dham pilgrimage sites. The temple is famous for its annual Ratha Yatra, or chariot festival, in which the three principal deities are pulled on huge and elaborately decorated temple cars.",
+          history: "The temple was built by the Ganga dynasty king Anantavarman Chodaganga in the 12th century CE, as suggested by the Kendupatna copper-plate inscription.",
+          builtYear: "1161 CE",
           location: "Puri, Odisha",
           category: "Temple",
           imageUrl: jagannathImage,

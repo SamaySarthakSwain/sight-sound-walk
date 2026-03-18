@@ -12,7 +12,7 @@ type WebRTCState = {
     peers: Record<string, PeerData>;
     localStream: MediaStream | null;
     setLocalStream: (stream: MediaStream) => void;
-    handleMetadataUpdate: (personCount: number, vehicleCount: number, gpsCoords?: { lat: number; lng: number } | null) => void;
+    handleMetadataUpdate: (personCount: number, vehicleCount: number, bboxes?: any[], gpsCoords?: { lat: number; lng: number } | null) => void;
 };
 
 const WebRTCContext = createContext<WebRTCState | undefined>(undefined);

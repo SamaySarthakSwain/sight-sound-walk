@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer } from "recharts";
-import { Users, Clock, MapPin, Map as MapIcon, CalendarHeart } from "lucide-react";
+import { Users, Clock, MapPin, Map as MapIcon, CalendarHeart, AlertTriangle } from "lucide-react";
 import { getOfflineData } from "@/hooks/useOfflineData";
+import { useCrowdPersistence } from "@/hooks/useCrowdPersistence";
+import { cn } from "@/lib/utils";
 
 interface Monument {
   id: string;
@@ -42,52 +44,60 @@ const getBestTime = (history: {time: string, density: number}[]) => {
 const MonumentDensityList = () => {
   const [monuments, setMonuments] = useState<Monument[]>([]);
   const [loading, setLoading] = useState(true);
-  const [densities, setDensities] = useState<Record<string, { current: number, history: any[], bestTime: string }>>({});
+  const [densities, setDensities] = useState<Record<string, { current: number, history: any[], bestTime: string, isRealTime?: boolean }>>({});
+  const { fetchGlobalDensity } = useCrowdPersistence();
 
   useEffect(() => {
-    const fetchMonuments = async () => {
+    const fetchMonumentsData = async () => {
       try {
         setLoading(true);
-        // Try to get from supabase first
-        const { data, error } = await supabase
+        // Fetch monuments
+        const { data: monumentData, error: mError } = await supabase
           .from("monuments")
           .select("id,title,location,category,latitude,longitude,image_url,is_featured")
           .order("is_featured", { ascending: false })
           .limit(6);
 
-        let finalData = data || [];
-
-        // Fallback to offline data if needed
-        if (error || !data || data.length === 0) {
-          console.log("Using offline monument data");
-          finalData = getOfflineData("monuments").slice(0, 6);
+        let finalMonuments = monumentData || [];
+        if (mError || finalMonuments.length === 0) {
+          finalMonuments = getOfflineData("monuments").slice(0, 6);
         }
-        
-        setMonuments(finalData);
+        setMonuments(finalMonuments);
 
-        // Generate density profiles for each loaded monument
+        // Fetch real global density data if available
+        const realData = await fetchGlobalDensity();
         const profiles: Record<string, any> = {};
-        finalData.forEach(m => {
-          // Base level seeded by string length to keep it consistent but pseudo-random
-          const baseLevel = (m.title.length * 3) % 60 + 20; 
+
+        finalMonuments.forEach(m => {
+          // Check if we have real-time detection for this "location" or general area
+          const latestForLocation = realData.find(r => 
+            r.location?.toLowerCase().includes(m.title.toLowerCase()) || 
+            r.location?.toLowerCase().includes(m.location.toLowerCase())
+          );
+
+          const baseLevel = (m.title.length * 3) % 60 + 20;
           const history = generateMockHistory(baseLevel);
+          const currentVal = latestForLocation 
+            ? Math.min(100, (latestForLocation.person_count * 10)) 
+            : history[history.length - 1].density;
+
           profiles[m.id] = {
-            current: history[history.length - 1].density, // Last data point as current
-            history,
-            bestTime: getBestTime(history)
+            current: currentVal,
+            history: history,
+            bestTime: getBestTime(history),
+            isRealTime: !!latestForLocation
           };
         });
         setDensities(profiles);
-
       } catch (err) {
-        console.error("Failed to load monuments:", err);
+        console.error("Monument data fetch error:", err);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchMonuments();
-  }, []);
+    fetchMonumentsData();
+  }, [fetchGlobalDensity]);
 
   const getDensityColor = (density: number) => {
     if (density > 80) return "text-red-400";
@@ -110,13 +120,13 @@ const MonumentDensityList = () => {
   }
 
   return (
-    <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 shadow-2xl overflow-hidden mt-8 w-full max-w-5xl mx-auto mb-12">
+    <div className="bg-card/50 backdrop-blur-xl border border-border rounded-2xl p-6 shadow-xl overflow-hidden mt-8 w-full max-w-5xl mx-auto mb-12">
       <div className="mb-8">
-        <h2 className="text-2xl font-bold bg-gradient-to-r from-teal-400 to-emerald-300 bg-clip-text text-transparent flex items-center gap-3">
-          <MapIcon className="w-6 h-6 text-teal-400" />
+        <h2 className="text-2xl font-bold bg-gradient-to-r from-orange-500 to-amber-400 bg-clip-text text-transparent flex items-center gap-3">
+          <MapIcon className="w-6 h-6 text-orange-500" />
           Monument Crowd Density Insights
         </h2>
-        <p className="text-white/60 mt-2 text-sm max-w-xl">
+        <p className="text-muted-foreground mt-2 text-sm max-w-xl">
           Check live and historical crowd patterns at famous monuments to plan your visit at the perfect time.
         </p>
       </div>
@@ -127,7 +137,7 @@ const MonumentDensityList = () => {
           if (!densityData) return null;
 
           return (
-            <div key={monument.id} className="bg-black/20 border border-white/10 rounded-xl overflow-hidden flex flex-col group hover:border-white/20 transition-all duration-300">
+            <div key={monument.id} className="bg-muted/30 border border-border/50 rounded-xl overflow-hidden flex flex-col group hover:border-primary/30 transition-all duration-300">
               <div className="relative h-32 w-full overflow-hidden">
                 <img 
                   src={monument.image_url || 'https://images.unsplash.com/photo-1621008779836-3a72d42ce563?q=80&w=400&auto=format&fit=crop'} 
@@ -137,14 +147,30 @@ const MonumentDensityList = () => {
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
                 
                 {/* Live Badge */}
-                <div className="absolute top-3 right-3 flex items-center gap-1.5 px-2 py-1 bg-black/60 backdrop-blur-md rounded-full border border-white/10">
-                  <span className={`w-2 h-2 rounded-full animate-pulse bg-gradient-to-r ${getDensityGradient(densityData.current)} to-transparent`} />
-                  <span className="text-[10px] font-bold text-white/90">LIVE: {densityData.current}%</span>
+                <div className="absolute top-3 right-3 flex flex-col items-end gap-2">
+                  <div className="flex items-center gap-1.5 px-2 py-1 bg-background/80 backdrop-blur-md rounded-full border border-border">
+                    <span className={cn(
+                      "w-2.5 h-2.5 rounded-full animate-pulse shadow-[0_0_8px_rgba(255,255,255,0.5)]",
+                      densityData.current > 80 ? "bg-red-500 shadow-red-500/50" : 
+                      densityData.current > 50 ? "bg-amber-500 shadow-amber-500/50" : 
+                      "bg-emerald-500 shadow-emerald-500/50"
+                    )} />
+                    <span className="text-[10px] font-bold text-foreground tracking-wider">
+                      {densityData.isRealTime ? "DETECTION: " : "ESTIMATED: "}{densityData.current}%
+                    </span>
+                  </div>
+                  
+                  {densityData.current > 75 && (
+                    <div className="flex items-center gap-1.5 px-2 py-1 bg-red-500/80 backdrop-blur-md rounded-lg border border-red-400/50 animate-bounce shadow-lg">
+                      <AlertTriangle className="w-3 h-3 text-white" />
+                      <span className="text-[9px] font-black text-white uppercase tracking-tighter">Heavy Crowd</span>
+                    </div>
+                  )}
                 </div>
 
                 <div className="absolute bottom-3 left-3 right-3">
-                  <h3 className="text-white font-bold truncate text-sm">{monument.title}</h3>
-                  <div className="flex items-center gap-1 text-white/60 text-[10px] mt-0.5">
+                  <h3 className="text-foreground font-bold truncate text-sm">{monument.title}</h3>
+                  <div className="flex items-center gap-1 text-muted-foreground text-[10px] mt-0.5">
                     <MapPin className="w-3 h-3" />
                     <span className="truncate">{monument.location}</span>
                   </div>
@@ -152,30 +178,30 @@ const MonumentDensityList = () => {
               </div>
 
               <div className="p-4 flex-1 flex flex-col">
-                <div className="flex justify-between items-center mb-4 pb-3 border-b border-white/5">
+                <div className="flex justify-between items-center mb-4 pb-3 border-b border-border/50">
                   <div className="flex items-center gap-2">
-                    <div className={`p-1.5 rounded-md bg-white/5 ${getDensityColor(densityData.current)}`}>
+                    <div className={cn("p-1.5 rounded-md bg-muted", getDensityColor(densityData.current))}>
                       <Users className="w-4 h-4" />
                     </div>
                     <div>
-                      <p className="text-[10px] text-white/50 uppercase tracking-wider">Current Status</p>
-                      <p className={`text-sm font-bold ${getDensityColor(densityData.current)}`}>
+                      <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Current Status</p>
+                      <p className={cn("text-sm font-bold", getDensityColor(densityData.current))}>
                         {densityData.current > 80 ? 'Very Crowded' : densityData.current > 50 ? 'Moderate' : 'Uncrowded'}
                       </p>
                     </div>
                   </div>
                   
                   <div className="text-right">
-                    <div className="flex items-center justify-end gap-1.5 text-teal-400 mb-0.5">
+                    <div className="flex items-center justify-end gap-1.5 text-primary mb-0.5">
                       <Clock className="w-3.5 h-3.5" />
                       <span className="text-xs font-bold">{densityData.bestTime}</span>
                     </div>
-                    <p className="text-[9px] text-white/50 uppercase tracking-wider">Best Time to Visit</p>
+                    <p className="text-[9px] text-muted-foreground uppercase tracking-wider">Best Time to Visit</p>
                   </div>
                 </div>
 
                 <div className="flex-1 mt-auto">
-                  <p className="text-[10px] text-white/50 uppercase tracking-wider mb-2 flex items-center gap-1">
+                  <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-2 flex items-center gap-1">
                     <CalendarHeart className="w-3 h-3" /> Hourly Trend
                   </p>
                   <div className="h-16 w-full ml-[-10px]">
@@ -183,27 +209,28 @@ const MonumentDensityList = () => {
                       <AreaChart data={densityData.history}>
                         <defs>
                           <linearGradient id={`grad-${monument.id}`} x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#14b8a6" stopOpacity={0.3}/>
-                            <stop offset="95%" stopColor="#14b8a6" stopOpacity={0}/>
+                            <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3}/>
+                            <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
                           </linearGradient>
                         </defs>
                         <XAxis 
                           dataKey="time" 
-                          tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 9 }}
+                          tick={{ fill: 'currentColor', fontSize: 9 }}
+                          className="text-muted-foreground/50"
                           tickLine={false}
                           axisLine={false}
                           interval="preserveStartEnd"
                         />
                         <RechartsTooltip 
                           contentStyle={{ 
-                            backgroundColor: 'rgba(10,10,10,0.9)', 
-                            border: '1px solid rgba(255,255,255,0.1)',
+                            backgroundColor: 'hsl(var(--background))', 
+                            border: '1px solid hsl(var(--border))',
                             borderRadius: '6px',
-                            color: '#fff',
+                            color: 'hsl(var(--foreground))',
                             fontSize: '11px',
                             padding: '4px 8px'
                           }}
-                          itemStyle={{ color: '#fff' }}
+                          itemStyle={{ color: 'hsl(var(--primary))' }}
                         />
                         <Area 
                           type="monotone" 

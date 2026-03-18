@@ -3,6 +3,7 @@ import * as tf from "@tensorflow/tfjs";
 import * as cocoSsd from "@tensorflow-models/coco-ssd";
 import { Camera, AlertCircle, RefreshCw, BarChart2, Zap, LayoutDashboard, Clock, Users, Car } from "lucide-react";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer } from "recharts";
+import { useCrowdPersistence } from "@/hooks/useCrowdPersistence";
 
 type DetectionRecord = {
   timestamp: Date;
@@ -26,6 +27,7 @@ const CrowdDensityScanner = () => {
 
   // History tracking local to this component
   const [history, setHistory] = useState<DetectionRecord[]>([]);
+  const { saveRecord } = useCrowdPersistence("local-scanner");
 
   // Load COCO-SSD Model
   useEffect(() => {
@@ -57,10 +59,20 @@ const CrowdDensityScanner = () => {
         if (newHistory.length > 60) newHistory.shift();
         return newHistory;
       });
+
+      // Persist to Supabase every minute (approx) to avoid too many writes
+      if (Math.random() > 0.8) {
+        saveRecord({
+          username: "LocalScanner",
+          location: "On-site Detection",
+          person_count: personCount,
+          vehicle_count: vehicleCount,
+        });
+      }
     }, 5000);
 
     return () => clearInterval(interval);
-  }, [isCameraActive, model, personCount, vehicleCount]);
+  }, [isCameraActive, model, personCount, vehicleCount, saveRecord]);
 
   const startCamera = async () => {
     try {
@@ -248,36 +260,36 @@ const CrowdDensityScanner = () => {
             
             {/* Live Indicator overlay */}
             {isCameraActive && (
-              <div className="absolute top-4 right-4 flex items-center gap-2 px-3 py-1.5 bg-black/60 backdrop-blur-md rounded-full border border-white/10">
+              <div className="absolute top-4 right-4 flex items-center gap-2 px-3 py-1.5 bg-background/60 backdrop-blur-md rounded-full border border-border">
                 <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-                <span className="text-xs font-medium tracking-wide text-white/90">LIVE DETECT</span>
+                <span className="text-xs font-medium tracking-wide text-foreground/90">LIVE DETECT</span>
               </div>
             )}
             
             {/* Density Overlay */}
             {isCameraActive && (
-              <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between p-4 bg-black/60 backdrop-blur-md rounded-xl border border-white/10">
+              <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between p-4 bg-background/60 backdrop-blur-md rounded-xl border border-border">
                 <div className="flex items-center gap-6">
                   <div>
-                    <p className="text-[10px] text-white/50 font-mono uppercase tracking-wider mb-1">Density Level</p>
+                    <p className="text-[10px] text-muted-foreground font-mono uppercase tracking-wider mb-1">Density Level</p>
                     <p className={`text-xl font-bold ${densityInfo.color}`}>{densityInfo.level}</p>
-                    <p className="text-xs text-white/40 mt-0.5">{densityInfo.desc}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">{densityInfo.desc}</p>
                   </div>
-                  <div className="h-10 w-px bg-white/10" />
+                  <div className="h-10 w-px bg-border" />
                   <div className="flex gap-6">
                     <div>
-                      <div className="flex items-center gap-2 text-white/70 mb-1">
-                        <Users className="w-4 h-4 text-teal-400" />
+                      <div className="flex items-center gap-2 text-muted-foreground mb-1">
+                        <Users className="w-4 h-4 text-primary" />
                         <span className="text-xs uppercase tracking-wider font-medium">People</span>
                       </div>
-                      <span className="text-2xl font-bold font-mono text-white">{personCount}</span>
+                      <span className="text-2xl font-bold font-mono text-foreground">{personCount}</span>
                     </div>
                     <div>
-                      <div className="flex items-center gap-2 text-white/70 mb-1">
-                        <Car className="w-4 h-4 text-amber-400" />
+                      <div className="flex items-center gap-2 text-muted-foreground mb-1">
+                        <Car className="w-4 h-4 text-amber-500" />
                         <span className="text-xs uppercase tracking-wider font-medium">Vehicles</span>
                       </div>
-                      <span className="text-2xl font-bold font-mono text-white">{vehicleCount}</span>
+                      <span className="text-2xl font-bold font-mono text-foreground">{vehicleCount}</span>
                     </div>
                   </div>
                 </div>
@@ -288,21 +300,21 @@ const CrowdDensityScanner = () => {
 
         <div className="space-y-6">
           {/* Stats Breakdown */}
-          <div className="bg-white/5 border border-white/10 rounded-xl p-5 shadow-inner">
-             <h3 className="text-sm font-semibold text-white/90 mb-6 uppercase tracking-wider flex items-center gap-2">
-              <Zap className="w-4 h-4 text-emerald-400" />
+          <div className="bg-card border border-border rounded-xl p-5 shadow-sm">
+             <h3 className="text-sm font-semibold text-foreground mb-6 uppercase tracking-wider flex items-center gap-2">
+              <Zap className="w-4 h-4 text-primary" />
               Live Insights
             </h3>
             
             <div className="space-y-5">
               <div>
                 <div className="flex justify-between items-end mb-2">
-                  <span className="text-sm text-white/60">Crowd Capacity Limit</span>
-                  <span className="text-xs font-mono text-white/40">{Math.min(100, Math.round((personCount / 20) * 100))}%</span>
+                  <span className="text-sm text-muted-foreground">Crowd Capacity Limit</span>
+                  <span className="text-xs font-mono text-muted-foreground/60">{Math.min(100, Math.round((personCount / 20) * 100))}%</span>
                 </div>
-                <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden border border-white/5">
+                <div className="h-2 w-full bg-muted rounded-full overflow-hidden border border-border/50">
                   <div 
-                    className="h-full bg-gradient-to-r from-teal-500 to-emerald-400 transition-all duration-500"
+                    className="h-full bg-gradient-to-r from-orange-500 to-amber-400 transition-all duration-500"
                     style={{ width: `${Math.min(100, (personCount / 20) * 100)}%` }}
                   />
                 </div>
@@ -310,12 +322,12 @@ const CrowdDensityScanner = () => {
               
               <div>
                 <div className="flex justify-between items-end mb-2">
-                  <span className="text-sm text-white/60">Vehicle Load</span>
-                  <span className="text-xs font-mono text-white/40">{Math.min(100, Math.round((vehicleCount / 10) * 100))}%</span>
+                  <span className="text-sm text-muted-foreground">Vehicle Load</span>
+                  <span className="text-xs font-mono text-muted-foreground/60">{Math.min(100, Math.round((vehicleCount / 10) * 100))}%</span>
                 </div>
-                <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden border border-white/5">
+                <div className="h-2 w-full bg-muted rounded-full overflow-hidden border border-border/50">
                   <div 
-                    className="h-full bg-gradient-to-r from-amber-500 to-orange-400 transition-all duration-500"
+                    className="h-full bg-gradient-to-r from-teal-500 to-emerald-400 transition-all duration-500"
                     style={{ width: `${Math.min(100, (vehicleCount / 10) * 100)}%` }}
                   />
                 </div>
@@ -324,20 +336,20 @@ const CrowdDensityScanner = () => {
           </div>
           
           {/* Historical Timeline */}
-          <div className="bg-white/5 border border-white/10 rounded-xl p-5 shadow-inner flex flex-col min-h-[260px]">
+          <div className="bg-card border border-border rounded-xl p-5 shadow-sm flex flex-col min-h-[260px]">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-sm font-semibold text-white/90 uppercase tracking-wider flex items-center gap-2">
-                <BarChart2 className="w-4 h-4 text-indigo-400" />
+              <h3 className="text-sm font-semibold text-foreground uppercase tracking-wider flex items-center gap-2">
+                <BarChart2 className="w-4 h-4 text-primary" />
                 History Timeline
               </h3>
-              <span className="text-[10px] font-mono text-white/40 px-2 py-0.5 rounded border border-white/10 bg-black/20">
+              <span className="text-[10px] font-mono text-muted-foreground px-2 py-0.5 rounded border border-border bg-muted">
                 {history.length} data points
               </span>
             </div>
             
             <div className="flex-1 flex flex-col justify-end min-h-[160px]">
               {history.length < 2 ? (
-                <div className="flex flex-col items-center justify-center text-white/30 gap-3 h-full pb-6">
+                <div className="flex flex-col items-center justify-center text-muted-foreground/30 gap-3 h-full pb-6">
                   <Clock className="w-8 h-8 opacity-50" />
                   <p className="text-xs text-center">Start scanner & wait a few seconds<br/>to build history...</p>
                 </div>
@@ -355,29 +367,31 @@ const CrowdDensityScanner = () => {
                           <stop offset="95%" stopColor="#f59e0b" stopOpacity={0}/>
                         </linearGradient>
                       </defs>
-                      <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
+                      <CartesianGrid strokeDasharray="3 3" stroke="currentColor" className="text-border/20" vertical={false} />
                       <XAxis 
                         dataKey="time" 
-                        tick={{ fill: 'rgba(255,255,255,0.3)', fontSize: 10 }}
+                        tick={{ fill: 'currentColor', fontSize: 10 }}
+                        className="text-muted-foreground/40"
                         tickLine={false}
                         axisLine={false}
                         minTickGap={30}
                       />
                       <YAxis 
-                        tick={{ fill: 'rgba(255,255,255,0.3)', fontSize: 10 }}
+                        tick={{ fill: 'currentColor', fontSize: 10 }}
+                        className="text-muted-foreground/40"
                         tickLine={false}
                         axisLine={false}
                         width={40}
                       />
                       <RechartsTooltip 
                         contentStyle={{ 
-                          backgroundColor: 'rgba(10,10,10,0.8)', 
-                          border: '1px solid rgba(255,255,255,0.1)',
+                          backgroundColor: 'hsl(var(--background))', 
+                          border: '1px solid hsl(var(--border))',
                           borderRadius: '8px',
-                          color: '#fff',
+                          color: 'hsl(var(--foreground))',
                           fontSize: '12px'
                         }}
-                        itemStyle={{ color: '#fff' }}
+                        itemStyle={{ color: 'hsl(var(--primary))' }}
                       />
                       <Area 
                         type="monotone" 
@@ -403,9 +417,9 @@ const CrowdDensityScanner = () => {
               )}
             </div>
             
-            <div className="flex gap-4 mt-2 justify-center border-t border-white/5 pt-3">
-               <span className="flex items-center gap-1.5 text-[10px] text-white/50"><span className="w-2 h-2 rounded-full bg-teal-400" />People Trend</span>
-               <span className="flex items-center gap-1.5 text-[10px] text-white/50"><span className="w-2 h-2 rounded-full bg-amber-400" />Vehicle Trend</span>
+            <div className="flex gap-4 mt-2 justify-center border-t border-border pt-3">
+               <span className="flex items-center gap-1.5 text-[10px] text-muted-foreground"><span className="w-2 h-2 rounded-full bg-primary" />People Trend</span>
+               <span className="flex items-center gap-1.5 text-[10px] text-muted-foreground"><span className="w-2 h-2 rounded-full bg-amber-500" />Vehicle Trend</span>
             </div>
           </div>
         </div>

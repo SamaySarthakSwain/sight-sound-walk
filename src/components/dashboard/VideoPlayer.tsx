@@ -6,6 +6,8 @@ interface VideoPlayerProps {
     stream: MediaStream | null;
     className?: string;
     showDetection?: boolean;
+    personCount?: number;
+    bboxes?: any[];
 }
 
 const VEHICLE_CLASSES = ["car", "truck", "bus", "motorcycle", "bicycle"];
@@ -51,10 +53,14 @@ const drawBox = (
     ctx.fillText(label, x + 4, y - 6);
 };
 
-export const VideoPlayer: React.FC<VideoPlayerProps> = ({ stream, className, showDetection = false }) => {
+export const VideoPlayer: React.FC<VideoPlayerProps> = ({ stream, className, showDetection = false, personCount: forcedPersonCount, bboxes: forcedBboxes }) => {
     const videoRef = useRef<HTMLVideoElement>(null);
     const canvasRef = useRef<HTMLCanvasElement>(null);
-    const { bboxes, personCount } = useDetection();
+    const { bboxes: localBboxes, personCount: localPersonCount } = useDetection();
+
+    // Use forced bboxes (for remote streams) or fallback to local context
+    const currentBboxes = forcedBboxes ?? localBboxes;
+    const currentPersonCount = forcedPersonCount ?? localPersonCount;
 
     useEffect(() => {
         if (videoRef.current && stream) {
@@ -79,9 +85,9 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({ stream, className, sho
                 canvas.height = video.videoHeight;
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 
-                const personColor = getPersonColor(personCount);
+                const personColor = getPersonColor(currentPersonCount);
                 
-                bboxes.forEach((p: any) => {
+                currentBboxes.forEach((p: any) => {
                     const [x, y, w, h] = p.bbox;
                     const isPerson = p.class === "person";
                     const color = isPerson ? personColor : VEHICLE_COLOR;
@@ -95,7 +101,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({ stream, className, sho
 
         render();
         return () => { active = false; };
-    }, [showDetection, bboxes, personCount]);
+    }, [showDetection, currentBboxes, currentPersonCount]);
 
     if (!stream) {
         return (

@@ -8,48 +8,46 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 35 25% 97%;
-    --foreground: 25 30% 15%;
+    --background: 0 0% 100%;
+    --foreground: 224 71.4% 4.1%;
 
     --card: 0 0% 100%;
-    --card-foreground: 25 30% 15%;
+    --card-foreground: 224 71.4% 4.1%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 25 30% 15%;
+    --popover-foreground: 224 71.4% 4.1%;
 
-    --primary: 25 95% 53%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 18 100% 60%; /* Previous Orange */
+    --primary-foreground: 210 20% 98%;
 
-    --secondary: 180 45% 45%;
-    --secondary-foreground: 0 0% 100%;
+    --secondary: 220 14.3% 95.9%;
+    --secondary-foreground: 220.9 39.3% 11%;
 
-    --muted: 35 20% 90%;
-    --muted-foreground: 25 15% 45%;
+    --muted: 220 14.3% 95.9%;
+    --muted-foreground: 220 8.9% 46.1%;
 
-    --accent: 15 75% 60%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 18 100% 60%;
+    --accent-foreground: 220.9 39.3% 11%;
 
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 100%;
+    --destructive-foreground: 210 20% 98%;
 
-    --border: 35 20% 85%;
-    --input: 35 20% 85%;
-    --ring: 25 95% 53%;
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 18 100% 60%;
 
-    --radius: 0.75rem;
+    --radius: 1rem;
 
-    --gradient-hero: linear-gradient(135deg, hsl(25 95% 53%) 0%, hsl(15 75% 60%) 100%);
-    --gradient-card: linear-gradient(145deg, hsl(0 0% 100%) 0%, hsl(35 25% 97%) 100%);
-    --gradient-subtle: linear-gradient(180deg, hsl(35 25% 97%) 0%, hsl(0 0% 100%) 100%);
+    --gradient-hero: linear-gradient(135deg, hsl(18 100% 60%) 0%, hsl(25 95% 53%) 100%);
+    --gradient-card: linear-gradient(145deg, hsl(0 0% 100%) 0%, hsl(240 5% 98%) 100%);
+    --gradient-subtle: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(240 5% 96%) 100%);
 
     --shadow-soft: 0 4px 20px -2px hsl(25 30% 15% / 0.08);
     --shadow-medium: 0 8px 30px -4px hsl(25 30% 15% / 0.12);
-    --shadow-glow: 0 0 40px hsl(25 95% 53% / 0.15);
+    --shadow-glow: 0 0 40px hsl(18 100% 60% / 0.15);
 
-    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-
-    --glow-primary: 25 95% 53%;
-    --glow-secondary: 170 80% 50%;
+    --glow-primary: 18 100% 60%;
+    --glow-secondary: 25 95% 53%;
   }
 
   .dark {
@@ -141,7 +139,7 @@ All colors MUST be HSL.
 
 .glass-button {
   @apply relative overflow-hidden bg-primary/90 hover:bg-primary backdrop-blur-md text-primary-foreground transition-all duration-300;
-  box-shadow: 0 4px 14px 0 hsl(18 100% 60% / 0.3);
+  box-shadow: 0 4px 14px 0 hsl(var(--glow-primary) / 0.3);
 }
 
 .glass-button::before {
@@ -360,18 +358,18 @@ All colors MUST be HSL.
   background-image:
     radial-gradient(1px 1px at 10% 20%, hsl(0 0% 40% / 0.3), transparent),
     radial-gradient(1px 1px at 30% 40%, hsl(0 0% 50% / 0.2), transparent),
-    radial-gradient(1.5px 1.5px at 50% 10%, hsl(18 60% 50% / 0.15), transparent),
+    radial-gradient(1.5px 1.5px at 50% 10%, hsl(var(--glow-primary) / 0.15), transparent),
     radial-gradient(1px 1px at 70% 60%, hsl(0 0% 40% / 0.2), transparent),
     radial-gradient(1px 1px at 90% 30%, hsl(0 0% 50% / 0.25), transparent),
-    radial-gradient(1.5px 1.5px at 20% 80%, hsl(18 100% 60% / 0.1), transparent),
+    radial-gradient(1.5px 1.5px at 20% 80%, hsl(var(--glow-secondary) / 0.1), transparent),
     radial-gradient(1px 1px at 60% 90%, hsl(0 0% 40% / 0.2), transparent),
-    radial-gradient(1px 1px at 80% 70%, hsl(25 60% 50% / 0.1), transparent),
+    radial-gradient(1px 1px at 80% 70%, hsl(var(--glow-primary) / 0.1), transparent),
     radial-gradient(1px 1px at 15% 55%, hsl(0 0% 50% / 0.2), transparent),
     radial-gradient(1px 1px at 45% 75%, hsl(0 0% 40% / 0.25), transparent),
-    radial-gradient(1.5px 1.5px at 75% 15%, hsl(18 100% 60% / 0.08), transparent),
+    radial-gradient(1.5px 1.5px at 75% 15%, hsl(var(--glow-secondary) / 0.08), transparent),
     radial-gradient(1px 1px at 35% 95%, hsl(0 0% 50% / 0.2), transparent),
     radial-gradient(1px 1px at 85% 85%, hsl(0 0% 40% / 0.2), transparent),
-    radial-gradient(1px 1px at 55% 45%, hsl(25 60% 50% / 0.08), transparent),
+    radial-gradient(1px 1px at 55% 45%, hsl(var(--glow-primary) / 0.08), transparent),
     radial-gradient(1px 1px at 5% 70%, hsl(0 0% 50% / 0.2), transparent),
     radial-gradient(1.5px 1.5px at 95% 50%, hsl(0 0% 40% / 0.25), transparent);
 }

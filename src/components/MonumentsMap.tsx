@@ -14,6 +14,7 @@ interface RouteData {
 
 interface MonumentsMapProps {
   routeData?: RouteData | null;
+  selectedMonumentId?: string | null;
 }
 
 interface Monument {
@@ -44,7 +45,7 @@ const center = {
   lng: 85.8245
 };
 
-const MonumentsMap: React.FC<MonumentsMapProps> = ({ routeData }) => {
+const MonumentsMap: React.FC<MonumentsMapProps> = ({ routeData, selectedMonumentId }) => {
   const [monuments, setMonuments] = useState<Monument[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedMonument, setSelectedMonument] = useState<Monument | null>(null);
@@ -136,6 +137,17 @@ const MonumentsMap: React.FC<MonumentsMapProps> = ({ routeData }) => {
       };
     }
   }, []);
+
+  useEffect(() => {
+    if (selectedMonumentId && monuments.length > 0) {
+      const selected = monuments.find(m => m.id === selectedMonumentId);
+      if (selected) {
+        setMapCenter(selected.position);
+        setMapZoom(16);
+        setSelectedMonument(selected);
+      }
+    }
+  }, [selectedMonumentId, monuments]);
 
   useEffect(() => {
     if (routeData && window.google) {

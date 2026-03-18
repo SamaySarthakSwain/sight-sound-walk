@@ -139,7 +139,7 @@ const ITOSDashboard = () => {
   const cctvCount = nodes.filter((n) => n.hasCCTV).length;
 
   return (
-    <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 shadow-2xl overflow-hidden mt-8 w-full max-w-5xl mx-auto mb-12">
+    <div className="bg-card/50 backdrop-blur-xl border border-border rounded-2xl p-6 shadow-xl overflow-hidden mt-8 w-full max-w-5xl mx-auto mb-12">
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
@@ -149,19 +149,19 @@ const ITOSDashboard = () => {
         {/* ITOS Header */}
         <div className="flex items-center justify-between flex-wrap gap-4 mb-4">
           <div className="flex items-center gap-3">
-            <h2 className="text-2xl font-bold bg-gradient-to-r from-teal-400 to-emerald-300 bg-clip-text text-transparent flex items-center gap-3">
-              <MapIcon className="w-6 h-6 text-teal-400" />
+            <h2 className="text-2xl font-bold bg-gradient-to-r from-orange-500 to-amber-400 bg-clip-text text-transparent flex items-center gap-3">
+              <MapIcon className="w-6 h-6 text-orange-500" />
               ITOS Traffic Management
             </h2>
           </div>
           <div className="flex items-center gap-3 flex-wrap">
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-black/20 border border-white/10 text-xs font-mono text-white/80">
-              <Zap className="w-3.5 h-3.5 text-teal-400" />
-              RL Step: <span className="text-teal-400 font-bold">{rlStep}</span>
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-muted border border-border text-xs font-mono text-muted-foreground">
+              <Zap className="w-3.5 h-3.5 text-orange-500" />
+              RL Step: <span className="text-orange-500 font-bold">{rlStep}</span>
             </div>
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-black/20 border border-white/10 text-xs font-mono text-white/80">
-              <Activity className="w-3.5 h-3.5 text-emerald-400" />
-              Reward: <span className="text-emerald-400 font-bold">{totalReward.toFixed(0)}</span>
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-muted border border-border text-xs font-mono text-muted-foreground">
+              <Activity className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+              Reward: <span className="text-emerald-600 dark:text-emerald-400 font-bold">{totalReward.toFixed(0)}</span>
             </div>
           </div>
         </div>
@@ -177,13 +177,13 @@ const ITOSDashboard = () => {
             <motion.div
               key={s.label}
               whileHover={{ scale: 1.02 }}
-              className="bg-black/20 border border-white/10 rounded-xl p-4 flex items-center gap-3"
+              className="bg-muted/30 border border-border rounded-xl p-4 flex items-center gap-3"
             >
               <div className="p-2 rounded-lg" style={{ backgroundColor: `${s.color}20`, border: `1px solid ${s.color}40` }}>
                 <s.icon className="w-4 h-4" style={{ color: s.color }} />
               </div>
               <div>
-                <p className="text-[11px] text-white/50 uppercase tracking-wider">{s.label}</p>
+                <p className="text-[11px] text-muted-foreground uppercase tracking-wider">{s.label}</p>
                 <p className="text-lg font-black font-mono" style={{ color: s.color }}>{s.value}</p>
               </div>
             </motion.div>
@@ -193,10 +193,10 @@ const ITOSDashboard = () => {
         {/* Controls Row */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {/* Weather */}
-          <div className="bg-black/20 border border-white/10 rounded-xl p-4">
+          <div className="bg-muted/30 border border-border rounded-xl p-4">
             <div className="flex items-center gap-2 mb-3">
-              <Thermometer className="w-4 h-4 text-teal-400" />
-              <span className="text-xs font-bold text-white uppercase tracking-wider">Weather Factor</span>
+              <Thermometer className="w-4 h-4 text-orange-500" />
+              <span className="text-xs font-bold text-foreground uppercase tracking-wider">Weather Factor</span>
             </div>
             <div className="flex gap-2 flex-wrap">
               {weatherOptions.map((w) => (
@@ -213,41 +213,41 @@ const ITOSDashboard = () => {
                 </button>
               ))}
             </div>
-            <p className="text-[10px] text-white/40 mt-2 font-mono">
+            <p className="text-[10px] text-muted-foreground mt-2 font-mono">
               Capacity capacity: {(getWeatherCapacityFactor(weather) * 100).toFixed(0)}%
             </p>
           </div>
 
           {/* Routing */}
-          <div className="bg-black/20 border border-white/10 rounded-xl p-4">
+          <div className="bg-muted/30 border border-border rounded-xl p-4">
             <div className="flex items-center gap-2 mb-3">
-              <Route className="w-4 h-4 text-teal-400" />
-              <span className="text-xs font-bold text-white uppercase tracking-wider">Optimal Route</span>
+              <Route className="w-4 h-4 text-orange-500" />
+              <span className="text-xs font-bold text-foreground uppercase tracking-wider">Optimal Route</span>
             </div>
             <div className="flex gap-2 mb-2">
-              <select value={routeFrom} onChange={(e) => setRouteFrom(e.target.value)} className="flex-1 bg-black/40 border border-white/10 rounded-lg px-2 py-1 text-xs text-white">
+              <select value={routeFrom} onChange={(e) => setRouteFrom(e.target.value)} className="flex-1 bg-background border border-border rounded-lg px-2 py-1 text-xs text-foreground">
                 {nodes.map((n) => <option key={n.id} value={n.id}>{n.id}: {n.name}</option>)}
               </select>
-              <select value={routeTo} onChange={(e) => setRouteTo(e.target.value)} className="flex-1 bg-black/40 border border-white/10 rounded-lg px-2 py-1 text-xs text-white">
+              <select value={routeTo} onChange={(e) => setRouteTo(e.target.value)} className="flex-1 bg-background border border-border rounded-lg px-2 py-1 text-xs text-foreground">
                 {nodes.map((n) => <option key={n.id} value={n.id}>{n.id}: {n.name}</option>)}
               </select>
             </div>
             <div className="flex gap-2">
-              <select value={routeAlgo} onChange={(e) => setRouteAlgo(e.target.value as any)} className="bg-black/40 border border-white/10 rounded-lg px-2 py-1 text-xs text-white">
+              <select value={routeAlgo} onChange={(e) => setRouteAlgo(e.target.value as any)} className="bg-background border border-border rounded-lg px-2 py-1 text-xs text-foreground">
                 <option value="astar">A* Search</option>
                 <option value="dijkstra">Dijkstra</option>
               </select>
-              <button onClick={calcRoute} className="flex-1 px-3 py-1.5 rounded-lg text-xs font-bold bg-teal-500/20 text-teal-400 border border-teal-500/40 hover:bg-teal-500 hover:text-white transition-all">
+              <button onClick={calcRoute} className="flex-1 px-3 py-1.5 rounded-lg text-xs font-bold bg-orange-500/10 text-orange-600 dark:text-orange-400 border border-orange-500/30 hover:bg-orange-500 hover:text-white transition-all">
                 Find Route
               </button>
             </div>
           </div>
 
           {/* Emergency */}
-          <div className="bg-black/20 border border-white/10 rounded-xl p-4">
+          <div className="bg-muted/30 border border-border rounded-xl p-4">
             <div className="flex items-center gap-2 mb-3">
               <Siren className="w-4 h-4 text-destructive" />
-              <span className="text-xs font-bold text-white uppercase tracking-wider">Emergency Priority</span>
+              <span className="text-xs font-bold text-foreground uppercase tracking-wider">Emergency Priority</span>
             </div>
             <button
               onClick={triggerEmergency}
@@ -326,12 +326,11 @@ const ITOSDashboard = () => {
                     }}
                   >
                     <Popup>
-                      <div style={{ fontFamily: "monospace", fontSize: 12, background: "rgba(10,10,10,0.9)", backdropFilter: "blur(10px)", color: "#fff", padding: 12, borderRadius: 8, border: "1px solid rgba(255,255,255,0.1)", minWidth: 200 }}>
-                        <p style={{ fontWeight: 800, fontSize: 13, marginBottom: 8 }}>{n.id} — {n.name}</p>
-                        <p>Type: <span style={{ color: "#14b8a6" }}>{n.type}</span></p>
-                        <p>Congestion: <span style={{ color: getNodeColor(n.congestion), fontWeight: 700 }}>{n.congestion}%</span></p>
-                        <p>Queue: <span style={{ color: n.queueLength > 15 ? "#ef4444" : "#10b981" }}>{n.queueLength} vehicles</span></p>
-                        <p>Sensor/Cam: {n.hasCCTV ? "✅ Online" : "❌ None"}</p>
+                      <div className="p-3 min-w-[200px] bg-background border border-border rounded-lg shadow-xl">
+                        <p className="font-bold text-sm mb-2 text-foreground">{n.id} — {n.name}</p>
+                        <p className="text-xs">Type: <span className="text-orange-500">{n.type}</span></p>
+                        <p className="text-xs">Congestion: <span className="font-bold" style={{ color: getNodeColor(n.congestion) }}>{n.congestion}%</span></p>
+                        <p className="text-xs text-muted-foreground mt-1">Sensor: {n.hasCCTV ? "✅ Online" : "❌ None"}</p>
                         {sig && (
                           <div style={{ marginTop: 8, paddingTop: 8, borderTop: "1px solid rgba(255,255,255,0.1)" }}>
                             <p style={{ fontWeight: 700, color: "#14b8a6" }}>RL Active Control</p>

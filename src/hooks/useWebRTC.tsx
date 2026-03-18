@@ -8,6 +8,7 @@ export type PeerData = {
     stream: MediaStream | null;
     personCount: number;
     vehicleCount: number;
+    bboxes?: any[];
     isLocal?: boolean;
     gpsCoords?: { lat: number; lng: number } | null;
 };
@@ -41,6 +42,7 @@ export const useWebRTC = (sessionId: string | null, username: string | null, loc
     const [localStream, setLocalStreamState] = useState<MediaStream | null>(null);
     const peersRef = useRef<Record<string, PeerData>>({});
     const connectionsRef = useRef<Record<string, RTCPeerConnection>>({});
+    const dataChannelsRef = useRef<Record<string, RTCDataChannel>>({});
     const localStreamRef = useRef<MediaStream | null>(null);
     const channelRef = useRef<any>(null);
     const clientId = useRef(Math.random().toString(36).substring(2, 9)).current;
@@ -59,6 +61,7 @@ export const useWebRTC = (sessionId: string | null, username: string | null, loc
                 stream: null,
                 personCount: 0,
                 vehicleCount: 0,
+                bboxes: [],
             };
             return { ...prev, [id]: { ...existing, ...updates } };
         });
@@ -68,6 +71,10 @@ export const useWebRTC = (sessionId: string | null, username: string | null, loc
         if (connectionsRef.current[id]) {
             connectionsRef.current[id].close();
             delete connectionsRef.current[id];
+        }
+        if (dataChannelsRef.current[id]) {
+            dataChannelsRef.current[id].close();
+            delete dataChannelsRef.current[id];
         }
         setPeers((prev) => {
             const copy = { ...prev };
@@ -93,6 +100,40 @@ export const useWebRTC = (sessionId: string | null, username: string | null, loc
 
         const pc = new RTCPeerConnection(ICE_SERVERS);
         connectionsRef.current[peerId] = pc;
+
+        // Create data channel for high-frequency telemetry
+        const dc = pc.createDataChannel("telemetry", { ordered: false, maxRetransmits: 0 });
+        dc.onmessage = (event) => {
+            try {
+                const data = JSON.parse(event.data);
+                if (data.type === "telemetry") {
+                    updatePeer(peerId, { 
+                        personCount: data.personCount, 
+                        vehicleCount: data.vehicleCount, 
+                        bboxes: data.bboxes 
+                    });
+                }
+            } catch (e) {}
+        };
+        dataChannelsRef.current[peerId] = dc;
+
+        pc.ondatachannel = (event) => {
+            const receiveChannel = event.channel;
+            receiveChannel.onmessage = (e) => {
+                try {
+                    const data = JSON.parse(e.data);
+                    if (data.type === "telemetry") {
+                        updatePeer(peerId, { 
+                            personCount: data.personCount, 
+                            vehicleCount: data.vehicleCount, 
+                            bboxes: data.bboxes 
+                        });
+                    }
+                } catch (err) {}
+            };
+            // Override with receiver channel if it exists
+            dataChannelsRef.current[peerId] = receiveChannel;
+        };
 
         if (localStreamRef.current) {
             localStreamRef.current.getTracks().forEach((track) => {
@@ -123,14 +164,24 @@ export const useWebRTC = (sessionId: string | null, username: string | null, loc
         return pc;
     }, [broadcastMessage, updatePeer, removePeer]);
 
-    const handleMetadataUpdate = useCallback((personCount: number, vehicleCount: number, gpsCoords?: { lat: number; lng: number } | null) => {
-        if (!sessionId || !username) return;
-        broadcastMessage({
-            type: "metadata-update",
-            personCount,
-            vehicleCount,
-            gpsCoords,
-        });
+    const handleMetadataUpdate = useCallback((personCount: number, vehicleCount: number, bboxes?: any[], gpsCoords?: { lat: number; lng: number } | null) => {
+            if (!sessionId || !username) return;
+
+            // Send high-frequency data (bboxes, counts) via WebRTC Data Channels
+            const telemetryPayload = JSON.stringify({ type: "telemetry", personCount, vehicleCount, bboxes: bboxes || [] });
+            Object.values(dataChannelsRef.current).forEach(dc => {
+                if (dc.readyState === "open") {
+                    dc.send(telemetryPayload);
+                }
+            });
+
+            // Send low-frequency data (gpsCoords) via Supabase
+            if (gpsCoords) {
+                broadcastMessage({
+                    type: "metadata-update",
+                    gpsCoords,
+                });
+            }
     }, [sessionId, username, broadcastMessage]);
 
     useEffect(() => {
@@ -143,7 +194,7 @@ export const useWebRTC = (sessionId: string | null, username: string | null, loc
 
         channel
             .on("broadcast", { event: "webrtc" }, async ({ payload }) => {
-                const { type, senderId, targetId, offer, answer, candidate, u, l, personCount, vehicleCount } = payload;
+                const { type, senderId, targetId, offer, answer, candidate, u, l, gpsCoords } = payload;
 
                 if (senderId === clientId) return;
                 if (targetId && targetId !== clientId) return;
@@ -190,7 +241,7 @@ export const useWebRTC = (sessionId: string | null, username: string | null, loc
                     }
                 }
                 else if (type === "metadata-update") {
-                    updatePeer(senderId, { personCount, vehicleCount, gpsCoords: payload.gpsCoords });
+                    updatePeer(senderId, { gpsCoords });
                 }
                 else if (type === "peer-leave") {
                     removePeer(senderId);

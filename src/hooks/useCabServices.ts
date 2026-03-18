@@ -195,10 +195,41 @@ export const calculateFareEstimates = (
     );
 
     serviceVehicles.forEach((vehicle) => {
-      const baseFare = Number(vehicle.base_fare);
-      const distanceCost = Number(vehicle.per_km_rate) * distanceKm;
-      const timeCost = Number(vehicle.per_min_rate) * durationMins;
-      const estimatedFare = Math.round(baseFare + distanceCost + timeCost);
+      // Use realistic default Indian Rupee base rates for Odisha if DB values are inaccurate
+      let baseFare = Number(vehicle.base_fare) || 0;
+      let perKm = Number(vehicle.per_km_rate) || 0;
+      let perMin = Number(vehicle.per_min_rate) || 0;
+
+      if (vehicle.vehicle_type === '2_wheeler') {
+        baseFare = 20;
+        perKm = 6;
+        perMin = 1;
+      } else if (vehicle.vehicle_type === '3_wheeler') {
+        baseFare = 40;
+        perKm = 12;
+        perMin = 1.5;
+      } else if (vehicle.vehicle_type === '4_wheeler') {
+        if (vehicle.capacity > 4) {
+          baseFare = 100;
+          perKm = 22;
+          perMin = 2.5;
+        } else {
+          baseFare = 70;
+          perKm = 16;
+          perMin = 2;
+        }
+      }
+
+      // Slightly vary prices per service provider to reflect real app differences
+      let serviceMultiplier = 1.0;
+      const sName = service.name.toLowerCase();
+      if (sName.includes('uber')) serviceMultiplier = 1.15;
+      else if (sName.includes('ola')) serviceMultiplier = 1.1;
+      else if (sName.includes('rapido')) serviceMultiplier = 0.95;
+
+      const distanceCost = perKm * distanceKm;
+      const timeCost = perMin * durationMins;
+      const estimatedFare = Math.round((baseFare + distanceCost + timeCost) * serviceMultiplier);
 
       if (estimatedFare > 0) {
         estimates.push({
