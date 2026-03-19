@@ -70,6 +70,8 @@ const Cabs = () => {
 
   const [openStartPoint, setOpenStartPoint] = useState(false);
   const [startPointDisplay, setStartPointDisplay] = useState("");
+  const [openEndPoint, setOpenEndPoint] = useState(false);
+  const [endPointDisplay, setEndPointDisplay] = useState("");
 
   const { isLoaded } = useGoogleMaps();
 
@@ -379,35 +381,71 @@ const Cabs = () => {
                 </Button>
               )}
 
-              {/* Ending Point */}
+              {/* Ending Point — same dropdown structure as Starting Point */}
               <div className="space-y-2">
                 <Label className="flex items-center gap-2">
                   <MapPin className="w-4 h-4 text-red-500" />
                   Destination
                 </Label>
-                {isLoaded ? (
-                  <Autocomplete
-                    onLoad={(autocomplete) => setAutocompleteEnd(autocomplete)}
-                    onPlaceChanged={() => {
-                      if (autocompleteEnd !== null) {
-                        const place = autocompleteEnd.getPlace();
-                        setEndLocation(place.formatted_address || place.name || "");
-                      }
-                    }}
-                  >
-                    <Input
-                      placeholder="e.g., Kalinga Stadium, Bhubaneswar"
-                      value={endLocation}
-                      onChange={(e) => setEndLocation(e.target.value)}
-                    />
-                  </Autocomplete>
-                ) : (
-                  <Input
-                    placeholder="e.g., Kalinga Stadium, Bhubaneswar"
-                    value={endLocation}
-                    onChange={(e) => setEndLocation(e.target.value)}
-                  />
-                )}
+                <Popover open={openEndPoint} onOpenChange={setOpenEndPoint}>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      aria-expanded={openEndPoint}
+                      className={cn(
+                        "w-full h-12 text-base justify-between font-normal",
+                        !endPointDisplay && "text-muted-foreground"
+                      )}
+                    >
+                      <span className="truncate">
+                        {endPointDisplay || `Where to in ${cityDisplayName}?`}
+                      </span>
+                      {loadingMonuments ? (
+                        <Loader2 className="ml-2 h-4 w-4 shrink-0 animate-spin opacity-50" />
+                      ) : (
+                        <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                      )}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0" align="start">
+                    <Command>
+                      <CommandInput placeholder="Search destination monuments..." className="h-10" />
+                      <CommandList>
+                        <CommandEmpty>No monument found. Keep typing to search.</CommandEmpty>
+                        <CommandGroup heading="Available monuments">
+                          {startPointOptions.map((loc) => (
+                            <CommandItem
+                              key={loc.id}
+                              value={`${loc.name} ${loc.description} ${loc.id}`}
+                              onSelect={() => {
+                                setEndLocation(loc.name);
+                                setEndPointDisplay(loc.name);
+                                setOpenEndPoint(false);
+                              }}
+                              className="flex flex-col items-start gap-0.5 py-3"
+                            >
+                              <span className="font-medium">{loc.name}</span>
+                              <span className="text-xs text-muted-foreground truncate w-full">
+                                {loc.description || "—"}
+                              </span>
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                        <CommandGroup heading="Type for Custom Location">
+                           <CommandItem 
+                             onSelect={() => {
+                               // This allows the user to still use their search text as location
+                               // But Command component usually hides non-matches.
+                               // For now, matching the Start Point's logic.
+                             }}
+                             className="hidden"
+                           />
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
               </div>
 
               {/* Passengers */}
