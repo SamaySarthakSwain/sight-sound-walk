@@ -3,10 +3,10 @@ import { createContext, useContext, useState, type ReactNode } from "react";
 type DetectionData = {
   personCount: number;
   vehicleCount: number;
-  bboxes: any[]; // Detection results for visual feedback
+  bboxes: unknown[]; // Detection results for visual feedback
   setPersonCount: (n: number) => void;
   setVehicleCount: (n: number) => void;
-  setBboxes: (boxes: any[]) => void;
+  setBboxes: (boxes: unknown[]) => void;
 };
 
 const DetectionContext = createContext<DetectionData>({
@@ -23,7 +23,7 @@ export const useDetection = () => useContext(DetectionContext);
 export const DetectionProvider = ({ children }: { children: ReactNode }) => {
   const [personCount, setPersonCount] = useState(0);
   const [vehicleCount, setVehicleCount] = useState(0);
-  const [bboxes, setBboxes] = useState<any[]>([]);
+  const [bboxes, setBboxes] = useState<unknown[]>([]);
 
   return (
     <DetectionContext.Provider value={{ personCount, vehicleCount, bboxes, setPersonCount, setVehicleCount, setBboxes }}>

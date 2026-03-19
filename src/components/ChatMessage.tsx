@@ -1,7 +1,7 @@
 import { Bot, User, Volume2, VolumeX } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { useSpeechSynthesis } from "@/hooks/useSpeechSynthesis";
+import { useAppTTS } from "@/hooks/useAppTTS";
 import type { SupportedLanguage } from "@/hooks/useTravelChat";
 
 interface ChatMessageProps {
@@ -10,15 +10,15 @@ interface ChatMessageProps {
   language?: SupportedLanguage;
 }
 
-const ChatMessage = ({ role, content, language = "en" }: ChatMessageProps) => {
+const ChatMessage = ({ role, content }: ChatMessageProps) => {
   const isUser = role === "user";
-  const { speak, stop, isSpeaking, isSupported } = useSpeechSynthesis();
+  const { speak, stop, isSpeaking } = useAppTTS();
 
   const handleSpeak = () => {
     if (isSpeaking) {
       stop();
     } else {
-      speak(content, language);
+      speak(content);
     }
   };
 
@@ -40,7 +40,7 @@ const ChatMessage = ({ role, content, language = "en" }: ChatMessageProps) => {
         >
           <p className="text-sm whitespace-pre-wrap leading-relaxed">{content}</p>
         </div>
-        {!isUser && isSupported && content && (
+        {!isUser && content && (
           <Button
             variant="ghost"
             size="sm"

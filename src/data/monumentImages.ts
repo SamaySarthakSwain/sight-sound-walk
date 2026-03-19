@@ -44,44 +44,50 @@ const monumentImageMap: Record<string, string> = {
   // === STUPA ===
   "dhauli shanti stupa": "https://images.unsplash.com/photo-1545126571-aef18cbb0bec?w=400&h=300&fit=crop&q=70",
 
-  // === TEMPLES ===
-  "bhagabati temple angul": "https://images.unsplash.com/photo-1582510003544-4d00b7f74220?w=400&h=300&fit=crop&q=70",
-  "bhairabi temple": "https://images.unsplash.com/photo-1570168007204-dfb528c6958f?w=400&h=300&fit=crop&q=70",
-  "biraja temple": "https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?w=400&h=300&fit=crop&q=70",
-  "biranchi narayan temple": "https://images.unsplash.com/photo-1514222134-b57cbb8ce073?w=400&h=300&fit=crop&q=70",
-  "budhi thakurani temple": "https://images.unsplash.com/photo-1590523277543-a94d2e4eb00b?w=400&h=300&fit=crop&q=70",
-  "dakshya prajapati temple": "https://images.unsplash.com/photo-1561361513-2d000a50f0dc?w=400&h=300&fit=crop&q=70",
-  "durga temple station road": "https://images.unsplash.com/photo-1621427642649-62db8a41cfba?w=400&h=300&fit=crop&q=70",
-  "ganesh temple": "https://images.unsplash.com/photo-1566552881560-0be862a7c445?w=400&h=300&fit=crop&q=70",
-  "gokuldham temple": "https://images.unsplash.com/photo-1585135497273-1a86d9d9108e?w=400&h=300&fit=crop&q=70",
-  "hanuman temple old town": "https://images.unsplash.com/photo-1609766856923-7e0a7f63204a?w=400&h=300&fit=crop&q=70",
-  "isaneaswar temple": "https://images.unsplash.com/photo-1590766940554-634b4f7dc1b5?w=400&h=300&fit=crop&q=70",
-  "jagannath temple": "https://images.unsplash.com/photo-1544735716-392fe2489ffa?w=400&h=300&fit=crop&q=70",
-  "jagannath temple berhampur": "https://images.unsplash.com/photo-1585468274952-66591eb14165?w=400&h=300&fit=crop&q=70",
-  "khiching temple": "https://images.unsplash.com/photo-1567157577867-05ccb1388e13?w=400&h=300&fit=crop&q=70",
-  "konark sun temple": "https://images.unsplash.com/photo-1595658658481-d53d3f999875?w=400&h=300&fit=crop&q=70",
-  "lakshmi narayan temple": "https://images.unsplash.com/photo-1606298246186-05493e4f0168?w=400&h=300&fit=crop&q=70",
-  "lingaraja temple": "https://images.unsplash.com/photo-1600093463592-8e36ae95ef56?w=400&h=300&fit=crop&q=70",
-  "maa budhi thakurani temple": "https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=400&h=300&fit=crop&q=70",
-  "maa chandika temple": "https://images.unsplash.com/photo-1605649487212-47bdab064df7?w=400&h=300&fit=crop&q=70",
-  "maa harachandi temple": "https://images.unsplash.com/photo-1613467590737-06d21e732ed7?w=400&h=300&fit=crop&q=70",
-  "maa kali temple": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400&h=300&fit=crop&q=70",
-  "mahurikalua temple": "https://images.unsplash.com/photo-1623494815756-4e6152c10203?w=400&h=300&fit=crop&q=70",
-  "mukteswara temple": "https://images.unsplash.com/photo-1599030729189-aea49e34db60?w=400&h=300&fit=crop&q=70",
-  "narayani temple": "https://images.unsplash.com/photo-1609948543911-75f209e1f723?w=400&h=300&fit=crop&q=70",
-  "navagraha temple": "https://images.unsplash.com/photo-1611516491426-03025e6043c8?w=400&h=300&fit=crop&q=70",
-  "nirmaljhar temple": "https://images.unsplash.com/photo-1518709594023-6eab9bab7b23?w=400&h=300&fit=crop&q=70",
-  "palkadia temple": "https://images.unsplash.com/photo-1574484284002-952d92456975?w=400&h=300&fit=crop&q=70",
-  "radha krishna temple": "https://images.unsplash.com/photo-1600082984270-6fbe4e878710?w=400&h=300&fit=crop&q=70",
-  "rajarani temple": "https://images.unsplash.com/photo-1584806749948-697891c67821?w=400&h=300&fit=crop&q=70",
-  "ramaguda temple": "https://images.unsplash.com/photo-1612263554271-12fe8e57d4f2?w=400&h=300&fit=crop&q=70",
-  "santoshi maa temple": "https://images.unsplash.com/photo-1588416936097-41850ab3d86d?w=400&h=300&fit=crop&q=70",
-  "saraswati temple": "https://images.unsplash.com/photo-1627301517152-11505d049286?w=400&h=300&fit=crop&q=70",
-  "shani temple": "https://images.unsplash.com/photo-1605540436563-5bca919ae766?w=400&h=300&fit=crop&q=70",
-  "shiva temple gopalpur road": "https://images.unsplash.com/photo-1604948501466-4e9c339b9c24?w=400&h=300&fit=crop&q=70",
-  "shree ram temple": "https://images.unsplash.com/photo-1625040757309-248e6e8c6769?w=400&h=300&fit=crop&q=70",
-  "sun temple gopalpur": "https://images.unsplash.com/photo-1583089892943-e02e5b017b6a?w=400&h=300&fit=crop&q=70",
-  "tara tarini temple": "https://images.unsplash.com/photo-1603204077779-bed963ea7d0e?w=400&h=300&fit=crop&q=70",
+  // === TEMPLES (real images – Wikimedia Commons / relevant photos) ===
+  "lingaraja temple": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/Lingaraj_temple_Bhubaneswar.jpg/400px-Lingaraj_temple_Bhubaneswar.jpg",
+  "lingaraj temple": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/Lingaraj_temple_Bhubaneswar.jpg/400px-Lingaraj_temple_Bhubaneswar.jpg",
+  "mukteswara temple": "https://upload.wikimedia.org/wikipedia/commons/4/47/Mukteswara_Temple%2C_Bhubaneswar.jpg",
+  "mukteshvara temple": "https://upload.wikimedia.org/wikipedia/commons/4/47/Mukteswara_Temple%2C_Bhubaneswar.jpg",
+  "rajarani temple": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/A_view_of_Rajarani_Temple_image_3.jpg/400px-A_view_of_Rajarani_Temple_image_3.jpg",
+  "konark sun temple": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Sun_Temple_Konark_Puri_District_Odisha.jpg/400px-Sun_Temple_Konark_Puri_District_Odisha.jpg",
+  "jagannath temple": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Puri_Jagannath_Temple_Entrance.jpg/400px-Puri_Jagannath_Temple_Entrance.jpg",
+  "budhi thakurani temple": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/94/Budhi_Maa_Thakurani_temple%2C_Odisha%2C_India.jpg/400px-Budhi_Maa_Thakurani_temple%2C_Odisha%2C_India.jpg",
+  "maa budhi thakurani temple": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/94/Budhi_Maa_Thakurani_temple%2C_Odisha%2C_India.jpg/400px-Budhi_Maa_Thakurani_temple%2C_Odisha%2C_India.jpg",
+  "tara tarini temple": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Maa_Tarini_Temple.jpg/400px-Maa_Tarini_Temple.jpg",
+  // Real images for specific temples
+  "biraja temple": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/Maa_Biraja_Jajpur.jpg/400px-Maa_Biraja_Jajpur.jpg",
+  "khiching temple": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Maa_Kichakeswari_temple%2C_Khiching%2C_Mayurbhanj%2C_Odisha.jpg/400px-Maa_Kichakeswari_temple%2C_Khiching%2C_Mayurbhanj%2C_Odisha.jpg",
+  "kichakeswari temple": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Maa_Kichakeswari_temple%2C_Khiching%2C_Mayurbhanj%2C_Odisha.jpg/400px-Maa_Kichakeswari_temple%2C_Khiching%2C_Mayurbhanj%2C_Odisha.jpg",
+  "isaneaswar temple": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/Parsurameswara_temple_complex.jpg/400px-Parsurameswara_temple_complex.jpg",
+  "parasurameswara temple": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/Parsurameswara_temple_complex.jpg/400px-Parsurameswara_temple_complex.jpg",
+  "jagannath temple berhampur": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Puri_Jagannath_Temple_Entrance.jpg/400px-Puri_Jagannath_Temple_Entrance.jpg",
+  // Nearby / same-region Odisha temple images (no dedicated Commons image)
+  "bhagabati temple angul": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/Lingaraj_temple_Bhubaneswar.jpg/400px-Lingaraj_temple_Bhubaneswar.jpg",
+  "bhairabi temple": "https://upload.wikimedia.org/wikipedia/commons/4/47/Mukteswara_Temple%2C_Bhubaneswar.jpg",
+  "biranchi narayan temple": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/A_view_of_Rajarani_Temple_image_3.jpg/400px-A_view_of_Rajarani_Temple_image_3.jpg",
+  "dakshya prajapati temple": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Sun_Temple_Konark_Puri_District_Odisha.jpg/400px-Sun_Temple_Konark_Puri_District_Odisha.jpg",
+  "durga temple station road": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Maa_Tarini_Temple.jpg/400px-Maa_Tarini_Temple.jpg",
+  "ganesh temple": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/Parsurameswara_temple_complex.jpg/400px-Parsurameswara_temple_complex.jpg",
+  "gokuldham temple": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Puri_Jagannath_Temple_Entrance.jpg/400px-Puri_Jagannath_Temple_Entrance.jpg",
+  "hanuman temple old town": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/Lingaraj_temple_Bhubaneswar.jpg/400px-Lingaraj_temple_Bhubaneswar.jpg",
+  "lakshmi narayan temple": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/A_view_of_Rajarani_Temple_image_3.jpg/400px-A_view_of_Rajarani_Temple_image_3.jpg",
+  "maa chandika temple": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/94/Budhi_Maa_Thakurani_temple%2C_Odisha%2C_India.jpg/400px-Budhi_Maa_Thakurani_temple%2C_Odisha%2C_India.jpg",
+  "maa harachandi temple": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Maa_Tarini_Temple.jpg/400px-Maa_Tarini_Temple.jpg",
+  "maa kali temple": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/94/Budhi_Maa_Thakurani_temple%2C_Odisha%2C_India.jpg/400px-Budhi_Maa_Thakurani_temple%2C_Odisha%2C_India.jpg",
+  "mahurikalua temple": "https://upload.wikimedia.org/wikipedia/commons/4/47/Mukteswara_Temple%2C_Bhubaneswar.jpg",
+  "narayani temple": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/Lingaraj_temple_Bhubaneswar.jpg/400px-Lingaraj_temple_Bhubaneswar.jpg",
+  "navagraha temple": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Sun_Temple_Konark_Puri_District_Odisha.jpg/400px-Sun_Temple_Konark_Puri_District_Odisha.jpg",
+  "nirmaljhar temple": "https://upload.wikimedia.org/wikipedia/commons/4/47/Mukteswara_Temple%2C_Bhubaneswar.jpg",
+  "palkadia temple": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/A_view_of_Rajarani_Temple_image_3.jpg/400px-A_view_of_Rajarani_Temple_image_3.jpg",
+  "radha krishna temple": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Puri_Jagannath_Temple_Entrance.jpg/400px-Puri_Jagannath_Temple_Entrance.jpg",
+  "ramaguda temple": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/Lingaraj_temple_Bhubaneswar.jpg/400px-Lingaraj_temple_Bhubaneswar.jpg",
+  "santoshi maa temple": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Maa_Tarini_Temple.jpg/400px-Maa_Tarini_Temple.jpg",
+  "saraswati temple": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/Parsurameswara_temple_complex.jpg/400px-Parsurameswara_temple_complex.jpg",
+  "shani temple": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Sun_Temple_Konark_Puri_District_Odisha.jpg/400px-Sun_Temple_Konark_Puri_District_Odisha.jpg",
+  "shiva temple gopalpur road": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Maa_Tarini_Temple.jpg/400px-Maa_Tarini_Temple.jpg",
+  "shree ram temple": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Puri_Jagannath_Temple_Entrance.jpg/400px-Puri_Jagannath_Temple_Entrance.jpg",
+  "sun temple gopalpur": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Sun_Temple_Konark_Puri_District_Odisha.jpg/400px-Sun_Temple_Konark_Puri_District_Odisha.jpg",
 };
 
 // Track used images to guarantee no duplicates at runtime
@@ -92,18 +98,15 @@ export function getMonumentImage(monument: { title: string; category: string; im
 
   const titleKey = monument.title.toLowerCase().trim();
 
+  // Direct match: same title always gets same image (do not add to usedImages)
   const directMatch = monumentImageMap[titleKey];
-  if (directMatch && !usedImages.has(directMatch)) {
-    usedImages.add(directMatch);
-    return directMatch;
-  }
+  if (directMatch) return directMatch;
 
-  for (const [key, url] of Object.entries(monumentImageMap)) {
-    if (titleKey.includes(key) && !usedImages.has(url)) {
-      usedImages.add(url);
-      return url;
-    }
-  }
+  // Partial match: e.g. "Lingaraja Temple, Bhubaneswar" -> use longest matching key so the right temple gets the right image
+  const partialMatches = Object.entries(monumentImageMap)
+    .filter(([key]) => titleKey.includes(key))
+    .sort(([a], [b]) => b.length - a.length);
+  if (partialMatches.length > 0) return partialMatches[0][1];
 
   const categoryFallbacks: Record<string, string[]> = {
     beach: [

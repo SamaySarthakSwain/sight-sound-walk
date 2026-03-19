@@ -119,7 +119,7 @@ const Profile = () => {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [visitHistory, setVisitHistory] = useState<VisitHistory[]>([]);
   const [searchHistory, setSearchHistory] = useState<SearchHistory[]>([]);
-  const [suggestedPlaces, setSuggestedPlaces] = useState<any[]>([]);
+  const [suggestedPlaces, setSuggestedPlaces] = useState<unknown[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

@@ -5,6 +5,9 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { CityProvider } from "@/contexts/CityContext";
+import { GoogleMapsProvider } from "@/contexts/GoogleMapsContext";
+import { WebRTCProvider } from "@/contexts/WebRTCContext";
+import { DetectionProvider } from "@/contexts/DetectionContext";
 import { ThemeProvider } from "next-themes";
 import Index from "./pages/Index";
 import { toast } from "sonner";
@@ -104,15 +107,16 @@ const App = () => {
           <TooltipProvider>
             <CityProvider>
               <BrowserRouter>
-                <Suspense fallback={null}>
-                  <FloatingParticles />
-                  <ProactiveNudgeTrigger />
-                  <OfflineBanner />
-                </Suspense>
-                <Toaster />
-                <Sonner />
-                <Suspense fallback={<PageLoader />}>
-                  <Routes>
+                <GoogleMapsProvider>
+                  <Suspense fallback={null}>
+                    <FloatingParticles />
+                    <ProactiveNudgeTrigger />
+                    <OfflineBanner />
+                  </Suspense>
+                  <Toaster />
+                  <Sonner />
+                  <Suspense fallback={<PageLoader />}>
+                    <Routes>
                     <Route path="/" element={<Index />} />
                     <Route path="/explore" element={<Explore />} />
                     <Route path="/food" element={<Food />} />
@@ -123,11 +127,12 @@ const App = () => {
                     <Route path="/help" element={<Help />} />
                     <Route path="/ar" element={<ARExperience />} />
                     <Route path="/profile" element={<Profile />} />
-                    <Route path="/crowd" element={<CrowdDashboard />} />
+                    <Route path="/crowd" element={<WebRTCProvider><DetectionProvider><CrowdDashboard /></DetectionProvider></WebRTCProvider>} />
                     <Route path="/crowd/room" element={<LiveRoom />} />
                     <Route path="*" element={<NotFound />} />
                   </Routes>
                 </Suspense>
+                </GoogleMapsProvider>
               </BrowserRouter>
             </CityProvider>
           </TooltipProvider>

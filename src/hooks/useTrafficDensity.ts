@@ -100,7 +100,7 @@ export const useTrafficDensity = (refreshInterval = 30000) => {
       setSummary(data.summary);
       setLastUpdated(new Date());
       setError(null);
-    } catch (e: any) {
+    } catch (e: unknown) {
       console.error("Traffic density Generation error:", e);
       setError("Failed to generate traffic data");
     } finally {

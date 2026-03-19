@@ -1,0 +1,8 @@
+{
+  "watch": ["src", "index.html", "vite.config.ts", "vite.config.js"],
+  "ext": "ts,tsx,js,jsx,html,css,json",
+  "ignore": ["node_modules", "dist", "*.test.*", "*.spec.*"],
+  "exec": "vite --host 127.0.0.1",
+  "delay": "500",
+  "verbose": true
+}

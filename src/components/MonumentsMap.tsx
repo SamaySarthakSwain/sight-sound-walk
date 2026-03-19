@@ -1,10 +1,11 @@
-import { GoogleMap, LoadScript, Marker, InfoWindow, DirectionsRenderer } from '@react-google-maps/api';
-import { useState, useEffect } from 'react';
+import { GoogleMap, Marker, InfoWindow, DirectionsRenderer } from "@react-google-maps/api";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Map as MapIcon, Loader2, Navigation as NavButtonIcon } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import DownloadMapButton from "./DownloadMapButton";
+import { useGoogleMaps } from "@/contexts/GoogleMapsContext";
 
 interface RouteData {
   start: { lat: number; lng: number };
@@ -24,15 +25,6 @@ interface Monument {
   description: string;
 }
 
-const GOOGLE_MAPS_API_KEY = "AIzaSyBVVkTWwfx3NW6bFi1t7CEomwv1owCO1SI";
-
-const loadScriptOptions = {
-  googleMapsApiKey: GOOGLE_MAPS_API_KEY,
-  onError: () => {
-    console.log('Google Maps loaded with API key');
-  }
-};
-
 const mapContainerStyle = {
   width: '100%',
   height: '600px',
@@ -46,8 +38,9 @@ const center = {
 };
 
 const MonumentsMap: React.FC<MonumentsMapProps> = ({ routeData, selectedMonumentId }) => {
+  const { isLoaded: mapsLoaded } = useGoogleMaps();
   const [monuments, setMonuments] = useState<Monument[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [monumentsLoading, setMonumentsLoading] = useState(true);
   const [selectedMonument, setSelectedMonument] = useState<Monument | null>(null);
   const [directions, setDirections] = useState<google.maps.DirectionsResult | null>(null);
   const [mapCenter, setMapCenter] = useState(center);
@@ -57,40 +50,47 @@ const MonumentsMap: React.FC<MonumentsMapProps> = ({ routeData, selectedMonument
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [watchId, setWatchId] = useState<number | null>(null);
 
-  // Fetch Odisha monuments from database
+  // Fetch monuments with precise lat/lng (no region filter so we get all; filter nulls only)
   useEffect(() => {
+    let cancelled = false;
     const fetchMonuments = async () => {
       try {
         const { data, error } = await supabase
-          .from('monuments')
-          .select('id, title, description, latitude, longitude')
-          .eq('region', 'odisha')
-          .not('latitude', 'is', null)
-          .not('longitude', 'is', null);
+          .from("monuments")
+          .select("id, title, description, latitude, longitude")
+          .not("latitude", "is", null)
+          .not("longitude", "is", null);
 
         if (error) throw error;
+        if (cancelled) return;
 
-        const formattedMonuments: Monument[] = (data || []).map(m => ({
+        const formattedMonuments: Monument[] = (data || []).map((m) => ({
           id: m.id,
           name: m.title,
-          position: { lat: Number(m.latitude), lng: Number(m.longitude) },
-          description: m.description
+          position: {
+            lat: Number(m.latitude) as number,
+            lng: Number(m.longitude) as number,
+          },
+          description: m.description ?? "",
         }));
 
         setMonuments(formattedMonuments);
       } catch (error) {
-        console.error('Error fetching monuments:', error);
+        if (!cancelled) console.error("Error fetching monuments:", error);
       } finally {
-        setLoading(false);
+        if (!cancelled) setMonumentsLoading(false);
       }
     };
 
     fetchMonuments();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   // Enable traffic layer
   useEffect(() => {
-    if (map && window.google && !trafficLayer) {
+    if (map && !trafficLayer) {
       const traffic = new google.maps.TrafficLayer();
       traffic.setMap(map);
       setTrafficLayer(traffic);
@@ -150,7 +150,7 @@ const MonumentsMap: React.FC<MonumentsMapProps> = ({ routeData, selectedMonument
   }, [selectedMonumentId, monuments]);
 
   useEffect(() => {
-    if (routeData && window.google) {
+    if (routeData && mapsLoaded && typeof window !== "undefined" && window.google) {
       const directionsService = new google.maps.DirectionsService();
 
       const waypoints = routeData.waypoints?.map(wp => ({
@@ -186,7 +186,7 @@ const MonumentsMap: React.FC<MonumentsMapProps> = ({ routeData, selectedMonument
     } else if (!routeData) {
       setDirections(null);
     }
-  }, [routeData]);
+  }, [routeData, mapsLoaded]);
 
   return (
     <section className="py-20 bg-background">
@@ -200,7 +200,9 @@ const MonumentsMap: React.FC<MonumentsMapProps> = ({ routeData, selectedMonument
                   Monuments Map of Odisha
                 </CardTitle>
                 <CardDescription className="text-base mt-1">
-                  Explore all {monuments.length} famous monuments and historical sites across Odisha
+                  {monumentsLoading
+                    ? "Loading monuments…"
+                    : `Explore all ${monuments.length} famous monuments and historical sites across Odisha`}
                 </CardDescription>
               </div>
               <div className="flex gap-2">
@@ -224,27 +226,41 @@ const MonumentsMap: React.FC<MonumentsMapProps> = ({ routeData, selectedMonument
           </CardHeader>
 
           <CardContent className="space-y-6">
-            {loading ? (
-              <div className="flex items-center justify-center h-[600px]">
-                <Loader2 className="w-8 h-8 animate-spin text-primary" />
+            {!mapsLoaded ? (
+              <div className="flex flex-col items-center justify-center h-[600px] gap-3 rounded-lg bg-muted/30">
+                <Loader2 className="w-10 h-10 animate-spin text-primary" />
+                <p className="text-sm text-muted-foreground">Loading map…</p>
               </div>
             ) : (
               <>
-                {/* Map */}
-                <LoadScript {...loadScriptOptions}>
+                {/* Map — uses global script so renders instantly */}
+                <div className="relative">
+                  {monumentsLoading && (
+                    <div className="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-background/60">
+                      <Loader2 className="w-8 h-8 animate-spin text-primary" />
+                    </div>
+                  )}
                   <GoogleMap
                     mapContainerStyle={mapContainerStyle}
                     center={mapCenter}
                     zoom={mapZoom}
                     onLoad={(map) => setMap(map)}
                     options={{
+                      tilt: 45,
+                      heading: 0,
+                      mapTypeId: "hybrid",
+                      mapTypeControl: true,
+                      streetViewControl: true,
+                      fullscreenControl: true,
+                      zoomControl: true,
+                      scaleControl: true,
                       styles: [
                         {
                           featureType: "poi",
                           elementType: "labels",
-                          stylers: [{ visibility: "off" }]
-                        }
-                      ]
+                          stylers: [{ visibility: "off" }],
+                        },
+                      ],
                     }}
                   >
                     {/* Display route if available */}
@@ -290,14 +306,16 @@ const MonumentsMap: React.FC<MonumentsMapProps> = ({ routeData, selectedMonument
                         position={selectedMonument.position}
                         onCloseClick={() => setSelectedMonument(null)}
                       >
-                        <div className="p-2">
+                        <div className="p-2 min-w-[200px]">
                           <h3 className="font-bold text-base mb-1">{selectedMonument.name}</h3>
-                          <p className="text-sm text-gray-600">{selectedMonument.description}</p>
+                          <p className="text-sm text-muted-foreground">
+                            {selectedMonument.description || "—"}
+                          </p>
                         </div>
                       </InfoWindow>
                     )}
                   </GoogleMap>
-                </LoadScript>
+                </div>
 
                 {/* Monument List */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

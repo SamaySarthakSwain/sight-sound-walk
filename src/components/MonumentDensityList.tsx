@@ -44,7 +44,7 @@ const getBestTime = (history: {time: string, density: number}[]) => {
 const MonumentDensityList = () => {
   const [monuments, setMonuments] = useState<Monument[]>([]);
   const [loading, setLoading] = useState(true);
-  const [densities, setDensities] = useState<Record<string, { current: number, history: any[], bestTime: string, isRealTime?: boolean }>>({});
+  const [densities, setDensities] = useState<Record<string, { current: number, history: unknown[], bestTime: string, isRealTime?: boolean }>>({});
   const { fetchGlobalDensity } = useCrowdPersistence();
 
   useEffect(() => {
@@ -66,7 +66,7 @@ const MonumentDensityList = () => {
 
         // Fetch real global density data if available
         const realData = await fetchGlobalDensity();
-        const profiles: Record<string, any> = {};
+        const profiles: Record<string, unknown> = {};
 
         finalMonuments.forEach(m => {
           // Check if we have real-time detection for this "location" or general area

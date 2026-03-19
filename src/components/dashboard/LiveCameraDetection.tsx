@@ -241,7 +241,7 @@ const LiveCameraDetection = () => {
               </div>
               <button
                 onClick={takeScreenshot}
-                className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold bg-background/50 border border-white/10 text-foreground hover:bg-white/10 hover:border-white/20 transition-all duration-300 backdrop-blur-md"
+                className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold bg-muted/80 border border-border text-foreground hover:bg-muted transition-all duration-300 backdrop-blur-md"
               >
                 <Download className="w-4 h-4" />
                 Snapshot
@@ -266,7 +266,7 @@ const LiveCameraDetection = () => {
           </button>
           <button
             onClick={switchCamera}
-            className="p-2.5 rounded-xl bg-background/50 border border-white/10 text-foreground hover:bg-white/10 hover:border-white/20 transition-all duration-300 backdrop-blur-md"
+            className="p-2.5 rounded-xl bg-muted/80 border border-border text-foreground hover:bg-muted transition-all duration-300 backdrop-blur-md"
             title="Switch Camera"
           >
             <RefreshCw className="w-4 h-4" />
@@ -278,7 +278,7 @@ const LiveCameraDetection = () => {
         <div className="mb-4 p-3 rounded-xl bg-destructive/10 border border-destructive/30 text-destructive text-sm font-medium backdrop-blur-md relative z-10">{error}</div>
       )}
 
-      <div className="relative aspect-video rounded-xl overflow-hidden bg-black/40 border border-white/5 shadow-inner z-10 backdrop-blur-sm">
+      <div className="relative aspect-video rounded-xl overflow-hidden bg-muted/50 dark:bg-black/40 border border-border shadow-inner z-10 backdrop-blur-sm">
         <video ref={videoRef} className="absolute inset-0 w-full h-full object-cover" style={{ display: "none" }} playsInline muted />
         <canvas ref={canvasRef} className={`absolute inset-0 w-full h-full object-contain ${cameraActive ? "block" : "hidden"}`} />
         {!cameraActive && (

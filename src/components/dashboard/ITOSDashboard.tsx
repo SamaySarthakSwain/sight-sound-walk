@@ -12,7 +12,7 @@ import { dijkstra, astar, findGreenCorridor, type RouteResult } from "@/lib/itos
 import { optimizeSignals, type SignalAction } from "@/lib/itos/rlSignalOptimizer";
 import { runIncidentDetection, type DetectedIncident, getWeatherCapacityFactor } from "@/lib/itos/incidentDetector";
 
-delete (L.Icon.Default.prototype as any)._getIconUrl;
+delete (L.Icon.Default.prototype as { _getIconUrl?: unknown })._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png",
   iconUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png",
@@ -237,7 +237,7 @@ const ITOSDashboard = () => {
             </select>
           </div>
           <div className="flex gap-2">
-            <select value={routeAlgo} onChange={(e) => setRouteAlgo(e.target.value as any)} className="bg-background/50 border border-border/50 rounded-lg px-2 py-1 text-xs text-foreground">
+            <select value={routeAlgo} onChange={(e) => setRouteAlgo((e.target.value === "dijkstra" ? "dijkstra" : "astar") as "astar" | "dijkstra")} className="bg-background/50 border border-border/50 rounded-lg px-2 py-1 text-xs text-foreground">
               <option value="astar">A* Search</option>
               <option value="dijkstra">Dijkstra</option>
             </select>

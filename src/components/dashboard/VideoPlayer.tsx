@@ -7,7 +7,7 @@ interface VideoPlayerProps {
     className?: string;
     showDetection?: boolean;
     personCount?: number;
-    bboxes?: any[];
+    bboxes?: unknown[];
 }
 
 const VEHICLE_CLASSES = ["car", "truck", "bus", "motorcycle", "bicycle"];
@@ -87,7 +87,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({ stream, className, sho
                 
                 const personColor = getPersonColor(currentPersonCount);
                 
-                currentBboxes.forEach((p: any) => {
+                currentBboxes.forEach((p: { bbox: number[]; class: string; score: number }) => {
                     const [x, y, w, h] = p.bbox;
                     const isPerson = p.class === "person";
                     const color = isPerson ? personColor : VEHICLE_COLOR;

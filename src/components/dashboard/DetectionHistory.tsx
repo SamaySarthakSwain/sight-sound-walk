@@ -120,7 +120,7 @@ const DetectionHistory = () => {
                   </div>
 
                   {/* Visual density bar */}
-                  <div className="w-20 h-2 bg-background/50 rounded-full overflow-hidden border border-white/5 shadow-inner hidden sm:block">
+                  <div className="w-20 h-2 bg-muted rounded-full overflow-hidden border border-border shadow-inner hidden sm:block">
                     <div
                       className={`h-full rounded-full transition-all duration-1000 ${level === "destructive" ? "bg-destructive shadow-[0_0_8px_rgba(var(--destructive),0.8)]" : level === "accent" ? "bg-accent shadow-[0_0_8px_rgba(var(--accent),0.8)]" : "bg-success shadow-[0_0_8px_rgba(var(--success),0.8)]"
                         }`}

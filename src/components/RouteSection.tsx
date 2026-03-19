@@ -1,12 +1,21 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import { Navigation, MapPin, Route, Clock, Landmark } from "lucide-react";
-import { useState, useEffect } from "react";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Navigation, MapPin, Route, Clock, Landmark, ChevronDown, Loader2 } from "lucide-react";
+import { useState, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
+import { useMonuments } from "@/hooks/useMonuments";
+import { cn } from "@/lib/utils";
 
 interface RouteSectionProps {
   onRouteSelected?: (
@@ -30,31 +39,38 @@ interface RouteInfo {
   monumentsOnRoute: Monument[];
 }
 
-const locations = {
-  "konark-sun-temple": { lat: 19.8876, lng: 86.0945, name: "Konark Sun Temple", description: "13th century Sun Temple - UNESCO World Heritage Site" },
-  "jagannath-temple": { lat: 19.8048, lng: 85.8182, name: "Jagannath Temple, Puri", description: "Famous temple of Lord Jagannath with annual Rath Yatra" },
-  "lingaraj-temple": { lat: 20.2379, lng: 85.8338, name: "Lingaraj Temple, Bhubaneswar", description: "11th century temple dedicated to Lord Shiva" },
-  "rajarani-temple": { lat: 20.2524, lng: 85.8229, name: "Rajarani Temple, Bhubaneswar", description: "11th century temple known for exquisite carvings" },
-  "mukteshwar-temple": { lat: 20.2508, lng: 85.8271, name: "Mukteshwar Temple, Bhubaneswar", description: "10th century gem of Odishan architecture" },
-  "udayagiri-khandagiri": { lat: 20.2644, lng: 85.7787, name: "Udayagiri & Khandagiri Caves", description: "Ancient Jain rock-cut caves from 2nd century BCE" },
-  "dhauli-stupa": { lat: 20.1895, lng: 85.8609, name: "Dhauli Shanti Stupa", description: "Buddhist peace pagoda at historic Kalinga War site" },
-  "chilika-lake": { lat: 19.7166, lng: 85.3206, name: "Chilika Lake", description: "Asia's largest brackish water lagoon" },
-  "nist-university": { lat: 19.2950, lng: 84.8108, name: "NIST University, Berhampur", description: "Premier educational institution in Berhampur" },
-  "budhi-thakurani": { lat: 19.3149, lng: 84.7941, name: "Maa Budhi Thakurani Temple", description: "Presiding deity of Berhampur" },
-  "tara-tarini": { lat: 19.2905, lng: 84.9567, name: "Tara Tarini Temple", description: "Ancient Shakti Peetha on Kumari Hills" },
-  "gopalpur-beach": { lat: 19.2590, lng: 84.9090, name: "Gopalpur-on-Sea", description: "Serene beach town with colonial heritage" },
-  "taptapani": { lat: 19.4833, lng: 84.4167, name: "Taptapani Hot Springs", description: "Natural sulfur hot springs with medicinal properties" },
-  "barabati-fort": { lat: 20.4625, lng: 85.8830, name: "Barabati Fort, Cuttack", description: "14th century fort with moat and ramparts" },
-  "ratnagiri": { lat: 20.6167, lng: 86.3333, name: "Ratnagiri Buddhist Site", description: "Buddhist Diamond Triangle monastery site" }
-};
+type LocationEntry = { lat: number; lng: number; name: string; description: string };
 
 const RouteSection: React.FC<RouteSectionProps> = ({ onRouteSelected }) => {
+  const { monuments, loading } = useMonuments();
   const [startLocation, setStartLocation] = useState("");
   const [endLocation, setEndLocation] = useState("");
+  const [startDisplay, setStartDisplay] = useState("");
+  const [endDisplay, setEndDisplay] = useState("");
+  const [openStart, setOpenStart] = useState(false);
+  const [openEnd, setOpenEnd] = useState(false);
   const [availableTime, setAvailableTime] = useState("");
   const [routeInfo, setRouteInfo] = useState<RouteInfo | null>(null);
   const [showResults, setShowResults] = useState(false);
   const [selectedWaypoints, setSelectedWaypoints] = useState<Monument[]>([]);
+
+  // Build location map from DB monuments that have coordinates (for route planning and search)
+  const locationMap = useMemo((): Record<string, LocationEntry> => {
+    const map: Record<string, LocationEntry> = {};
+    for (const m of monuments) {
+      if (m.latitude != null && m.longitude != null) {
+        map[m.id] = {
+          lat: m.latitude,
+          lng: m.longitude,
+          name: m.title,
+          description: m.description || "",
+        };
+      }
+    }
+    return map;
+  }, [monuments]);
+
+  const routeLocations = useMemo(() => Object.entries(locationMap).map(([id, loc]) => ({ id, ...loc })), [locationMap]);
 
   // Calculate distance between two points (Haversine formula)
   const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
@@ -80,34 +96,33 @@ const RouteSection: React.FC<RouteSectionProps> = ({ onRouteSelected }) => {
     return totalDistance <= routeDistance * 1.2;
   };
 
-  // Find monuments along the route
-  const findMonumentsOnRoute = (startKey: string, endKey: string): Monument[] => {
-    const start = locations[startKey as keyof typeof locations];
-    const end = locations[endKey as keyof typeof locations];
+  // Find monuments along the route (from DB locations)
+  const findMonumentsOnRoute = (startId: string, endId: string): Monument[] => {
+    const start = locationMap[startId];
+    const end = locationMap[endId];
+    if (!start || !end) return [];
 
     const monumentsOnRoute: Monument[] = [];
-
-    Object.entries(locations).forEach(([key, location]) => {
-      if (key !== startKey && key !== endKey) {
+    for (const [id, location] of Object.entries(locationMap)) {
+      if (id !== startId && id !== endId) {
         if (isNearRoute(location.lat, location.lng, start.lat, start.lng, end.lat, end.lng)) {
           monumentsOnRoute.push({
-            id: key,
+            id,
             name: location.name,
             lat: location.lat,
             lng: location.lng,
-            description: location.description
+            description: location.description,
           });
         }
       }
-    });
-
+    }
     return monumentsOnRoute;
   };
 
   const handlePlanRoute = async () => {
     if (startLocation && endLocation) {
-      const start = locations[startLocation as keyof typeof locations];
-      const end = locations[endLocation as keyof typeof locations];
+      const start = locationMap[startLocation];
+      const end = locationMap[endLocation];
 
       if (start && end) {
         // Calculate distance and estimated time
@@ -157,10 +172,12 @@ const RouteSection: React.FC<RouteSectionProps> = ({ onRouteSelected }) => {
 
       // Update route with new waypoints
       if (startLocation && endLocation && onRouteSelected) {
-        const start = locations[startLocation as keyof typeof locations];
-        const end = locations[endLocation as keyof typeof locations];
-        const waypoints = newWaypoints.map(w => ({ lat: w.lat, lng: w.lng }));
-        onRouteSelected(start, end, waypoints);
+        const start = locationMap[startLocation];
+        const end = locationMap[endLocation];
+        if (start && end) {
+          const waypoints = newWaypoints.map(w => ({ lat: w.lat, lng: w.lng }));
+          onRouteSelected(start, end, waypoints);
+        }
       }
     } else {
       // Add waypoint
@@ -169,10 +186,12 @@ const RouteSection: React.FC<RouteSectionProps> = ({ onRouteSelected }) => {
 
       // Update route with new waypoints
       if (startLocation && endLocation && onRouteSelected) {
-        const start = locations[startLocation as keyof typeof locations];
-        const end = locations[endLocation as keyof typeof locations];
-        const waypoints = newWaypoints.map(w => ({ lat: w.lat, lng: w.lng }));
-        onRouteSelected(start, end, waypoints);
+        const start = locationMap[startLocation];
+        const end = locationMap[endLocation];
+        if (start && end) {
+          const waypoints = newWaypoints.map(w => ({ lat: w.lat, lng: w.lng }));
+          onRouteSelected(start, end, waypoints);
+        }
       }
     }
   };
@@ -180,8 +199,9 @@ const RouteSection: React.FC<RouteSectionProps> = ({ onRouteSelected }) => {
   const openInGoogleMaps = () => {
     if (!startLocation || !endLocation) return;
 
-    const start = locations[startLocation as keyof typeof locations];
-    const end = locations[endLocation as keyof typeof locations];
+    const start = locationMap[startLocation];
+    const end = locationMap[endLocation];
+    if (!start || !end) return;
 
     let url = `https://www.google.com/maps/dir/?api=1&origin=${start.lat},${start.lng}&destination=${end.lat},${end.lng}&travelmode=driving`;
 
@@ -229,56 +249,110 @@ const RouteSection: React.FC<RouteSectionProps> = ({ onRouteSelected }) => {
             </CardHeader>
 
             <CardContent className="space-y-6">
-              {/* Start Location */}
+              {/* Start Location — searchable from DB */}
               <div className="space-y-2">
                 <Label htmlFor="start" className="text-base font-semibold flex items-center gap-2">
                   <MapPin className="w-4 h-4 text-secondary" />
                   Starting Point
                 </Label>
-                <Select value={startLocation} onValueChange={setStartLocation}>
-                  <SelectTrigger className="h-12 text-base">
-                    <SelectValue placeholder="Select starting monument" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="nist-university">NIST University, Berhampur</SelectItem>
-                    <SelectItem value="budhi-thakurani">Maa Budhi Thakurani Temple</SelectItem>
-                    <SelectItem value="tara-tarini">Tara Tarini Temple</SelectItem>
-                    <SelectItem value="konark-sun-temple">Konark Sun Temple</SelectItem>
-                    <SelectItem value="jagannath-temple">Jagannath Temple, Puri</SelectItem>
-                    <SelectItem value="lingaraj-temple">Lingaraj Temple, Bhubaneswar</SelectItem>
-                    <SelectItem value="rajarani-temple">Rajarani Temple, Bhubaneswar</SelectItem>
-                    <SelectItem value="mukteshwar-temple">Mukteshwar Temple, Bhubaneswar</SelectItem>
-                    <SelectItem value="udayagiri-khandagiri">Udayagiri & Khandagiri Caves</SelectItem>
-                    <SelectItem value="dhauli-stupa">Dhauli Shanti Stupa</SelectItem>
-                    <SelectItem value="chilika-lake">Chilika Lake</SelectItem>
-                  </SelectContent>
-                </Select>
+                <Popover open={openStart} onOpenChange={setOpenStart}>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      aria-expanded={openStart}
+                      className={cn(
+                        "w-full h-12 text-base justify-between font-normal",
+                        !startDisplay && "text-muted-foreground"
+                      )}
+                    >
+                      <span className="truncate">{startDisplay || "Type to search monuments..."}</span>
+                      {loading ? (
+                        <Loader2 className="ml-2 h-4 w-4 shrink-0 animate-spin opacity-50" />
+                      ) : (
+                        <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                      )}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0" align="start">
+                    <Command>
+                      <CommandInput placeholder="Search by name or location..." className="h-10" />
+                      <CommandList>
+                        <CommandEmpty>No monument found. Keep typing to search.</CommandEmpty>
+                        <CommandGroup heading="Monuments from database">
+                          {routeLocations.map((loc) => (
+                            <CommandItem
+                              key={loc.id}
+                              value={`${loc.name} ${loc.description} ${loc.id}`}
+                              onSelect={() => {
+                                setStartLocation(loc.id);
+                                setStartDisplay(loc.name);
+                                setOpenStart(false);
+                              }}
+                              className="flex flex-col items-start gap-0.5 py-3"
+                            >
+                              <span className="font-medium">{loc.name}</span>
+                              <span className="text-xs text-muted-foreground truncate w-full">{loc.description || "—"}</span>
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
               </div>
 
-              {/* End Location */}
+              {/* End Location — searchable from DB */}
               <div className="space-y-2">
                 <Label htmlFor="end" className="text-base font-semibold flex items-center gap-2">
                   <Navigation className="w-4 h-4 text-accent" />
                   Destination
                 </Label>
-                <Select value={endLocation} onValueChange={setEndLocation}>
-                  <SelectTrigger className="h-12 text-base">
-                    <SelectValue placeholder="Select destination monument" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="nist-university">NIST University, Berhampur</SelectItem>
-                    <SelectItem value="budhi-thakurani">Maa Budhi Thakurani Temple</SelectItem>
-                    <SelectItem value="tara-tarini">Tara Tarini Temple</SelectItem>
-                    <SelectItem value="konark-sun-temple">Konark Sun Temple</SelectItem>
-                    <SelectItem value="jagannath-temple">Jagannath Temple, Puri</SelectItem>
-                    <SelectItem value="lingaraj-temple">Lingaraj Temple, Bhubaneswar</SelectItem>
-                    <SelectItem value="rajarani-temple">Rajarani Temple, Bhubaneswar</SelectItem>
-                    <SelectItem value="mukteshwar-temple">Mukteshwar Temple, Bhubaneswar</SelectItem>
-                    <SelectItem value="udayagiri-khandagiri">Udayagiri & Khandagiri Caves</SelectItem>
-                    <SelectItem value="dhauli-stupa">Dhauli Shanti Stupa</SelectItem>
-                    <SelectItem value="chilika-lake">Chilika Lake</SelectItem>
-                  </SelectContent>
-                </Select>
+                <Popover open={openEnd} onOpenChange={setOpenEnd}>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      aria-expanded={openEnd}
+                      className={cn(
+                        "w-full h-12 text-base justify-between font-normal",
+                        !endDisplay && "text-muted-foreground"
+                      )}
+                    >
+                      <span className="truncate">{endDisplay || "Type to search monuments..."}</span>
+                      {loading ? (
+                        <Loader2 className="ml-2 h-4 w-4 shrink-0 animate-spin opacity-50" />
+                      ) : (
+                        <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                      )}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0" align="start">
+                    <Command>
+                      <CommandInput placeholder="Search by name or location..." className="h-10" />
+                      <CommandList>
+                        <CommandEmpty>No monument found. Keep typing to search.</CommandEmpty>
+                        <CommandGroup heading="Monuments from database">
+                          {routeLocations.map((loc) => (
+                            <CommandItem
+                              key={loc.id}
+                              value={`${loc.name} ${loc.description} ${loc.id}`}
+                              onSelect={() => {
+                                setEndLocation(loc.id);
+                                setEndDisplay(loc.name);
+                                setOpenEnd(false);
+                              }}
+                              className="flex flex-col items-start gap-0.5 py-3"
+                            >
+                              <span className="font-medium">{loc.name}</span>
+                              <span className="text-xs text-muted-foreground truncate w-full">{loc.description || "—"}</span>
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
               </div>
 
               {/* Available Time Input */}

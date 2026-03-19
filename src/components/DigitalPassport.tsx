@@ -1,12 +1,12 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Trophy, Award, Map as MapIcon, Star, CheckCircle2, Lock, Landmark, Waves, History, Mic } from "lucide-react";
+import { Trophy, Award, Map as MapIcon, Star, CheckCircle2, Lock, Landmark, Waves, History, Mic, type LucideIcon } from "lucide-react";
 import { useAchievements, Achievement } from "@/hooks/useAchievements";
 import { User } from "@supabase/supabase-js";
 import { cn } from "@/lib/utils";
 
-const iconMap: Record<string, any> = {
+const iconMap: Record<string, LucideIcon> = {
     "Trophy": Trophy,
     "Award": Award,
     "MapIcon": MapIcon,

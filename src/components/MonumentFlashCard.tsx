@@ -2,8 +2,14 @@ import React, { useState } from "react";
 import { MapPin, Volume2, FileText, VolumeX, X, Calendar, Clock, BookOpen, Maximize2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import type { Monument } from "@/hooks/useMonuments";
-import { motion, useMotionValue, useSpring, useTransform, AnimatePresence } from "framer-motion";
+import { useAppTTS } from "@/hooks/useAppTTS";
+import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 
 interface Props {
   monument: Monument;
@@ -11,11 +17,11 @@ interface Props {
 }
 
 const MonumentFlashCard = ({ monument, imageUrl }: Props) => {
-  const [isReading, setIsReading] = useState(false);
   const [showSummary, setShowSummary] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [imgLoaded, setImgLoaded] = useState(false);
   const [imgError, setImgError] = useState(false);
+  const { speak, stop, isSpeaking: isReading } = useAppTTS();
 
   // Framer Motion 3D Hover Effect
   const x = useMotionValue(0);
@@ -48,31 +54,8 @@ const MonumentFlashCard = ({ monument, imageUrl }: Props) => {
   };
 
   const handleSpeak = () => {
-    try {
-      if ("speechSynthesis" in window) {
-        window.speechSynthesis.cancel();
-        const text = `${monument.title}. ${monument.longDescription || monument.description}`;
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.rate = 0.9;
-        utterance.pitch = 1;
-        utterance.onstart = () => setIsReading(true);
-        utterance.onend = () => setIsReading(false);
-        utterance.onerror = () => setIsReading(false);
-        window.speechSynthesis.speak(utterance);
-      }
-    } catch (err) {
-      console.error("Speech error:", err);
-      setIsReading(false);
-    }
-  };
-
-  const handleStop = () => {
-    try {
-      window.speechSynthesis.cancel();
-    } catch (err) {
-      console.error("Stop error:", err);
-    }
-    setIsReading(false);
+    const text = `${monument.title}. ${monument.longDescription || monument.description}`;
+    speak(text);
   };
 
   const toggleSummary = () => {
@@ -92,7 +75,8 @@ const MonumentFlashCard = ({ monument, imageUrl }: Props) => {
           }}
           onMouseMove={handleMouseMove}
           onMouseLeave={handleMouseLeave}
-          className="group relative rounded-3xl overflow-hidden glass-card glass-card-hover"
+          onClick={() => setShowModal(true)}
+          className="group relative rounded-3xl overflow-hidden glass-card glass-card-hover cursor-pointer"
         >
           {/* Neon Edge Glow (Visible on Hover) */}
           <div className="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none shadow-[inset_0_0_20px_rgba(var(--primary),0.3)] z-0" />
@@ -105,14 +89,14 @@ const MonumentFlashCard = ({ monument, imageUrl }: Props) => {
             style={{ transform: "translateZ(30px)" }}
           >
             {/* Image */}
-            <div className="relative h-48 sm:h-56 overflow-hidden mt-2 mx-2 rounded-2xl shadow-lg ring-1 ring-black/5 dark:ring-white/10 group/img cursor-pointer" onClick={() => setShowModal(true)}>
+            <div className="relative h-48 sm:h-56 overflow-hidden mt-2 mx-2 rounded-2xl shadow-lg ring-1 ring-black/5 dark:ring-white/10 group/img">
               {!imgLoaded && !imgError && (
                 <Skeleton className="absolute inset-0 rounded-2xl" />
               )}
               <img
                 src={imgError ? fallbackImg : imageUrl}
                 alt={monument.title}
-                className={`w-full h-full object-cover transition-transform duration-700 group-[.group\/img]:hover:scale-110 ${imgLoaded ? "opacity-100" : "opacity-0"}`}
+                className={`w-full h-full object-cover transition-transform duration-700 group-[.group/img]:hover:scale-110 ${imgLoaded ? "opacity-100" : "opacity-0"}`}
                 loading="lazy"
                 onLoad={() => setImgLoaded(true)}
                 onError={() => {
@@ -122,7 +106,7 @@ const MonumentFlashCard = ({ monument, imageUrl }: Props) => {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-transparent" />
               
-              <div className="absolute inset-0 bg-black/40 opacity-0 group-[.group\/img]:hover:opacity-100 transition-opacity flex items-center justify-center">
+              <div className="absolute inset-0 bg-black/40 opacity-0 group-[.group/img]:hover:opacity-100 transition-opacity flex items-center justify-center">
                 <Maximize2 className="w-8 h-8 text-white drop-shadow-lg" />
               </div>
 
@@ -177,7 +161,11 @@ const MonumentFlashCard = ({ monument, imageUrl }: Props) => {
               >
                 <button
                   type="button"
-                  onClick={isReading ? handleStop : handleSpeak}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (isReading) stop();
+                    else handleSpeak();
+                  }}
                   className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl h-10 text-xs sm:text-sm font-medium transition-all duration-300 active:scale-95 shadow-lg overflow-hidden relative glass-button"
                   style={{
                     backgroundColor: isReading ? "hsl(var(--destructive)/0.8)" : "",
@@ -192,7 +180,10 @@ const MonumentFlashCard = ({ monument, imageUrl }: Props) => {
 
                 <button
                   type="button"
-                  onClick={toggleSummary}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleSummary();
+                  }}
                   className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl h-10 text-xs sm:text-sm font-medium glass-panel hover:bg-white/20 dark:hover:bg-white/10 text-foreground transition-all duration-300 active:scale-95 border-white/20"
                 >
                   <FileText className="w-4 h-4" />
@@ -201,7 +192,10 @@ const MonumentFlashCard = ({ monument, imageUrl }: Props) => {
 
                 <button
                   type="button"
-                  onClick={() => setShowModal(true)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowModal(true);
+                  }}
                   className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl h-10 text-xs sm:text-sm font-medium glass-panel hover:bg-primary/20 bg-primary/10 text-primary transition-all duration-300 active:scale-95 border-primary/20"
                 >
                   <BookOpen className="w-4 h-4" />
@@ -215,6 +209,7 @@ const MonumentFlashCard = ({ monument, imageUrl }: Props) => {
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: "auto" }}
                   className="overflow-hidden"
+                  onClick={(e) => e.stopPropagation()}
                 >
                   {monument.facts && monument.facts.length > 0 ? (
                     <div className="p-4 rounded-xl glass-panel space-y-3 mt-3 shadow-inner">
@@ -242,131 +237,118 @@ const MonumentFlashCard = ({ monument, imageUrl }: Props) => {
         </motion.div>
       </div>
 
-      <AnimatePresence>
-        {showModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-              onClick={() => setShowModal(false)}
-            />
-            
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              transition={{ duration: 0.3, type: "spring", bounce: 0.3 }}
-              className="relative w-full max-w-4xl max-h-[90vh] overflow-y-auto bg-background/95 rounded-[2rem] shadow-2xl border border-white/10 z-10 custom-scrollbar"
-            >
-              <button
-                onClick={() => setShowModal(false)}
-                className="absolute top-4 right-4 z-20 p-2 rounded-full bg-black/20 hover:bg-black/40 text-white backdrop-blur-md transition-colors"
-                aria-label="Close modal"
-              >
-                <X className="w-5 h-5" />
-              </button>
+      <Dialog open={showModal} onOpenChange={setShowModal}>
+        <DialogContent
+          className="max-w-4xl w-[95vw] sm:w-full h-[92vh] sm:h-[85vh] max-h-[90vh] p-0 gap-0 flex flex-col overflow-hidden rounded-t-3xl sm:rounded-2xl border-border [&>button]:hidden"
+        >
+          <DialogTitle className="sr-only">{monument.title} – Details</DialogTitle>
+          <button
+            type="button"
+            onClick={() => setShowModal(false)}
+            className="absolute top-3 right-3 sm:top-4 sm:right-4 z-20 p-2 rounded-full bg-background/90 hover:bg-muted text-foreground border border-border shadow-lg"
+            aria-label="Close modal"
+          >
+            <X className="w-5 h-5" />
+          </button>
 
-              <div className="relative h-64 sm:h-96 w-full shrink-0">
-                <img
-                  src={imgError ? fallbackImg : imageUrl}
-                  alt={monument.title}
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent" />
-                
-                <div className="absolute bottom-6 left-6 sm:left-10 z-10 w-full pr-10">
-                  <Badge className="bg-primary/90 text-primary-foreground mb-3 backdrop-blur-md border border-primary/50 shadow-lg">
+          <div className="flex-1 overflow-y-auto overflow-x-hidden min-h-0 min-w-0 scrollbar-thin">
+            <div className="relative h-48 sm:h-64 md:h-80 lg:h-96 w-full shrink-0 min-w-0">
+              <img
+                src={imgError ? fallbackImg : imageUrl}
+                alt=""
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent" />
+<div className="absolute bottom-6 left-6 sm:left-10 z-10 right-12 min-w-0">
+                <Badge className="bg-primary/90 text-primary-foreground mb-3 backdrop-blur-md border border-primary/50 shadow-lg">
                     {monument.category}
                   </Badge>
-                  <h2 className="text-3xl sm:text-5xl font-bold text-white mb-2 drop-shadow-md">
+                <h2 className="text-2xl sm:text-4xl md:text-5xl font-bold text-white mb-2 drop-shadow-md break-words line-clamp-2">
                     {monument.title}
                   </h2>
-                  <div className="flex items-center gap-2 text-white/90 font-medium drop-shadow">
-                    <MapPin className="w-5 h-5" />
-                    <span>{monument.location}</span>
-                  </div>
+                <div className="flex items-center gap-2 text-white/90 font-medium drop-shadow min-w-0">
+                  <MapPin className="w-5 h-5 shrink-0" />
+                  <span className="truncate">{monument.location}</span>
                 </div>
               </div>
+            </div>
 
-              <div className="p-6 sm:p-10 space-y-8">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div className="md:col-span-2 space-y-6">
-                    <div>
+            <div className="p-4 sm:p-6 md:p-10 space-y-6 sm:space-y-8 min-w-0">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 min-w-0">
+                <div className="md:col-span-2 space-y-6 min-w-0">
+                  <div className="min-w-0">
+                    <h3 className="text-xl font-semibold mb-3 flex items-center gap-2 text-foreground">
+                      <BookOpen className="w-5 h-5 shrink-0 text-primary" />
+                      About
+                    </h3>
+                    <p className="text-foreground/80 leading-relaxed text-lg break-words">
+                      {monument.longDescription || monument.description}
+                    </p>
+                  </div>
+
+                  {monument.history && (
+                    <div className="min-w-0">
                       <h3 className="text-xl font-semibold mb-3 flex items-center gap-2 text-foreground">
-                        <BookOpen className="w-5 h-5 text-primary" />
-                        About
+                        <Clock className="w-5 h-5 shrink-0 text-primary" />
+                        History
                       </h3>
-                      <p className="text-foreground/80 leading-relaxed text-lg">
-                        {monument.longDescription || monument.description}
+                      <p className="text-foreground/80 leading-relaxed break-words">
+                        {monument.history}
                       </p>
                     </div>
-
-                    {monument.history && (
-                      <div>
-                        <h3 className="text-xl font-semibold mb-3 flex items-center gap-2 text-foreground">
-                          <Clock className="w-5 h-5 text-primary" />
-                          History
-                        </h3>
-                        <p className="text-foreground/80 leading-relaxed">
-                          {monument.history}
-                        </p>
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="space-y-6">
-                    {monument.builtYear && (
-                      <div className="glass-panel p-5 rounded-2xl relative overflow-hidden">
-                        <div className="absolute -right-4 -top-4 w-16 h-16 bg-primary/20 blur-2xl rounded-full" />
-                        <h4 className="text-sm text-foreground/60 mb-1 flex items-center gap-2">
-                          <Calendar className="w-4 h-4" />
-                          Built Year
-                        </h4>
-                        <p className="text-xl font-semibold text-foreground">
-                          {monument.builtYear}
-                        </p>
-                      </div>
-                    )}
-
-                    {monument.facts && monument.facts.length > 0 && (
-                      <div className="glass-panel p-5 rounded-2xl">
-                        <h4 className="font-semibold mb-4 flex items-center gap-2 text-foreground">
-                          <FileText className="w-4 h-4 text-primary" />
-                          Key Facts
-                        </h4>
-                        <ul className="space-y-3">
-                          {monument.facts.map((fact, index) => (
-                            <li key={index} className="flex gap-3 text-sm text-foreground/80">
-                              <span className="w-2 h-2 rounded-full bg-primary/50 shrink-0 mt-1.5" />
-                              <span className="leading-relaxed">{fact}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                  </div>
+                  )}
                 </div>
 
-                <div className="pt-6 flex justify-center border-t border-border">
-                  <button
-                    onClick={isReading ? handleStop : handleSpeak} 
-                    className="flex items-center gap-2 glass-button px-6 py-3 rounded-xl font-medium shadow-xl hover:shadow-primary/20 transition-all active:scale-95"
-                  >
-                    {isReading ? (
-                      <><VolumeX className="w-5 h-5" /> Stop Audio Guide</>
-                    ) : (
-                      <><Volume2 className="w-5 h-5" /> Play Audio Tour</>
-                    )}
-                  </button>
+                <div className="space-y-6 min-w-0">
+                  {monument.builtYear && (
+                    <div className="glass-panel p-5 rounded-2xl relative overflow-hidden">
+                      <div className="absolute -right-4 -top-4 w-16 h-16 bg-primary/20 blur-2xl rounded-full" />
+                      <h4 className="text-sm text-foreground/60 mb-1 flex items-center gap-2">
+                        <Calendar className="w-4 h-4" />
+                        Built Year
+                      </h4>
+                      <p className="text-xl font-semibold text-foreground">
+                        {monument.builtYear}
+                      </p>
+                    </div>
+                  )}
+
+                  {monument.facts && monument.facts.length > 0 && (
+                    <div className="glass-panel p-5 rounded-2xl">
+                      <h4 className="font-semibold mb-4 flex items-center gap-2 text-foreground">
+                        <FileText className="w-4 h-4 text-primary" />
+                        Key Facts
+                      </h4>
+                      <ul className="space-y-3">
+                        {monument.facts.map((fact, index) => (
+                          <li key={index} className="flex gap-3 text-sm text-foreground/80">
+                            <span className="w-2 h-2 rounded-full bg-primary/50 shrink-0 mt-1.5" />
+                            <span className="leading-relaxed">{fact}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
                 </div>
               </div>
-            </motion.div>
+
+              <div className="pt-4 sm:pt-6 flex justify-center border-t border-border">
+                <button
+                  type="button"
+                  onClick={isReading ? stop : handleSpeak}
+                  className="flex items-center gap-2 glass-button px-5 py-2.5 sm:px-6 sm:py-3 rounded-xl text-sm sm:text-base font-medium shadow-xl hover:shadow-primary/20 transition-all active:scale-95"
+                >
+                  {isReading ? (
+                    <><VolumeX className="w-4 h-4 sm:w-5 sm:h-5" /> Stop Audio Guide</>
+                  ) : (
+                    <><Volume2 className="w-4 h-4 sm:w-5 sm:h-5" /> Play Audio Tour</>
+                  )}
+                </button>
+              </div>
+            </div>
           </div>
-        )}
-      </AnimatePresence>
+        </DialogContent>
+      </Dialog>
     </>
   );
 };

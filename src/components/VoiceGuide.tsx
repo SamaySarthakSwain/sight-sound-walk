@@ -14,6 +14,8 @@ import {
 } from "@/components/ui/select";
 import { Globe } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useTTSVoice } from "@/hooks/useTTSVoice";
+import { fetchElevenLabsAudio } from "@/lib/elevenlabsTts";
 
 // Web Speech API types
 interface SpeechRecognitionEvent extends Event {
@@ -73,9 +75,9 @@ const speechLangCodes: Record<SupportedLanguage, string> = {
 };
 
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/gemini-voice-guide`;
-const TTS_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/elevenlabs-tts`;
 
 const VoiceGuide = () => {
+  const { preferredVoice, lang: ttsLang } = useTTSVoice();
   const [isListening, setIsListening] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -116,7 +118,7 @@ const VoiceGuide = () => {
   }, [location.state?.proactiveMonument, isConversationActive, navigate]);
 
   useEffect(() => {
-    const handleNudge = (event: any) => {
+    const handleNudge = (event: CustomEvent<{ monument: { title: string } }>) => {
       const { monument } = event.detail;
       if (!isConversationActive) {
         setIsConversationActive(true);
@@ -154,26 +156,16 @@ const VoiceGuide = () => {
     return recognition;
   }, [language, toast]);
 
-  // ElevenLabs TTS playback
+  // ElevenLabs TTS (Indian female voice via shared lib), with Web Speech fallback
   const speakWithElevenLabs = async (text: string) => {
     setIsSpeaking(true);
     try {
-      const resp = await fetch(TTS_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
-          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
-        },
-        body: JSON.stringify({ text }),
-      });
-
-      if (!resp.ok) {
-        throw new Error("TTS failed");
+      const result = await fetchElevenLabsAudio(text);
+      if (!result) {
+        speakWithWebSpeech(text);
+        return;
       }
-
-      const audioBlob = await resp.blob();
-      const audioUrl = URL.createObjectURL(audioBlob);
+      const { audio, revoke } = result;
 
       // Create audio context for visualization
       const audioCtx = new AudioContext();
@@ -181,14 +173,11 @@ const VoiceGuide = () => {
       analyser.fftSize = 256;
       analyserRef.current = analyser;
 
-      const audio = new Audio(audioUrl);
       audioRef.current = audio;
-
       const source = audioCtx.createMediaElementSource(audio);
       source.connect(analyser);
       analyser.connect(audioCtx.destination);
 
-      // Start visualization
       const dataArray = new Uint8Array(analyser.frequencyBinCount);
       const visualize = () => {
         analyser.getByteFrequencyData(dataArray);
@@ -202,9 +191,8 @@ const VoiceGuide = () => {
         setIsSpeaking(false);
         setAudioLevel(0);
         cancelAnimationFrame(animFrameRef.current);
-        URL.revokeObjectURL(audioUrl);
+        revoke();
         audioCtx.close();
-        // Auto-restart listening
         if (isConversationActive && shouldRestartRef.current) {
           setTimeout(() => startListening(), 300);
         }
@@ -214,6 +202,7 @@ const VoiceGuide = () => {
         setIsSpeaking(false);
         setAudioLevel(0);
         cancelAnimationFrame(animFrameRef.current);
+        revoke();
         audioCtx.close();
         if (isConversationActive && shouldRestartRef.current) {
           setTimeout(() => startListening(), 300);
@@ -225,17 +214,21 @@ const VoiceGuide = () => {
       console.error("ElevenLabs TTS error:", err);
       setIsSpeaking(false);
       setAudioLevel(0);
-      // Fallback to Web Speech API
       speakWithWebSpeech(text);
     }
   };
 
-  // Fallback Web Speech TTS
+  // Fallback Web Speech TTS (uses app TTS voice from src/lib/tts.ts)
   const speakWithWebSpeech = (text: string) => {
     if (!("speechSynthesis" in window)) return;
     window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = speechLangCodes[language];
+    if (preferredVoice) {
+      utterance.voice = preferredVoice;
+      utterance.lang = preferredVoice.lang;
+    } else {
+      utterance.lang = speechLangCodes[language] ?? ttsLang;
+    }
     utterance.rate = 1;
     utterance.pitch = 1;
     utterance.onstart = () => setIsSpeaking(true);

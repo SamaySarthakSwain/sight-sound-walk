@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import type { SupportedLanguage } from "./useTravelChat";
+import { getPreferredVoice } from "@/lib/tts";
 
 // Language codes for Web Speech API
 const speechLanguageCodes: Record<SupportedLanguage, string> = {
@@ -45,6 +46,12 @@ export const useSpeechSynthesis = () => {
 
   const getVoiceForLanguage = useCallback((lang: SupportedLanguage): SpeechSynthesisVoice | null => {
     if (availableVoices.length === 0) return null;
+
+    // Use app-wide preferred voice for English (from src/lib/tts.ts)
+    if (lang === "en") {
+      const preferred = getPreferredVoice(availableVoices);
+      if (preferred) return preferred;
+    }
 
     // Try primary language code
     const primaryCode = speechLanguageCodes[lang];

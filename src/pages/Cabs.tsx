@@ -15,13 +15,25 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
   useCabServices,
   useVehicleTypes,
   calculateFareEstimates,
   FareEstimate,
 } from "@/hooks/useCabServices";
 import { useCity } from "@/contexts/CityContext";
-import { useJsApiLoader, Autocomplete } from "@react-google-maps/api";
+import { useMonuments } from "@/hooks/useMonuments";
+import { cn } from "@/lib/utils";
+import { Autocomplete } from "@react-google-maps/api";
+import { useGoogleMaps } from "@/contexts/GoogleMapsContext";
 import {
   Car,
   Bike,
@@ -35,25 +47,32 @@ import {
   Leaf,
   TrendingDown,
   Bus,
+  ChevronDown,
+  Loader2,
 } from "lucide-react";
 
 const Cabs = () => {
   const { data: cabServices, isLoading: loadingServices } = useCabServices();
   const { data: vehicleTypes, isLoading: loadingVehicles } = useVehicleTypes();
   const { selectedCity } = useCity();
+  const { monuments, loading: loadingMonuments } = useMonuments();
 
   const cityDisplayName = selectedCity.split(",")[0] || "Odisha";
 
-  // Define places library array outside the component or memoize it to avoid re-renders
-  const [libraries] = useState<("places")[]>(["places"]);
+  // Monuments with coordinates for searchable Starting Point dropdown (same structure as Explore > Plan Your Journey)
+  const startPointOptions = useMemo(
+    () =>
+      monuments
+        .filter((m) => m.latitude != null && m.longitude != null)
+        .map((m) => ({ id: m.id, name: m.title, description: m.description || "" })),
+    [monuments]
+  );
 
-  const { isLoaded } = useJsApiLoader({
-    id: 'google-map-script',
-    googleMapsApiKey: "AIzaSyBVVkTWwfx3NW6bFi1t7CEomwv1owCO1SI",
-    libraries: libraries,
-  });
+  const [openStartPoint, setOpenStartPoint] = useState(false);
+  const [startPointDisplay, setStartPointDisplay] = useState("");
 
-  const [autocompleteStart, setAutocompleteStart] = useState<google.maps.places.Autocomplete | null>(null);
+  const { isLoaded } = useGoogleMaps();
+
   const [autocompleteEnd, setAutocompleteEnd] = useState<google.maps.places.Autocomplete | null>(null);
   const [autocompleteStops, setAutocompleteStops] = useState<Record<number, google.maps.places.Autocomplete>>({});
 
@@ -242,35 +261,61 @@ const Cabs = () => {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              {/* Starting Point */}
+              {/* Starting Point — same dropdown structure as Explore > Plan Your Journey */}
               <div className="space-y-2">
                 <Label className="flex items-center gap-2">
                   <MapPin className="w-4 h-4 text-green-500" />
                   Starting Point
                 </Label>
-                {isLoaded ? (
-                  <Autocomplete
-                    onLoad={(autocomplete) => setAutocompleteStart(autocomplete)}
-                    onPlaceChanged={() => {
-                      if (autocompleteStart !== null) {
-                        const place = autocompleteStart.getPlace();
-                        setStartLocation(place.formatted_address || place.name || "");
-                      }
-                    }}
-                  >
-                    <Input
-                      placeholder={`e.g., City Center, ${cityDisplayName}`}
-                      value={startLocation}
-                      onChange={(e) => setStartLocation(e.target.value)}
-                    />
-                  </Autocomplete>
-                ) : (
-                  <Input
-                    placeholder={`e.g., City Center, ${cityDisplayName}`}
-                    value={startLocation}
-                    onChange={(e) => setStartLocation(e.target.value)}
-                  />
-                )}
+                <Popover open={openStartPoint} onOpenChange={setOpenStartPoint}>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      aria-expanded={openStartPoint}
+                      className={cn(
+                        "w-full h-12 text-base justify-between font-normal",
+                        !startPointDisplay && "text-muted-foreground"
+                      )}
+                    >
+                      <span className="truncate">
+                        {startPointDisplay || `Type to search monuments in ${cityDisplayName}...`}
+                      </span>
+                      {loadingMonuments ? (
+                        <Loader2 className="ml-2 h-4 w-4 shrink-0 animate-spin opacity-50" />
+                      ) : (
+                        <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                      )}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0" align="start">
+                    <Command>
+                      <CommandInput placeholder="Search by name or location..." className="h-10" />
+                      <CommandList>
+                        <CommandEmpty>No monument found. Keep typing to search.</CommandEmpty>
+                        <CommandGroup heading="Monuments from database">
+                          {startPointOptions.map((loc) => (
+                            <CommandItem
+                              key={loc.id}
+                              value={`${loc.name} ${loc.description} ${loc.id}`}
+                              onSelect={() => {
+                                setStartLocation(loc.name);
+                                setStartPointDisplay(loc.name);
+                                setOpenStartPoint(false);
+                              }}
+                              className="flex flex-col items-start gap-0.5 py-3"
+                            >
+                              <span className="font-medium">{loc.name}</span>
+                              <span className="text-xs text-muted-foreground truncate w-full">
+                                {loc.description || "—"}
+                              </span>
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
               </div>
 
               {/* Stops */}

@@ -51,13 +51,13 @@ const AlertsPanel = () => {
   }
 
   return (
-    <div className="relative overflow-hidden bg-black/40 backdrop-blur-xl border border-white/10 rounded-xl p-5 shadow-[0_0_40px_rgba(0,0,0,0.5)] flex flex-col h-full">
-      <div className="absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent pointer-events-none" />
+    <div className="relative overflow-hidden bg-card border border-border rounded-xl p-5 shadow-sm dark:shadow-[0_0_40px_rgba(0,0,0,0.3)] flex flex-col h-full">
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.02] to-transparent pointer-events-none" />
 
       <div className="flex items-center justify-between mb-5 relative z-10">
         <div className="flex items-center gap-2">
           <div className="w-1 h-4 rounded-full bg-accent animate-pulse-glow" />
-          <h3 className="text-sm font-semibold text-white uppercase tracking-wider">Live Alerts</h3>
+          <h3 className="text-sm font-semibold text-foreground uppercase tracking-wider">Live Alerts</h3>
         </div>
         {alerts.filter(a => a.level === "critical").length > 0 && (
           <motion.span
@@ -81,17 +81,17 @@ const AlertsPanel = () => {
               whileHover={{ scale: 1.02, x: 5 }}
               className={`group relative flex items-start gap-3 p-3.5 rounded-lg border backdrop-blur-md transition-all duration-300 cursor-pointer ${bgMap[a.level]} ${glowMap[a.level]}`}
             >
-              <div className="absolute inset-0 rounded-lg bg-gradient-to-b from-white/[0.05] to-transparent pointer-events-none" />
+              <div className="absolute inset-0 rounded-lg bg-gradient-to-b from-primary/[0.03] to-transparent pointer-events-none" />
 
-              <div className={`p-1.5 rounded-md bg-white/5 border border-white/10 shrink-0 ${colorMap[a.level]}`}>
+              <div className={`p-1.5 rounded-md bg-muted/80 border border-border shrink-0 ${colorMap[a.level]}`}>
                 <Icon className="w-4 h-4" />
               </div>
 
               <div className="flex-1 min-w-0">
-                <p className="text-sm text-gray-200 leading-snug font-medium group-hover:text-white transition-colors">{a.message}</p>
+                <p className="text-sm text-foreground leading-snug font-medium group-hover:text-foreground transition-colors">{a.message}</p>
                 <div className="flex items-center gap-2 mt-1.5">
-                  <span className="text-[10px] text-gray-400 font-mono px-1.5 py-0.5 rounded bg-white/5 border border-white/10 uppercase tracking-wider">{a.zone}</span>
-                  <span className="text-[10px] text-gray-500 font-medium flex items-center gap-1">
+                  <span className="text-[10px] text-muted-foreground font-mono px-1.5 py-0.5 rounded bg-muted/80 border border-border uppercase tracking-wider">{a.zone}</span>
+                  <span className="text-[10px] text-muted-foreground font-medium flex items-center gap-1">
                     <Clock className="w-2.5 h-2.5" />
                     {a.time}
                   </span>

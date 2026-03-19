@@ -36,7 +36,7 @@ export const useOfflineData = () => {
     // Defer heavily — only run after page is idle for 5 seconds
     const timer = setTimeout(() => {
       if ("requestIdleCallback" in window) {
-        (window as any).requestIdleCallback(() => cacheData(), { timeout: 10000 });
+        (window as Window & { requestIdleCallback?: (cb: () => void, opts?: { timeout?: number }) => number }).requestIdleCallback(() => cacheData(), { timeout: 10000 });
       } else {
         cacheData();
       }

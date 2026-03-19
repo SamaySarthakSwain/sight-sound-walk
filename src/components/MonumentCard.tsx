@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Volume2, FileText, MapPin } from "lucide-react";
 import { useState } from "react";
+import { useAppTTS } from "@/hooks/useAppTTS";
 
 interface MonumentCardProps {
   title: string;
@@ -14,26 +15,10 @@ interface MonumentCardProps {
 }
 
 const MonumentCard = ({ title, description, location, category, imageUrl, facts }: MonumentCardProps) => {
-  const [isReading, setIsReading] = useState(false);
   const [showSummary, setShowSummary] = useState(false);
+  const { speak, stop, isSpeaking: isReading } = useAppTTS();
 
-  const handleSpeak = () => {
-    if ('speechSynthesis' in window) {
-      const utterance = new SpeechSynthesisUtterance(description);
-      utterance.rate = 0.9;
-      utterance.pitch = 1;
-      
-      utterance.onstart = () => setIsReading(true);
-      utterance.onend = () => setIsReading(false);
-      
-      window.speechSynthesis.speak(utterance);
-    }
-  };
-
-  const handleStop = () => {
-    window.speechSynthesis.cancel();
-    setIsReading(false);
-  };
+  const handleSpeak = () => speak(description);
 
   return (
     <Card className="overflow-hidden hover:shadow-medium transition-smooth group">
@@ -73,7 +58,7 @@ const MonumentCard = ({ title, description, location, category, imageUrl, facts 
 
         <div className="flex gap-2">
           <Button
-            onClick={isReading ? handleStop : handleSpeak}
+            onClick={isReading ? stop : handleSpeak}
             className="flex-1 bg-secondary hover:bg-secondary/90"
           >
             <Volume2 className="w-4 h-4 mr-2" />

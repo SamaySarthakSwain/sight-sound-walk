@@ -98,7 +98,7 @@ export function adjustForWeather(edges: RoadEdge[], weather: string): RoadEdge[]
     ...e,
     capacity: Math.floor(e.capacity * factor),
     speedLimit: Math.floor(e.speedLimit * factor),
-    weather: weather as any,
+    weather,
   }));
 }
 

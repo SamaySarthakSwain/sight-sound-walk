@@ -8,7 +8,7 @@ export type PeerData = {
     stream: MediaStream | null;
     personCount: number;
     vehicleCount: number;
-    bboxes?: any[];
+    bboxes?: unknown[];
     isLocal?: boolean;
     gpsCoords?: { lat: number; lng: number } | null;
 };
@@ -44,7 +44,7 @@ export const useWebRTC = (sessionId: string | null, username: string | null, loc
     const connectionsRef = useRef<Record<string, RTCPeerConnection>>({});
     const dataChannelsRef = useRef<Record<string, RTCDataChannel>>({});
     const localStreamRef = useRef<MediaStream | null>(null);
-    const channelRef = useRef<any>(null);
+    const channelRef = useRef<BroadcastChannel | null>(null);
     const clientId = useRef(Math.random().toString(36).substring(2, 9)).current;
 
     // We need to keep refs synced with state so we can access current state in event listeners
@@ -83,7 +83,7 @@ export const useWebRTC = (sessionId: string | null, username: string | null, loc
         });
     }, []);
 
-    const broadcastMessage = useCallback((payload: any) => {
+    const broadcastMessage = useCallback((payload: Record<string, unknown>) => {
         if (channelRef.current) {
             channelRef.current.send({
                 type: "broadcast",
@@ -113,7 +113,9 @@ export const useWebRTC = (sessionId: string | null, username: string | null, loc
                         bboxes: data.bboxes 
                     });
                 }
-            } catch (e) {}
+            } catch {
+                // ignore parse errors from data channel
+            }
         };
         dataChannelsRef.current[peerId] = dc;
 
@@ -129,7 +131,9 @@ export const useWebRTC = (sessionId: string | null, username: string | null, loc
                             bboxes: data.bboxes 
                         });
                     }
-                } catch (err) {}
+                } catch {
+                    // ignore parse errors from received data
+                }
             };
             // Override with receiver channel if it exists
             dataChannelsRef.current[peerId] = receiveChannel;
@@ -164,7 +168,7 @@ export const useWebRTC = (sessionId: string | null, username: string | null, loc
         return pc;
     }, [broadcastMessage, updatePeer, removePeer]);
 
-    const handleMetadataUpdate = useCallback((personCount: number, vehicleCount: number, bboxes?: any[], gpsCoords?: { lat: number; lng: number } | null) => {
+    const handleMetadataUpdate = useCallback((personCount: number, vehicleCount: number, bboxes?: unknown[], gpsCoords?: { lat: number; lng: number } | null) => {
             if (!sessionId || !username) return;
 
             // Send high-frequency data (bboxes, counts) via WebRTC Data Channels

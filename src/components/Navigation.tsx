@@ -1,6 +1,6 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Home, Map, HelpCircle, LogIn, LogOut, User as UserIcon, Bot, UtensilsCrossed, Car, Building2, Menu, X, Box } from "lucide-react";
+import { Home, Map, HelpCircle, LogIn, LogOut, User as UserIcon, Bot, UtensilsCrossed, Car, Building2, Menu, X, Box, Users } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
@@ -31,6 +31,7 @@ const navItems = [
   { path: "/hotels", label: "Hotels", icon: Building2 },
   { path: "/assistant", label: "Assistant", icon: Bot },
   { path: "/ar", label: "AR", icon: Box },
+  { path: "/crowd", label: "Crowd", icon: Users },
   { path: "/help", label: "Help", icon: HelpCircle },
 ];
 
@@ -39,6 +40,9 @@ const Navigation = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  // Crowd tab only visible when user is logged in
+  const visibleNavItems = navItems.filter((item) => item.path !== "/crowd" || !!user);
 
   const handleLogout = async () => {
     const { error } = await supabase.auth.signOut();
@@ -95,7 +99,7 @@ const Navigation = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center gap-1">
-            {navItems.map((item) => (
+            {visibleNavItems.map((item) => (
               <NavLink key={item.path} item={item} />
             ))}
             <ThemeToggle />
@@ -220,7 +224,7 @@ const Navigation = () => {
                   </SheetTitle>
                 </SheetHeader>
                 <nav className="flex flex-col gap-2 mt-6">
-                  {navItems.map((item) => (
+                  {visibleNavItems.map((item) => (
                     <SheetClose asChild key={item.path}>
                       <NavLink item={item} onClick={() => setMobileMenuOpen(false)} />
                     </SheetClose>
