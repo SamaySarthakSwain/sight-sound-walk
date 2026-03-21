@@ -33,10 +33,10 @@ export const arModels: ARModel[] = [
     has3DTimeTravel: true,
     hasPhotoTimeTravel: true,
     historicalPhotos: [
-      { year: 1868, url: "https://upload.wikimedia.org/wikipedia/commons/e/e2/Konark_Sun_Temple_main_temple_in_ruins_1868.jpg", caption: "Earliest known photograph showing the main temple in ruins." },
-      { year: 1900, url: "https://upload.wikimedia.org/wikipedia/commons/1/14/Sun_Temple_of_Konark_1900.jpg", caption: "Early 20th century view showing the temple's mandapa before the sand-filling was removed." },
-      { year: 1950, url: "https://upload.wikimedia.org/wikipedia/commons/4/4e/Konark_Sun_Temple_in_1955.jpg", caption: "Post-independence conservation and archaeological study." },
-      { year: 2024, url: "https://images.unsplash.com/photo-1620393470010-fd97d3962002?auto=format&fit=crop&q=80&w=1200", caption: "Present day UNESCO World Heritage Site." }
+      { year: 1868, url: "/time-travel/konark-1868.png", caption: "Earliest known photograph showing the main temple in ruins." },
+      { year: 1900, url: "/time-travel/konark-1900.png", caption: "Early 20th century view showing the temple's mandapa before the sand-filling was removed." },
+      { year: 1950, url: "/time-travel/konark-1950.png", caption: "Post-independence conservation and archaeological study." },
+      { year: 2024, url: "/time-travel/konark-2024.png", caption: "Present day UNESCO World Heritage Site." }
     ],
     categories: ["Odisha", "Temples"],
     credit: { author: "moniln", authorUrl: "https://sketchfab.com/moniln9", modelUrl: "https://sketchfab.com/3d-models/sun-temple-konark-6cc905be2ae34e8091eb1eaa84a17738" },
@@ -50,10 +50,10 @@ export const arModels: ARModel[] = [
     embedUrl: "https://sketchfab.com/models/33149233cefd492b9abdd50fe5a8c921/embed?ui_theme=dark",
     hasPhotoTimeTravel: true,
     historicalPhotos: [
-      { year: 1850, url: "https://upload.wikimedia.org/wikipedia/commons/a/a2/Taj_Mahal_Agra_1850s.jpg", caption: "Rare mid-19th century calotype view of the mausoleum." },
-      { year: 1900, url: "https://upload.wikimedia.org/wikipedia/commons/8/87/Taj_Mahal_Agra_India_ca_1900.jpg", caption: "View from the formal gardens during the late British Raj." },
-      { year: 1940, url: "https://upload.wikimedia.org/wikipedia/commons/8/82/Ariel_view_of_Taj_Mahal_1940.jpg", caption: "Aerial view during World War II, showing protective scaffolding." },
-      { year: 2024, url: "https://images.unsplash.com/photo-1564507592333-c60657eea023?auto=format&fit=crop&q=80&w=1200", caption: "Modern day iconic landmark and wonder of the world." }
+      { year: 1850, url: "/time-travel/taj-1850.png", caption: "Rare mid-19th century calotype view of the mausoleum." },
+      { year: 1900, url: "/time-travel/taj-1900.png", caption: "View from the formal gardens during the late British Raj." },
+      { year: 1940, url: "/time-travel/taj-1940.png", caption: "Aerial view during World War II, showing protective scaffolding." },
+      { year: 2024, url: "/time-travel/taj-2024.png", caption: "Modern day iconic landmark and wonder of the world." }
     ],
     categories: ["India", "Historical Monuments"],
     credit: { author: "Sketchfab", authorUrl: "https://sketchfab.com", modelUrl: "https://sketchfab.com/models/33149233cefd492b9abdd50fe5a8c921" },
@@ -67,9 +67,9 @@ export const arModels: ARModel[] = [
     embedUrl: "https://sketchfab.com/models/549cc0862a184db2b48e518bb6beedbd/embed?ui_theme=dark",
     hasPhotoTimeTravel: true,
     historicalPhotos: [
-      { year: 1931, url: "https://upload.wikimedia.org/wikipedia/commons/7/77/India_Gate_New_Delhi_1930s.jpg", caption: "The newly completed All India War Memorial." },
-      { year: 1950, url: "https://upload.wikimedia.org/wikipedia/commons/b/b3/New_Delhi_India_Gate_1950.jpg", caption: "The heart of independent India's new capital." },
-      { year: 2024, url: "https://images.unsplash.com/photo-1587474260584-136574528ed5?auto=format&fit=crop&q=80&w=1200", caption: "Present day view of the Central Vista." }
+      { year: 1931, url: "/time-travel/indiagate-1931.png", caption: "The newly completed All India War Memorial." },
+      { year: 1950, url: "/time-travel/indiagate-1950.png", caption: "The heart of independent India's new capital." },
+      { year: 2024, url: "/time-travel/indiagate-2024.png", caption: "Present day view of the Central Vista." }
     ],
     categories: ["India", "Historical Monuments"],
     credit: { author: "Karan Sahu", authorUrl: "https://sketchfab.com/cgkaran", modelUrl: "https://sketchfab.com/3d-models/india-gate-high-poly-model-549cc0862a184db2b48e518bb6beedbd" },
@@ -83,9 +83,9 @@ export const arModels: ARModel[] = [
     embedUrl: "https://sketchfab.com/models/82603f1fe3ed4c31b37786e2bc2b63b0/embed?ui_theme=dark",
     hasPhotoTimeTravel: true,
     historicalPhotos: [
-      { year: 1887, url: "https://upload.wikimedia.org/wikipedia/commons/3/30/Charminar_in_1887.jpg", caption: "A street view of Charminar during the reign of the Nizams." },
-      { year: 1920, url: "https://upload.wikimedia.org/wikipedia/commons/f/ff/Charminar_Hyderabad_India_1920s.jpg", caption: "The bustling intersection in old Hyderabad a century ago." },
-      { year: 2024, url: "https://images.unsplash.com/photo-1590050752117-2ba079ca9631?auto=format&fit=crop&q=80&w=1200", caption: "Modern day view showing the vibrant culture around the monument." }
+      { year: 1887, url: "/time-travel/charminar-1887.png", caption: "A street view of Charminar during the reign of the Nizams." },
+      { year: 1920, url: "/time-travel/charminar-1920.png", caption: "The bustling intersection in old Hyderabad a century ago." },
+      { year: 2024, url: "/time-travel/charminar-2024.png", caption: "Modern day view showing the vibrant culture around the monument." }
     ],
     categories: ["India", "Historical Monuments"],
     credit: { author: "Dolores", authorUrl: "https://sketchfab.com/upto21", modelUrl: "https://sketchfab.com/3d-models/charminar-hyderabad-82603f1fe3ed4c31b37786e2bc2b63b0" },
@@ -99,9 +99,9 @@ export const arModels: ARModel[] = [
     embedUrl: "https://sketchfab.com/models/38a652e9f3bf49039026ef65ef61ac92/embed?ui_theme=dark",
     hasPhotoTimeTravel: true,
     historicalPhotos: [
-      { year: 1924, url: "https://upload.wikimedia.org/wikipedia/commons/c/cd/Gateway_of_India%2C_Mumbai_1924.jpg", caption: "The year of its completion and official opening." },
-      { year: 1948, url: "https://upload.wikimedia.org/wikipedia/commons/3/39/The_Departure_of_the_British_from_India%2C_1948.jpg", caption: "The last British troops leaving India through the Gateway." },
-      { year: 2024, url: "https://images.unsplash.com/photo-1567157577867-05ccb1301934?auto=format&fit=crop&q=80&w=1200", caption: "The soul of Mumbai's waterfront today." }
+      { year: 1924, url: "/time-travel/gateway-1924.png", caption: "The year of its completion and official opening." },
+      { year: 1948, url: "/time-travel/gateway-1948.png", caption: "The last British troops leaving India through the Gateway." },
+      { year: 2024, url: "/time-travel/gateway-2024.png", caption: "The soul of Mumbai's waterfront today." }
     ],
     categories: ["India", "Historical Monuments"],
     credit: { author: "CyArk", authorUrl: "https://sketchfab.com/CyArk", modelUrl: "https://sketchfab.com/3d-models/gateway-of-india-mumbai-38a652e9f3bf49039026ef65ef61ac92" },
