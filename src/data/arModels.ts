@@ -5,6 +5,8 @@ export interface ARModel {
   state: string;
   description: string;
   embedUrl: string;
+  /** Optional native GLB/GLTF file URL for direct VR loading (future use) */
+  glbUrl?: string;
   categories: string[];
   credit: { author: string; authorUrl: string; modelUrl: string };
 }
