@@ -2,9 +2,10 @@ import { useState, useRef, useCallback } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Maximize2, RotateCcw, Eye, MapPin, ExternalLink, Headset } from "lucide-react";
+import { Maximize2, RotateCcw, Eye, MapPin, ExternalLink, Headset, Sparkles } from "lucide-react";
 import type { ARModel } from "@/data/arModels";
 import VRMonumentViewer from "@/components/VRMonumentViewer";
+import KonarkTimeTravelViewer from "@/components/KonarkTimeTravelViewer";
 import { useVRSession } from "@/hooks/useVRSession";
 
 interface ARModelCardProps {
@@ -15,6 +16,7 @@ const ARModelCard = ({ model }: ARModelCardProps) => {
   const [loaded, setLoaded] = useState(false);
   const [inView, setInView] = useState(false);
   const [vrOpen, setVrOpen] = useState(false);
+  const [timeTravelOpen, setTimeTravelOpen] = useState(false);
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
   const { isVRSupported } = useVRSession();
@@ -57,6 +59,10 @@ const ARModelCard = ({ model }: ARModelCardProps) => {
       {/* VR Full-Screen Viewer Overlay */}
       {vrOpen && (
         <VRMonumentViewer model={model} onClose={() => setVrOpen(false)} />
+      )}
+      {/* Time Travel Full-Screen Viewer Overlay */}
+      {timeTravelOpen && (
+        <KonarkTimeTravelViewer model={model} onClose={() => setTimeTravelOpen(false)} />
       )}
 
       <Card
@@ -131,17 +137,29 @@ const ARModelCard = ({ model }: ARModelCardProps) => {
               Fullscreen
             </Button>
 
-            {/* VR Button — shown on all browsers, prompts Quest users */}
-            <Button
-              size="sm"
-              variant={isVRSupported ? "default" : "outline"}
-              className={`gap-1.5 ${isVRSupported ? "bg-orange-600 hover:bg-orange-500 text-white border-orange-500" : ""}`}
-              onClick={() => setVrOpen(true)}
-              title="View in VR with Meta Quest 2"
-            >
-              <Headset className="h-3.5 w-3.5" />
-              VR
-            </Button>
+            {model.hasTimeTravel ? (
+              <Button
+                size="sm"
+                variant="default"
+                className="gap-1.5 bg-indigo-600 hover:bg-indigo-500 text-white border-indigo-500 shadow-md shadow-indigo-900/20"
+                onClick={() => setTimeTravelOpen(true)}
+                title="Immersive Time Travel Mode"
+              >
+                <Sparkles className="h-3.5 w-3.5" />
+                Time Travel
+              </Button>
+            ) : (
+              <Button
+                size="sm"
+                variant={isVRSupported ? "default" : "outline"}
+                className={`gap-1.5 ${isVRSupported ? "bg-orange-600 hover:bg-orange-500 text-white border-orange-500" : ""}`}
+                onClick={() => setVrOpen(true)}
+                title="View in VR with Meta Quest 2"
+              >
+                <Headset className="h-3.5 w-3.5" />
+                VR
+              </Button>
+            )}
 
             <Button size="sm" variant="outline" className="gap-1.5" onClick={handleReload}>
               <RotateCcw className="h-3.5 w-3.5" />

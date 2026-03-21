@@ -7,6 +7,8 @@ export interface ARModel {
   embedUrl: string;
   /** Optional native GLB/GLTF file URL for direct VR loading (future use) */
   glbUrl?: string;
+  /** Whether this model has the special Immersive Time Travel Mode */
+  hasTimeTravel?: boolean;
   categories: string[];
   credit: { author: string; authorUrl: string; modelUrl: string };
 }
@@ -19,6 +21,7 @@ export const arModels: ARModel[] = [
     state: "Odisha",
     description: "A 13th-century CE Sun temple at Konark, a UNESCO World Heritage Site known for its intricate chariot-shaped architecture.",
     embedUrl: "https://sketchfab.com/models/6cc905be2ae34e8091eb1eaa84a17738/embed?ui_theme=dark",
+    hasTimeTravel: true,
     categories: ["Odisha", "Temples"],
     credit: { author: "moniln", authorUrl: "https://sketchfab.com/moniln9", modelUrl: "https://sketchfab.com/3d-models/sun-temple-konark-6cc905be2ae34e8091eb1eaa84a17738" },
   },
