@@ -8,7 +8,7 @@ const QRShareSection = () => {
   const [copied, setCopied] = useState(false);
   const { sessionId } = useWebRTC();
   const appUrl = typeof window !== "undefined" ? window.location.origin : "https://crowdmanagementsystem.lovable.app";
-  const sessionUrl = sessionId ? `${appUrl}/room?session=${sessionId}&join=true` : `${appUrl}/room`;
+  const sessionUrl = sessionId ? `${appUrl}/crowd/room?session=${sessionId}&join=true` : `${appUrl}/crowd/room`;
 
   const handleCopy = () => {
     navigator.clipboard.writeText(sessionUrl);

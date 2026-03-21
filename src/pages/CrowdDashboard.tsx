@@ -140,7 +140,7 @@ const CrowdDashboard = () => {
                 subtitle="View the synchronized grid of all active cameras"
                 action={
                   <Link
-                    to={`/room${location.search}`}
+                    to={`/crowd/room${location.search}`}
                     className="flex items-center gap-2 px-5 py-3 bg-primary/20 hover:bg-primary/40 text-primary border border-primary/50 rounded-xl text-base font-bold tracking-wide transition-all hover:scale-105"
                   >
                     ENTER LIVE ROOM

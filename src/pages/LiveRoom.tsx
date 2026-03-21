@@ -49,7 +49,7 @@ const LiveRoomContent = () => {
     const [copied, setCopied] = useState(false);
 
     const appUrl = typeof window !== "undefined" ? window.location.origin : "";
-    const sessionUrl = sessionId ? `${appUrl}/room?session=${sessionId}&join=true` : `${appUrl}/room`;
+    const sessionUrl = sessionId ? `${appUrl}/crowd/room?session=${sessionId}&join=true` : `${appUrl}/crowd/room`;
 
     const handleCopy = () => {
         navigator.clipboard.writeText(sessionUrl);
