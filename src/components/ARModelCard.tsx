@@ -6,6 +6,7 @@ import { Maximize2, RotateCcw, Eye, MapPin, ExternalLink, Headset, Sparkles } fr
 import type { ARModel } from "@/data/arModels";
 import VRMonumentViewer from "@/components/VRMonumentViewer";
 import KonarkTimeTravelViewer from "@/components/KonarkTimeTravelViewer";
+import TimeTravelPhotoViewer from "@/components/TimeTravelPhotoViewer";
 import { useVRSession } from "@/hooks/useVRSession";
 
 interface ARModelCardProps {
@@ -16,7 +17,8 @@ const ARModelCard = ({ model }: ARModelCardProps) => {
   const [loaded, setLoaded] = useState(false);
   const [inView, setInView] = useState(false);
   const [vrOpen, setVrOpen] = useState(false);
-  const [timeTravelOpen, setTimeTravelOpen] = useState(false);
+  const [immersive3DOpen, setImmersive3DOpen] = useState(false);
+  const [photoTimeTravelOpen, setPhotoTimeTravelOpen] = useState(false);
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
   const { isVRSupported } = useVRSession();
@@ -60,9 +62,13 @@ const ARModelCard = ({ model }: ARModelCardProps) => {
       {vrOpen && (
         <VRMonumentViewer model={model} onClose={() => setVrOpen(false)} />
       )}
-      {/* Time Travel Full-Screen Viewer Overlay */}
-      {timeTravelOpen && (
-        <KonarkTimeTravelViewer model={model} onClose={() => setTimeTravelOpen(false)} />
+      {/* 3D Immersive Time Travel (Three.js) */}
+      {immersive3DOpen && (
+        <KonarkTimeTravelViewer model={model} onClose={() => setImmersive3DOpen(false)} />
+      )}
+      {/* Photo-based Time Travel Journey */}
+      {photoTimeTravelOpen && (
+        <TimeTravelPhotoViewer model={model} onClose={() => setPhotoTimeTravelOpen(false)} />
       )}
 
       <Card
@@ -131,24 +137,39 @@ const ARModelCard = ({ model }: ARModelCardProps) => {
             ))}
           </div>
 
-          <div className="flex gap-2 pt-1">
+          <div className="flex flex-wrap gap-2 pt-1">
             <Button size="sm" variant="default" className="flex-1 gap-1.5" onClick={handleFullscreen}>
               <Maximize2 className="h-3.5 w-3.5" />
               Fullscreen
             </Button>
 
-            {model.hasTimeTravel ? (
+            {model.hasPhotoTimeTravel && (
               <Button
                 size="sm"
                 variant="default"
                 className="gap-1.5 bg-indigo-600 hover:bg-indigo-500 text-white border-indigo-500 shadow-md shadow-indigo-900/20"
-                onClick={() => setTimeTravelOpen(true)}
-                title="Immersive Time Travel Mode"
+                onClick={() => setPhotoTimeTravelOpen(true)}
+                title="Historical Photo Journey"
               >
                 <Sparkles className="h-3.5 w-3.5" />
                 Time Travel
               </Button>
-            ) : (
+            )}
+
+            {model.has3DTimeTravel && (
+              <Button
+                size="sm"
+                variant="outline"
+                className="gap-1.5 border-orange-500 text-orange-500 hover:bg-orange-500/10"
+                onClick={() => setImmersive3DOpen(true)}
+                title="3D Immersive Reconstruction"
+              >
+                <RotateCcw className="h-3.5 w-3.5" />
+                3D History
+              </Button>
+            )}
+
+            {!model.has3DTimeTravel && (
               <Button
                 size="sm"
                 variant={isVRSupported ? "default" : "outline"}
@@ -161,10 +182,10 @@ const ARModelCard = ({ model }: ARModelCardProps) => {
               </Button>
             )}
 
-            <Button size="sm" variant="outline" className="gap-1.5" onClick={handleReload}>
+            <Button size="sm" variant="outline" className="px-2" onClick={handleReload}>
               <RotateCcw className="h-3.5 w-3.5" />
             </Button>
-            <Button size="sm" variant="outline" className="gap-1.5" asChild>
+            <Button size="sm" variant="outline" className="px-2" asChild>
               <a href={model.credit.modelUrl} target="_blank" rel="noopener noreferrer">
                 <ExternalLink className="h-3.5 w-3.5" />
               </a>

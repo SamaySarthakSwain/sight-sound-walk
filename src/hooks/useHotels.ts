@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useCity } from '@/contexts/CityContext';
+import { fallbackHotels } from '@/data/fallbackHotels';
 
 export interface Hotel {
   id: string;
@@ -20,6 +21,12 @@ export interface Hotel {
   available_rooms: number | null;
   total_rooms: number | null;
   contact_phone: string | null;
+  // Optional Supabase fields to satisfy internal types
+  contact_email?: string | null;
+  website?: string | null;
+  google_place_id?: string | null;
+  created_at?: string;
+  updated_at?: string;
 }
 
 export const useHotels = () => {
@@ -32,21 +39,24 @@ export const useHotels = () => {
     try {
       setLoading(true);
       
-      // Get the city name for filtering
       const cityName = selectedCity.split(",")[0].toLowerCase().trim();
       
-      const { data, error } = await supabase
+      const { data, error: fetchError } = await supabase
         .from('hotels')
         .select('*')
         .order('star_rating', { ascending: false });
 
-      if (error) throw error;
+      let hotelData: Hotel[] = (data as Hotel[]) || [];
+
+      if (fetchError || hotelData.length === 0) {
+        console.log('Using fallback hotels data...');
+        hotelData = fallbackHotels;
+      }
       
-      // Filter hotels based on selected city
-      let filteredHotels = data || [];
+      let filteredHotels = hotelData;
       
       if (cityName === "berhampur" || cityName === "brahmapur") {
-        filteredHotels = (data || []).filter((h) => {
+        filteredHotels = hotelData.filter((h) => {
           const loc = h.location.toLowerCase();
           return (
             loc.includes("berhampur") ||
@@ -60,26 +70,26 @@ export const useHotels = () => {
           );
         });
       } else if (cityName === "bhubaneswar" || cityName === "bbsr") {
-        filteredHotels = (data || []).filter((h) => {
+        filteredHotels = hotelData.filter((h) => {
           const loc = h.location.toLowerCase();
           return loc.includes("bhubaneswar") || loc.includes("bbsr");
         });
       } else if (cityName === "puri") {
-        filteredHotels = (data || []).filter((h) => {
+        filteredHotels = hotelData.filter((h) => {
           const loc = h.location.toLowerCase();
           return loc.includes("puri") || loc.includes("konark");
         });
       } else if (cityName === "cuttack") {
-        filteredHotels = (data || []).filter((h) => {
+        filteredHotels = hotelData.filter((h) => {
           const loc = h.location.toLowerCase();
           return loc.includes("cuttack");
         });
       }
-      // For other cities, show all hotels
       
       setHotels(filteredHotels);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch hotels');
+      setHotels(fallbackHotels);
     } finally {
       setLoading(false);
     }

@@ -4,6 +4,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useCity } from "@/contexts/CityContext";
 import { toast } from "sonner";
 import { berhampur_restaurants } from "@/data/berhampur_restaurants";
+import { fallbackFoodPlaces } from "@/data/fallbackFoodPlaces";
 
 export interface FoodPlace {
   id: string;
@@ -44,145 +45,133 @@ export const useFoodPlaces = () => {
   const { selectedCity } = useCity();
 
   const fetchFoodPlaces = async () => {
-    setLoading(true);
-    
-    // Get the city name for filtering
-    const cityName = selectedCity.split(",")[0].toLowerCase().trim();
-    
-    // For Berhampur, use local data
-    if (cityName === "berhampur" || cityName === "brahmapur") {
-      // Use local Berhampur data
-      const enrichedPlaces: FoodPlace[] = berhampur_restaurants.map((place) => ({
-        id: place.id,
-        name: place.name,
-        description: place.description,
-        location: place.location,
-        latitude: place.latitude,
-        longitude: place.longitude,
-        category: place.category,
-        famous_dishes: place.famous_dishes || [],
-        avg_price_min: place.avg_price_min,
-        avg_price_max: place.avg_price_max,
-        image_url: place.image_url,
-        is_food_street: place.is_food_street || false,
-        avg_overall: place.google_rating || place.avg_overall || 0,
-        avg_taste: place.avg_taste || 0,
-        avg_hygiene: place.avg_hygiene || 0,
-        avg_value: place.avg_value || 0,
-        total_ratings: place.total_ratings || 0,
-        google_rating: place.google_rating,
-        google_total_ratings: place.google_total_ratings,
-        user_rating: null,
-      }));
+    try {
+      setLoading(true);
       
-      setFoodPlaces(enrichedPlaces.sort((a, b) => a.name.localeCompare(b.name)));
-      setLoading(false);
-      return;
-    }
+      const cityName = (selectedCity || "").split(",")[0].toLowerCase().trim();
+      
+      // Special logic for Berhampur using local data
+      if (cityName === "berhampur" || cityName === "brahmapur") {
+        const enrichedPlaces: FoodPlace[] = berhampur_restaurants.map((place) => ({
+          id: place.id,
+          name: place.name,
+          description: place.description,
+          location: place.location,
+          latitude: place.latitude,
+          longitude: place.longitude,
+          category: place.category,
+          famous_dishes: place.famous_dishes || [],
+          avg_price_min: place.avg_price_min,
+          avg_price_max: place.avg_price_max,
+          image_url: place.image_url,
+          is_food_street: place.is_food_street || false,
+          avg_overall: place.google_rating || place.avg_overall || 0,
+          avg_taste: place.avg_taste || 0,
+          avg_hygiene: place.avg_hygiene || 0,
+          avg_value: place.avg_value || 0,
+          total_ratings: place.total_ratings || 0,
+          google_rating: place.google_rating,
+          google_total_ratings: place.google_total_ratings,
+          user_rating: null,
+        }));
+        
+        setFoodPlaces(enrichedPlaces.sort((a, b) => a.name.localeCompare(b.name)));
+        return;
+      }
 
-    // For other cities, fetch from Supabase
-    const { data: places, error: placesError } = await supabase
-      .from("food_places")
-      .select("*")
-      .order("name");
+      // Fetch from Supabase for other cities
+      let { data: places, error: placesError } = await supabase
+        .from("food_places")
+        .select("*")
+        .order("name");
 
-    if (placesError) {
-      toast.error("Failed to load food places");
-      setLoading(false);
-      return;
-    }
+      if (placesError || !places || places.length === 0) {
+        console.log('Using fallback food places data for Supabase failure...');
+        places = fallbackFoodPlaces as any;
+      }
 
-    // Fetch all ratings
-    const { data: ratings, error: ratingsError } = await supabase
-      .from("food_ratings")
-      .select("*");
+      const { data: ratings } = await supabase
+        .from("food_ratings")
+        .select("*");
 
-    if (ratingsError) {
-      toast.error("Failed to load ratings");
-      setLoading(false);
-      return;
-    }
+      // Filter based on city
+      let filteredPlaces = places || [];
+      if (cityName === "bhubaneswar" || cityName === "bbsr") {
+        filteredPlaces = filteredPlaces.filter((p) => {
+          const loc = (p.location || "").toLowerCase();
+          return loc.includes("bhubaneswar") || loc.includes("bbsr");
+        });
+      } else if (cityName === "puri") {
+        filteredPlaces = filteredPlaces.filter((p) => (p.location || "").toLowerCase().includes("puri"));
+      } else if (cityName === "cuttack") {
+        filteredPlaces = filteredPlaces.filter((p) => (p.location || "").toLowerCase().includes("cuttack"));
+      }
 
-    // Filter places based on selected city
-    let filteredPlaces = places || [];
-    
-    if (cityName === "bhubaneswar" || cityName === "bbsr") {
-      filteredPlaces = (places || []).filter((p) => {
-        const loc = p.location.toLowerCase();
-        return loc.includes("bhubaneswar") || loc.includes("bbsr");
+      const enrichedPlaces: FoodPlace[] = filteredPlaces.map((place: any) => {
+        const placeRatings = (ratings || []).filter((r) => r.food_place_id === place.id);
+        const count = placeRatings.length;
+
+        const avgOverall = count 
+          ? placeRatings.reduce((s, r) => s + (r.overall_rating || 0), 0) / count 
+          : (place.avg_overall || 0);
+        const avgTaste = count 
+          ? placeRatings.reduce((s, r) => s + (r.taste_rating || 0), 0) / count 
+          : (place.avg_taste || 0);
+        const avgHygiene = count 
+          ? placeRatings.reduce((s, r) => s + (r.hygiene_rating || 0), 0) / count 
+          : (place.avg_hygiene || 0);
+        const avgValue = count 
+          ? placeRatings.reduce((s, r) => s + (r.value_rating || 0), 0) / count 
+          : (place.avg_value || 0);
+
+        const userRatingMatch = user ? placeRatings.find((r) => r.user_id === user.id) : null;
+
+        return {
+          id: place.id,
+          name: place.name,
+          description: place.description,
+          location: place.location,
+          latitude: place.latitude ? Number(place.latitude) : null,
+          longitude: place.longitude ? Number(place.longitude) : null,
+          category: place.category,
+          famous_dishes: place.famous_dishes || [],
+          avg_price_min: place.avg_price_min,
+          avg_price_max: place.avg_price_max,
+          image_url: place.image_url,
+          is_food_street: place.is_food_street || false,
+          avg_overall: avgOverall,
+          avg_taste: avgTaste,
+          avg_hygiene: avgHygiene,
+          avg_value: avgValue,
+          total_ratings: count || place.total_ratings || 0,
+          google_rating: place.google_rating ? Number(place.google_rating) : null,
+          google_total_ratings: place.google_total_ratings,
+          user_rating: userRatingMatch ? {
+            id: userRatingMatch.id,
+            overall_rating: userRatingMatch.overall_rating,
+            taste_rating: userRatingMatch.taste_rating,
+            hygiene_rating: userRatingMatch.hygiene_rating,
+            value_rating: userRatingMatch.value_rating,
+            comment: userRatingMatch.comment,
+          } : null,
+        };
       });
-    } else if (cityName === "puri") {
-      filteredPlaces = (places || []).filter((p) => {
-        const loc = p.location.toLowerCase();
-        return loc.includes("puri");
-      });
-    } else if (cityName === "cuttack") {
-      filteredPlaces = (places || []).filter((p) => {
-        const loc = p.location.toLowerCase();
-        return loc.includes("cuttack");
-      });
+
+      setFoodPlaces(enrichedPlaces);
+    } catch (err) {
+      console.error("Critical error in fetchFoodPlaces:", err);
+      // Fallback robustly
+      const enrichedFallback: FoodPlace[] = fallbackFoodPlaces.map(place => ({
+        ...place,
+        user_rating: null,
+        avg_taste: 0,
+        avg_hygiene: 0,
+        avg_value: 0
+      } as any));
+      setFoodPlaces(enrichedFallback);
+    } finally {
+      setLoading(false);
     }
-    // For other cities, show all food places
-
-    // Calculate averages and map user ratings
-    const enrichedPlaces: FoodPlace[] = filteredPlaces.map((place) => {
-      const placeRatings = (ratings || []).filter(
-        (r) => r.food_place_id === place.id
-      );
-      const totalRatings = placeRatings.length;
-
-      const avgOverall = totalRatings
-        ? placeRatings.reduce((sum, r) => sum + r.overall_rating, 0) / totalRatings
-        : 0;
-      const avgTaste = totalRatings
-        ? placeRatings.reduce((sum, r) => sum + r.taste_rating, 0) / totalRatings
-        : 0;
-      const avgHygiene = totalRatings
-        ? placeRatings.reduce((sum, r) => sum + r.hygiene_rating, 0) / totalRatings
-        : 0;
-      const avgValue = totalRatings
-        ? placeRatings.reduce((sum, r) => sum + r.value_rating, 0) / totalRatings
-        : 0;
-
-      const userRating = user
-        ? placeRatings.find((r) => r.user_id === user.id)
-        : null;
-
-      return {
-        id: place.id,
-        name: place.name,
-        description: place.description,
-        location: place.location,
-        latitude: place.latitude ? Number(place.latitude) : null,
-        longitude: place.longitude ? Number(place.longitude) : null,
-        category: place.category,
-        famous_dishes: place.famous_dishes || [],
-        avg_price_min: place.avg_price_min,
-        avg_price_max: place.avg_price_max,
-        image_url: place.image_url,
-        is_food_street: place.is_food_street || false,
-        avg_overall: avgOverall,
-        avg_taste: avgTaste,
-        avg_hygiene: avgHygiene,
-        avg_value: avgValue,
-        total_ratings: totalRatings,
-        google_rating: place.google_rating ? Number(place.google_rating) : null,
-        google_total_ratings: place.google_total_ratings,
-        user_rating: userRating
-          ? {
-              id: userRating.id,
-              overall_rating: userRating.overall_rating,
-              taste_rating: userRating.taste_rating,
-              hygiene_rating: userRating.hygiene_rating,
-              value_rating: userRating.value_rating,
-              comment: userRating.comment,
-            }
-          : null,
-      };
-    });
-
-    setFoodPlaces(enrichedPlaces);
-    setLoading(false);
   };
 
   const submitRating = async (
@@ -202,7 +191,6 @@ export const useFoodPlaces = () => {
 
     const existingPlace = foodPlaces.find((p) => p.id === foodPlaceId);
     if (existingPlace?.user_rating) {
-      // Update existing rating
       const { error } = await supabase
         .from("food_ratings")
         .update({
@@ -220,7 +208,6 @@ export const useFoodPlaces = () => {
       }
       toast.success("Rating updated!");
     } else {
-      // Insert new rating
       const { error } = await supabase.from("food_ratings").insert({
         user_id: user.id,
         food_place_id: foodPlaceId,
@@ -242,10 +229,10 @@ export const useFoodPlaces = () => {
       toast.success("Rating submitted!");
     }
 
+    fetchFoodPlaces();
     return true;
   };
 
-  // Subscribe to realtime updates and refetch on city change
   useEffect(() => {
     fetchFoodPlaces();
 
