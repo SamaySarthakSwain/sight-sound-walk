@@ -1,8 +1,8 @@
 import { motion, useScroll, useTransform } from "framer-motion";
 import { ChevronDown, Volume2 } from "lucide-react";
-import heroCinematic from "@/assets/hero-cinematic.jpg";
 import CitySearchBox from "@/components/CitySearchBox";
 import { useRef } from "react";
+import ThreeDBackground from "./ThreeDBackground";
 
 const letterVariants = {
   hidden: { opacity: 0, y: 80, rotateX: -90 },
@@ -49,23 +49,12 @@ const HeroSection = () => {
 
   return (
     <section ref={sectionRef} className="relative h-screen w-full overflow-hidden">
-      {/* Background Image with Parallax */}
+      {/* 3D Animated Background */}
       <motion.div className="absolute inset-0 z-0" style={{ y: imageY }}>
-        <img
-          src={heroCinematic}
-          alt="Ancient monument at golden hour"
-          loading="eager"
-          decoding="async"
-          fetchPriority="high"
-          className="w-full h-[120%] object-cover"
-        />
-        {/* Light mode overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-transparent dark:from-[#0A0A0C] dark:via-[#0A0A0C]/60 dark:to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-r from-background/70 via-transparent to-transparent dark:from-[#0A0A0C]/80 dark:via-transparent dark:to-transparent" />
-        {/* Film grain effect */}
-        <div className="absolute inset-0 opacity-[0.03] mix-blend-overlay"
-          style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 256 256\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noise\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noise)\'/%3E%3C/svg%3E")' }}
-        />
+        <ThreeDBackground />
+        {/* Light mode overlay gradient for readability */}
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent dark:from-[#0a0a0c] dark:via-[#0a0a0c]/60 dark:to-transparent pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-r from-background/80 via-transparent to-transparent dark:from-[#0a0a0c]/90 dark:via-transparent dark:to-transparent pointer-events-none" />
       </motion.div>
 
       {/* Ambient glow orbs */}
