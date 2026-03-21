@@ -54,20 +54,10 @@ const itemVariants: Variants = {
   },
 };
 
-const Index = () => {
+const CrowdDashboard = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, loading } = useAuth();
-
-  useEffect(() => {
-    if (!loading && !user) {
-      navigate("/auth", { replace: true });
-    }
-  }, [loading, user, navigate]);
-
-  if (loading || !user) {
-    return null;
-  }
 
   return (
     <div className="min-h-screen bg-background relative overflow-x-hidden pt-14 md:pt-16">
@@ -232,4 +222,4 @@ const Index = () => {
   );
 };
 
-export default Index;
+export default CrowdDashboard;

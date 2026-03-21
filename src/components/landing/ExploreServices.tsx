@@ -1,7 +1,7 @@
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 import { Link } from "react-router-dom";
-import { Landmark, UtensilsCrossed, Car, Building2, Box, Bot, ArrowUpRight } from "lucide-react";
+import { Landmark, UtensilsCrossed, Car, Building2, Box, Bot, ArrowUpRight, Users } from "lucide-react";
 
 const services = [
   {
@@ -45,6 +45,13 @@ const services = [
     desc: "Your personal AI companion for route planning and recommendations.",
     path: "/assistant",
     gradient: "from-primary/20 to-accent/20",
+  },
+  {
+    icon: Users,
+    title: "Crowd Management",
+    desc: "Real-time crowd density monitoring and safe route recommendations.",
+    path: "/crowd",
+    gradient: "from-red-500/20 to-orange-500/20",
   },
 ];
 
