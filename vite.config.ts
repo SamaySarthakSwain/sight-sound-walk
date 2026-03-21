@@ -8,6 +8,7 @@ export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
     port: 5173,
+    strictPort: true,
   },
   plugins: [
     react(),
@@ -38,7 +39,7 @@ export default defineConfig(({ mode }) => ({
         maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
         runtimeCaching: [
           {
-            urlPattern: /^https:\/\/eydofmtdkcshvgehdbyl\.supabase\.co\/rest\/v1\/.*/i,
+            urlPattern: /^https:\/\/fsptuiiymuxtwepbumda\.supabase\.co\/rest\/v1\/.*/i,
             handler: "StaleWhileRevalidate",
             options: {
               cacheName: "supabase-api-cache",
