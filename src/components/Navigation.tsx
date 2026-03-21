@@ -41,8 +41,8 @@ const Navigation = () => {
   const { user } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  // Navigation items
-  const visibleNavItems = navItems;
+  // Crowd tab only visible when user is logged in
+  const visibleNavItems = navItems.filter((item) => item.path !== "/crowd" || !!user);
 
   const handleLogout = async () => {
     const { error } = await supabase.auth.signOut();

@@ -59,7 +59,13 @@ const Index = () => {
   const navigate = useNavigate();
   const { user, loading } = useAuth();
 
-  if (loading) {
+  useEffect(() => {
+    if (!loading && !user) {
+      navigate("/auth", { replace: true });
+    }
+  }, [loading, user, navigate]);
+
+  if (loading || !user) {
     return null;
   }
 

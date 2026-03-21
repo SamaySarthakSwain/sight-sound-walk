@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useCity } from "@/contexts/CityContext";
+import { fallbackMonuments } from "@/data/fallbackMonuments";
 
 export interface Monument {
   id: string;
@@ -38,17 +39,19 @@ export const useMonuments = () => {
     if (cn === "berhampur" || cn === "brahmapur") {
       return data.filter((m) => {
         const loc = m.location.toLowerCase();
+        const reg = m.region?.toLowerCase();
         return (
           loc.includes("berhampur") || loc.includes("brahmapur") || loc.includes("ganjam") ||
           loc.includes("gopalpur") || loc.includes("taptapani") || loc.includes("chilika") ||
-          loc.includes("gajapati") || loc.includes("aryapalli") || m.region?.toLowerCase() === "berhampur"
+          loc.includes("gajapati") || loc.includes("aryapalli") || reg === "berhampur"
         );
       });
     }
     if (cn === "bhubaneswar" || cn === "bbsr") {
       return data.filter((m) => {
         const loc = m.location.toLowerCase();
-        return loc.includes("bhubaneswar") || loc.includes("bbsr") || loc.includes("konark") || loc.includes("puri") || m.region?.toLowerCase() === "bhubaneswar";
+        const reg = m.region?.toLowerCase();
+        return loc.includes("bhubaneswar") || loc.includes("bbsr") || loc.includes("konark") || loc.includes("puri") || reg === "bhubaneswar";
       });
     }
     if (cn === "puri") {
@@ -85,13 +88,30 @@ export const useMonuments = () => {
         .select("*")
         .order("is_featured", { ascending: false });
 
-      if (fetchError) throw fetchError;
+      let finalRawData: Monument[] = (data as Monument[]) || [];
 
-      const filtered = filterMonuments(data || [], cityName);
-      monumentCache = { data: filtered, city: cityName, timestamp: Date.now() };
-      setMonuments(filtered);
+      // If database is empty or error occurs, use fallback data
+      if (fetchError || !data || data.length === 0) {
+        console.warn("Using fallback monument data", fetchError);
+        finalRawData = fallbackMonuments as Monument[];
+      }
+
+      const filtered = filterMonuments(finalRawData, cityName);
+      const finalMonuments = filtered.length > 0 ? filtered : finalRawData;
+      
+      monumentCache = { data: finalMonuments, city: cityName, timestamp: Date.now() };
+      setMonuments(finalMonuments);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to fetch monuments");
+      console.warn("Error fetching from Supabase, using fallback:", err);
+      // Even if fetch fails completely, use fallback
+      const finalRawData = fallbackMonuments as Monument[];
+      const filtered = filterMonuments(finalRawData, cityName);
+      const finalMonuments = filtered.length > 0 ? filtered : finalRawData;
+      
+      monumentCache = { data: finalMonuments, city: cityName, timestamp: Date.now() };
+      setMonuments(finalMonuments);
+      // Don't set error state if we have fallback data to show
+      setError(null);
     } finally {
       setLoading(false);
     }

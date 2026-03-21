@@ -8,7 +8,6 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ChatMessage from "@/components/ChatMessage";
 import VoiceGuide from "@/components/VoiceGuide";
-import WeatherReport from "@/components/WeatherReport";
 import { useTravelChat, languageLabels, type SupportedLanguage } from "@/hooks/useTravelChat";
 import { toast } from "sonner";
 import {
@@ -111,18 +110,14 @@ const Assistant = () => {
               )}
             </div>
 
-            <TabsList className="grid w-full max-w-md grid-cols-3">
+            <TabsList className="grid w-full max-w-md grid-cols-2">
               <TabsTrigger value="chat" className="gap-2">
-                <MessageSquare className="h-4 w-4 hidden sm:block" />
-                Chat
+                <MessageSquare className="h-4 w-4" />
+                Text Chat
               </TabsTrigger>
               <TabsTrigger value="voice" className="gap-2">
-                <Mic className="h-4 w-4 hidden sm:block" />
-                Audio
-              </TabsTrigger>
-              <TabsTrigger value="weather" className="gap-2">
-                <CloudSun className="h-4 w-4 hidden sm:block" />
-                Weather
+                <Mic className="h-4 w-4" />
+                Voice Guide
               </TabsTrigger>
             </TabsList>
           </Tabs>
@@ -213,13 +208,9 @@ const Assistant = () => {
               </form>
             </div>
           </>
-        ) : activeTab === "voice" ? (
+        ) : (
           <div className="flex-1 py-8">
             <VoiceGuide />
-          </div>
-        ) : (
-          <div className="flex-1 py-6 px-4">
-            <WeatherReport />
           </div>
         )}
       </div>
