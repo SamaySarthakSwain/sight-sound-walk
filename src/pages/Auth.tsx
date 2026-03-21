@@ -143,21 +143,36 @@ const Auth = () => {
   const handleGoogleSignIn = async () => {
     setGoogleLoading(true);
     try {
-      const { error } = await supabase.auth.signInWithOAuth({
+      const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
           redirectTo: window.location.origin,
-        }
+        },
       });
 
       if (error) {
         console.error("Google OAuth Error:", error);
-        toast.error(error.message || "Failed to sign in with Google");
+        if (error.message?.includes("OAuth secret") || error.message?.includes("provider")) {
+          toast.error("Google login is not configured yet. Please use Email login below.", {
+            duration: 5000,
+          });
+        } else {
+          toast.error(error.message || "Failed to sign in with Google");
+        }
+        setGoogleLoading(false);
+        return;
+      }
+
+      // If signInWithOAuth succeeds, it will redirect the browser automatically.
+      // We keep the loading indicator active during the redirect.
+      if (!data?.url) {
+        setGoogleLoading(false);
       }
     } catch (err) {
       console.error("Google Sign In Exception:", err);
-      toast.error(err instanceof Error ? err.message : "An error occurred");
-    } finally {
+      toast.error("Google login is not available. Please use Email login below.", {
+        duration: 5000,
+      });
       setGoogleLoading(false);
     }
   };
