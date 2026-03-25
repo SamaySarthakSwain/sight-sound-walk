@@ -200,11 +200,6 @@ const Auth = () => {
     }
   };
 
-  const PasswordRequirements = () => (
-    <p className="text-xs text-muted-foreground mt-1">
-      Minimum 6 characters
-    </p>
-  );
 
   const ErrorMessage = ({ message }: { message?: string }) => {
     if (!message) return null;
@@ -362,7 +357,6 @@ const Auth = () => {
                             className={`h-11 ${errors.password ? "border-destructive" : ""}`}
                           />
                           <ErrorMessage message={errors.password} />
-                          <PasswordRequirements />
                         </div>
                         <Button type="submit" className="w-full h-11" disabled={loading}>
                           {loading ? (
@@ -408,7 +402,6 @@ const Auth = () => {
                             className={`h-11 ${errors.password ? "border-destructive" : ""}`}
                           />
                           <ErrorMessage message={errors.password} />
-                          <PasswordRequirements />
                         </div>
                         <Button type="submit" className="w-full h-11" disabled={loading}>
                           {loading ? (
