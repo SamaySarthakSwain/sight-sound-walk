@@ -1,0 +1,1149 @@
+Journal of Internet Computing and Services(JICS) 2021. Aug.: 22(4): 65-82  65
+Study and Evaluation of Tourism Websites 
+based on User Perspective
+Deepanjal Shrestha1, Tan Wenan2, Neesha Rajkarnikar3, Deepmala Shrestha4 a n d  S e u n g  R y u l  J e o n g5**
+ABSTRACT
+A  w e l l - d e s i g n e d  w e b s i t e  i s  m a n d a t o r y  f o r  g o o d  m a r k e t i n g  a n d  p r oper tourism business. This research considers Nepal as a domain  
+of study and specifically explores welcomenepal.com, the offici a l  t o u r i s m  p o r t a l  a s  a  r e f e r e n c e  f o r  t h e  s t u d y .  T h e  w o r k  i s  b a sed on 
+the study of the existing literature, user-survey, and technica l  t e s t i n g  o f  t h e  w e b s i t e  u s i n g  o p e n - s o u r c e  t e s t i n g  t o o l s  t o  i d entify user 
+perspective, design issues, website architecture and design quality of the tourism website. A population size of 400 responden ts, which 
+c o n s i s t  o f  b o t h  d o m e s t i c  a n d  i n t e r n a t i o n a l  t o u r i s t ,  a r e  c o n s i d ered for the survey. Data is received from 360 respondents, whic h is 
+analyzed using statistical tests like Cronbach’s alpha, Pearson’s correlation, cross-tabulations, bars charts and graphs to draw inferences 
+and consclusion. The software-based test results serve as anothe r  i m p o r t a n t  p a r a m e t e r  f o r  t h e  e v a l u a t i o n  o f  t h e  c u r r e n t  o f f i c ial website. 
+T h i s  s t u d y  b r i n g s  o u t  c o r e  n e e d s  o f  t h e  t o u r i s t  i n  t e r m s  o f  e x pe c t a t i o n s  f r o m  a  t o u r i s m  w e b s i t e  a n d  a c c e s s  t e c h n i c a l  q u a l i t y  of the 
+current portal to provide necessary feedback and suggestions. The government officials, business houses, and web designers can utilize 
+t h i s  w o r k  a s  a  k n o w l e d g e  b a s e  t o  b u i l d  t o u r i s m  w e b s i t e s ,  w h i c h  a r e  u s e r - c e n t r i c .  F u r t h e r ,  t h e  w o r k  i s  s p e c i f i c a l l y  i m p o r t a n t  for Nepal 
+g o v e r n m e n t  a n d  t o u r i s m  o f f i c i a l s  t o  i d e n t i f y  s h o r t c o m i n g s  i n  t heir current website and make improvements for better design and  u s e r  
+adaptability in future.  
+☞ keyword : tourism website, user requirements, web evaluation, w e b  q u a l i t y ,  u s e r  c e n t r i c  d e s i g n
+1. Introduction
+Tourism websites serve as one of the important 
+components of ICT, which help travelers to make travel 
+related decisions. Nepal is an underdeveloped and emerging 
+economy in South East Asia. As the country is landlocked 
+it has huge barriers in case of trade and economy, relying 
+mostly on two giant neighbors, India and China for trade and 
+facilitation. Agriculture is the principal economic activity, 
+which employs 65% of the population and provides 31.7% 
+of GDP, followed by remittance 9.1%   and tourism with 
+7.5%. [1]. Tourism is a vital industry of the country and it 
+1,2 School of Computer Science and Technology, Nanjing 
+University of Aeronautics and Astronautics, Nanjing 210016, 
+China
+3 School of Energy Science and Engineering, Nanjing Tech 
+University, Nanjing, China
+1,4 School of Business, Pokhara University, Pokhara, Nepal 
+5 Graduate School of Business IT, Kookmin University, Seoul, 
+South Korea
+* Corresponding author: (srjeong@kookmin.ac.kr)
+[Received 30 December 2020, Reviewed 11 January 2021(R2 15 
+April 2021, R3 4 June 2021), Accepted 10 June 2021]
+☆ A preliminary version of this paper was presented at APIC-IST 
+2020.
+plays a great role in uplifting the overall economy of Nepal 
+and add value at different proportions. Reports published by 
+the Economic Impact Research of 2018, showed that tourism 
+contributed a 177 billion NRS in Nepal’s total GDP. It is 
+further forecasted to rise by 4.3 percent annually reaching 
+upto NRS 287.6 billion (8.3%) of the GDP in 2027, which 
+is mandatory for the Nepalese economy to grow and improve 
+as shown in figure 1[2]. 
+Tourism is an integrated business that is closely connected 
+to the hotel industry, the hospitality industry and the 
+transport industry which serve as the base, followed by any 
+other supporting industries that make business possible 
+within these entities [1]. The dependency of tourism on 
+various industries of small and big nature requires an 
+integration of all such industries. A strong integrated 
+information management system with vital information on 
+destinations, products, services, transport facilities, etc., i s 
+very important. Also, an information portal that can 
+accurately link all these industries can prove highly beneficial 
+both for the tourist as well as tourism business organizations 
+making a great impact on the application of ICT in tourism 
+industry.
+Websites are an important sources of information that 
+J. Internet Comput. Serv. 
+ISSN 1598-0170 (Print) / ISSN 2287-1136 (Online)
+http://www.jics.or.kr
+Copyright ⓒ 2021 KSII
+http://dx.doi.org/10.7472/jksii.2021.22.4.65
+Study and Evaluation of Tourism Websites based on User Perspective
+66 2021. 8
+serve as a niche in helping the tourist to make decisions on 
+destinations. In current times, websites serve as a store house 
+of information on tourism products and services. A well- 
+designed and comprehensive website is a core need for 
+(Figure 1) Travel and Tourism contribution to GDP 
+of Nepal, Source WTTC report 2018
+marketing, exploring and gathering information for tourist 
+and tourism agencies. Therefore, it is important that tourism 
+websites are developed based on user requirements and have 
+user-centric approach. This work explores user perspective 
+and users' requirements through survey and literature study 
+to come up with design solutions, recommendations, and 
+suggestions for effective tourism websites.
+Nepal is highly dependent on tourism to support its 
+economy and provide jobs to its citizens. A good tourism 
+business can guarantee small and big jobs of various nature 
+and also provide chances for linked industries of all kinds to 
+prosper and make fortune. ICT is enlisted as an important 
+component by World Travel and Tourism Council for 
+uplifting and supporting the growth of tourism economy. The 
+government of Nepal has realized this fact and has initiated 
+many programs and projects to promote and digitize tourism 
+industry. Some initiatives include the digitalization of 
+tourism sector, promoting Nepal for tourism 2020, 
+conserving national heritage and world heritage sites, etc. [3]. 
+A lot of work is already underway in tourism sector and 
+government has approached its citizens to provide 
+constructive feedbacks, suggestions and ideas to develop 
+tourism industry. ICT is taken as a major component in this 
+phase of development and different levels of technological 
+initiatives are introduced in tourism that includes the 
+construction of tourism 
+website, impelmentation of ICT 
+systems in airports, construction of tourism 
+information centers and other related activities.  I n  s p i t e 
+of these initiatives and aggressive approach in tourism, there 
+is still a gap that is seen at all levels of implementations [3]. 
+The studies from earlier authors also state that Nepal suffers 
+in terms of physical infrastructure, roads, proper policies and 
+strategies in place and weak homework done for digital 
+implementations and connectivity. Further, an integration 
+between different units of Nepalese tourism is missing at 
+large contributing to information gaps and proper 
+management. This work addresses the core needs for a 
+tourism websites from user prespective to design and 
+develope better tourism websites.
+2. Literature review
+There are many factors that are responsible and play an 
+important role in the growth and development of a tourism 
+economy, which includes a well-developed infrastructure, 
+good governance, well planned promotional activities, 
+friendly policies and practical approaches at tourism business 
+and governance level [4]. In the current scenario, the role of 
+ICT and internet-based technologies are significantly 
+important and form an integral part of tourism industry. 
+Various studies have been carried out by different authors at 
+different times, studying   d i f f e r e n t  a s p e c t s  o f  I C T .  T h e  
+application of internet has brought profound change in the 
+existing business models and have created a great impact. 
+Digital technologies have opened vast opportunities in 
+business substituting old business models with new ones, 
+redefining supply chain, business structures and business 
+associations [4] [5]. The application of ICT has empowered 
+consumers with immense information and varied choices. A 
+consumer today has a lot of flexibility in terms of quality, 
+price and services. The ICT impact is not only advantageous 
+to tourist but even business houses, government agencies and 
+public sectors also have strong position to sell, manage and 
+market their products and services [6] [7]. 
+The tourism industry is information intensive industry and 
+all actors associated in this business heavily rely on 
+information for proper marketing and management of this 
+Study and Evaluation of Tourism Websites based on User Perspective
+한국 인터넷 정보학회(22권4호) 67
+(Table 1) Literature review on web design and development issues
+Year Component of the study Authors Ref
+2000 Electronic queries J. Palkoska, A. Dunzendorfer, and J. Küng [11]
+2000 Data warehousing P. Sharma, D. Carson, and T. Delacy [12]
+2000 Tourism commerce J. Zabel, D. Bönke, and P. Constanta [13]
+2016 Web Usability Tuba Ugras et. Al [14]
+2014 Multimedia functions Xie, Gui Mei [15]
+2019 Interaction P. Voštinár, D. Horváthová, M. Bako and M. Mitter [16]
+2003 E business H. Degen and S. Pedell [17]
+2004 Web adaptations N. Singh and D. W. Baack [18]
+2020 ICT and Tourism Shrestha et al. [19]
+2020 Web Design D. Shrestha, T. Wenan, B. Gaudel, J. Chun and S. R. Jeong [20]
+2002 Travel Semantics B. Pan and D. R. Fesenmaier, [21]
+1995 ICT tourism channels D. Buhalis [22]
+2020 Technology and Nepal tourism Lama, S., Pradhan, S. & Shrestha [23]
+2019 Attitude towards ICT in tourism Tan Wenan, Deepanjal  Shrestha, Deepmala  Shrestha, Seung Ryul [24]
+2002 Web design and evaluation Law R., Bai B. [25]
+business. Websites are the first and foremost medium to 
+provide information in this business [6]. The work on 
+tourism research has shown that websites play a very 
+important role when travelers sit to plan and make their 
+travel itinerary [7]. Therefore, the importance of tourism 
+websites in tourism business is an indispensable component. 
+Authors argue that because internet has the capacity to 
+distribute large volume of multimedia information over long 
+distances immediately, the websites have become a very 
+important tools of information [4][5][8]. The use of 
+multimedia in websites has substantially improved the 
+effectiveness and efficiency of information presentation and 
+dissemination through electronic channels. The amalgamation 
+of internet with e-commerce has further opened a wide and 
+huge spectrum for tourist to buy their products and services 
+[7]. Business organizations are incorporating e-business 
+applications as an essential part in their websites helping 
+them to catch attention of user and allow them to buy 
+products and services [7]. The use of virtual systems, 
+high-definition technologies, and extensive information 
+content are capable of generating huge value in websites. Use 
+of multimedia and attractive designs are important to keep 
+visitors flocking in websites [9][10]. The technology of 
+personalization of information, analysis of data and 
+recommendations for the users on products and services has 
+caught a lot of attention of web users and it has become an 
+important area of research and development [9] [10]. 
+Literature review shows that website design, content 
+layout, architecture, usability, ease of use, web dimensions 
+and attributes of tourism websites are curious subject of 
+study. Different authors have carried out studies related to 
+different aspects of website as shown in table 1.   
+Most of 
+the authors and  researchers point out that besides the huge 
+development in the internet and web technologies, the 
+usability quotient of the website is still poor [11]. The users 
+still struggle with web information, content analysis and find 
+it difficult to navigate through webpages. Some authors 
+highlight visibility, inaccessibility, poor design, weak 
+functions, hard-to-use content and few cross-cultural 
+considerations as major problems [11]. Travelers come from 
+different origins and have different cultural and social needs. 
+Tourism websites should be able to accommodate the cultural 
+differences and have sufficient understanding of traveler's 
+needs.  Information and tools on languages, cultures, 
+currencies, and customs are the vital components that must 
+be addressed in a web site design. Travelers need to be 
+provided with vivid and comprehensive information on 
+destinations, food, shopping, budget estimate, itinerary 
+planning, safety, etc. Thus, website development needs a 
+comprehensive analysis and design at user and business level. 
+A good analysis and design increases the probability of 
+proper use of website from it's targetted users.
+Study and Evaluation of Tourism Websites based on User Perspective
+68 2021. 8
+3. Problem Definition and 
+Research Framework
+Tourism websites hold a great significance in tourism 
+business sector as they serve as the first face of tourism 
+industry of a country. They are an important tool for 
+providing information on tourism products and services, 
+along with other vital information on VISA, regulations and 
+other important aspects. A good tourism website is 
+mandatory requirement for tourism marketing, business and 
+governance. It is observed that tourist have special 
+requirements from tourism websites, so it is mandatory to 
+understand user perspective and related design aspects of a 
+tourism website. 
+3.1 Research Questions:
+The study is carried to solve the above scenario and 
+answer four research questions mentioned below:
+1. What is the current status of the official tourism 
+website of Nepal? 
+2. What do tourists perceive as an effective tourism web 
+site?
+3. What features do they perceive important in an 
+effective tourism web site?
+4. Can we generalize the current study for other tourism 
+websites?
+3.2 Significance of the Study
+This study holds a great value for tourism organizations, 
+business houses and tourism dependent government sectors to 
+have a knowledge on the primary requirements of tourist 
+from a tourism website. This study will bring out the 
+technical details in terms of content representation, design 
+issues, web architecture and navigational features specifically 
+required for a tourism website. A contrasting approach to 
+take official website of Nepal tourism as a reference will 
+help users to identify their core needs as well as test the 
+quality of existing websites. User will be able to provide 
+better inputs taking official website as a reference. Further, 
+testing the official web portal with testing tools will uncover 
+the technical details which will be important knowledge for 
+the web designer in future. The work will hold special 
+significance for Nepal government and Nepalese business 
+houses to know the concrete details of official web portal 
+and user requirements for future enhancement and 
+improvement of the current websites.
+3.3 Research Framework
+The study is carried in different phases that includes 
+literature review, survey design, data analysis and 
+interpretation. The validation of the technical aspects of the 
+system is based on the automated testing tools as shown in 
+figure 2.  
+Li et r a t ure 
+review
+Co llec t 
+data a nd 
+feedbac ks
+Identify 
+att ribu te s o f 
+w eb eva luatio n
+Design survey & 
+questio nnaire
+Data a nalysi s 
+a nd 
+interpretati on 
+Visualize data
+Make 
+recommendation
+Create 
+know ledg e ba se Autom ated too l based testing
+(Figure 2) Research framework of the study
+3.4 Sampling Method  
+The study is carried out for a sample of 400 respondents  
+which include both domestic and In-bound tourist. The 
+respondents were divided into 4 classes which included 
+tourism business personnels, government officials, frequent 
+travelers and website designers. The study did not 
+discriminate on the basis of age and gender in the formed 
+groups. A total of 360 responses were received from the total 
+number of distributed questionnaires. The domestic 
+respondents were contacted both through online media and 
+physically by distributing the questionnaire to them in 
+person. The international tourist were provided the 
+questionnaire through online media with assistance of 
+Facebook, Google and peer group contacts. A random sample 
+of respondents consitisintg of 2-4 persons in each group were 
+further interviewed to extract more details in terms of their 
+Study and Evaluation of Tourism Websites based on User Perspective
+한국 인터넷 정보학회(22권4호) 69
+preferences. The interviews were recorded and analyzed later. 
+The technical aspects of web design were tested using open 
+source web testing application.  The analysis on data was 
+done both qualitatively and using statistical tools to extract 
+requirements of tourist regarding a tourism website.
+Sampling
+International 
+responde nts
+National 
+responde nts
+Co u nt ry ba s ed  resp o n de nt s 
+Tou rism business person nels
+To ur ism  off ic ia ls
+Frequent travellers
+We b  d es i gn e r s
+(Figure 3) Sampling outline of the study
+3.5 Website testing
+A thorough testing of the website welcomenepal.com was 
+carried out to uncover the technical details and assure quality 
+of the website. The two application Jmeter and Amber loom 
+were used for inspecting the technicalities of the website. In 
+order to have a comprehensive test, the tools were run in 
+different time settings and tested in different environments.  
+3.6 Evaluation and analysis principles
+A comprehensive study of different tourism website 
+frameworks were carried and finally, framework proposed by 
+Layla Hasan and Emad Abuelrub was considered after some 
+modification. The attributes include web quality, which had 
+four components in the first hierarchy consisting of content 
+quality, design quality, organization quality, and 
+user-friendly. The identified four attributes were further 
+investigated by extending 
+attributes of the framework to 
+understand the tourism business needs of Nepal.  T h e  
+study extensively studied 20 top tourism website as a 
+reference to build a knowledge base of information and 
+architecture of popular tourism websites. A framework was 
+developed using the knowledge and literature for the tourism 
+web design as shown in figure 4. This attained knowledge 
+was further used to develop questionnaire for the study and 
+conduct survey. 11 major categories with 61 sub categories 
+were detailed for the study. 
+(Figure 4) Modified framework proposed by Layla 
+Hasan and Emad Abuelrub
+4. Data analysis and findings 
+Data analysis is the core activity of any research and is 
+carried out after data is collected cleaned, compiled and then 
+investigated using a statistical tool. The obtained two sets of 
+data were investigated with simple statistical analysis 
+combined with user feedbacks, interview and software testing 
+results. The result of the data analysis included findings and 
+conclusions with respect to tourism web design requirements.
+4.1 Analysis from the Survey
+The figure below represents survey results of demography 
+data. Figure 5 shows data of countries of the respondent 
+from 11 countries represented in the form of increasing 
+frequency of respondents, which include, Nepal, India, USA, 
+Ukraine and China. Figure 6 represents the age groups of the 
+respondents with increasing frequency consisting of 18-25, 
+followed by 26-32 and 33-40. There were no respondents 
+reported above this age. One of the reasons that may account 
+for absence of other groups is that the survey is technology 
+based. It can be c
+oncluded that people above 40 were not 
+comfortable with the technology related survey.
+Study and Evaluation of Tourism Websites based on User Perspective
+70 2021. 8
+(Table 2) Representing cross tabulation of website content data of inbound and domestic tourist
+Excellent Very Good Good Average Bad Not Available
+What is your impression about the undermentioned contents 
+in Nepal’s Official Tourism Website Dm In Dm In Dm In Dm In Dm In Dm In
+Design layout 8% 0% 15% 13% 20% 33% 35% 35% 23% 20% 0% 0%
+Content information 8% 0% 5% 15% 18% 28% 33% 54% 38% 4% 0% 0%
+Information Architecture 15% 0% 15% 0% 19% 24% 14% 42% 38% 34% 0% 0%
+Mobile Compatibility 8% 1% 13% 18% 56% 77% 24% 4% 0% 0% 0% 0%
+Load Times 13% 12% 20% 16% 38% 67% 30% 6% 0% 0% 0% 0%
+Browser Consistency 10% 2% 23% 24% 44% 55% 24% 20% 0% 0% 0% 0%
+Effective Navigation 5% 0% 18% 9% 20% 29% 18% 39% 40% 24% 0% 0%
+Colour Scheme 18% 25% 15% 46% 34% 10% 14% 0% 20% 20% 0% 0%
+D m :  D o m e s t i c  T o u r i s t                                   I n :  I n b o u n d  ( I n t e r n a t i o n a l  T o u r i s t )
+(Figure 5) Representation of respondent countries
+ 
+(Figure 6) Representation of respondents age group
+The further analysis of four important attributes of 
+website is carried out using cross tabulation. The result of 
+inbound and domestic tourist has important insights to 
+display. It was seen that design layout was rated as average 
+by inbound 38% and domestic 35% tourist. The next 
+category content information had a rating as 56% by inbound 
+and 32.5% by domestic tourist. Similarly, information 
+architecture had rating percentage of 42% inbound and 
+12.5% domestic tourist and effective navigation with 42% 
+inbound and 17.5% domestic tourist. Respondents rated 
+information architecture (37.5% inbound and 34% domestic) 
+and effective navigation (inbound 24%, domestic 40%) as 
+bad design. Content architecture had a major difference in 
+the range with inbound and domestic tourist rating it at (4% 
+and 37.5%). Respondents with 17.5% to 30% rated all the 
+other attributes as good as shown in table 2. Positive results 
+were seen in case of  load times, mobile compatibility, 
+browser consistency for both inbound and domestic tourist 
+participants.
+The data regarding the government agencies show that 
+data on tourism board is available easily on the website and 
+is confirmed by both sets of respondents as shown in figure 
+7 and 8. The other information components are not seen or 
+present in the official website. 
+(Figure 7)  Representation of domestic respondents 
+views on Government agency information 
+Study and Evaluation of Tourism Websites based on User Perspective
+한국 인터넷 정보학회(22권4호) 71
+(Figure 8) Representation of inbound respondents 
+views on Government agency information.
+(Figure 10) Inbound respondent views, VISA information 
+(Figure 9) Domestic respondent view, VISA information 
+(Figure 11)  Representation of respondents views 
+on news and events (Domestic)
+VISA is a very important information component of the 
+tourism website. A clear and complete information is an 
+ultimate requirement of any tourist visiting another country. 
+VISA is a very important aspect of travel and it serves as 
+one of the most vital information for any tourist. A good 
+tourism website must have clear, updated and price 
+information in terms of VISA and regulations. The next 
+section of the survey inquired the four 
+components: 
+custom regulation, administrative regulation, VISA 
+information and currency exchange rate information. The 
+survey concluded that website lacked information for 
+administrative regulation. The survey had (Domestic 64%, 
+Inbound 61%), similarly custom regulations were also not 
+available (domestic 78%, inbound 78%) and currency 
+exchange rate (domestic 81%, inbound 80%) as shown in the 
+figure 9 and 10. VISA regulations was rated as good by 
+(domestic 31% and inbound 40%). Respondents data and 
+interview depicted that information on VISA did not had 
+right placing on the web page and respondents had to 
+struggle to find out the information in this section.
+Tourist needs to keep themselves updated about local 
+news and events in the tourism destinations and the country 
+itself. The analysis of this aspect depicted that informations 
+on tourism news is very good in the tourism portal (45% 
+domestic, 47% Inbound). The news on government release, 
+updates and events in very poor (60% domestic, 60% 
+Inbound)  and there are no pop-ups or real time mechanism 
+for information update in the portal as ahown in figure 11 
+and 12.
+The modern websites have complex demands and this 
+demand increases for a tourism website. Tools and 
+application links are important part of business and must be 
+included in a good web design. The survey concluded that 
+official tourism website had this component missing from the 
+web structure. Mobile and Windows apps (Not available 
+67.5%), Location finder (Not Available 77.5%) and Language 
+Study and Evaluation of Tourism Websites based on User Perspective
+72 2021. 8
+(Figure 12) Representation of inbound respondents 
+views on news and events 
+(Figure 14) Inbound respondents views on tools & 
+apps 
+(Figure 13) Domestic respondents views on tools 
+& apps 
+(Figure 15) Representation of domestic respondents 
+views on information and relevant links.
+assistant (Not available 70%) for domestic tourist. The data 
+from inbound tourist also had similar conclusions as Mobile and 
+Windows apps (Not available 72%), Location finder (Not 
+Available 78%), and Language assistant (Not available 74%).
+Tourism websites are important source of  information 
+sources that must provide comprehensive and detailed 
+information on tourism product and services. An analysis of 
+this aspect concluded that eating and travelling as very good 
+to good (35% domestic, 45% Inbound), 33% and 40% rated 
+it as bad presentation and for wandering and enjoying 
+respondents rated it as very good to excellent by (60% 
+domestic, 33% Inbound) 45% and 39% rated it as bad 
+presentation. The information on culture and communities 
+was rated as bad, 43% by domestic and 42% by inbound 
+tourist. The presentation of this aspect was rated as an 
+average value by both the group of respondents as shown in 
+figure 15 and 16.
+(Figure 16) Representation of inbound respondents 
+views on information and relevant links.
+Tourism business revolves around tourism destinations 
+which include Point of Interets, hotels, restaurents. 
+Information on these aspects is very important for marketing, 
+promotion and growth of business.  To explore this part, 
+major questions with 12 sub questions were asked to both 
+domestic and inbound respondents. The popular destination 
+Study and Evaluation of Tourism Websites based on User Perspective
+한국 인터넷 정보학회(22권4호) 73
+(Table 3) Representing cross tabulation of tourism destination attributes between data of inbound and 
+domestic tourist.
+Excellent Very Good Good Average Bad Not Available
+Tourism Destinations Dm In Dm In Dm In Dm In Dm In Dm In
+Popular Destinations 31% 41% 23% 31% 46% 28% 0% 0% 0% 0% 0% 0%
+Spiritual and Religious Sites 20% 47% 46% 17% 34% 8% 0% 0% 0% 29% 0% 0%
+Religious Information 0% 37% 0% 6% 41% 18% 59% 36% 0% 3% 0% 0%
+National Heritage 0% 15% 0% 49% 0% 8% 59% 0% 41% 20% 0% 9%
+Wild life Conservations 10% 5% 50% 49% 40% 37% 0% 0% 0% 10% 0% 0%
+Flora and Fauna Sites 0% 2% 0% 4% 0% 23% 24% 39% 20% 19% 56% 14%
+Culture and Arts 25% 32% 15% 43% 55% 23% 0% 0% 0% 2% 5% 0%
+T o u r  O p e r a t o r s 0 %0 %0 %0 %0 %0 %0 %0 % 3 5 % 0 % 6 5 % 1 0 0 %
+H o t e l  O p e r a t o r s 0 %0 %0 %0 %0 %0 %0 %0 % 3 5 % 0 % 6 5 % 1 0 0 %
+Adventure Sports 63% 59% 21% 28% 3% 12% 0% 0% 0% 2% 14% 0%
+E n t e r t a i n m e n t 0 %0 %0 %0 %0 %0 %0 %0 % 5 3 % 4 3 % 4 8 %5 8 %
+Seminar, Events and Conventions 0% 0% 0% 0% 0% 4% 0% 19% 28% 14% 73% 64%
+information was rated by domestic respondents as 
+(Excellent 31%, Very good 23% good 46%), Spiritual and 
+Religious 
+information as (Excellent 20%, Very good 46% 
+Good 34%), Culture and Arts as (Excellent 25%, Very good 
+15% Good 55%) Adventure sports (Excellent 63%, Very 
+good 21% Good 3%).  Tour hotel operator information as 
+bad 65% in each category and 56% as not available in flora 
+and fauna category. The inbound tourist data about Tourism 
+destination depicted that Popular destination(Excellent 41%, 
+Very good 31% Good 28%), Spiritual and Religious 
+information as (Excellent 20%, Very good 17% Good 8%), 
+Culture and Arts (Excellent 32%, Very good 43% Good 
+23%) Adventure sports (Excellent 59%, Very good 28% 
+Good 12%). Tour operator and hotel operator information as 
+bad with 100% in each category and 58% Not available in 
+entertainment and 64% NA in seminars and events as the 
+next highest category as shown in table 3.
+Information on Geography and Seasons were next 
+component of investigation, and respondents data showed  
+that website had rich information regarding it. 52% of the 
+domestic tourist and 60% of inbound tourist ranked season 
+and similar tourism information as good. Information on 
+sensitive area was not available for 75% of domestic 
+respondents and 95% of the inbound tourist. Domestic 
+respondents rated Information on landmass as excellent by 
+20% Good 25%, 35% as average while inbound tourist voted 
+it as 36% average, 40% as bad and 24% as NA. The website 
+regarding seasons had general information. This part of 
+content did not share any specific details with respect to a 
+particular geographical region. Respondents for the 
+component, sensitive area traced no information in the 
+website
+The development of e-commerce and web technology has 
+enabled websites to import tools and applications that enable 
+business. Social network sites, commercial websites, booking 
+portals, dynamic web content and management portals are 
+actively using commercial tools and applications as a part of 
+their web content. The analysis of these components from 
+respondents’ data showed 100% inbound 
+tourist found it 
+missing while domestic tourist rated it around 80% NA and 
+20% as bad availability.  Chat bots had rating of 75% as 
+excellent to good in both categories of the tourist. User 
+personalization, electronic transaction features, mass 
+customization, dynamic content, online booking features, 
+experience sharing, emergency and rescue sections were rated 
+as NA or bad availability by 60% of the both inbound and 
+domestic tourist as shown in table 5.   Travel information 
+was also rated as poor and NA by 60% domestic tourist 
+whereas the inbound percentage included 38% NA and 42% 
+as good. Safety instruction got a rating of (62.5% NA) 
+emergency contacts (65% NA) health and hygiene (97.5% 
+NA) by domestic tourist. The same attributes got a rating as 
+safety instruction as (42% good 26.5% NA) emergency 
+contacts as (50% NA), health and hygiene (66% as NA) by 
+Study and Evaluation of Tourism Websites based on User Perspective
+74 2021. 8
+(Table 4) Representing data of geography, seasons and information assitance of inbound and domestic 
+tourist.
+Excellent Very Good Good Average Bad Not Available
+Geography, Seasons & Information Assistance Dm In Dm In Dm In Dm In Dm In Dm In
+Seasons and Tourism Information 18% 14% 18% 14% 51% 58% 0% 4% 0% 0% 14% 11%
+Landmass Information (Hills,  terrain) 20% 16% 8% 6% 25% 20% 0% 2% 34% 41% 14% 16%
+Sensitive Areas Info.(Earthquake, landslides) 10% 8% 5% 4% 5% 4% 0% 0% 5% 5% 75% 79%
+Travel Guide 13% 10% 18% 20% 9% 11% 0% 0% 0% 0% 61% 60%
+Food and Cuisine 10% 8% 18% 16% 58% 56% 0% 0% 0% 7% 15% 14%
+Safety Instructions 0% 0% 0% 0% 30% 31% 0% 2% 6% 8% 64% 59%
+Quick Dialer (Emergency) 10% 8% 10% 8% 8% 12% 0% 0% 6% 8% 66% 65%
+Health and Hygiene 0% 0% 0% 0% 0% 0% 0% 0% 1% 5% 99% 96%
+D m :  D o m e s t i c  T o u r i s t                                   I n :  I n b o u n d  ( I n t e r n a t i o n a l  T o u r i s t )
+(Table 5) Representing data of tourism business assistance of inbound and domestic tourist
+Excellent Very Good Good Average Bad Not Available
+Tourism Business and Assistance Components Dm In Dm In Dm In Dm In Dm In Dm In
+Visitors personal profile page 0% 2% 0% 15% 0% 16% 0% 0% 0% 2% 100% 65%
+Online Query Tools (Chabot’s) 18% 21% 15% 20% 43% 37% 0% 0% 13% 2% 13% 21%
+Tourism Events 18% 13% 20% 30% 40% 45% 0% 0% 0% 0% 23% 13%
+Experience sharing and blogs 18% 13% 10% 12% 13% 21% 0% 0% 0% 8% 60% 47%
+Online transaction facilities 0% 2% 0% 2% 0% 7% 0% 0% 0% 15% 100% 75%
+Languages 18% 12% 20% 19% 50% 52% 0% 0% 0% 8% 13% 10%
+Official emergency contacts 10% 0% 15% 11% 8% 6% 0% 0% 8% 16% 60% 68%
+Photos gallery and clarity 28% 45% 25% 36% 3% 0% 0% 0% 45% 20% 0% 0%
+Audio, Video content 10% 12% 25% 35% 18% 31% 0% 0% 45% 20% 3% 2%
+Allowing information and products to be downloaded by users 15% 4% 8% 6% 13% 15% 0% 7% 0% 0% 65% 69%
+Online ordering/booking for tourism products and services 5% 0% 10% 2% 20% 19% 0% 7% 0% 0% 65% 73%
+Customer relationships information database (feedbacks, ratings) 10% 0% 0% 2% 13% 4% 0% 7% 10% 16% 68% 72%
+Information provisionaccording to  the profile of the users 10% 0% 0% 0% 10% 4% 0% 7% 8% 6% 73% 84%
+D m :  D o m e s t i c  T o u r i s t                                   I n :  I n b o u n d  ( I n t e r n a t i o n a l  T o u r i s t )
+inbound tourist as shown in table 4. This part of the study 
+bring a very important aspect of the tourist requirement that 
+is missing from the official tourims web portal. Government 
+of Nepal and any country coming up with a tourism website 
+must include 
+this component as primary part of their 
+system. This will give added benefit and advantage for to a 
+tourism website.
+4.2 Reliability test for internal consistency
+This section describes reliability test for constructs under 
+consideration for both domestic and inbound tourists. The 
+analytical results for domestic respondents in Table 6 
+indicate that the Cronbach's alpha (
+α) value for the construct 
+C1: What is your impression about the under mentioned 
+contents in Nepal’s Official Tourism Website is 0.915, C2: 
+Visa Information is 0.830, C3: Tourism Destinations is 
+0.779, C4: Geography and Seasons is 0.849, C5: Information 
+Assistance is 0.826, C6:Government Agencies is 0.946, 
+C7:Tools and Apps is 0.910, C8: News and Events is 0.852, 
+C9: Tourism Business and Assistance Components is 0.964 
+and C10: Enough links to relevant websites for information 
+is 0.960. It shows that the Cronbach's alpha (
+α) values for 
+all the constructs are greater than the threshold value of 0.7. 
+Thus, the internal consistency reliability of the ten constructs 
+of Nepalese tourist respondents is confirmed. The analytical 
+results for inbound respondents in Table 7 indicate that the 
+Study and Evaluation of Tourism Websites based on User Perspective
+한국 인터넷 정보학회(22권4호) 75
+Construct Item Description ǯ
+C1: What is your impression about the undermentioned contents in Nepal’s Official 
+Tourism Website Design layout 0.915
+Content information
+Information Architecture
+Mobile Compatibility
+Load Times and Browser Consistency
+Colour Scheme and Effective Navigation
+C2: Visa Information VISA Issue information and VISA regulations 0.830
+Currency Exchange Rate
+Custom Regulations
+Administrative Regulations
+C3: Tourism Destinations Popular Destinations 0.779
+Spiritual and Religious Sites
+Religious Information
+National Heritage, Culture and Arts
+Wild life Conservations
+Flora and Fauna Sites
+Hotel Operators, Tour Operators
+Adventure Sports and Entertainment
+Seminar, Events and Conventions
+C4: Geography and Seasons Seasons around year and Tourism Information 0.849
+Landmass Information (Hills, mountains, terrain)
+Sensitive Areas Info.(Earthquake, landslides, floods, others)
+C5: Information Assistance Travel Guide 0.826
+Food and Cuisine
+Safety Instructions, Quick Dialer (Emergency)
+Health and Hygiene
+C6:Government Agencies Ministry of Tourism, Tourism Board, State Tourism, District Tourism 0.946
+Embassy and Consulates
+C7:Tools and Apps Language Assistance 0.910
+Location finder
+Windows to mobile Apps
+C8: News and Events Government Releases 0.852
+Tourism news portal
+Event popups and event news
+C9: Tourism Business and Assistance Components Visitors personal profile page 0.964
+Online Query Tools (Chabot’s)
+Tourism Events
+Experience sharing and blogs
+Online transaction facilities
+Languages
+Photos gallery and clarity
+Audio, Video content
+Allowing information and products to be downloaded by users
+Online ordering/booking for tourism products and services
+Customer relationships information database (feedbacks, ratings)
+Information provision according to  the profile of the users
+C10: Enough links to relevant websites for information Eating, living, travelling 0.960
+Wandering, enjoying and shopping
+Culture and Communities in Nepal
+Notes: α = Cronbach's Alpha
+(Table 6) Representing analytical results for domestic respondents for internal reliability
+Study and Evaluation of Tourism Websites based on User Perspective
+76 2021. 8
+Construct Item Description α
+C1: What is your impression about the undermentioned contents in Nepal’s Official 
+Tourism Website Design layout 0.848
+Content information
+Information Architecture
+Mobile Compatibility
+Load Times and Browser Consistency
+Colour Scheme and Effective Navigation
+C2: Visa Information VISA Issue information and VISA regulations 0.829
+Currency Exchange Rate
+Custom Regulations
+Administrative Regulations
+C3: Tourism Destinations Popular Destinations 0.839
+Spiritual and Religious Sites
+Religious Information
+National Heritage, Culture and Arts
+Wild life Conservations
+Flora and Fauna Sites
+Hotel Operators, Tour Operators
+Adventure Sports and Entertainment
+Seminar, Events and Conventions
+C4: Geography and Seasons Seasons around year and Tourism Information 0.844
+Landmass Information (Hills, mountains, terrain)
+Sensitive Areas Info.(Earthquake, landslides, floods, others)
+C5: Information Assistance Travel Guide 0.817
+Food and Cuisine
+Safety Instructions and Quick Dialer (Emergency)
+Health and Hygiene
+C6:Government Agencies Ministry of Tourism, Tourism Board, State Tourism, District Tourism 0.831
+Embassy and Consulates
+C7:Tools and Apps Language Assistance 0.894
+Location finder
+Windows to mobile Apps
+C8: News and Events Government Releases 0.836
+Tourism news portal
+Event popups and event news
+C9: Tourism Business and Assistance Components Visitors personal profile page 0.890
+Online Query Tools (Chabot’s)
+Tourism Events
+Experience sharing and blogs
+Online transaction facilities
+Languages
+Official emergency contacts
+Photos gallery and clarity, Audio, Video content
+Allowing information and products to be downloaded by users
+Online ordering/booking for tourism products and services
+Customer relationships information database (feedbacks, ratings)
+Information provision according to  the profile of the users
+C10: Enough links to relevant websites for information Eating, living, travelling 0.700
+Wandering, enjoying and shopping
+Culture and Communities in Nepal
+Notes: α = Cronbach's Alpha
+(Table 7) Representing analytical results for domestic respondents for internal reliability
+Study and Evaluation of Tourism Websites based on User Perspective
+한국 인터넷 정보학회(22권4호) 77
+(Table 8) Representation of Correlations between four major components (foreign respondents)
+What is your impression about the undermentioned contents in Nepal’s 
+Official Tourism Website Design layout Content information Information Architecture Mobile Compatibility
+Design layout
+Pearson Correlation 1 .648** .585** -.036
+Sig. (2-tailed) .000 .000 .611
+N 200 200 200 200
+Content information
+Pearson Correlation .648** 1 .627** .239**
+Sig. (2-tailed) .000 .000 .001
+N 200 200 200 200
+Information Architecture
+Pearson Correlation .585** .627** 1 .153*
+Sig. (2-tailed) .000 .000 .030
+N 200 200 200 200
+Mobile Compatibility
+Pearson Correlation -.036 .239** .153* 1
+Sig. (2-tailed) .611 .001 .030
+N 200 200 200 200
+**. Correlation is significant at the 0.01 level (2-tailed).
+*. Correlation is significant at the 0.05 level (2-tailed).
+The correlation table for inbound tourist:
+1. Since r(198)=0.648 and p=0.000 (i.e., <0.01), the correlation between design layout and content information has positive and strong association and is statistically significant.
+2. Since r(198)=0.585 and p=0.000 (i.e., <0.01), the correlation between design layout and information architecture has positive  and strong association and is statistically significant.
+3. Since r(198) = -0.036 and p=0.611 (i.e., >0.05), the correlation between design layout and mobile compatibility has negative and weak association but is not statistically 
+significant. 
+4. Since r(198) = 0.627 and p=0.000 (i.e., <0.01), the correlation between content information and information architecture has positive and strong association and is statistically 
+significant.
+5. Since r(198) = 0.239 and p=0.001 (i.e., <0.01), the correlation between content information and mobile compatibility has posi tive and moderate association and is statistically 
+significant.
+6. Since r(198) = 0.153 and p=0.030 (i.e., <0.05), the correlation between information architecture and mobile compatibility has  positive and moderate association and is statistically 
+significant
+Cronbach's alpha (α) value for the construct. C1: What is 
+your impression about the undermentioned contents in 
+Nepal’s Official Tourism Website is 0.848, C2: Visa 
+Information is 0.829, C3: Tourism Destinations is 0.839, C4: 
+Geography and Seasons is 0.844, C5: Information Assistance 
+is 0.817, C6:Government Agencies is 0.831, C7:Tools and 
+Apps is 0.894, C8: News and Events is 0.836, C9: Tourism 
+Business and Assistance Components is 0.890 and C10: 
+Enough links to relevant websites for information is 0.700. 
+It shows that the Cronbach's alpha (
+α) values for all the 
+constructs are either greater than or equal to the threshold 
+value of 0.7 confirming the internal consistency reliability of 
+the constructs.
+4.3 Analysis from the Interview
+The study also interviewed some of the domestic 
+respondents to get a deeper understanding of the subject 
+under investigation. They were asked to provide a brief 
+understanding for choosing a particular option. The 
+respondents used simple principle of navigation to locate for 
+subjects of their interest. They rated a question as not 
+available or bad in case they did not find for something they 
+are looking for. The rating of user appeared as a need from 
+the website or a comparison that they made with other 
+tourism websites. The view on interview revealed that if they 
+can find a feature easily available with good information 
+content they rated it as excellent to good. If they found a 
+feature missing or not appropriately located, they rated it as 
+average to bad availability. The ratings were also based on 
+content presentation, clarity, layout, picture quality and other 
+related aspects. The distinction from excellent to good was 
+marginal as they used their relative experiences to rate it. 
+4.4 Analysis from the tool-based testing
+To ensure the technical standard of the official website 
+tool based was carried with two different tools. The results 
+Study and Evaluation of Tourism Websites based on User Perspective
+78 2021. 8
+(Table 9) Representation of Correlations between four major components (domestic respondents)
+What is your impression about the undermentioned contents in Nepal’s 
+Official Tourism Website Design layout Content information Information Architecture Mobile 
+Compatibility
+Design layout
+Pearson Correlation 1 .778** .893** .262**
+Sig. (2-tailed) .000 .000 .001
+N 160 160 160 160
+Content information
+Pearson Correlation .778** 1 .756** .410**
+Sig. (2-tailed) .000 .000 .000
+N 160 160 160 160
+Information Architecture
+Pearson Correlation .893** .756** 1 .335**
+Sig. (2-tailed) .000 .000 .000
+N 160 160 160 160
+Mobile Compatibility
+Pearson Correlation .262** .410** .335** 1
+Sig. (2-tailed) .001 .000 .000
+N 160 160 160 160
+**. Correlation is significant at the 0.01 level (2-tailed).
+The correlation table shows:
+1. Since r(158)=0.778 and p=0.000 (i.e., <0.01), the correlation between design layout and content information has positive and strong association and is statistically significant.
+2. Since r(158)=0.893 and p=0.000 (i.e., <0.01), the correlation between design layout and information architecture has positive  and strong association and is statistically significant.
+3. Since r(158) = 0.262 and p=0.001 (i.e., <0.01), the correlation between design layout and mobile compatib ility has positive and moderate association and is statistically significant. 
+4. Since r(158) = 0.756 and p=0.000 (i.e., <0.01), the correlation between content information and information architecture has positive and strong association and is statistically 
+significant.
+5. Since r(158) = 0.410 and p=0.000 (i.e., <0.01), the correlation between content information and mobile compatibility has posi tive and strong association and is statistically 
+significant.
+6. Since r(158) = 0.335 and p=0.000 (i.e., <0.01), the correlation between information architecture and mobile compatibility has  positive and strong association and is statistically 
+significant.
+depicted some technical faults at different locations that need 
+correction. Working links are important features of a website 
+and missing or break of these links is bad user experience. 
+The visitors get annoyed if these missing links occur on 
+account of any faults that are traced to a typo error in the 
+code, or renaming of a target web page or a web page is 
+removed. The data of broken link  and missing webpages of 
+the official webpage is shown below in figure 17 and 18. 
+The missing link and webpages are also problem of good 
+maintenance when a content page is added or removed and 
+as associated information is not updated accordingly. Official 
+portals should avoid these mistakes and errors in their 
+webpages to ensure a high quality of website design and 
+information portal in existence. 
+Response time is an important aspect of a web design as 
+it evaluates how much time a target machine takes to provide 
+a response. There are two types of check ICMP echo and 
+HTTP head request on port 80 of TCP to evaluate this. The 
+technical test carried out with two testing tools show that 
+some delays in website are above 100 ms, which is a poor 
+response time as shown in figure 19. The power of a website 
+and its popularity is checked, based data collected from 
+several sources by some of the metrics. Some of the metrics 
+show number of visitors of a web site as one of the important 
+features as this data does not change so quickly for most webs. 
+Some of the tools consider interest of visitors in website over 
+social networks to measure visitor frequency and popularity 
+index. If a visitor looks for related information in social 
+network, it indicates that the website is not popular and the 
+score is 0. The data of popularity is very low for Nepal 
+Tourism Official website, which indicates that this website has 
+very less reach and popularity in the global index.
+(Figure 17)  Representing broken links of website
+Study and Evaluation of Tourism Websites based on User Perspective
+한국 인터넷 정보학회(22권4호) 79
+(Figure 18) Representation of broken page of website
+(Figure 19) Representation of access time of 
+website
+(Figure 20) Data of http head request for the official 
+tourism webpage welcomenepal.com
+5. Conclusions
+The study answered all the questions under consideration 
+for the study of official tourism website. The first research 
+question investigated about the present status of the website 
+and it was analyzed that website needs a lot of improvement 
+and restructuring in the design. The contents related to 
+information presentation, design layout, content placement 
+and easy navigability need a revision. The respondents of 
+both class domestic and inbound liked some of the features 
+already existing in the website, which included image 
+quality, color scheme, some information sections and video 
+content.  The open tool testing carried out with Jmeter and 
+Amberloom brought the technical qualities of the website 
+pointing to low popularity, usage and global reach. The test 
+also pointed toward missing links, webpages and poor 
+response time of the host machine. 
+In response to the second question on what do tourists 
+perceive as an effective tourism web site, it was explored 
+that tourist are very specific about the information present in 
+website. They are more interested to have good and reliable 
+information on websites in their own language. Besides this 
+information on VISA, destinations, hotels, service sectors, 
+transport facilities and payment modes are their first 
+priorities. Once they decide to visit a particular place, they 
+look for more specific information in terms of health and 
+hygiene, cost price, quality, risk and safety, destination 
+peculiarities, internet facilities and other tourism related 
+information. Social site connectivity, mobile connectivity, 
+public opinions and reviews also from an important 
+component of information in websites. Easy navigability with 
+proper distribution of information on the webpage is an 
+i m p o r t a n t  a s p e c t  f o r  v i s i t o r s  t o  u s e  t h e  w e b s i t e .  
+The third research question investigated features that are 
+important in a tourism website as an effective component. 
+The features that respondents included were design issue, 
+easy navigation, content availability and information 
+architecture. Information on hotel booking, travel guides, 
+safety instructions and information on health and hygiene 
+was either limited or not present. Information on VISA 
+regulations, culture, people, customs, entertainment values, 
+history, art, culture and religion had good content and 
+presentation. The availability of tool for language assistance, 
+payment, route finder, GPS navigator and e-commerce were 
+missing. The personalize of website with user preferences 
+can attract users to use the website and also recommend 
+tourist product and services. This feature was also not 
+discovered by the repondents. 
+Further, to test the quality, vaibility and authencity of data 
+different statistical tool like the Cronbach’s alpha Pearson’s 
+correlation, Cross tabulations were performed on the data set 
+which concluded that data is reliable and consistent. The 
+cross tabulation depicted that the data between the two 
+groups matched further strengthening the study. The 
+correlation between four groups of variables depicted positive 
+strong and positive moderate relationship.
+Study and Evaluation of Tourism Websites based on User Perspective
+80 2021. 8
+The examination of final question about generalization of 
+this study for other tourism websites, it is concluded that the 
+results are common for all tourism websites and can be 
+applied equally. Further, repondents have specifically 
+considered official tourism portal of Nepal to answer the 
+survey which deepens the understanding of tourism 
+requirements and provide very specific answers. The answers 
+on website content, architecture, information and navigation 
+are also specifically answered by tourist in terms of priority. 
+The technical testing and inferences from the literature 
+further strengthen the output of the research. Hence, this also 
+strengthens the claim that it is not specific to the Nepal 
+tourism industry but can be generalized for other tourism 
+economies and 
+other tourism websites design.  
+6. Recommendation and future 
+work 
+The current work is explored for tourism industry and 
+considers Nepal as a reference. This work can be extended 
+considering other tourism economies like underdeveloped, 
+emerging and developed economies with more elaborated 
+form of questions and interview sessions with experts 
+working as industry professionals in website construction. A 
+comparative study of existing top tourism websites can help 
+in coming up with an elaborate understanding of tourism 
+websites requirements and help in construction of a standard 
+framework. 
+References
+[ 1 ] The World Travel & Tourism Council, "WTTC Travel & 
+Tourism Economic Impact 2018 Nepal", London: The 
+World Travel & Tourism Council, 2018, 
+https://nepalindata.com/media/resources/items/12/bNepal
+2018.pdf.
+[ 2 ] Gautam, B. P., "Tourism and Economic Growth in Nepal," 
+NRB Economic, 2011, Review, 
+https://www.nrb.org.np/contents/uploads/2019/12/NRB_
+Economic_Review-Vol_23-2_October_20112_Tourism_
+and_Economic_Growth_in_NepalBishnu-Prasad-Gautam
+-Ph.D.pdf
+[ 3 ] Shrestha D, Jeong SR, "An ICT Framework for Tourism 
+Industry of Nepal: Prospect and Challenges", 31, 17(6), 
+113
+–22, Dec. 2016. 
+http://dx.doi.org/10.7472/JKSII.2016.17.6.113
+[4] B e r né, C., Gómez Campillo, M. and Orive, V., "Tourism 
+Distribution System and Information and Communication 
+Technologies (ICT) Development: Comparing Data of 
+2008 and 2012", Modern Economy, Vol 6, 145-152, 2015. 
+http://dx.doi.org/10.4236/me.2015.62012
+[ 5 ] Rob Law, Shanshan Qi, Dimitrios Buhalis, "Progress in 
+tourism management: A review of website evaluation in 
+tourism research", Tourism Management, Volume 31, 
+Issue 3, Pages 297-313, ISSN 0261-5177, 2010. 
+http://dx.doi.org/10.1016/j.tourman.2009.11.007
+[ 6 ] Gupta, D.D. & Utkarsh “Information Technology & 
+Tourism, Assessing the website effectiveness of top ten 
+tourist attracting nations” Inf Technol Tourism, ISSN 
+1098-3058,  2014, ISSN 1943 -4294, 
+http://dx.doi.org/10.1007/s40558-014-0012-x
+[ 7 ] Rosemary, Stockdale, Craig. “Sstanding, framework for 
+participants' recognition of key success factors in 
+electronic marketplaces”, International Federation for 
+Information Processing, 2003. 
+http://dx.doi.org/10.1007/978-0-387-35692-1_36
+[ 8 ] Ranee Esichaikul, iSukhothai Thammathirat, “Travel 
+motivations, behavior and requirements of European senior 
+tourists to Thailand”, Open University (Thailand), Pp, 
+47-58., Vol. 10 N 2, 10(2), ISSN 1695-7121 2012. 
+http://dx.doi.org/10.25145/j.pasos.2012.10.026
+[9] A n tónio Carvalho, Carlos R., Cunha, Elisabete, Paulo 
+Morais, “A framework to support the tourist’s 
+information-needs Based on a ubiquitous approach,” 
+Business Transformation through Innovation and 
+Knowledge Management, An Academic Perspective, 
+P.No. 2470-2479.
+[10] Khurram Shehzad, Xiaoxing Liu, Abdul Rauf, Muhammad 
+Arif, SamanMazhar, Nadeem Sohail & Waqas Amin, 
+“Revolutionising tourism development in China: an 
+effective role of ICT and Western Silk Road project” Asia 
+Pacific Journal of Tourism Research, Volume 24, Issue 9, 
+pp. 965-977, 2019.  
+http://dx.doi.org/10.1080/10941665.2019.1653334
+Study and Evaluation of Tourism Websites based on User Perspective
+한국 인터넷 정보학회(22권4호) 81
+[11] Palkoska J., Dunzendorfer A., Küng J., "Vague Queries in 
+Tourism Information Systems," In: Fesenmaier D.R., Klein 
+S., Buhalis D. (eds) Information and Communication 
+Technologies in Tourism Springer, 2000. 
+http://dx.doi.org/10.1007/978-3-7091-6291-0_6
+[12] Sharma P., Carson D., DeLacy T., "Developing A Business 
+Information Data Warehouse For The Australian Tourism 
+Industry-A Strategic Response" Information and 
+Communication Technologies in Tourism, Springer, 2000. 
+http://dx.doi.org/10.1007/978-3-7091-6291-0_13 
+[13] Zabel J., B önke D., Constanta P.," Open Network for 
+Tourism (Ontour): A Concept for Electronic Commerce in 
+the Business Processes of the Tourism Industry," In: 
+Fesenm aier D .R ., K lein S., B uhalis D . (eds) Inform ation 
+and Communication Technologies in Tourism, Springer, 
+Vienna, 2000. 
+http://dx.doi.org/10.1007/978-3-7091-6291-0_25 
+[14] Tuba Ugras, Sevinç Gülseçen, Ceren Çubukçu, İpek İli 
+Erdoğmuş, Vala Gashi, Merve Bedir, "Research Trends in 
+Web Site Usability: A Systematic Review,” Design, User 
+Experience, and Usability: Design Thinking and Methods, 
+Vol 9746, ISBN : 978-3-319-40408-0, 2016. 
+http://dx.doi.org/10.1007/978-3-319-40409-7_49
+[15] Xie, Gui Mei. “The Functions of Multimedia and Internet 
+Technology in Content-Based English Study in China.” 
+Applied Mechanics and Materials, vol. 519
+–520, Trans 
+Tech Publications, 2014. 
+http://dx.doi.org/10.4028/www.scientific.net/amm.519-52
+0.1654
+[16] Voštinár P., Horv áthová D., Bako M. and Mitter M., 
+"Possibilities of human interaction in the virtual 
+environment," 2019 IEEE 15th International Scientific 
+Conference on Informatics, Poprad, Slovakia, pp. 
+000371-000376, 2019. 
+http://dx.doi.org/10.1109/Informatics47936.2019.9119296
+[17] H. Degen and S. Pedell, “JIET Design Process for 
+E-Business Applications,” In Handbook of task analysis 
+for human-computer interaction, D. Diaper and N Stanton, 
+Eds., NJ: Lawrence Erlbaum Associates, pp. 193-220, 
+2003.
+[18] Shrestha D., Wenan T., Rajkarnikar N., Shrestha D., Jeong 
+S.R., "Analysis and Design Recommendations for Nepal 
+Tourism Website Based on User Perspective," Computer 
+Networks and Inventive Communication Technologies, 
+Lecture Notes on Data Engineering and Communications 
+Tech., vol 58, Springer 2021. 
+http://dx.doi.org/10.1007/978-981-15-9647-6_3
+[19] Shrestha D., Wenan T., Gaudel B., Maharjan S., Jeong 
+S.R., "An Exploratory Study on the Role of ICT Tools and 
+Technologies in Tourism Industry of Nepal", ICMCSI 
+2020, EAI/Springer Innovations in Communication and 
+Computing, Springer, Cham, 2020. 
+http://dx.doi.org/10.1007/978-3-030-49795-8_9
+[20] Shrestha D., Wenan T., Maharjan S., Gaudel B., Chun J. 
+and Jeong S. R., "A UML based approach for analysis and 
+design of tourism web portal," 2020 International 
+Conference on Smart Electronics and Communication 
+(ICOSEC), pp. 236-243, Trichy, India, 2020. 
+http://dx.doi.org/10.1109/ICOSEC49089.2020.9215380
+[21] Pan B. and Fesenmaier D. R., “Semantics of Tourism and 
+Travel Information Search on the Internet,” in Proc. of the 
+International Conference on Information and 
+Communication Technologies in Tourism 2002, New 
+York: Springer-Verlag, pp. 320-328, 2002.
+[22] Buhalis D., "The Impact of Information Telecommuni-
+cation Technologies on Tourism Channels: Implications 
+for the Small and Medium Sized Tourism Enterprises. 
+Dissertation." University of Surrey, Guildford, UK, 1995.
+[23] Shrestha D., Wenan T., Shrestha D., Jeong S. R., "Attitude 
+of international tourist towards ICT and digital services in 
+tourism industry of Nepal", AISS '19: Proceedings of the 
+International Conference on Advanced Information 
+Science and System, Article No.: 10 Pages 1
+–7, November 
+2019. 
+http://dx.doi.org/10.1145/3373477.3373487
+[24] Lama, S., Pradhan, S. & Shrestha, "A Exploration and 
+implication of factors affecting e-tourism adoption in 
+developing countries: a case of Nepal, "Inf Technol 
+Tourism, Vol 22, 5
+–32, 2020, 
+http://dx.doi.org/10.1007/s40558-019-00163-0
+[25] Law R., Bai B. "Website Development and Evaluations in 
+Tourism: A Retrospective Analysis. In: Hitz M., Sigala M., 
+Murphy J. (eds) Information and Communication 
+Technologies in Tourism," Springer, 2006. 
+http://dx.doi.org/10.1007/3-211-32710-X_1
+Study and Evaluation of Tourism Websites based on User Perspective
+82 2021. 8
+◐ Authors ◑
+Deepanjal Shrestha
+2004: M.Sc. (Computer Science), Pokhara University, Nepal
+2005: MPhil, English Studies, Pokhara University, Nepal
+2016: (PhD student) at Nanjing University of Aeronautics and Astronautics, Dept. of Computer Science and 
+Technology, Nanjing, China.
+2011 ~ Present: Asst. Professor, School of Business, Pokhara University, Nepal 
+Research Interests: MIS, Software Engineering, Digital Ecosystems, Service Engineering.
+E-mail: deepanjal@pusob.edu.np 
+Tan Wenan 
+1987: Engineering degree in computer software, Beihang University, Beijing, China
+2001: Ph.D. degree in computer software and theory, Beihang University, Beijing, China
+Present: Professor of Computer Science at the Nanjing University of Aeronautics and Astronautics, Nanjing, 
+China and Shanghai Second Polytechnic University, Shanghai, China.
+Research Interests: Software engineering, Process engineering a nd development environment, Enterprise 
+dynamic modeling, and Enterprise intelligent information systems. 
+E-mail: wtan@foxmail.com
+Neesha Rajkarnikar
+2005: Masters of Computer Applications, Sikkim Manipal University, India
+2011: Master in Population, Gender and Development Studies, Pokhara University, Nepal
+2017: (PhD Student) at Nanjing Tech University, Department of New Energy Science and Engineering, Nanjing, 
+China
+Research Interests: Computer applications, Social Computing, Energy science. 
+E-mail: Neesha_rk@hotmail.com
+Deepmala Shrestha
+2004: MBA (HRM), Pokhara University, Nepal
+2005: MPhil, Management Studies, Tribhuvan University, Nepal
+2015: (PhD student) at Pokhara University, Nepal.
+2011 ~ Present: Asst. Professor, School of Business, Pokhara University, Nepal 
+Research Interests: HRM, General Management and ICT in Management.
+E-mail: deepmala@pusob.edu.np
+Seung Ryul Jeong 
+1985 B.A. in Economics, Sogang Univ., Seoul, Korea
+1989 M.S. in MIS, Univ. of Wisconsin - Milwaukee, WI, U.S.A.
+1995 Ph.D. in MIS, Univ. of South Carolina, SC, U.S.A.
+1997~Present: Professor, Graduate School of Business IT, Kookmin Univ., Korea
+Research Interests: System Implementation, Process Innovation, Text Mining, Project Management, Information 
+Resource Management etc.
+E-mail: srjeong@kookmin.ac.kr

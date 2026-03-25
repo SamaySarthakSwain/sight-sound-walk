@@ -1,0 +1,184 @@
+128 | P a g e  
+ 
+International Journal of Innovative Research in Engineering 
+Volume 3, Issue 6 (November-December 2022), PP: 128-130. 
+www.theijire.com                                      ISSN No: 2582-8746 
+ 
+Travel and Tourism Website 
+ 
+ 
+ 
+ 
+  
+Swapnil Chitransh1, Satyansh Upadhyay2, Suryansh Chaubey3, Prakhar Goyal4 
+1,2,3,4Undergraduate Students, Information Technology Department, Institute of Technology and Management GIDA  Gorakhpur, 
+Uttar Pradesh, India. 
+ 
+How to cite this paper: 
+Swapnil Chitransh1, Satyansh Chaubey2, 
+Suryansh Chaubey3, Prakhar Goyal4, “Travel and 
+Tourism Website”, IJIRE-V3I06-128-130. 
+ 
+ 
+Copyright © 2022  by author(s) and  5th Dimension  
+Research Publication . 
+This work is licensed under the Creative 
+Commons Attribution International License (CC 
+BY 4.0). 
+http://creativecommons.org/licenses/by/4.0/  
+ 
+Abstract: This project “Travel and Tourism Website” is used to automate all process of  the travel 
+and tourism, which deals with creation, booking and confirmation and user  details. The project is 
+designed HTML-JavaScript as front end and Microsoft SQL Server  as backend which works in any 
+browsers. The coding language used HTML, CSS, Java Script. Travel and tourism management 
+system is used to book a tour from anywhere in the world by a single dynamic website which will help 
+the user to know all about the places and tour details in a single website. The admin can add packages 
+to the website from a certain travel agents and hotels by create a tour page. Then the users can sign 
+in and book each project, they can be confirmed by the admin in them manage booking page. The user 
+can see the confirmation in my booking page. It is an easiest platform for all travelers which can be 
+easily booked and know the all details. 
+Key Word: Travel and tourism management, travel packages, tourism, package booking. 
+I. INTRODUCTION 
+ Travel and tourism management system is used to book a tour from anywhere in the world by a single dynamic website 
+which will help the user to know all about the places and tour  details in a single website. The admin can add packages to  the 
+website from a certain travel agents and hotels by create a tour page. Then the users can sign in and book each project, they can 
+be confirmed by the admin in them manage booking page. The user can see the confirmation in my booking page. It is an easiest 
+platform for all travelers which can be easily booked and know the all details. Tour Management system is a dynamic website for 
+tourism business. It is dynamic and responsive web design. It is also called travel technology solution for agencies & tour operation. 
+Nearly Everyone goes on a vacation for this ‘a Tourism management system’ would play a vital role in planning the perfect trip. 
+The tourism management system allows the user of the system access all the details  such as location, events, etc. The main 
+purpose is to help tourism companies to manage customer and hotels etc. The system can also be used for both professional and 
+business trips. 
+ In the existing system, each task is carried out manually and processing is also a tedious job. In previous system travelers 
+were maintaining time table details manually in pen and paper, which was time taking and costly. The travelers are not  able to 
+achieve its need in time and also the results may not accurate. Because of the manual maintenance there are number of difficulties 
+and drawbacks exist in the system. Some of them are 
+ 
+ Increased transaction leads to increased source document and hence maintenance becomes difficult. 
+ If any admin, user entry is wrongly made then the maintenance becomes very difficult. 
+ 
+ The proposed system is designed to be more efficient than the manual system. It invokes all base tasks that are now carried 
+out manually, such as the forms transactions and reports which is added advantage. The proposed System is completely computer-
+based application. Thousands of records can search and displayed without taking any significant time 
+ 
+ Gives accurate information 
+ Simplifies the manual work 
+ It minimizes the documentation related work 
+ Provides up to date information 
+ Friendly Environment by providing warning messages. 
+ travelers’ details can be provided 
+ booking confirmation notification 
+ 
+II.LITERATURE REVIEW 
+ The tourism industry has always been considered as an industry that brings many benefits and profits to India. Now, 
+the tourism industry not only attracts domestic tourists but also brings a large number of tourists from abroad. According to  
+statistics from tourism.gov.in newspaper. "Total revenue from tourists reached 755 trillion INR (equivalent to 32.8 billion  
+
+Travel and Tourism Website 
+129 | P a g e  
+ 
+USD)", "Direct contribution of tourism: 9.2% of GDP. 
+ However, with the Covid 19 epidemic, the worldwide tourism industry has been "frozen" and India's tourism industry 
+has also been significantly affected. 
+ According to the UNWTO report, the number of international tourists globally in 2020 will decrease by 1.1 billion. 
+Total global tourism revenue lost $1.1 trillion; about 100-120 million orders in the industry lost their jobs. 
+In this literature review, the most information available on India's tourism industry, from  which businesses need to have new 
+strategies, is more suitable to the actual situation. This research article will help Vacation Travel better understand the needs and 
+factors affecting customers when booking tours. 
+ Since then, this research is considered necessary before Vacation comes up with a new strategy: Creating an e-
+commerce site. 
+ Before the technology 4.0, India also gradually used technology in life more than before. According to statistics of 
+Okla., a company that owns the world famous Speed Test measuring tool, said that broadband internet in India reached 47.6 6 
+Mbps in April 2020. 
+ From the data that INETWORK shares, the number of people using social media in India has increased quite quickly 
+with a specific increase of 57 million people (i.e. an increase of more than +9.6%). These statistics are from April 2019 to January 
+2020. 
+ Also according to INETWORK, in India we have more than 845.8 million mobile data network connections in India 
+as of January 2020. That means each person can use multiple mobile devices. different people to alternately do some things such 
+as: entertainment, work... The battery power on mobile devices is limited, while the total amount of time they use the internet is too 
+much during the day. 
+ Through those actual figures, we once again see that using the internet is already a part of India’s people's lives. 
+Therefore, based on the above data, we can prove that: It is perfectly reasonable for us to develop a new foundation for our 
+business strategy and can bring high profits. 
+ This is also considered a bridge, which helps businesses connect with customers more easily in the face of the stressful 
+pandemic situation and travel difficulties. 
+ The Covid-19 pandemic suddenly appeared and spread around the world, affecting not only the tourism industry but 
+also the psychology of tourists. In India, along with the gradually recovering tourism, the tourism demand of tourists has also  
+been changing. 
+ In the middle of May, after the end of social distancing in India, the Ministry of Tourism and Indian Express electronic 
+newspaper conducted a survey with nearly 2,000 people about post-Covid domestic tourists. -19. 
+ With this survey result, it can be one of the useful suggestions for tourism units to recover the smokeless industry after 
+Covid-19. The survey showed that tourism demand in India be gan to recover from mid-July - when social distancing was eased 
+until now. More than 53% of people said they are ready to travel this summer. 
+ Covid-19 has impacted online shopping habits. This trend is reflected in the fact that tourists choose to book tours 
+themselves directly (62%) and book hotels/tours via online platforms (44%). 
+ According to the Tourism Advisory Council, through this survey, it can be seen that the behavior of domestic tourists 
+in India after Covid-19 has changed a lot compared to before Covid-19. We need to think about restructuring tourism businesses, 
+tourism products, promoting destinations to meet the needs and new trends of the domestic tourism market after Covid-19. 
+ The need to focus on e-commerce 
+ Ministry of Tourism conducted a survey in September with around 1,000 people to see the psychology and behavior of 
+tourists. According to the survey results, 58.2% of the respondents admitted that they were afraid to go to tourist  destinations 
+that were affected by the epidem ic. Besides, the trend of buying travel insurance is also increasing. This  comes from the risks 
+when traveling during the epidemic time has not been completely controlled. 
+ This survey also reaffirms that small group and short -term tourism is a priority af ter the epidemic. In addition, 
+customers also prioritize disease -free destinations and safe destinations. The ratio of these two priorities is 31.2% and 26%  
+respectively. Guests' top priority is financial ability (32.7%). 
+ Based on the survey, this unit offers a number of solutions for travel businesses. First, they have to transform their  
+marketing, sales consulting and customer care forms through online platforms. With 87% of guests wanting to receive incentives 
+directly on the tour price, the survey unit suggested that travel businesses and airlines connect to create cheaper travel combos. 
+In addition, the tourism industry needs to work with the insurance industry to create new travel packages.  When customers buy 
+tours, travel agencies need to encourage them to book more Insurance to create peace of mind. 
+ Those are specific examples and data that will help tourism management agencies, localities and tourism businesses 
+better understand the thoughts of tourists, thereby building suitable tourism products, and at the same time conduct more effective 
+domestic tourism stimulus campaigns during the covid-19 pandemic. 
+ Through the data reported above, we can see that developing an e-commerce platform in this period will be a good 
+strategy. 
+ However, in order to implement this strategy, firstly through a study on the factors that decide to buy tours of customers, 
+it will help Vacation Travel  get more specific data, as well as understand the important points that The above data will be 
+evaluated by customers who have purchased tours at Vacation Travel. 
+ 
+ 
+Admin authentication 
+Travel and Tourism Website 
+130 | P a g e  
+ 
+ This module is mainly based on admin. System will check the admin user name and password for authentication. After 
+the verification for authorization the admin can be able to precede the process. All works are done under his control. 
+User Registration 
+ This module covers the details about the registration of users which they can be register by itself by adding data like 
+name, password, email id and further details. After registration they can be sign in by their username and password. 
+ 
+Package Creation 
+ The admin can create packages by creating package page which the type, price, details, place details all the travel tour  
+package details can be added here. Which it will be showed in user homepage. 
+Package booking 
+ In this module maintain the booking of travel packages by the user by selecting a various package with date and certain 
+comments. 
+Booking confirmation/manage 
+ Booking confirmation is the process of confirming the booked packages by the admin that is booked by the user with 
+date and comment. Also, admin can manage the booking by cancelling. 
+ 
+Issue ticket 
+Tickets can be issued for the user in the issue ticket page in the homepage of user the certain booked packages only can be issued. 
+ 
+ 
+ 
+III.CONCLUSION 
+ This web application was  successfully created and stored all the travel admin tourism packages booking, creation 
+managing and tour details into the database using this application. The application was tested very well and the errors were 
+properly debugged. Testing also concluded that the performance of the system is satisfactory. All the necessary output is 
+generated. This system thus provides an easy way to automate all the functionalities of consumption. If this application is 
+implemented in few consumptions, it will be helpful. Further enhancements can be made to the project, so that the website 
+functions in a very attractive and useful manner than the present one. It is concluded that the application works well and satisfy 
+the needs. The application is tested very well and errors are properly debugged.  It also acts as thesharing of files to the valuable  
+resources. 
+ 
+Reference 
+[1]. Azevedo, D. (2009). Proposal of Home Website Evaluation model in Tourism. 
+[2].   Blain, C. (2005). Destination Branding and Practices from Destination Management Organizations. Travel Research, 43,328 -338. 
+[3]. Brey, E., So, S., Kim, D., and Morrison, A. (2007). Web-based permission marketing: segmentation for the lodging industry. Tourism 
+Management, 28(6)1408–1416. 
+[4]. 4. Cavia, J. F., Rovira, C., Luque, P. D., and Cavaller, V. (2014). Web Quality Index WQI) for official tourist destination websites. 
+Proposal for an assessment system. Tourism Management Perspectives , 9, 5–13. 
+ 
+
