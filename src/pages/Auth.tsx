@@ -202,7 +202,7 @@ const Auth = () => {
 
   const PasswordRequirements = () => (
     <p className="text-xs text-muted-foreground mt-1">
-      Min 8 characters, 1 uppercase letter, 1 number
+      Minimum 6 characters
     </p>
   );
 
