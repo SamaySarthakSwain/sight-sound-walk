@@ -143,18 +143,28 @@ const Auth = () => {
   const handleGoogleSignIn = async () => {
     setGoogleLoading(true);
     try {
-      const { error } = await lovable.auth.signInWithOAuth("google", {
+      const result = await lovable.auth.signInWithOAuth("google", {
         redirect_uri: window.location.origin,
       });
 
-      if (error) {
-        console.error("Google OAuth Error:", error);
-        toast.error(error.message || "Failed to sign in with Google");
+      if (result.redirected) {
+        // Browser will redirect to Google - just return
+        return;
       }
+
+      if (result.error) {
+        console.error("Google OAuth Error:", result.error);
+        toast.error(result.error.message || "Failed to sign in with Google");
+        setGoogleLoading(false);
+        return;
+      }
+
+      // Success - session is set
+      toast.success("Signed in with Google!");
+      navigate("/");
     } catch (err) {
       console.error("Google Sign In Exception:", err);
       toast.error(err instanceof Error ? err.message : "An error occurred");
-    } finally {
       setGoogleLoading(false);
     }
   };
