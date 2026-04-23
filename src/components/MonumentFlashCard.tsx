@@ -328,6 +328,166 @@ const MonumentFlashCard = ({ monument, imageUrl }: Props) => {
           </div>
         </div>
       </motion.div>
+
+      {/* Detail Dialog */}
+      <Dialog open={detailOpen} onOpenChange={setDetailOpen}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto p-0 glass-card border-white/20">
+          {/* Hero image */}
+          <div className="relative h-56 sm:h-72 w-full overflow-hidden rounded-t-lg">
+            <img
+              src={imgError ? fallbackImg : imageUrl}
+              alt={monument.title}
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-transparent" />
+            <div className="absolute bottom-4 left-5 right-5">
+              <Badge className="bg-primary/90 text-primary-foreground mb-2">{monument.category}</Badge>
+              <h2 className="text-2xl sm:text-3xl font-bold text-foreground drop-shadow-lg">{monument.title}</h2>
+              <div className="flex items-center gap-1.5 text-sm text-foreground/80 mt-1">
+                <MapPin className="w-4 h-4 text-primary" />
+                <span>{monument.location}</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="p-5 sm:p-6 space-y-5">
+            <DialogHeader className="sr-only">
+              <DialogTitle>{monument.title}</DialogTitle>
+              <DialogDescription>Detailed information about {monument.title}</DialogDescription>
+            </DialogHeader>
+
+            {/* Overview */}
+            <section>
+              <h3 className="font-semibold text-base flex items-center gap-2 mb-2">
+                <Sparkles className="w-4 h-4 text-primary" />
+                Overview
+              </h3>
+              <p className="text-sm text-foreground/80 leading-relaxed">{monument.description}</p>
+            </section>
+
+            {/* Significance */}
+            <section className="p-4 rounded-xl glass-panel">
+              <h3 className="font-semibold text-sm flex items-center gap-2 mb-2">
+                <Compass className="w-4 h-4 text-primary" />
+                Cultural & Historical Significance
+              </h3>
+              <p className="text-sm text-foreground/80 leading-relaxed">{enrichedDetails.significance}</p>
+            </section>
+
+            {/* Discovery / Era */}
+            <section className="p-4 rounded-xl glass-panel">
+              <h3 className="font-semibold text-sm flex items-center gap-2 mb-2">
+                <Calendar className="w-4 h-4 text-primary" />
+                Era & Discovery
+              </h3>
+              <p className="text-sm text-foreground/80 leading-relaxed">{enrichedDetails.discovery}</p>
+            </section>
+
+            {/* Quick info grid */}
+            <section className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div className="p-3 rounded-xl glass-panel">
+                <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-1">
+                  <Calendar className="w-3.5 h-3.5 text-primary" /> Best Time
+                </div>
+                <p className="text-sm font-medium text-foreground">{enrichedDetails.bestTime}</p>
+              </div>
+              <div className="p-3 rounded-xl glass-panel">
+                <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-1">
+                  <Clock className="w-3.5 h-3.5 text-primary" /> Visit Duration
+                </div>
+                <p className="text-sm font-medium text-foreground">{enrichedDetails.visitDuration}</p>
+              </div>
+              <div className="p-3 rounded-xl glass-panel">
+                <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-1">
+                  <Ticket className="w-3.5 h-3.5 text-primary" /> Entry Fee
+                </div>
+                <p className="text-sm font-medium text-foreground">{enrichedDetails.entryFee}</p>
+              </div>
+            </section>
+
+            {/* Historical facts */}
+            {monument.facts && monument.facts.length > 0 && (
+              <section className="p-4 rounded-xl glass-panel">
+                <h3 className="font-semibold text-sm flex items-center gap-2 mb-2">
+                  <FileText className="w-4 h-4 text-primary" />
+                  Historical Facts
+                </h3>
+                <ul className="list-disc list-inside space-y-1.5 text-sm text-foreground/80 marker:text-primary/60">
+                  {monument.facts.map((fact, i) => (
+                    <li key={i} className="leading-relaxed">{fact}</li>
+                  ))}
+                </ul>
+              </section>
+            )}
+
+            {/* Travel tips */}
+            <section className="p-4 rounded-xl glass-panel">
+              <h3 className="font-semibold text-sm flex items-center gap-2 mb-2">
+                <Info className="w-4 h-4 text-primary" />
+                Travel Tips
+              </h3>
+              <ul className="space-y-1.5 text-sm text-foreground/80">
+                {enrichedDetails.tips.map((tip, i) => (
+                  <li key={i} className="flex gap-2">
+                    <span className="text-primary mt-0.5">•</span>
+                    <span className="leading-relaxed">{tip}</span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+
+            {/* Distance + coords */}
+            {(monument.distance_from_berhampur || (monument.latitude && monument.longitude)) && (
+              <section className="flex flex-wrap gap-2 text-xs text-muted-foreground">
+                {monument.distance_from_berhampur && (
+                  <span className="px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-foreground">
+                    📍 {monument.distance_from_berhampur}
+                  </span>
+                )}
+                {monument.latitude && monument.longitude && (
+                  <span className="px-3 py-1.5 rounded-full glass-panel">
+                    🌐 {monument.latitude.toFixed(4)}, {monument.longitude.toFixed(4)}
+                  </span>
+                )}
+              </section>
+            )}
+
+            {/* Action buttons */}
+            <section className="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-2">
+              <a
+                href={googleMapsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2 rounded-xl h-11 text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 transition-all active:scale-95 shadow-lg"
+              >
+                <MapPin className="w-4 h-4" />
+                View on Google Maps
+                <ExternalLink className="w-3.5 h-3.5" />
+              </a>
+              <a
+                href={directionsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2 rounded-xl h-11 text-sm font-medium glass-panel hover:bg-white/20 dark:hover:bg-white/10 text-foreground transition-all active:scale-95 border border-white/20"
+              >
+                <Compass className="w-4 h-4" />
+                Get Directions
+              </a>
+              <button
+                type="button"
+                onClick={isReading ? handleStop : handleSpeak}
+                className="inline-flex items-center justify-center gap-2 rounded-xl h-11 text-sm font-medium glass-button transition-all active:scale-95"
+              >
+                {isReading ? (
+                  <><VolumeX className="w-4 h-4" /> Stop Audio</>
+                ) : (
+                  <><Volume2 className="w-4 h-4" /> Listen</>
+                )}
+              </button>
+            </section>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
