@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import { MapPin, Volume2, FileText, VolumeX, ChevronDown, ChevronUp } from "lucide-react";
+import { MapPin, Volume2, FileText, VolumeX, ChevronDown, ChevronUp, Info, Calendar, Clock, Ticket, Compass, ExternalLink, Sparkles, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import type { Monument } from "@/hooks/useMonuments";
-import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
+import { motion, useMotionValue, useSpring, useTransform, AnimatePresence } from "framer-motion";
 
 interface Props {
   monument: Monument;
