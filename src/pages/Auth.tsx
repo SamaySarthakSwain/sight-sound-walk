@@ -42,18 +42,21 @@ const Auth = () => {
   const [errors, setErrors] = useState<{ email?: string; password?: string; phone?: string }>({});
 
   useEffect(() => {
-    // Check if user is already logged in
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) {
-        navigate("/");
-      }
+    let hasRedirected = false;
+    const safeRedirect = () => {
+      if (hasRedirected) return;
+      hasRedirected = true;
+      navigate("/", { replace: true });
+    };
+
+    // Listen for auth changes FIRST
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session) safeRedirect();
     });
 
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (session) {
-        navigate("/");
-      }
+    // THEN check for existing session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) safeRedirect();
     });
 
     return () => subscription.unsubscribe();
@@ -141,30 +144,42 @@ const Auth = () => {
   };
 
   const handleGoogleSignIn = async () => {
+    if (googleLoading) return; // prevent double-clicks
     setGoogleLoading(true);
     try {
       const result = await lovable.auth.signInWithOAuth("google", {
         redirect_uri: window.location.origin,
+        extraParams: {
+          prompt: "select_account",
+        },
       });
 
-      if (result.redirected) {
-        // Browser will redirect to Google - just return
+      if (result?.redirected) {
+        // Browser will redirect to Google. Keep button disabled briefly,
+        // but clear it after a short delay so a stuck redirect doesn't lock UI.
+        setTimeout(() => setGoogleLoading(false), 4000);
         return;
       }
 
-      if (result.error) {
+      if (result?.error) {
         console.error("Google OAuth Error:", result.error);
-        toast.error(result.error.message || "Failed to sign in with Google");
+        const msg = result.error.message || "Failed to sign in with Google";
+        // Friendlier message for the most common preview/network case
+        if (/fetch|network|failed/i.test(msg)) {
+          toast.error("Couldn't reach Google sign-in. Please try again, or use email login.");
+        } else {
+          toast.error(msg);
+        }
         setGoogleLoading(false);
         return;
       }
 
-      // Success - session is set
+      // Success path: tokens were set on the client. The auth listener
+      // above will navigate to "/" once the session is confirmed.
       toast.success("Signed in with Google!");
-      navigate("/");
     } catch (err) {
       console.error("Google Sign In Exception:", err);
-      toast.error(err instanceof Error ? err.message : "An error occurred");
+      toast.error(err instanceof Error ? err.message : "An error occurred during sign-in");
       setGoogleLoading(false);
     }
   };
