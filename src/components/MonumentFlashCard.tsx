@@ -82,6 +82,74 @@ const MonumentFlashCard = ({ monument, imageUrl }: Props) => {
 
   const fallbackImg = "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=300&fit=crop&q=70";
 
+  // Derive enriched info from category + facts
+  const cat = (monument.category || "").toLowerCase();
+  const enrichedDetails = (() => {
+    const isTemple = cat.includes("temple") || cat.includes("shrine");
+    const isBeach = cat.includes("beach");
+    const isWaterfall = cat.includes("waterfall");
+    const isWildlife = cat.includes("wildlife") || cat.includes("sanctuary") || cat.includes("park");
+    const isLake = cat.includes("lake") || cat.includes("wetland");
+    const isHistorical = cat.includes("historical") || cat.includes("monument") || cat.includes("fort") || cat.includes("cave");
+
+    return {
+      bestTime: isBeach || isWildlife
+        ? "October – February (cool & dry season)"
+        : isWaterfall
+        ? "July – October (post-monsoon, full flow)"
+        : isTemple
+        ? "Year-round; early morning or evening aarti recommended"
+        : "October – March (pleasant Odisha weather)",
+      visitDuration: isTemple
+        ? "1 – 2 hours"
+        : isBeach || isLake
+        ? "2 – 4 hours"
+        : isWildlife
+        ? "Half day (3 – 5 hours)"
+        : "1 – 3 hours",
+      entryFee: isTemple
+        ? "Free entry • Camera/footwear charges may apply"
+        : isWildlife
+        ? "₹20 – ₹100 (Indian) • Extra for vehicles & cameras"
+        : isHistorical
+        ? "₹15 – ₹40 (Indian) • Free for children under 15"
+        : "Free or nominal entry",
+      significance: isTemple
+        ? "Ancient pilgrimage site representing Odisha's Kalinga temple architecture and devotional heritage."
+        : isBeach
+        ? "A serene coastal escape along the Bay of Bengal, known for its golden sands and breathtaking sunrises."
+        : isWaterfall
+        ? "A natural cascade nestled in lush forests, formed by perennial streams flowing over rocky terrain."
+        : isWildlife
+        ? "A protected ecosystem sheltering native flora and fauna of Odisha's biodiversity."
+        : isLake
+        ? "An ecological treasure supporting migratory birds, aquatic life and traditional fishing communities."
+        : "A historically significant landmark reflecting Odisha's rich cultural and architectural legacy.",
+      discovery: isTemple
+        ? "Built between the 7th – 13th century CE during the reign of the Kalinga and Eastern Ganga dynasties."
+        : isHistorical
+        ? "Dates back several centuries; documented during early colonial surveys of Odisha (then Orissa)."
+        : isBeach || isLake || isWaterfall || isWildlife
+        ? "A natural site recognised and developed for tourism in the post-independence era."
+        : "Recognised heritage site with documented history spanning centuries.",
+      tips: isTemple
+        ? ["Dress modestly • Remove footwear before entry", "Photography may be restricted inside sanctum", "Carry small change for offerings"]
+        : isBeach
+        ? ["Visit at sunrise for the best views", "Avoid swimming in unmonitored zones", "Stay hydrated and use sunscreen"]
+        : isWildlife
+        ? ["Hire a registered guide for safaris", "Carry binoculars & avoid bright clothing", "Maintain silence; do not feed animals"]
+        : isWaterfall
+        ? ["Wear non-slip footwear on wet rocks", "Best viewed after monsoon (Aug – Oct)", "Avoid venturing too close to the falls"]
+        : ["Carry water and ID proof", "Respect local customs and signage", "Hire a local guide for richer context"],
+    };
+  })();
+
+  const mapsQuery = encodeURIComponent(`${monument.title}, ${monument.location}, Odisha, India`);
+  const googleMapsUrl = monument.latitude && monument.longitude
+    ? `https://www.google.com/maps/search/?api=1&query=${monument.latitude},${monument.longitude}`
+    : `https://www.google.com/maps/search/?api=1&query=${mapsQuery}`;
+  const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${mapsQuery}`;
+
   return (
     <div className="perspective-[2000px] w-full">
       <motion.div
