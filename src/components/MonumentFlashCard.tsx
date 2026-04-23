@@ -16,6 +16,7 @@ const MonumentFlashCard = ({ monument, imageUrl }: Props) => {
   const [showSummary, setShowSummary] = useState(false);
   const [imgLoaded, setImgLoaded] = useState(false);
   const [imgError, setImgError] = useState(false);
+  const [detailOpen, setDetailOpen] = useState(false);
 
   // Framer Motion 3D Hover Effect
   const x = useMotionValue(0);
