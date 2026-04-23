@@ -565,7 +565,119 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      food_ratings_public: {
+        Row: {
+          ate_here: boolean | null
+          comment: string | null
+          created_at: string | null
+          food_place_id: string | null
+          hygiene_rating: number | null
+          id: string | null
+          overall_rating: number | null
+          taste_rating: number | null
+          value_rating: number | null
+        }
+        Insert: {
+          ate_here?: boolean | null
+          comment?: string | null
+          created_at?: string | null
+          food_place_id?: string | null
+          hygiene_rating?: number | null
+          id?: string | null
+          overall_rating?: number | null
+          taste_rating?: number | null
+          value_rating?: number | null
+        }
+        Update: {
+          ate_here?: boolean | null
+          comment?: string | null
+          created_at?: string | null
+          food_place_id?: string | null
+          hygiene_rating?: number | null
+          id?: string | null
+          overall_rating?: number | null
+          taste_rating?: number | null
+          value_rating?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "food_ratings_food_place_id_fkey"
+            columns: ["food_place_id"]
+            isOneToOne: false
+            referencedRelation: "food_places"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      hotels_public: {
+        Row: {
+          address: string | null
+          amenities: string[] | null
+          available_rooms: number | null
+          created_at: string | null
+          description: string | null
+          google_place_id: string | null
+          google_rating: number | null
+          google_total_ratings: number | null
+          id: string | null
+          image_url: string | null
+          latitude: number | null
+          location: string | null
+          longitude: number | null
+          name: string | null
+          price_per_night_max: number | null
+          price_per_night_min: number | null
+          star_rating: number | null
+          total_rooms: number | null
+          updated_at: string | null
+          website: string | null
+        }
+        Insert: {
+          address?: string | null
+          amenities?: string[] | null
+          available_rooms?: number | null
+          created_at?: string | null
+          description?: string | null
+          google_place_id?: string | null
+          google_rating?: number | null
+          google_total_ratings?: number | null
+          id?: string | null
+          image_url?: string | null
+          latitude?: number | null
+          location?: string | null
+          longitude?: number | null
+          name?: string | null
+          price_per_night_max?: number | null
+          price_per_night_min?: number | null
+          star_rating?: number | null
+          total_rooms?: number | null
+          updated_at?: string | null
+          website?: string | null
+        }
+        Update: {
+          address?: string | null
+          amenities?: string[] | null
+          available_rooms?: number | null
+          created_at?: string | null
+          description?: string | null
+          google_place_id?: string | null
+          google_rating?: number | null
+          google_total_ratings?: number | null
+          id?: string | null
+          image_url?: string | null
+          latitude?: number | null
+          location?: string | null
+          longitude?: number | null
+          name?: string | null
+          price_per_night_max?: number | null
+          price_per_night_min?: number | null
+          star_rating?: number | null
+          total_rooms?: number | null
+          updated_at?: string | null
+          website?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       [_ in never]: never
