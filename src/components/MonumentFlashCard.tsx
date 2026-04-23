@@ -172,8 +172,13 @@ const MonumentFlashCard = ({ monument, imageUrl }: Props) => {
           className="relative z-10"
           style={{ transform: "translateZ(30px)" }}
         >
-          {/* Image */}
-          <div className="relative h-48 sm:h-56 overflow-hidden mt-2 mx-2 rounded-2xl shadow-lg ring-1 ring-black/5 dark:ring-white/10">
+          {/* Image (clickable to open detail) */}
+          <button
+            type="button"
+            onClick={() => setDetailOpen(true)}
+            aria-label={`View details about ${monument.title}`}
+            className="relative h-48 sm:h-56 w-[calc(100%-1rem)] overflow-hidden mt-2 mx-2 rounded-2xl shadow-lg ring-1 ring-black/5 dark:ring-white/10 block text-left focus:outline-none focus:ring-2 focus:ring-primary"
+          >
             {!imgLoaded && !imgError && (
               <Skeleton className="absolute inset-0 rounded-2xl" />
             )}
@@ -212,7 +217,14 @@ const MonumentFlashCard = ({ monument, imageUrl }: Props) => {
                 </p>
               </div>
             )}
-          </div>
+
+            {/* Tap-hint chip */}
+            <div className="absolute bottom-3 right-3 z-10">
+              <span className="text-[10px] sm:text-xs text-white/95 font-medium bg-primary/80 px-2 py-1 rounded-full backdrop-blur-md border border-white/20 inline-flex items-center gap-1">
+                <Info className="w-3 h-3" /> Tap for details
+              </span>
+            </div>
+          </button>
 
           {/* Content */}
           <div className="p-5 space-y-4">
