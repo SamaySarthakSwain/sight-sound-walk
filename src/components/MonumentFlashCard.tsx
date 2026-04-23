@@ -268,12 +268,33 @@ const MonumentFlashCard = ({ monument, imageUrl }: Props) => {
 
               <button
                 type="button"
-                onClick={toggleSummary}
+                onClick={() => setDetailOpen(true)}
                 className="flex-[0.6] inline-flex items-center justify-center gap-1.5 rounded-xl h-11 text-sm font-medium glass-panel hover:bg-white/20 dark:hover:bg-white/10 text-foreground transition-all duration-300 active:scale-95 border-white/20"
               >
-                <FileText className="w-4 h-4" />
-                {showSummary ? "Hide" : "Facts"}
+                <Info className="w-4 h-4" />
+                More Info
               </button>
+            </div>
+
+            {/* Quick action row */}
+            <div className="flex gap-3" style={{ transform: "translateZ(40px)" }}>
+              <button
+                type="button"
+                onClick={toggleSummary}
+                className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl h-10 text-xs font-medium glass-panel hover:bg-white/20 dark:hover:bg-white/10 text-foreground transition-all duration-300 active:scale-95 border-white/20"
+              >
+                <FileText className="w-3.5 h-3.5" />
+                {showSummary ? "Hide Facts" : "Quick Facts"}
+              </button>
+              <a
+                href={googleMapsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl h-10 text-xs font-medium bg-primary/15 hover:bg-primary/25 text-primary transition-all duration-300 active:scale-95 border border-primary/30"
+              >
+                <MapPin className="w-3.5 h-3.5" />
+                Google Maps
+              </a>
             </div>
 
             {/* Facts Section */}
