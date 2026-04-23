@@ -139,7 +139,7 @@ const Auth = () => {
       }
     } else {
       toast.success("Logged in successfully!");
-      navigate("/");
+      // The auth listener will navigate to "/" once the session is committed.
     }
   };
 
