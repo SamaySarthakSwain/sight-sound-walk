@@ -1,15 +1,10 @@
 import React, { useState } from "react";
-import { MapPin, Volume2, FileText, VolumeX, X, Calendar, Clock, BookOpen, Maximize2 } from "lucide-react";
+import { MapPin, Volume2, FileText, VolumeX, ChevronDown, ChevronUp, Info, Calendar, Clock, Ticket, Compass, ExternalLink, Sparkles, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import type { Monument } from "@/hooks/useMonuments";
-import { useAppTTS } from "@/hooks/useAppTTS";
-import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
+import { motion, useMotionValue, useSpring, useTransform, AnimatePresence } from "framer-motion";
 
 interface Props {
   monument: Monument;
@@ -17,11 +12,11 @@ interface Props {
 }
 
 const MonumentFlashCard = ({ monument, imageUrl }: Props) => {
+  const [isReading, setIsReading] = useState(false);
   const [showSummary, setShowSummary] = useState(false);
-  const [showModal, setShowModal] = useState(false);
   const [imgLoaded, setImgLoaded] = useState(false);
   const [imgError, setImgError] = useState(false);
-  const { speak, stop, isSpeaking: isReading } = useAppTTS();
+  const [detailOpen, setDetailOpen] = useState(false);
 
   // Framer Motion 3D Hover Effect
   const x = useMotionValue(0);
@@ -54,8 +49,31 @@ const MonumentFlashCard = ({ monument, imageUrl }: Props) => {
   };
 
   const handleSpeak = () => {
-    const text = `${monument.title}. ${monument.longDescription || monument.description}`;
-    speak(text);
+    try {
+      if ("speechSynthesis" in window) {
+        window.speechSynthesis.cancel();
+        const text = `${monument.title}. ${monument.description}`;
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.rate = 0.9;
+        utterance.pitch = 1;
+        utterance.onstart = () => setIsReading(true);
+        utterance.onend = () => setIsReading(false);
+        utterance.onerror = () => setIsReading(false);
+        window.speechSynthesis.speak(utterance);
+      }
+    } catch (err) {
+      console.error("Speech error:", err);
+      setIsReading(false);
+    }
+  };
+
+  const handleStop = () => {
+    try {
+      window.speechSynthesis.cancel();
+    } catch (err) {
+      console.error("Stop error:", err);
+    }
+    setIsReading(false);
   };
 
   const toggleSummary = () => {
@@ -64,292 +82,413 @@ const MonumentFlashCard = ({ monument, imageUrl }: Props) => {
 
   const fallbackImg = "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=300&fit=crop&q=70";
 
+  // Derive enriched info from category + facts
+  const cat = (monument.category || "").toLowerCase();
+  const enrichedDetails = (() => {
+    const isTemple = cat.includes("temple") || cat.includes("shrine");
+    const isBeach = cat.includes("beach");
+    const isWaterfall = cat.includes("waterfall");
+    const isWildlife = cat.includes("wildlife") || cat.includes("sanctuary") || cat.includes("park");
+    const isLake = cat.includes("lake") || cat.includes("wetland");
+    const isHistorical = cat.includes("historical") || cat.includes("monument") || cat.includes("fort") || cat.includes("cave");
+
+    return {
+      bestTime: isBeach || isWildlife
+        ? "October – February (cool & dry season)"
+        : isWaterfall
+        ? "July – October (post-monsoon, full flow)"
+        : isTemple
+        ? "Year-round; early morning or evening aarti recommended"
+        : "October – March (pleasant Odisha weather)",
+      visitDuration: isTemple
+        ? "1 – 2 hours"
+        : isBeach || isLake
+        ? "2 – 4 hours"
+        : isWildlife
+        ? "Half day (3 – 5 hours)"
+        : "1 – 3 hours",
+      entryFee: isTemple
+        ? "Free entry • Camera/footwear charges may apply"
+        : isWildlife
+        ? "₹20 – ₹100 (Indian) • Extra for vehicles & cameras"
+        : isHistorical
+        ? "₹15 – ₹40 (Indian) • Free for children under 15"
+        : "Free or nominal entry",
+      significance: isTemple
+        ? "Ancient pilgrimage site representing Odisha's Kalinga temple architecture and devotional heritage."
+        : isBeach
+        ? "A serene coastal escape along the Bay of Bengal, known for its golden sands and breathtaking sunrises."
+        : isWaterfall
+        ? "A natural cascade nestled in lush forests, formed by perennial streams flowing over rocky terrain."
+        : isWildlife
+        ? "A protected ecosystem sheltering native flora and fauna of Odisha's biodiversity."
+        : isLake
+        ? "An ecological treasure supporting migratory birds, aquatic life and traditional fishing communities."
+        : "A historically significant landmark reflecting Odisha's rich cultural and architectural legacy.",
+      discovery: isTemple
+        ? "Built between the 7th – 13th century CE during the reign of the Kalinga and Eastern Ganga dynasties."
+        : isHistorical
+        ? "Dates back several centuries; documented during early colonial surveys of Odisha (then Orissa)."
+        : isBeach || isLake || isWaterfall || isWildlife
+        ? "A natural site recognised and developed for tourism in the post-independence era."
+        : "Recognised heritage site with documented history spanning centuries.",
+      tips: isTemple
+        ? ["Dress modestly • Remove footwear before entry", "Photography may be restricted inside sanctum", "Carry small change for offerings"]
+        : isBeach
+        ? ["Visit at sunrise for the best views", "Avoid swimming in unmonitored zones", "Stay hydrated and use sunscreen"]
+        : isWildlife
+        ? ["Hire a registered guide for safaris", "Carry binoculars & avoid bright clothing", "Maintain silence; do not feed animals"]
+        : isWaterfall
+        ? ["Wear non-slip footwear on wet rocks", "Best viewed after monsoon (Aug – Oct)", "Avoid venturing too close to the falls"]
+        : ["Carry water and ID proof", "Respect local customs and signage", "Hire a local guide for richer context"],
+    };
+  })();
+
+  const mapsQuery = encodeURIComponent(`${monument.title}, ${monument.location}, Odisha, India`);
+  const googleMapsUrl = monument.latitude && monument.longitude
+    ? `https://www.google.com/maps/search/?api=1&query=${monument.latitude},${monument.longitude}`
+    : `https://www.google.com/maps/search/?api=1&query=${mapsQuery}`;
+  const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${mapsQuery}`;
+
   return (
-    <>
-      <div className="perspective-[2000px] w-full">
-        <motion.div
-          style={{
-            rotateX,
-            rotateY,
-            transformStyle: "preserve-3d",
-          }}
-          onMouseMove={handleMouseMove}
-          onMouseLeave={handleMouseLeave}
-          onClick={() => setShowModal(true)}
-          className="group relative rounded-3xl overflow-hidden glass-card glass-card-hover cursor-pointer"
+    <div className="perspective-[2000px] w-full">
+      <motion.div
+        style={{
+          rotateX,
+          rotateY,
+          transformStyle: "preserve-3d",
+        }}
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
+        className="group relative rounded-3xl overflow-hidden glass-card glass-card-hover"
+      >
+        {/* Neon Edge Glow (Visible on Hover) */}
+        <div className="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none shadow-[inset_0_0_20px_rgba(var(--primary),0.3)] z-0" />
+
+        {/* Subtle Gradient Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent dark:from-white/5 opacity-50 z-0" />
+
+        <div
+          className="relative z-10"
+          style={{ transform: "translateZ(30px)" }}
         >
-          {/* Neon Edge Glow (Visible on Hover) */}
-          <div className="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none shadow-[inset_0_0_20px_rgba(var(--primary),0.3)] z-0" />
-
-          {/* Subtle Gradient Overlay */}
-          <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent dark:from-white/5 opacity-50 z-0" />
-
-          <div
-            className="relative z-10"
-            style={{ transform: "translateZ(30px)" }}
-          >
-            {/* Image */}
-            <div className="relative h-48 sm:h-56 overflow-hidden mt-2 mx-2 rounded-2xl shadow-lg ring-1 ring-black/5 dark:ring-white/10 group/img">
-              {!imgLoaded && !imgError && (
-                <Skeleton className="absolute inset-0 rounded-2xl" />
-              )}
-              <img
-                src={imgError ? fallbackImg : imageUrl}
-                alt={monument.title}
-                className={`w-full h-full object-cover transition-transform duration-700 group-[.group/img]:hover:scale-110 ${imgLoaded ? "opacity-100" : "opacity-0"}`}
-                loading="lazy"
-                onLoad={() => setImgLoaded(true)}
-                onError={() => {
-                  setImgError(true);
-                  setImgLoaded(true);
-                }}
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-transparent" />
-              
-              <div className="absolute inset-0 bg-black/40 opacity-0 group-[.group/img]:hover:opacity-100 transition-opacity flex items-center justify-center">
-                <Maximize2 className="w-8 h-8 text-white drop-shadow-lg" />
-              </div>
-
-              {/* Category badge */}
-              <div className="absolute top-3 left-3 z-10" style={{ transform: "translateZ(40px)" }}>
-                <Badge className="bg-white/30 hover:bg-white/40 text-white backdrop-blur-xl border border-white/40 font-medium shadow-md">
-                  {monument.category}
-                </Badge>
-              </div>
-
-              {monument.is_featured && (
-                <div className="absolute top-3 right-3 z-10" style={{ transform: "translateZ(40px)" }}>
-                  <Badge variant="secondary" className="bg-gradient-to-r from-amber-500/80 to-orange-500/80 hover:from-amber-500 hover:to-orange-500 text-white backdrop-blur-xl border border-amber-300/50 shadow-md font-medium">
-                    Featured
-                  </Badge>
-                </div>
-              )}
-
-              {monument.distance_from_berhampur && (
-                <div className="absolute bottom-3 left-3 z-10" style={{ transform: "translateZ(20px)" }}>
-                  <p className="text-xs text-white/95 font-medium drop-shadow-lg bg-black/50 px-2 py-1 rounded-full backdrop-blur-md border border-white/20">
-                    📍 {monument.distance_from_berhampur}
-                  </p>
-                </div>
-              )}
-            </div>
-
-            {/* Content */}
-            <div className="p-5 space-y-4">
-              <div style={{ transform: "translateZ(50px)" }}>
-                <h3 className="text-xl sm:text-2xl font-bold text-foreground bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70 line-clamp-1 pb-1">
-                  {monument.title}
-                </h3>
-
-                <div className="flex items-center gap-1.5 text-xs sm:text-sm text-muted-foreground mt-1">
-                  <MapPin className="w-4 h-4 shrink-0 text-primary" />
-                  <span className="line-clamp-1">{monument.location}</span>
-                </div>
-              </div>
-
-              <p
-                className="text-foreground/80 text-sm line-clamp-3 leading-relaxed"
-                style={{ transform: "translateZ(20px)" }}
-              >
-                {monument.description}
-              </p>
-
-              {/* Buttons */}
-              <div
-                className="flex gap-2 pt-2"
-                style={{ transform: "translateZ(40px)" }}
-              >
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    if (isReading) stop();
-                    else handleSpeak();
-                  }}
-                  className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl h-10 text-xs sm:text-sm font-medium transition-all duration-300 active:scale-95 shadow-lg overflow-hidden relative glass-button"
-                  style={{
-                    backgroundColor: isReading ? "hsl(var(--destructive)/0.8)" : "",
-                  }}
-                >
-                  {isReading ? (
-                    <><VolumeX className="w-4 h-4" /> Stop</>
-                  ) : (
-                    <><Volume2 className="w-4 h-4" /> Listen</>
-                  )}
-                </button>
-
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    toggleSummary();
-                  }}
-                  className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl h-10 text-xs sm:text-sm font-medium glass-panel hover:bg-white/20 dark:hover:bg-white/10 text-foreground transition-all duration-300 active:scale-95 border-white/20"
-                >
-                  <FileText className="w-4 h-4" />
-                  {showSummary ? "Hide" : "Facts"}
-                </button>
-
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setShowModal(true);
-                  }}
-                  className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl h-10 text-xs sm:text-sm font-medium glass-panel hover:bg-primary/20 bg-primary/10 text-primary transition-all duration-300 active:scale-95 border-primary/20"
-                >
-                  <BookOpen className="w-4 h-4" />
-                  Details
-                </button>
-              </div>
-
-              {/* Facts Section */}
-              {showSummary && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: "auto" }}
-                  className="overflow-hidden"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  {monument.facts && monument.facts.length > 0 ? (
-                    <div className="p-4 rounded-xl glass-panel space-y-3 mt-3 shadow-inner">
-                      <h4 className="font-semibold text-sm flex items-center gap-1.5 text-foreground">
-                        <FileText className="w-4 h-4 text-primary" />
-                        Historical Facts
-                      </h4>
-                      <ul className="list-disc list-inside space-y-1.5 text-sm text-foreground/80 marker:text-primary/50">
-                        {monument.facts.map((fact, index) => (
-                          <li key={index} className="leading-relaxed">{fact}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  ) : (
-                    <div className="p-4 rounded-xl glass-panel mt-3 shadow-inner">
-                      <p className="text-sm text-foreground/70 italic text-center">
-                        No additional facts available for this monument yet.
-                      </p>
-                    </div>
-                  )}
-                </motion.div>
-              )}
-            </div>
-          </div>
-        </motion.div>
-      </div>
-
-      <Dialog open={showModal} onOpenChange={setShowModal}>
-        <DialogContent
-          className="max-w-4xl w-[95vw] sm:w-full h-[92vh] sm:h-[85vh] max-h-[90vh] p-0 gap-0 flex flex-col overflow-hidden rounded-t-3xl sm:rounded-2xl border-border [&>button]:hidden"
-        >
-          <DialogTitle className="sr-only">{monument.title} – Details</DialogTitle>
+          {/* Image (clickable to open detail) */}
           <button
             type="button"
-            onClick={() => setShowModal(false)}
-            className="absolute top-3 right-3 sm:top-4 sm:right-4 z-20 p-2 rounded-full bg-background/90 hover:bg-muted text-foreground border border-border shadow-lg"
-            aria-label="Close modal"
+            onClick={() => setDetailOpen(true)}
+            aria-label={`View details about ${monument.title}`}
+            className="relative h-48 sm:h-56 w-[calc(100%-1rem)] overflow-hidden mt-2 mx-2 rounded-2xl shadow-lg ring-1 ring-black/5 dark:ring-white/10 block text-left focus:outline-none focus:ring-2 focus:ring-primary"
           >
-            <X className="w-5 h-5" />
+            {!imgLoaded && !imgError && (
+              <Skeleton className="absolute inset-0 rounded-2xl" />
+            )}
+            <img
+              src={imgError ? fallbackImg : imageUrl}
+              alt={monument.title}
+              className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 ${imgLoaded ? "opacity-100" : "opacity-0"}`}
+              loading="lazy"
+              onLoad={() => setImgLoaded(true)}
+              onError={() => {
+                setImgError(true);
+                setImgLoaded(true);
+              }}
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-transparent" />
+
+            {/* Category badge */}
+            <div className="absolute top-3 left-3 z-10" style={{ transform: "translateZ(40px)" }}>
+              <Badge className="bg-white/30 hover:bg-white/40 text-white backdrop-blur-xl border border-white/40 font-medium shadow-md">
+                {monument.category}
+              </Badge>
+            </div>
+
+            {monument.is_featured && (
+              <div className="absolute top-3 right-3 z-10" style={{ transform: "translateZ(40px)" }}>
+                <Badge variant="secondary" className="bg-gradient-to-r from-amber-500/80 to-orange-500/80 hover:from-amber-500 hover:to-orange-500 text-white backdrop-blur-xl border border-amber-300/50 shadow-md font-medium">
+                  Featured
+                </Badge>
+              </div>
+            )}
+
+            {monument.distance_from_berhampur && (
+              <div className="absolute bottom-3 left-3 z-10" style={{ transform: "translateZ(20px)" }}>
+                <p className="text-xs text-white/95 font-medium drop-shadow-lg bg-black/50 px-2 py-1 rounded-full backdrop-blur-md border border-white/20">
+                  📍 {monument.distance_from_berhampur}
+                </p>
+              </div>
+            )}
+
+            {/* Tap-hint chip */}
+            <div className="absolute bottom-3 right-3 z-10">
+              <span className="text-[10px] sm:text-xs text-white/95 font-medium bg-primary/80 px-2 py-1 rounded-full backdrop-blur-md border border-white/20 inline-flex items-center gap-1">
+                <Info className="w-3 h-3" /> Tap for details
+              </span>
+            </div>
           </button>
 
-          <div className="flex-1 overflow-y-auto overflow-x-hidden min-h-0 min-w-0 scrollbar-thin">
-            <div className="relative h-48 sm:h-64 md:h-80 lg:h-96 w-full shrink-0 min-w-0">
-              <img
-                src={imgError ? fallbackImg : imageUrl}
-                alt=""
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent" />
-<div className="absolute bottom-6 left-6 sm:left-10 z-10 right-12 min-w-0">
-                <Badge className="bg-primary/90 text-primary-foreground mb-3 backdrop-blur-md border border-primary/50 shadow-lg">
-                    {monument.category}
-                  </Badge>
-                <h2 className="text-2xl sm:text-4xl md:text-5xl font-bold text-white mb-2 drop-shadow-md break-words line-clamp-2">
-                    {monument.title}
-                  </h2>
-                <div className="flex items-center gap-2 text-white/90 font-medium drop-shadow min-w-0">
-                  <MapPin className="w-5 h-5 shrink-0" />
-                  <span className="truncate">{monument.location}</span>
-                </div>
+          {/* Content */}
+          <div className="p-5 space-y-4">
+            <div style={{ transform: "translateZ(50px)" }}>
+              <h3 className="text-xl sm:text-2xl font-bold text-foreground bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70 line-clamp-1 pb-1">
+                {monument.title}
+              </h3>
+
+              <div className="flex items-center gap-1.5 text-xs sm:text-sm text-muted-foreground mt-1">
+                <MapPin className="w-4 h-4 shrink-0 text-primary" />
+                <span className="line-clamp-1">{monument.location}</span>
               </div>
             </div>
 
-            <div className="p-4 sm:p-6 md:p-10 space-y-6 sm:space-y-8 min-w-0">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 min-w-0">
-                <div className="md:col-span-2 space-y-6 min-w-0">
-                  <div className="min-w-0">
-                    <h3 className="text-xl font-semibold mb-3 flex items-center gap-2 text-foreground">
-                      <BookOpen className="w-5 h-5 shrink-0 text-primary" />
-                      About
-                    </h3>
-                    <p className="text-foreground/80 leading-relaxed text-lg break-words">
-                      {monument.longDescription || monument.description}
+            <p
+              className="text-foreground/80 text-sm line-clamp-3 leading-relaxed"
+              style={{ transform: "translateZ(20px)" }}
+            >
+              {monument.description}
+            </p>
+
+            {/* Buttons */}
+            <div
+              className="flex gap-3 pt-2"
+              style={{ transform: "translateZ(40px)" }}
+            >
+              <button
+                type="button"
+                onClick={isReading ? handleStop : handleSpeak}
+                className="flex-1 inline-flex items-center justify-center gap-2 rounded-xl h-11 text-sm font-medium transition-all duration-300 active:scale-95 shadow-lg overflow-hidden relative glass-button"
+                style={{
+                  backgroundColor: isReading ? "hsl(var(--destructive)/0.8)" : "",
+                }}
+              >
+                {isReading ? (
+                  <><VolumeX className="w-4 h-4" /> Stop</>
+                ) : (
+                  <><Volume2 className="w-4 h-4" /> Listen</>
+                )}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setDetailOpen(true)}
+                className="flex-[0.6] inline-flex items-center justify-center gap-1.5 rounded-xl h-11 text-sm font-medium glass-panel hover:bg-white/20 dark:hover:bg-white/10 text-foreground transition-all duration-300 active:scale-95 border-white/20"
+              >
+                <Info className="w-4 h-4" />
+                More Info
+              </button>
+            </div>
+
+            {/* Quick action row */}
+            <div className="flex gap-3" style={{ transform: "translateZ(40px)" }}>
+              <button
+                type="button"
+                onClick={toggleSummary}
+                className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl h-10 text-xs font-medium glass-panel hover:bg-white/20 dark:hover:bg-white/10 text-foreground transition-all duration-300 active:scale-95 border-white/20"
+              >
+                <FileText className="w-3.5 h-3.5" />
+                {showSummary ? "Hide Facts" : "Quick Facts"}
+              </button>
+              <a
+                href={googleMapsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl h-10 text-xs font-medium bg-primary/15 hover:bg-primary/25 text-primary transition-all duration-300 active:scale-95 border border-primary/30"
+              >
+                <MapPin className="w-3.5 h-3.5" />
+                Google Maps
+              </a>
+            </div>
+
+            {/* Facts Section */}
+            {showSummary && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                className="overflow-hidden"
+              >
+                {monument.facts && monument.facts.length > 0 ? (
+                  <div className="p-4 rounded-xl glass-panel space-y-3 mt-3 shadow-inner">
+                    <h4 className="font-semibold text-sm flex items-center gap-1.5 text-foreground">
+                      <FileText className="w-4 h-4 text-primary" />
+                      Historical Facts
+                    </h4>
+                    <ul className="list-disc list-inside space-y-1.5 text-sm text-foreground/80 marker:text-primary/50">
+                      {monument.facts.map((fact, index) => (
+                        <li key={index} className="leading-relaxed">{fact}</li>
+                      ))}
+                    </ul>
+                  </div>
+                ) : (
+                  <div className="p-4 rounded-xl glass-panel mt-3 shadow-inner">
+                    <p className="text-sm text-foreground/70 italic text-center">
+                      No additional facts available for this monument yet.
                     </p>
                   </div>
+                )}
+              </motion.div>
+            )}
+          </div>
+        </div>
+      </motion.div>
 
-                  {monument.history && (
-                    <div className="min-w-0">
-                      <h3 className="text-xl font-semibold mb-3 flex items-center gap-2 text-foreground">
-                        <Clock className="w-5 h-5 shrink-0 text-primary" />
-                        History
-                      </h3>
-                      <p className="text-foreground/80 leading-relaxed break-words">
-                        {monument.history}
-                      </p>
-                    </div>
-                  )}
-                </div>
-
-                <div className="space-y-6 min-w-0">
-                  {monument.builtYear && (
-                    <div className="glass-panel p-5 rounded-2xl relative overflow-hidden">
-                      <div className="absolute -right-4 -top-4 w-16 h-16 bg-primary/20 blur-2xl rounded-full" />
-                      <h4 className="text-sm text-foreground/60 mb-1 flex items-center gap-2">
-                        <Calendar className="w-4 h-4" />
-                        Built Year
-                      </h4>
-                      <p className="text-xl font-semibold text-foreground">
-                        {monument.builtYear}
-                      </p>
-                    </div>
-                  )}
-
-                  {monument.facts && monument.facts.length > 0 && (
-                    <div className="glass-panel p-5 rounded-2xl">
-                      <h4 className="font-semibold mb-4 flex items-center gap-2 text-foreground">
-                        <FileText className="w-4 h-4 text-primary" />
-                        Key Facts
-                      </h4>
-                      <ul className="space-y-3">
-                        {monument.facts.map((fact, index) => (
-                          <li key={index} className="flex gap-3 text-sm text-foreground/80">
-                            <span className="w-2 h-2 rounded-full bg-primary/50 shrink-0 mt-1.5" />
-                            <span className="leading-relaxed">{fact}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              <div className="pt-4 sm:pt-6 flex justify-center border-t border-border">
-                <button
-                  type="button"
-                  onClick={isReading ? stop : handleSpeak}
-                  className="flex items-center gap-2 glass-button px-5 py-2.5 sm:px-6 sm:py-3 rounded-xl text-sm sm:text-base font-medium shadow-xl hover:shadow-primary/20 transition-all active:scale-95"
-                >
-                  {isReading ? (
-                    <><VolumeX className="w-4 h-4 sm:w-5 sm:h-5" /> Stop Audio Guide</>
-                  ) : (
-                    <><Volume2 className="w-4 h-4 sm:w-5 sm:h-5" /> Play Audio Tour</>
-                  )}
-                </button>
+      {/* Detail Dialog */}
+      <Dialog open={detailOpen} onOpenChange={setDetailOpen}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto p-0 glass-card border-white/20">
+          {/* Hero image */}
+          <div className="relative h-56 sm:h-72 w-full overflow-hidden rounded-t-lg">
+            <img
+              src={imgError ? fallbackImg : imageUrl}
+              alt={monument.title}
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-transparent" />
+            <div className="absolute bottom-4 left-5 right-5">
+              <Badge className="bg-primary/90 text-primary-foreground mb-2">{monument.category}</Badge>
+              <h2 className="text-2xl sm:text-3xl font-bold text-foreground drop-shadow-lg">{monument.title}</h2>
+              <div className="flex items-center gap-1.5 text-sm text-foreground/80 mt-1">
+                <MapPin className="w-4 h-4 text-primary" />
+                <span>{monument.location}</span>
               </div>
             </div>
+          </div>
+
+          <div className="p-5 sm:p-6 space-y-5">
+            <DialogHeader className="sr-only">
+              <DialogTitle>{monument.title}</DialogTitle>
+              <DialogDescription>Detailed information about {monument.title}</DialogDescription>
+            </DialogHeader>
+
+            {/* Overview */}
+            <section>
+              <h3 className="font-semibold text-base flex items-center gap-2 mb-2">
+                <Sparkles className="w-4 h-4 text-primary" />
+                Overview
+              </h3>
+              <p className="text-sm text-foreground/80 leading-relaxed">{monument.description}</p>
+            </section>
+
+            {/* Significance */}
+            <section className="p-4 rounded-xl glass-panel">
+              <h3 className="font-semibold text-sm flex items-center gap-2 mb-2">
+                <Compass className="w-4 h-4 text-primary" />
+                Cultural & Historical Significance
+              </h3>
+              <p className="text-sm text-foreground/80 leading-relaxed">{enrichedDetails.significance}</p>
+            </section>
+
+            {/* Discovery / Era */}
+            <section className="p-4 rounded-xl glass-panel">
+              <h3 className="font-semibold text-sm flex items-center gap-2 mb-2">
+                <Calendar className="w-4 h-4 text-primary" />
+                Era & Discovery
+              </h3>
+              <p className="text-sm text-foreground/80 leading-relaxed">{enrichedDetails.discovery}</p>
+            </section>
+
+            {/* Quick info grid */}
+            <section className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div className="p-3 rounded-xl glass-panel">
+                <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-1">
+                  <Calendar className="w-3.5 h-3.5 text-primary" /> Best Time
+                </div>
+                <p className="text-sm font-medium text-foreground">{enrichedDetails.bestTime}</p>
+              </div>
+              <div className="p-3 rounded-xl glass-panel">
+                <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-1">
+                  <Clock className="w-3.5 h-3.5 text-primary" /> Visit Duration
+                </div>
+                <p className="text-sm font-medium text-foreground">{enrichedDetails.visitDuration}</p>
+              </div>
+              <div className="p-3 rounded-xl glass-panel">
+                <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-1">
+                  <Ticket className="w-3.5 h-3.5 text-primary" /> Entry Fee
+                </div>
+                <p className="text-sm font-medium text-foreground">{enrichedDetails.entryFee}</p>
+              </div>
+            </section>
+
+            {/* Historical facts */}
+            {monument.facts && monument.facts.length > 0 && (
+              <section className="p-4 rounded-xl glass-panel">
+                <h3 className="font-semibold text-sm flex items-center gap-2 mb-2">
+                  <FileText className="w-4 h-4 text-primary" />
+                  Historical Facts
+                </h3>
+                <ul className="list-disc list-inside space-y-1.5 text-sm text-foreground/80 marker:text-primary/60">
+                  {monument.facts.map((fact, i) => (
+                    <li key={i} className="leading-relaxed">{fact}</li>
+                  ))}
+                </ul>
+              </section>
+            )}
+
+            {/* Travel tips */}
+            <section className="p-4 rounded-xl glass-panel">
+              <h3 className="font-semibold text-sm flex items-center gap-2 mb-2">
+                <Info className="w-4 h-4 text-primary" />
+                Travel Tips
+              </h3>
+              <ul className="space-y-1.5 text-sm text-foreground/80">
+                {enrichedDetails.tips.map((tip, i) => (
+                  <li key={i} className="flex gap-2">
+                    <span className="text-primary mt-0.5">•</span>
+                    <span className="leading-relaxed">{tip}</span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+
+            {/* Distance + coords */}
+            {(monument.distance_from_berhampur || (monument.latitude && monument.longitude)) && (
+              <section className="flex flex-wrap gap-2 text-xs text-muted-foreground">
+                {monument.distance_from_berhampur && (
+                  <span className="px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-foreground">
+                    📍 {monument.distance_from_berhampur}
+                  </span>
+                )}
+                {monument.latitude && monument.longitude && (
+                  <span className="px-3 py-1.5 rounded-full glass-panel">
+                    🌐 {monument.latitude.toFixed(4)}, {monument.longitude.toFixed(4)}
+                  </span>
+                )}
+              </section>
+            )}
+
+            {/* Action buttons */}
+            <section className="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-2">
+              <a
+                href={googleMapsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2 rounded-xl h-11 text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 transition-all active:scale-95 shadow-lg"
+              >
+                <MapPin className="w-4 h-4" />
+                View on Google Maps
+                <ExternalLink className="w-3.5 h-3.5" />
+              </a>
+              <a
+                href={directionsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2 rounded-xl h-11 text-sm font-medium glass-panel hover:bg-white/20 dark:hover:bg-white/10 text-foreground transition-all active:scale-95 border border-white/20"
+              >
+                <Compass className="w-4 h-4" />
+                Get Directions
+              </a>
+              <button
+                type="button"
+                onClick={isReading ? handleStop : handleSpeak}
+                className="inline-flex items-center justify-center gap-2 rounded-xl h-11 text-sm font-medium glass-button transition-all active:scale-95"
+              >
+                {isReading ? (
+                  <><VolumeX className="w-4 h-4" /> Stop Audio</>
+                ) : (
+                  <><Volume2 className="w-4 h-4" /> Listen</>
+                )}
+              </button>
+            </section>
           </div>
         </DialogContent>
       </Dialog>
-    </>
+    </div>
   );
 };
 

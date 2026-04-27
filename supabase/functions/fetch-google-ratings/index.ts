@@ -3,10 +3,8 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-cron-secret",
 };
-
-const GOOGLE_API_KEY = "AIzaSyBVVkTWwfx3NW6bFi1t7CEomwv1owCO1SI";
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -14,6 +12,44 @@ serve(async (req) => {
   }
 
   try {
+    // Authorization: require either a valid cron secret OR an authenticated user
+    const cronSecret = req.headers.get("x-cron-secret");
+    const expectedCronSecret = Deno.env.get("CRON_SECRET");
+    const authHeader = req.headers.get("Authorization");
+
+    let authorized = false;
+
+    if (expectedCronSecret && cronSecret === expectedCronSecret) {
+      authorized = true;
+    } else if (authHeader?.startsWith("Bearer ")) {
+      const supabaseAnon = createClient(
+        Deno.env.get("SUPABASE_URL")!,
+        Deno.env.get("SUPABASE_ANON_KEY")!,
+        { global: { headers: { Authorization: authHeader } } }
+      );
+      const token = authHeader.replace("Bearer ", "");
+      const { data, error } = await supabaseAnon.auth.getClaims(token);
+      if (!error && data?.claims) {
+        authorized = true;
+      }
+    }
+
+    if (!authorized) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    const GOOGLE_API_KEY = Deno.env.get("GOOGLE_MAPS_API_KEY");
+    if (!GOOGLE_API_KEY) {
+      console.error("GOOGLE_MAPS_API_KEY not configured");
+      return new Response(JSON.stringify({ error: "Service not configured" }), {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseKey);
@@ -42,7 +78,7 @@ serve(async (req) => {
       // If no place ID, search for it
       if (!placeId && place.latitude && place.longitude) {
         const searchUrl = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${place.latitude},${place.longitude}&radius=500&keyword=${encodeURIComponent(place.name)}&key=${GOOGLE_API_KEY}`;
-        
+
         const searchResponse = await fetch(searchUrl);
         const searchData = await searchResponse.json();
 
@@ -54,7 +90,7 @@ serve(async (req) => {
       if (placeId) {
         // Get place details
         const detailsUrl = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=rating,user_ratings_total&key=${GOOGLE_API_KEY}`;
-        
+
         const detailsResponse = await fetch(detailsUrl);
         const detailsData = await detailsResponse.json();
 
@@ -86,8 +122,7 @@ serve(async (req) => {
     });
   } catch (error) {
     console.error("Error:", error);
-    const message = error instanceof Error ? error.message : "Unknown error";
-    return new Response(JSON.stringify({ error: message }), {
+    return new Response(JSON.stringify({ error: "Failed to process request" }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });

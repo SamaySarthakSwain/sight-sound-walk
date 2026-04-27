@@ -42,18 +42,21 @@ const Auth = () => {
   const [errors, setErrors] = useState<{ email?: string; password?: string; phone?: string }>({});
 
   useEffect(() => {
-    // Check if user is already logged in
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) {
-        navigate("/");
-      }
+    let hasRedirected = false;
+    const safeRedirect = () => {
+      if (hasRedirected) return;
+      hasRedirected = true;
+      navigate("/", { replace: true });
+    };
+
+    // Listen for auth changes FIRST
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session) safeRedirect();
     });
 
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (session) {
-        navigate("/");
-      }
+    // THEN check for existing session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) safeRedirect();
     });
 
     return () => subscription.unsubscribe();
@@ -136,43 +139,47 @@ const Auth = () => {
       }
     } else {
       toast.success("Logged in successfully!");
-      navigate("/");
+      // The auth listener will navigate to "/" once the session is committed.
     }
   };
 
   const handleGoogleSignIn = async () => {
+    if (googleLoading) return; // prevent double-clicks
     setGoogleLoading(true);
     try {
-      const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: "google",
-        options: {
-          redirectTo: window.location.origin,
+      const result = await lovable.auth.signInWithOAuth("google", {
+        redirect_uri: window.location.origin,
+        extraParams: {
+          prompt: "select_account",
         },
       });
 
-      if (error) {
-        console.error("Google OAuth Error:", error);
-        if (error.message?.includes("OAuth secret") || error.message?.includes("provider")) {
-          toast.error("Google login is not configured yet. Please use Email login below.", {
-            duration: 5000,
-          });
+      if (result?.redirected) {
+        // Browser will redirect to Google. Keep button disabled briefly,
+        // but clear it after a short delay so a stuck redirect doesn't lock UI.
+        setTimeout(() => setGoogleLoading(false), 4000);
+        return;
+      }
+
+      if (result?.error) {
+        console.error("Google OAuth Error:", result.error);
+        const msg = result.error.message || "Failed to sign in with Google";
+        // Friendlier message for the most common preview/network case
+        if (/fetch|network|failed/i.test(msg)) {
+          toast.error("Couldn't reach Google sign-in. Please try again, or use email login.");
         } else {
-          toast.error(error.message || "Failed to sign in with Google");
+          toast.error(msg);
         }
         setGoogleLoading(false);
         return;
       }
 
-      // If signInWithOAuth succeeds, it will redirect the browser automatically.
-      // We keep the loading indicator active during the redirect.
-      if (!data?.url) {
-        setGoogleLoading(false);
-      }
+      // Success path: tokens were set on the client. The auth listener
+      // above will navigate to "/" once the session is confirmed.
+      toast.success("Signed in with Google!");
     } catch (err) {
       console.error("Google Sign In Exception:", err);
-      toast.error("Google login is not available. Please use Email login below.", {
-        duration: 5000,
-      });
+      toast.error(err instanceof Error ? err.message : "An error occurred during sign-in");
       setGoogleLoading(false);
     }
   };
@@ -200,6 +207,11 @@ const Auth = () => {
     }
   };
 
+  const PasswordRequirements = () => (
+    <p className="text-xs text-muted-foreground mt-1">
+      Min 8 characters, 1 uppercase letter, 1 number
+    </p>
+  );
 
   const ErrorMessage = ({ message }: { message?: string }) => {
     if (!message) return null;
@@ -357,6 +369,7 @@ const Auth = () => {
                             className={`h-11 ${errors.password ? "border-destructive" : ""}`}
                           />
                           <ErrorMessage message={errors.password} />
+                          <PasswordRequirements />
                         </div>
                         <Button type="submit" className="w-full h-11" disabled={loading}>
                           {loading ? (
@@ -402,6 +415,7 @@ const Auth = () => {
                             className={`h-11 ${errors.password ? "border-destructive" : ""}`}
                           />
                           <ErrorMessage message={errors.password} />
+                          <PasswordRequirements />
                         </div>
                         <Button type="submit" className="w-full h-11" disabled={loading}>
                           {loading ? (
