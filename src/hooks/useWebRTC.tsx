@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import type { RealtimeChannel } from "@supabase/supabase-js";
 
 export type PeerData = {
     id: string;
@@ -44,7 +45,7 @@ export const useWebRTC = (sessionId: string | null, username: string | null, loc
     const connectionsRef = useRef<Record<string, RTCPeerConnection>>({});
     const dataChannelsRef = useRef<Record<string, RTCDataChannel>>({});
     const localStreamRef = useRef<MediaStream | null>(null);
-    const channelRef = useRef<BroadcastChannel | null>(null);
+    const channelRef = useRef<RealtimeChannel | null>(null);
     const clientId = useRef(Math.random().toString(36).substring(2, 9)).current;
 
     // We need to keep refs synced with state so we can access current state in event listeners
@@ -198,7 +199,7 @@ export const useWebRTC = (sessionId: string | null, username: string | null, loc
 
         channel
             .on("broadcast", { event: "webrtc" }, async ({ payload }) => {
-                const { type, senderId, targetId, offer, answer, candidate, u, l, gpsCoords } = payload;
+                const { type, senderId, targetId, offer, answer, candidate, u, l, gpsCoords } = payload as Record<string, unknown>;
 
                 if (senderId === clientId) return;
                 if (targetId && targetId !== clientId) return;
@@ -220,35 +221,35 @@ export const useWebRTC = (sessionId: string | null, username: string | null, loc
                     });
                 }
                 else if (type === "sdp-offer") {
-                    updatePeer(senderId, { username: u, location: l });
-                    const pc = createPeerConnection(senderId);
-                    await pc.setRemoteDescription(new RTCSessionDescription(offer));
+                    updatePeer(senderId as string, { username: u as string, location: l as string });
+                    const pc = createPeerConnection(senderId as string);
+                    await pc.setRemoteDescription(new RTCSessionDescription(offer as RTCSessionDescriptionInit));
                     const newAnswer = await pc.createAnswer();
                     await pc.setLocalDescription(newAnswer);
 
                     broadcastMessage({
                         type: "sdp-answer",
-                        targetId: senderId,
+                        targetId: senderId as string,
                         answer: newAnswer,
                     });
                 }
                 else if (type === "sdp-answer") {
-                    const pc = connectionsRef.current[senderId];
+                    const pc = connectionsRef.current[senderId as string];
                     if (pc) {
-                        await pc.setRemoteDescription(new RTCSessionDescription(answer));
+                        await pc.setRemoteDescription(new RTCSessionDescription(answer as RTCSessionDescriptionInit));
                     }
                 }
                 else if (type === "ice-candidate") {
-                    const pc = connectionsRef.current[senderId];
+                    const pc = connectionsRef.current[senderId as string];
                     if (pc) {
-                        await pc.addIceCandidate(new RTCIceCandidate(candidate)).catch(console.error);
+                        await pc.addIceCandidate(new RTCIceCandidate(candidate as RTCIceCandidateInit)).catch(console.error);
                     }
                 }
                 else if (type === "metadata-update") {
-                    updatePeer(senderId, { gpsCoords });
+                    updatePeer(senderId as string, { gpsCoords: (gpsCoords as { lat: number; lng: number } | null | undefined) ?? null });
                 }
                 else if (type === "peer-leave") {
-                    removePeer(senderId);
+                    removePeer(senderId as string);
                 }
             })
             .subscribe((status) => {
