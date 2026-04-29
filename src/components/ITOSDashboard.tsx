@@ -204,7 +204,7 @@ const ITOSDashboard = () => {
               {weatherOptions.map((w) => (
                 <button
                   key={w.value}
-                  onClick={() => setWeather(w.value)}
+                  onClick={() => setWeather(w.value as WeatherType)}
                   className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all ${
                     weather === w.value
                       ? "bg-teal-500/20 border-teal-500/50 text-teal-400 shadow-[0_0_10px_rgba(20,184,166,0.2)]"
