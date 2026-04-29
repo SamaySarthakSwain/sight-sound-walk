@@ -12,6 +12,8 @@ import { dijkstra, astar, findGreenCorridor, type RouteResult } from "@/lib/itos
 import { optimizeSignals, type SignalAction } from "@/lib/itos/rlSignalOptimizer";
 import { runIncidentDetection, type DetectedIncident, getWeatherCapacityFactor } from "@/lib/itos/incidentDetector";
 
+type WeatherType = "clear" | "rain" | "fog" | "heavy_rain";
+
 delete (L.Icon.Default.prototype as { _getIconUrl?: unknown })._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png",
@@ -33,7 +35,7 @@ const weatherOptions = [
 
 const ITOSDashboard = () => {
   const [nodes, setNodes] = useState<IntersectionNode[]>(intersections);
-  const [weather, setWeather] = useState("clear");
+  const [weather, setWeather] = useState<WeatherType>("clear");
   const [signals, setSignals] = useState<Map<string, { action: SignalAction; reward: number }>>(new Map());
   const [incidents, setIncidents] = useState<DetectedIncident[]>([]);
   const [emergency, setEmergency] = useState<EmergencyVehicle | null>(null);
@@ -206,7 +208,7 @@ const ITOSDashboard = () => {
             {weatherOptions.map((w) => (
               <button
                 key={w.value}
-                onClick={() => setWeather(w.value)}
+                onClick={() => setWeather(w.value as WeatherType)}
                 className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all ${
                   weather === w.value
                     ? "bg-primary/20 border-primary/50 text-primary shadow-[0_0_10px_rgba(var(--primary),0.3)]"

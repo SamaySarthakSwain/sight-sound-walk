@@ -38,7 +38,7 @@ const TimeTravelPhotoViewer = ({ model, onClose }: TimeTravelPhotoViewerProps) =
   }, [selectedYear, photos]);
 
   useEffect(() => {
-    let interval: NodeJS.Timeout;
+    let interval: ReturnType<typeof setInterval> | undefined;
     if (isAutoPlaying) {
       interval = setInterval(() => {
         setSelectedYear((prev) => {
@@ -50,7 +50,9 @@ const TimeTravelPhotoViewer = ({ model, onClose }: TimeTravelPhotoViewerProps) =
         });
       }, 50);
     }
-    return () => clearInterval(interval);
+    return () => {
+      if (interval) clearInterval(interval);
+    };
   }, [isAutoPlaying, maxYear]);
 
   return (

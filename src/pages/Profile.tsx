@@ -46,6 +46,13 @@ interface SearchHistory {
   searched_at: string;
 }
 
+interface SuggestedPlace {
+  id: string;
+  title: string;
+  category: string;
+  image_url: string | null;
+}
+
 const GuestProfileView = () => {
   const navigate = useNavigate();
 
@@ -119,7 +126,7 @@ const Profile = () => {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [visitHistory, setVisitHistory] = useState<VisitHistory[]>([]);
   const [searchHistory, setSearchHistory] = useState<SearchHistory[]>([]);
-  const [suggestedPlaces, setSuggestedPlaces] = useState<unknown[]>([]);
+  const [suggestedPlaces, setSuggestedPlaces] = useState<SuggestedPlace[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -187,7 +194,7 @@ const Profile = () => {
 
           // Filter out already visited places
           setSuggestedPlaces(
-            (suggestions || []).filter(s => !visitedNames.includes(s.title))
+            ((suggestions || []) as SuggestedPlace[]).filter((s) => !visitedNames.includes(s.title))
           );
         }
       }

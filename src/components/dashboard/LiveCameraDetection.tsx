@@ -161,7 +161,7 @@ const LiveCameraDetection = () => {
         now - lastMetadataRef.current.time > 1000 &&
         (persons.length !== lastMetadataRef.current.p || vehicles.length !== lastMetadataRef.current.v)
       ) {
-        handleMetadataUpdate(persons.length, vehicles.length, gpsCoords);
+        handleMetadataUpdate(persons.length, vehicles.length, undefined, gpsCoords);
         lastMetadataRef.current = { time: now, p: persons.length, v: vehicles.length };
       }
 
