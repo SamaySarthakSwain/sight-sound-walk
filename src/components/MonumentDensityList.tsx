@@ -17,9 +17,26 @@ interface Monument {
   is_featured: boolean;
 }
 
+type DensityHistoryPoint = {
+  time: string;
+  density: number;
+};
+
+type CrowdDensityProfile = {
+  current: number;
+  history: DensityHistoryPoint[];
+  bestTime: string;
+  isRealTime?: boolean;
+};
+
+type CrowdDensityRecord = {
+  location: string | null;
+  person_count: number;
+};
+
 // Generate some mock historical data for the charts since we don't have real historical sensors per monument yet
-const generateMockHistory = (baseLevel: number) => {
-  const data = [];
+const generateMockHistory = (baseLevel: number): DensityHistoryPoint[] => {
+  const data: DensityHistoryPoint[] = [];
   const hours = [8, 10, 12, 14, 16, 18, 20];
   for (const h of hours) {
     // Random variations based on time of day (peak at noon/afternoon)
@@ -44,7 +61,7 @@ const getBestTime = (history: {time: string, density: number}[]) => {
 const MonumentDensityList = () => {
   const [monuments, setMonuments] = useState<Monument[]>([]);
   const [loading, setLoading] = useState(true);
-  const [densities, setDensities] = useState<Record<string, { current: number, history: unknown[], bestTime: string, isRealTime?: boolean }>>({});
+  const [densities, setDensities] = useState<Record<string, CrowdDensityProfile>>({});
   const { fetchGlobalDensity } = useCrowdPersistence();
 
   useEffect(() => {
@@ -65,8 +82,8 @@ const MonumentDensityList = () => {
         setMonuments(finalMonuments);
 
         // Fetch real global density data if available
-        const realData = await fetchGlobalDensity();
-        const profiles: Record<string, unknown> = {};
+        const realData = (await fetchGlobalDensity()) as CrowdDensityRecord[];
+        const profiles: Record<string, CrowdDensityProfile> = {};
 
         finalMonuments.forEach(m => {
           // Check if we have real-time detection for this "location" or general area
