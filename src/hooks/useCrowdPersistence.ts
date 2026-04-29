@@ -11,6 +11,22 @@ export type CrowdRecord = {
   recorded_at: string;
 };
 
+type UntypedSupabaseClient = {
+  from: (table: string) => {
+    insert: (values: Record<string, unknown>) => Promise<{ error: Error | null }>;
+    select: (columns?: string) => {
+      eq: (column: string, value: string) => {
+        order: (column: string, options?: { ascending?: boolean }) => Promise<{ data: CrowdRecord[] | null; error: Error | null }>;
+      };
+      order: (column: string, options?: { ascending?: boolean }) => {
+        limit: (count: number) => Promise<{ data: CrowdRecord[] | null; error: Error | null }>;
+      };
+    };
+  };
+};
+
+const crowdClient = supabase as unknown as UntypedSupabaseClient;
+
 export const useCrowdPersistence = (sessionId?: string | null) => {
   const [history, setHistory] = useState<CrowdRecord[]>([]);
   const [loading, setLoading] = useState(false);
