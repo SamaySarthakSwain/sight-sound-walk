@@ -40,7 +40,7 @@ export const useCrowdPersistence = (sessionId?: string | null) => {
     if (!sessionId) return;
 
     try {
-      const { error } = await supabase
+      const { error } = await crowdClient
         .from("crowd_records")
         .insert({
           session_id: sessionId,
@@ -59,7 +59,7 @@ export const useCrowdPersistence = (sessionId?: string | null) => {
   const fetchSessionHistory = useCallback(async (sid: string) => {
     try {
       setLoading(true);
-      const { data, error } = await supabase
+      const { data, error } = await crowdClient
         .from("crowd_records")
         .select("*")
         .eq("session_id", sid)
@@ -77,7 +77,7 @@ export const useCrowdPersistence = (sessionId?: string | null) => {
   const fetchGlobalDensity = useCallback(async () => {
       // Get latest records from all sessions to show global density
       try {
-          const { data, error } = await supabase
+          const { data, error } = await crowdClient
             .from("crowd_records")
             .select("*")
             .order("recorded_at", { ascending: false })
