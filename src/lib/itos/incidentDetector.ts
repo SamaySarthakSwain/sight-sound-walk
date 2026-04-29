@@ -3,6 +3,8 @@
  */
 import type { IntersectionNode, RoadEdge } from "./cityTopology";
 
+type WeatherType = RoadEdge["weather"];
+
 export type DetectedIncident = {
   id: string;
   nodeId: string;
@@ -82,7 +84,7 @@ export function detectCongestionAnomalies(nodes: IntersectionNode[]): DetectedIn
 }
 
 /** Weather-aware capacity adjustments */
-export function getWeatherCapacityFactor(weather: string): number {
+export function getWeatherCapacityFactor(weather: WeatherType): number {
   switch (weather) {
     case "rain": return 0.85;
     case "fog": return 0.75;
@@ -92,7 +94,7 @@ export function getWeatherCapacityFactor(weather: string): number {
 }
 
 /** Apply weather adjustments to road capacities */
-export function adjustForWeather(edges: RoadEdge[], weather: string): RoadEdge[] {
+export function adjustForWeather(edges: RoadEdge[], weather: WeatherType): RoadEdge[] {
   const factor = getWeatherCapacityFactor(weather);
   return edges.map((e) => ({
     ...e,
