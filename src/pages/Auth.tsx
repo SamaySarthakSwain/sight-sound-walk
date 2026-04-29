@@ -11,6 +11,13 @@ import { toast } from "sonner";
 import { Phone, Mail, AlertCircle, Map, ArrowLeft, Loader2 } from "lucide-react";
 import { emailAuthSchema, phoneAuthSchema } from "@/lib/validations";
 
+const getOAuthRedirectUrl = () => `${window.location.origin}/auth`;
+
+const isLovableHostedSite = () => {
+  const host = window.location.hostname;
+  return host.endsWith(".lovable.app") || host === "localhost" || host === "127.0.0.1";
+};
+
 const GoogleIcon = () => (
   <svg className="w-5 h-5" viewBox="0 0 24 24">
     <path
@@ -48,6 +55,29 @@ const Auth = () => {
       hasRedirected = true;
       navigate("/", { replace: true });
     };
+
+    const exchangeCodeIfNeeded = async () => {
+      const url = new URL(window.location.href);
+      const code = url.searchParams.get("code");
+      if (!code) return;
+
+      const { error } = await supabase.auth.exchangeCodeForSession(code);
+      if (error) {
+        console.error("OAuth code exchange failed:", error);
+        toast.error("Google sign-in could not be completed. Please try again.");
+        setGoogleLoading(false);
+        return;
+      }
+
+      url.searchParams.delete("code");
+      url.searchParams.delete("state");
+      url.searchParams.delete("scope");
+      url.searchParams.delete("authuser");
+      url.searchParams.delete("prompt");
+      window.history.replaceState({}, "", url.toString());
+    };
+
+    void exchangeCodeIfNeeded();
 
     // Listen for auth changes FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
@@ -147,14 +177,26 @@ const Auth = () => {
     if (googleLoading) return; // prevent double-clicks
     setGoogleLoading(true);
     try {
-      const result = await lovable.auth.signInWithOAuth("google", {
-        redirect_uri: window.location.origin,
-        extraParams: {
-          prompt: "select_account",
-        },
-      });
+      const useLovableManagedFlow = isLovableHostedSite();
 
-      if (result?.redirected) {
+      const result = useLovableManagedFlow
+        ? await lovable.auth.signInWithOAuth("google", {
+            redirect_uri: getOAuthRedirectUrl(),
+            extraParams: {
+              prompt: "select_account",
+            },
+          })
+        : await supabase.auth.signInWithOAuth({
+            provider: "google",
+            options: {
+              redirectTo: getOAuthRedirectUrl(),
+              queryParams: {
+                prompt: "select_account",
+              },
+            },
+          });
+
+      if ("redirected" in result && result?.redirected) {
         // Browser will redirect to Google. Keep button disabled briefly,
         // but clear it after a short delay so a stuck redirect doesn't lock UI.
         setTimeout(() => setGoogleLoading(false), 4000);
@@ -174,8 +216,12 @@ const Auth = () => {
         return;
       }
 
-      // Success path: tokens were set on the client. The auth listener
-      // above will navigate to "/" once the session is confirmed.
+      if ("data" in result && result.data?.url) {
+        window.location.assign(result.data.url);
+        return;
+      }
+
+      // Success path: tokens were set on the client. The auth listener above will navigate.
       toast.success("Signed in with Google!");
     } catch (err) {
       console.error("Google Sign In Exception:", err);
