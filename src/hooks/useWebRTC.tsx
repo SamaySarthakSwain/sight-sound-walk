@@ -207,14 +207,14 @@ export const useWebRTC = (sessionId: string | null, username: string | null, loc
                 console.log(`Received ${type} from ${senderId}`);
 
                 if (type === "peer-join") {
-                    updatePeer(senderId, { username: u, location: l });
-                    const pc = createPeerConnection(senderId);
+                    updatePeer(senderId as string, { username: u as string, location: l as string });
+                    const pc = createPeerConnection(senderId as string);
                     const newOffer = await pc.createOffer();
                     await pc.setLocalDescription(newOffer);
 
                     broadcastMessage({
                         type: "sdp-offer",
-                        targetId: senderId,
+                        targetId: senderId as string,
                         offer: newOffer,
                         u: username,
                         l: location,
