@@ -15,8 +15,9 @@ const getOAuthRedirectUrl = () => `${window.location.origin}/auth`;
 
 const isLovableHostedSite = () => {
   const host = window.location.hostname;
-  return host.endsWith(".lovable.app") || host === "localhost" || host === "127.0.0.1";
+  return host.endsWith(".lovable.app");
 };
+
 
 const GoogleIcon = () => (
   <svg className="w-5 h-5" viewBox="0 0 24 24">
@@ -46,6 +47,8 @@ const Auth = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [isForgotPassword, setIsForgotPassword] = useState(false);
+  const [verificationSent, setVerificationSent] = useState(false);
   const [errors, setErrors] = useState<{ email?: string; password?: string; phone?: string }>({});
 
   useEffect(() => {
@@ -127,105 +130,119 @@ const Auth = () => {
     if (!validateEmailAuth()) return;
 
     setLoading(true);
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: `${window.location.origin}/`,
-      },
-    });
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth`,
+        },
+      });
 
-    setLoading(false);
-    if (error) {
-      if (error.message.includes("already registered")) {
-        toast.error("This email is already registered. Please log in instead.");
-      } else {
-        toast.error(error.message);
+      if (error) {
+        if (error.message.includes("already registered")) {
+          toast.error("This email is already registered. Please log in instead.");
+        } else {
+          toast.error(error.message);
+        }
+        return;
       }
-    } else {
-      toast.success("Account created successfully!");
+
+      if (data.session) {
+        toast.success("Account created successfully!");
+        navigate("/");
+      } else {
+        setVerificationSent(true);
+        toast.success("Verification email sent! Please check your inbox.");
+      }
+    } catch (err) {
+      toast.error("An unexpected error occurred during sign up.");
+      console.error(err);
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleEmailLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email || !password) {
-      toast.error("Please fill in all fields");
+    if (!validateEmailAuth()) return;
+
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) {
+        if (error.message.includes("Invalid login credentials") || error.message.includes("Email not confirmed")) {
+          toast.error(error.message === "Email not confirmed" 
+            ? "Please confirm your email before logging in." 
+            : "Invalid email or password. Please try again.");
+        } else {
+          toast.error(error.message);
+        }
+      } else {
+        toast.success("Logged in successfully!");
+      }
+    } catch (err) {
+      toast.error("An unexpected error occurred during login.");
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email) {
+      toast.error("Please enter your email address");
       return;
     }
 
     setLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/auth?reset=true`,
     });
 
     setLoading(false);
     if (error) {
-      if (error.message.includes("Invalid login credentials")) {
-        toast.error("Invalid email or password. Please try again.");
-      } else {
-        toast.error(error.message);
-      }
+      toast.error(error.message);
     } else {
-      toast.success("Logged in successfully!");
-      // The auth listener will navigate to "/" once the session is committed.
+      toast.success("Password reset link sent to your email!");
+      setIsForgotPassword(false);
     }
   };
 
-  const handleGoogleSignIn = async () => {
-    if (googleLoading) return; // prevent double-clicks
+  const handleOAuthSignIn = async (provider: "google") => {
     setGoogleLoading(true);
     try {
       const useLovableManagedFlow = isLovableHostedSite();
-
+      
       const result = useLovableManagedFlow
-        ? await lovable.auth.signInWithOAuth("google", {
+        ? await lovable.auth.signInWithOAuth(provider, {
             redirect_uri: getOAuthRedirectUrl(),
-            extraParams: {
-              prompt: "select_account",
-            },
+            extraParams: { prompt: "select_account" },
           })
         : await supabase.auth.signInWithOAuth({
-            provider: "google",
+            provider: provider,
             options: {
               redirectTo: getOAuthRedirectUrl(),
-              queryParams: {
-                prompt: "select_account",
-              },
+              queryParams: { prompt: "select_account" },
             },
           });
 
-      if ("redirected" in result && result?.redirected) {
-        // Browser will redirect to Google. Keep button disabled briefly,
-        // but clear it after a short delay so a stuck redirect doesn't lock UI.
-        setTimeout(() => setGoogleLoading(false), 4000);
-        return;
-      }
-
       if (result?.error) {
-        console.error("Google OAuth Error:", result.error);
-        const msg = result.error.message || "Failed to sign in with Google";
-        // Friendlier message for the most common preview/network case
-        if (/fetch|network|failed/i.test(msg)) {
-          toast.error("Couldn't reach Google sign-in. Please try again, or use email login.");
-        } else {
-          toast.error(msg);
-        }
+        toast.error(result.error.message);
         setGoogleLoading(false);
-        return;
       }
-
-      if ("data" in result && result.data?.url) {
+      
+      // If result.data.url is present, it's a redirect flow
+      if (result?.data?.url) {
         window.location.assign(result.data.url);
-        return;
       }
-
-      // Success path: tokens were set on the client. The auth listener above will navigate.
-      toast.success("Signed in with Google!");
     } catch (err) {
-      console.error("Google Sign In Exception:", err);
-      toast.error(err instanceof Error ? err.message : "An error occurred during sign-in");
+      toast.error("OAuth sign-in failed. Please try again.");
       setGoogleLoading(false);
     }
   };
@@ -296,21 +313,17 @@ const Auth = () => {
             </p>
           </div>
 
-          {/* Google Sign In - Prominent */}
+          {/* Google Sign In */}
           <Button
             type="button"
             variant="outline"
             size="lg"
-            className="w-full h-12 md:h-14 text-base font-medium border-2 hover:bg-muted/50 transition-all"
-            onClick={handleGoogleSignIn}
+            className="w-full h-12 md:h-14 text-base font-medium border-2 hover:bg-muted/50 transition-all flex items-center justify-center gap-3"
+            onClick={() => handleOAuthSignIn("google")}
             disabled={googleLoading || loading}
           >
-            {googleLoading ? (
-              <Loader2 className="w-5 h-5 mr-3 animate-spin" />
-            ) : (
-              <GoogleIcon />
-            )}
-            <span className="ml-3">Continue with Google</span>
+            {googleLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <GoogleIcon />}
+            <span>Continue with Google</span>
           </Button>
 
           {/* Divider */}
@@ -333,40 +346,87 @@ const Auth = () => {
                 </TabsList>
 
                 <TabsContent value="login" className="space-y-4 mt-0">
-                  <form onSubmit={handleEmailLogin} className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="email-login" className="text-sm font-medium">Email</Label>
-                      <Input
-                        id="email-login"
-                        type="email"
-                        placeholder="you@example.com"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        disabled={loading}
-                        className="h-11"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="password-login" className="text-sm font-medium">Password</Label>
-                      <Input
-                        id="password-login"
-                        type="password"
-                        placeholder="••••••••"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        disabled={loading}
-                        className="h-11"
-                      />
-                    </div>
-                    <Button type="submit" className="w-full h-11" disabled={loading}>
-                      {loading ? (
-                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      ) : (
-                        <Mail className="w-4 h-4 mr-2" />
-                      )}
-                      Login with Email
-                    </Button>
-                  </form>
+                  {isForgotPassword ? (
+                    <form onSubmit={handleForgotPassword} className="space-y-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="reset-email" className="text-sm font-medium">Email Address</Label>
+                        <Input
+                          id="reset-email"
+                          type="email"
+                          placeholder="you@example.com"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          disabled={loading}
+                          className="h-11"
+                        />
+                      </div>
+                      <div className="flex flex-col gap-2">
+                        <Button type="submit" className="w-full h-11" disabled={loading}>
+                          {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : "Send Reset Link"}
+                        </Button>
+                        <Button 
+                          type="button" 
+                          variant="ghost" 
+                          onClick={() => setIsForgotPassword(false)}
+                          className="text-xs"
+                        >
+                          Back to Login
+                        </Button>
+                      </div>
+                    </form>
+                  ) : (
+                    <form onSubmit={handleEmailLogin} className="space-y-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="email-login" className="text-sm font-medium">Email</Label>
+                        <Input
+                          id="email-login"
+                          type="email"
+                          placeholder="you@example.com"
+                          value={email}
+                          onChange={(e) => {
+                            setEmail(e.target.value);
+                            setErrors((prev) => ({ ...prev, email: undefined }));
+                          }}
+                          disabled={loading}
+                          className={`h-11 ${errors.email ? "border-destructive" : ""}`}
+                        />
+                        <ErrorMessage message={errors.email} />
+                      </div>
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <Label htmlFor="password-login" className="text-sm font-medium">Password</Label>
+                          <button 
+                            type="button"
+                            onClick={() => setIsForgotPassword(true)}
+                            className="text-xs text-primary hover:underline"
+                          >
+                            Forgot?
+                          </button>
+                        </div>
+                        <Input
+                          id="password-login"
+                          type="password"
+                          placeholder="••••••••"
+                          value={password}
+                          onChange={(e) => {
+                            setPassword(e.target.value);
+                            setErrors((prev) => ({ ...prev, password: undefined }));
+                          }}
+                          disabled={loading}
+                          className={`h-11 ${errors.password ? "border-destructive" : ""}`}
+                        />
+                        <ErrorMessage message={errors.password} />
+                      </div>
+                      <Button type="submit" className="w-full h-11" disabled={loading}>
+                        {loading ? (
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        ) : (
+                          <Mail className="w-4 h-4 mr-2" />
+                        )}
+                        Login with Email
+                      </Button>
+                    </form>
+                  )}
                 </TabsContent>
 
                 <TabsContent value="signup" className="space-y-4 mt-0">
@@ -383,49 +443,71 @@ const Auth = () => {
                     </TabsList>
 
                     <TabsContent value="email-signup" className="space-y-4 mt-4">
-                      <form onSubmit={handleEmailSignUp} className="space-y-4">
-                        <div className="space-y-2">
-                          <Label htmlFor="email-signup" className="text-sm font-medium">Email</Label>
-                          <Input
-                            id="email-signup"
-                            type="email"
-                            placeholder="you@example.com"
-                            value={email}
-                            onChange={(e) => {
-                              setEmail(e.target.value);
-                              setErrors((prev) => ({ ...prev, email: undefined }));
-                            }}
-                            disabled={loading}
-                            className={`h-11 ${errors.email ? "border-destructive" : ""}`}
-                          />
-                          <ErrorMessage message={errors.email} />
+                      {verificationSent ? (
+                        <div className="text-center py-6 space-y-4">
+                          <div className="w-12 h-12 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-full flex items-center justify-center mx-auto">
+                            <Mail className="w-6 h-6" />
+                          </div>
+                          <div className="space-y-2">
+                            <h3 className="font-semibold">Check your email</h3>
+                            <p className="text-sm text-muted-foreground">
+                              We've sent a verification link to <strong>{email}</strong>. 
+                              Please click the link to activate your account.
+                            </p>
+                          </div>
+                          <Button 
+                            variant="outline" 
+                            onClick={() => setVerificationSent(false)}
+                            className="w-full"
+                          >
+                            Back to Sign Up
+                          </Button>
                         </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="password-signup" className="text-sm font-medium">Password</Label>
-                          <Input
-                            id="password-signup"
-                            type="password"
-                            placeholder="••••••••"
-                            value={password}
-                            onChange={(e) => {
-                              setPassword(e.target.value);
-                              setErrors((prev) => ({ ...prev, password: undefined }));
-                            }}
-                            disabled={loading}
-                            className={`h-11 ${errors.password ? "border-destructive" : ""}`}
-                          />
-                          <ErrorMessage message={errors.password} />
-                          <PasswordRequirements />
-                        </div>
-                        <Button type="submit" className="w-full h-11" disabled={loading}>
-                          {loading ? (
-                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                          ) : (
-                            <Mail className="w-4 h-4 mr-2" />
-                          )}
-                          Create Account
-                        </Button>
-                      </form>
+                      ) : (
+                        <form onSubmit={handleEmailSignUp} className="space-y-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="email-signup" className="text-sm font-medium">Email</Label>
+                            <Input
+                              id="email-signup"
+                              type="email"
+                              placeholder="you@example.com"
+                              value={email}
+                              onChange={(e) => {
+                                setEmail(e.target.value);
+                                setErrors((prev) => ({ ...prev, email: undefined }));
+                              }}
+                              disabled={loading}
+                              className={`h-11 ${errors.email ? "border-destructive" : ""}`}
+                            />
+                            <ErrorMessage message={errors.email} />
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="password-signup" className="text-sm font-medium">Password</Label>
+                            <Input
+                              id="password-signup"
+                              type="password"
+                              placeholder="••••••••"
+                              value={password}
+                              onChange={(e) => {
+                                setPassword(e.target.value);
+                                setErrors((prev) => ({ ...prev, password: undefined }));
+                              }}
+                              disabled={loading}
+                              className={`h-11 ${errors.password ? "border-destructive" : ""}`}
+                            />
+                            <ErrorMessage message={errors.password} />
+                            <PasswordRequirements />
+                          </div>
+                          <Button type="submit" className="w-full h-11" disabled={loading}>
+                            {loading ? (
+                              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                            ) : (
+                              <Mail className="w-4 h-4 mr-2" />
+                            )}
+                            Create Account
+                          </Button>
+                        </form>
+                      )}
                     </TabsContent>
 
                     <TabsContent value="phone-signup" className="space-y-4 mt-4">
