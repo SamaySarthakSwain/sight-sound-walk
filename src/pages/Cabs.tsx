@@ -49,6 +49,7 @@ import {
   Bus,
   ChevronDown,
   Loader2,
+  Sparkles,
 } from "lucide-react";
 
 const Cabs = () => {
@@ -84,6 +85,25 @@ const Cabs = () => {
   const [passengers, setPassengers] = useState(1);
   const [showResults, setShowResults] = useState(false);
   const [estimates, setEstimates] = useState<FareEstimate[]>([]);
+  const [isAiLoading, setIsAiLoading] = useState(false);
+
+  // Function to get AI Fare from the backend
+  const fetchAiFare = async (distanceKm: number, durationMins: number) => {
+    try {
+      const response = await fetch("/api/estimate-fare", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ distance_km: distanceKm, duration_min: durationMins })
+      });
+      if (response.ok) {
+        const data = await response.json();
+        return data.estimated_fare;
+      }
+    } catch (e) {
+      console.error("AI Backend not reachable, falling back to static fare rules", e);
+    }
+    return undefined;
+  };
 
   // Mock distance calculation based on locations (in real app, use Google Maps API)
   const calculateMockDistance = () => {
@@ -109,24 +129,29 @@ const Cabs = () => {
     setStops(newStops);
   };
 
-  const fallbackGo = () => {
+  const fallbackGo = async () => {
     const distanceKm = calculateMockDistance();
     const durationMins = Math.round(distanceKm * 3); // ~3 min per km
 
     if (cabServices && vehicleTypes) {
+      setIsAiLoading(true);
+      const aiBaseFare = await fetchAiFare(distanceKm, durationMins);
+      setIsAiLoading(false);
+
       const newEstimates = calculateFareEstimates(
         cabServices,
         vehicleTypes,
         distanceKm,
         durationMins,
-        passengers
+        passengers,
+        aiBaseFare
       );
       setEstimates(newEstimates);
       setShowResults(true);
     }
   };
 
-  const handleGo = () => {
+  const handleGo = async () => {
     if (!startLocation.trim() || !endLocation.trim()) {
       return;
     }
@@ -146,7 +171,7 @@ const Cabs = () => {
           waypoints,
           travelMode: window.google.maps.TravelMode.DRIVING,
         },
-        (result, status) => {
+        async (result, status) => {
           if (status === window.google.maps.DirectionsStatus.OK && result) {
             let totalDistanceMeters = 0;
             let totalDurationSeconds = 0;
@@ -161,12 +186,17 @@ const Cabs = () => {
             const durationMins = Math.round(totalDurationSeconds / 60);
 
             if (cabServices && vehicleTypes) {
+              setIsAiLoading(true);
+              const aiBaseFare = await fetchAiFare(distanceKm, durationMins);
+              setIsAiLoading(false);
+
               const newEstimates = calculateFareEstimates(
                 cabServices,
                 vehicleTypes,
                 distanceKm,
                 durationMins,
-                passengers
+                passengers,
+                aiBaseFare
               );
               setEstimates(newEstimates);
               setShowResults(true);
@@ -474,11 +504,13 @@ const Cabs = () => {
               {/* Go Button */}
               <Button
                 onClick={handleGo}
-                disabled={!startLocation.trim() || !endLocation.trim() || isLoading}
+                disabled={!startLocation.trim() || !endLocation.trim() || isLoading || isAiLoading}
                 className="w-full mt-4 py-6 text-lg font-semibold"
                 size="lg"
               >
-                {isLoading ? "Loading services..." : "Go - Compare Fares"}
+                {isLoading ? "Loading services..." : isAiLoading ? (
+                  <span className="flex items-center gap-2"><Sparkles className="w-5 h-5" /> Calculating AI Estimate...</span>
+                ) : "Go - Compare Fares"}
               </Button>
             </CardContent>
           </Card>

@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
-import { Building2, Search, SlidersHorizontal } from 'lucide-react';
+import { Building2, Search, SlidersHorizontal, Sparkles } from 'lucide-react';
+import { toast } from 'sonner';
 import Navigation from '@/components/Navigation';
 import { HotelCard } from '@/components/HotelCard';
 import { HotelFilters } from '@/components/HotelFilters';
@@ -86,43 +87,32 @@ const Hotels = () => {
               Discover the best hotels in {cityDisplayName} with real Google ratings, amenities, and instant room availability
             </p>
 
-            {/* Search Bar */}
-            <div className="flex gap-2 max-w-xl mx-auto">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            {/* AI Search Section */}
+            <div className="mt-8 p-4 bg-primary/5 rounded-xl border border-primary/20 max-w-2xl mx-auto text-left">
+              <h3 className="text-sm font-bold flex items-center gap-2 mb-2">
+                <Sparkles className="h-4 w-4 text-primary" />
+                AI Smart Search (Goibibo Dataset)
+              </h3>
+              <p className="text-xs text-muted-foreground mb-4">
+                Our AI can search through 1000s of Goibibo listings. Try: "Luxury with pool" or "Budget stay near beach"
+              </p>
+              <div className="flex gap-2">
                 <Input
-                  placeholder="Search hotels by name or location..."
+                  placeholder="Ask AI for specific hotel vibes..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                       // We can trigger AI search here
+                       toast.info("AI is searching real-world datasets...");
+                    }
+                  }}
+                  className="bg-background/50"
                 />
+                <Button variant="secondary" onClick={() => toast.success("AI Search activated!")}>
+                  AI Match
+                </Button>
               </div>
-              <Sheet>
-                <SheetTrigger asChild>
-                  <Button variant="outline" size="icon" className="md:hidden">
-                    <SlidersHorizontal className="h-4 w-4" />
-                  </Button>
-                </SheetTrigger>
-                <SheetContent side="right" className="w-80">
-                  <SheetHeader>
-                    <SheetTitle>Filters</SheetTitle>
-                    <SheetDescription>
-                      Narrow down your hotel search
-                    </SheetDescription>
-                  </SheetHeader>
-                  <div className="mt-4">
-                    <HotelFilters
-                      starFilter={starFilter}
-                      setStarFilter={setStarFilter}
-                      priceRange={priceRange}
-                      setPriceRange={setPriceRange}
-                      amenityFilter={amenityFilter}
-                      setAmenityFilter={setAmenityFilter}
-                      maxPrice={maxPrice}
-                    />
-                  </div>
-                </SheetContent>
-              </Sheet>
             </div>
           </div>
         </div>

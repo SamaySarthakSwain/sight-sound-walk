@@ -3,6 +3,7 @@ import RouteSection from "@/components/RouteSection";
 import MonumentsMap from "@/components/MonumentsMap";
 import Navigation from "@/components/Navigation";
 import MonumentSearch from "@/components/MonumentSearch";
+import AIRecommend from "@/components/AIRecommend";
 import { useState } from "react";
 
 interface RouteData {
@@ -41,6 +42,7 @@ const Explore = () => {
            <MonumentSearch onSelect={handleMonumentSelect} />
         </div>
         
+        <AIRecommend />
         <PreferencesSection />
         <RouteSection onRouteSelected={handleRouteSelected} />
         <MonumentsMap routeData={routeData} selectedMonumentId={selectedMonumentId} />

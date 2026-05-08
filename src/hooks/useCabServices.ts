@@ -185,7 +185,8 @@ export const calculateFareEstimates = (
   vehicleTypes: VehicleType[],
   distanceKm: number,
   durationMins: number,
-  passengers: number = 1
+  passengers: number = 1,
+  aiBaseFare?: number
 ): FareEstimate[] => {
   const estimates: FareEstimate[] = [];
 
@@ -229,7 +230,18 @@ export const calculateFareEstimates = (
 
       const distanceCost = perKm * distanceKm;
       const timeCost = perMin * durationMins;
-      const estimatedFare = Math.round((baseFare + distanceCost + timeCost) * serviceMultiplier);
+      
+      let estimatedFare = 0;
+      if (aiBaseFare) {
+         // Apply AI base fare calibrated per vehicle type
+         let vehicleMultiplier = 1.0;
+         if (vehicle.vehicle_type === '2_wheeler') vehicleMultiplier = 0.4;
+         if (vehicle.vehicle_type === '3_wheeler') vehicleMultiplier = 0.6;
+         if (vehicle.capacity > 4) vehicleMultiplier = 1.4;
+         estimatedFare = Math.round((aiBaseFare * vehicleMultiplier) * serviceMultiplier);
+      } else {
+         estimatedFare = Math.round((baseFare + distanceCost + timeCost) * serviceMultiplier);
+      }
 
       if (estimatedFare > 0) {
         estimates.push({

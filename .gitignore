@@ -22,3 +22,10 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# AI Models and Datasets
+api/models/*.pkl
+api/models/*.csv
+datasets/
+__pycache__/
+*.pyc
