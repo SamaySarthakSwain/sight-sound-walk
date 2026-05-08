@@ -62,8 +62,8 @@ def train_fare_estimator():
     uber_path = os.path.join(DATASETS_DIR, "uber-fares-dataset", "uber.csv")
     
     if os.path.exists(uber_path):
-        # Load a manageable chunk for speed (e.g., 50k rows)
-        df_uber = pd.read_csv(uber_path, nrows=50000)
+        # Load a smaller chunk to keep model size small (<100MB)
+        df_uber = pd.read_csv(uber_path, nrows=20000)
         
         # Simple distance calculation (Haversine approx)
         def haversine(lat1, lon1, lat2, lon2):
@@ -83,21 +83,25 @@ def train_fare_estimator():
         df_uber = df_uber[(df_uber['distance_km'] > 0) & (df_uber['distance_km'] < 100)]
         df_uber = df_uber[(df_uber['fare_amount'] > 2) & (df_uber['fare_amount'] < 500)]
         
-        # Train model
+        # Train model with fewer estimators and max_depth to reduce size
         X = df_uber[['distance_km']]
         y = df_uber['fare_amount']
         
-        model = RandomForestRegressor(n_estimators=50, random_state=42)
+        # RandomForest with fewer trees and limited depth is much smaller
+        model = RandomForestRegressor(n_estimators=5, max_depth=8, random_state=42)
         model.fit(X, y)
         
-        joblib.dump(model, os.path.join(MODELS_DIR, 'fare_estimator.pkl'))
-        print("Fare Estimator trained successfully using Uber data.")
+        save_path = os.path.join(MODELS_DIR, 'fare_estimator.pkl')
+        joblib.dump(model, save_path)
+        
+        size_mb = os.path.getsize(save_path) / (1024 * 1024)
+        print(f"Fare Estimator trained. Size: {size_mb:.2f} MB (Uber data)")
     else:
         print("Warning: uber.csv not found, using dummy model.")
         # Dummy model
         X = np.array([[1], [5], [10], [20]])
         y = np.array([50, 150, 250, 450])
-        model = RandomForestRegressor(n_estimators=10)
+        model = RandomForestRegressor(n_estimators=5)
         model.fit(X, y)
         joblib.dump(model, os.path.join(MODELS_DIR, 'fare_estimator.pkl'))
 
