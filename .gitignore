@@ -23,9 +23,7 @@ dist-ssr
 *.sln
 *.sw?
 
-# AI Models and Datasets
-api/models/*.pkl
-api/models/*.csv
+# AI Models and Datasets (Datasets are ignored, models are small now)
 datasets/
 __pycache__/
 *.pyc
