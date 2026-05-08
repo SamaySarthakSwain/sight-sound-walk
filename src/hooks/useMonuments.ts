@@ -94,6 +94,13 @@ export const useMonuments = () => {
       if (fetchError || !data || data.length === 0) {
         console.warn("Using fallback monument data", fetchError);
         finalRawData = fallbackMonuments as Monument[];
+      } else {
+        // Merge fallback monuments that might be missing in the database
+        const dbIds = new Set(finalRawData.map((m) => m.id));
+        const missingFallbacks = (fallbackMonuments as Monument[]).filter((m) => !dbIds.has(m.id));
+        if (missingFallbacks.length > 0) {
+          finalRawData = [...finalRawData, ...missingFallbacks];
+        }
       }
 
       const filtered = filterMonuments(finalRawData, cityName);

@@ -1,5 +1,7 @@
+import { newOdishaPlaces } from './newOdishaPlaces';
+
 // Auto-generated fallback monuments data from SQL migration
-export const fallbackMonuments = [
+const originalFallbackMonuments = [
   {
     "id": "fallback-1-1774097074234",
     "title": "Tara Tarini Temple",
@@ -1993,3 +1995,5 @@ export const fallbackMonuments = [
     "created_at": "2026-03-21T12:44:34.237Z"
   }
 ];
+
+export const fallbackMonuments = [...originalFallbackMonuments, ...newOdishaPlaces];
