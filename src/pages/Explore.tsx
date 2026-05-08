@@ -5,6 +5,7 @@ import Navigation from "@/components/Navigation";
 import MonumentSearch from "@/components/MonumentSearch";
 import AIRecommend from "@/components/AIRecommend";
 import { useState } from "react";
+import { AuroraBackground } from "@/components/ui/aurora-background";
 
 interface RouteData {
   start: { lat: number; lng: number };
@@ -29,9 +30,10 @@ const Explore = () => {
   };
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen relative bg-background/50">
+      <AuroraBackground />
       <Navigation />
-      <div className="pt-24 pb-12 bg-gradient-to-b from-background to-black/20">
+      <div className="pt-24 pb-12 relative z-10">
         <div className="container mx-auto px-4 mb-2">
            <h1 className="text-4xl md:text-5xl font-bold text-center mb-4 bg-gradient-to-r from-primary to-primary-light bg-clip-text text-transparent">
              Explore Odisha

@@ -1,6 +1,7 @@
 import { lazy, Suspense } from "react";
 import Navigation from "@/components/Navigation";
 import HeroSection from "@/components/landing/HeroSection";
+import { AuroraBackground } from "@/components/ui/aurora-background";
 
 const FeaturedDestinations = lazy(() => import("@/components/landing/FeaturedDestinations"));
 const StatsMarquee = lazy(() => import("@/components/landing/StatsMarquee"));
@@ -11,7 +12,8 @@ const DatabaseMonuments = lazy(() => import("@/components/DatabaseMonuments"));
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen relative bg-background/50">
+      <AuroraBackground />
       <Navigation />
       <HeroSection />
       <Suspense fallback={null}>

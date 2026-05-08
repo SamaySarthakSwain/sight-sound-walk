@@ -10,6 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { Phone, Mail, AlertCircle, Map, ArrowLeft, Loader2 } from "lucide-react";
 import { emailAuthSchema, phoneAuthSchema } from "@/lib/validations";
+import { AuroraBackground } from "@/components/ui/aurora-background";
 
 const getOAuthRedirectUrl = () => `${window.location.origin}/auth`;
 
@@ -287,7 +288,8 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-primary/10 via-background to-secondary/10">
+    <div className="min-h-screen flex flex-col relative bg-background/50">
+      <AuroraBackground />
       {/* Header */}
       <header className="p-4 md:p-6">
         <Link to="/" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
