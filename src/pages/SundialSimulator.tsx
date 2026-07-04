@@ -1,12 +1,24 @@
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import Navigation from "@/components/Navigation";
 import { Slider } from "@/components/ui/slider";
-import { Sun, Clock, Info } from "lucide-react";
+import { Sun, Clock, Info, BookOpen, Compass, ArrowRight } from "lucide-react";
 
 // ── Constants ──────────────────────────────────────────────────────────────────
-const SPOKES = 24; // 24 spokes = 24 hours of the day (2 rotations)
-const PRAHARAS = ["Brahma Muhurta", "Pratah", "Sangava", "Madhyahna", "Aparahna", "Sayahna", "Pradosha", "Nisha"];
-const TIME_LABELS = ["6 AM", "7 AM", "8 AM", "9 AM", "10 AM", "11 AM", "12 PM", "1 PM", "2 PM", "3 PM", "4 PM", "5 PM", "6 PM"];
+const SPOKES = 8; // 8 major spokes representing the 8 Praharas of a 24-hour cycle (4 during the day)
+const PRAHARAS = [
+  { name: "Pratah", time: "6:00 AM - 9:00 AM", desc: "Dawn & Morning prayers" },
+  { name: "Sangava", time: "9:00 AM - 12:00 PM", desc: "Mid-morning work & study" },
+  { name: "Madhyahna", time: "12:00 PM - 3:00 PM", desc: "Solar Noon & rest" },
+  { name: "Aparahna", time: "3:00 PM - 6:00 PM", desc: "Late afternoon & returns" }
+];
+
+const PRESETS = [
+  { label: "🌅 Dawn (6:00 AM)", value: 0 },
+  { label: "📿 Morning Puja (9:00 AM)", value: 180 },
+  { label: "☀️ Solar Noon (12:00 PM)", value: 360 },
+  { label: "☕ Afternoon (3:00 PM)", value: 540 },
+  { label: "🌇 Sunset (6:00 PM)", value: 720 }
+];
 
 function getTimeFromSlider(value: number) {
   // value: 0–720 representing minutes from 6:00 AM to 6:00 PM
@@ -19,312 +31,423 @@ function getTimeFromSlider(value: number) {
 }
 
 function getShadowAngle(sliderValue: number) {
-  // Solar noon (12:00) = 0 degrees; 6AM = -90°; 6PM = +90°
+  // Solar noon (12:00) = 0 degrees (vertical shadow pointing down)
+  // 6AM = -90° (shadow pointing west/right)
+  // 6PM = +90° (shadow pointing east/left)
   const progress = (sliderValue / 720) * 180 - 90; // -90 to +90
   return progress;
 }
 
-function getPrahara(hours: number) {
-  if (hours < 6) return PRAHARAS[7];
-  if (hours < 7.5) return PRAHARAS[0];
-  if (hours < 9) return PRAHARAS[1];
-  if (hours < 10.5) return PRAHARAS[2];
-  if (hours < 12) return PRAHARAS[3];
-  if (hours < 13.5) return PRAHARAS[4];
-  if (hours < 15) return PRAHARAS[5];
-  if (hours < 16.5) return PRAHARAS[6];
-  return PRAHARAS[7];
-}
-
-function getSunPosition(sliderValue: number) {
-  // Sun arc from left (6AM) to right (6PM), peaks at top (noon)
-  const t = sliderValue / 720; // 0 to 1
-  const x = t * 100; // percentage across
-  // Arc: y = sin(t*π) * 60, inverted (top = low y)
-  const y = 80 - Math.sin(t * Math.PI) * 70;
-  return { x, y };
-}
-
 // ── SVG Wheel ─────────────────────────────────────────────────────────────────
 const KonarkWheel = ({ shadowAngle, timeValue }: { shadowAngle: number; timeValue: number }) => {
-  const cx = 200, cy = 200, r = 150, hubR = 24;
-  const spokeLength = r - hubR - 12;
-
-  const isNoon = Math.abs(timeValue - 360) < 15;
-  const isMorning = timeValue < 360;
+  const cx = 200, cy = 200, r = 140, hubR = 26;
+  const spokeLength = r - hubR - 10;
 
   return (
-    <svg viewBox="0 0 400 400" className="w-full max-w-[420px] mx-auto select-none">
+    <svg viewBox="0 0 400 400" className="w-full max-w-[380px] mx-auto select-none filter drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)]">
       <defs>
         {/* Outer glow */}
         <filter id="outerGlow">
-          <feGaussianBlur stdDeviation="8" result="blur" />
+          <feGaussianBlur stdDeviation="6" result="blur" />
           <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
         </filter>
         {/* Shadow blur */}
         <filter id="shadowBlur">
-          <feGaussianBlur stdDeviation="3" />
+          <feGaussianBlur stdDeviation="4" />
         </filter>
         {/* Stone texture gradient */}
-        <radialGradient id="stoneGrad" cx="40%" cy="35%">
-          <stop offset="0%" stopColor="#b5916a" />
-          <stop offset="60%" stopColor="#8b6347" />
-          <stop offset="100%" stopColor="#5c3d21" />
+        <radialGradient id="stoneGrad" cx="45%" cy="40%" r="60%">
+          <stop offset="0%" stopColor="#d4a978" />
+          <stop offset="65%" stopColor="#9a6e45" />
+          <stop offset="100%" stopColor="#5a3d22" />
         </radialGradient>
-        <radialGradient id="hubGrad" cx="30%" cy="30%">
-          <stop offset="0%" stopColor="#d4a96a" />
-          <stop offset="100%" stopColor="#7a4f2b" />
+        <radialGradient id="hubGrad" cx="35%" cy="30%">
+          <stop offset="0%" stopColor="#f59e0b" />
+          <stop offset="40%" stopColor="#b45309" />
+          <stop offset="100%" stopColor="#78350f" />
         </radialGradient>
-        {/* Shadow gradient */}
-        <linearGradient id="shadowGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%" stopColor="rgba(0,0,0,0)" />
-          <stop offset="30%" stopColor="rgba(0,0,0,0.7)" />
-          <stop offset="70%" stopColor="rgba(0,0,0,0.7)" />
-          <stop offset="100%" stopColor="rgba(0,0,0,0)" />
-        </linearGradient>
       </defs>
 
-      {/* Ground plate */}
-      <ellipse cx={cx} cy={cy + 155} rx={160} ry={16} fill="rgba(0,0,0,0.18)" filter="url(#shadowBlur)" />
+      {/* Ground shadow */}
+      <ellipse cx={cx} cy={cy + 155} rx={145} ry={12} fill="rgba(0,0,0,0.4)" filter="url(#shadowBlur)" />
 
-      {/* Outer decorative ring segments */}
-      {Array.from({ length: SPOKES }).map((_, i) => {
-        const angle = (i / SPOKES) * 360;
-        const rad = (angle - 90) * Math.PI / 180;
-        const x1 = cx + (r - 2) * Math.cos(rad);
-        const y1 = cy + (r - 2) * Math.sin(rad);
-        const x2 = cx + (r + 10) * Math.cos(rad);
-        const y2 = cy + (r + 10) * Math.sin(rad);
-        return <line key={`tick-${i}`} x1={x1} y1={y1} x2={x2} y2={y2} stroke="#c49a5e" strokeWidth="2" opacity="0.6" />;
-      })}
-
-      {/* Main outer rim */}
-      <circle cx={cx} cy={cy} r={r + 12} fill="none" stroke="#c49a5e" strokeWidth="6" opacity="0.4" />
+      {/* Rim divisions: 30 small dots/beads between spokes */}
+      <circle cx={cx} cy={cy} r={r + 14} fill="none" stroke="#c49a5e" strokeWidth="2" opacity="0.3" />
       <circle cx={cx} cy={cy} r={r} fill="url(#stoneGrad)" stroke="#c49a5e" strokeWidth="4" />
-      <circle cx={cx} cy={cy} r={r - 8} fill="none" stroke="#d4a96a" strokeWidth="1" opacity="0.4" />
-
-      {/* Hour markings on rim */}
-      {Array.from({ length: 12 }).map((_, i) => {
-        const angle = (i / 12) * 360 - 90;
-        const rad = angle * Math.PI / 180;
-        const tx = cx + (r - 18) * Math.cos(rad);
-        const ty = cy + (r - 18) * Math.sin(rad);
-        const label = i === 0 ? "12" : `${i}`;
+      
+      {/* Outer rim decorative beads */}
+      {Array.from({ length: 60 }).map((_, i) => {
+        const angle = (i / 60) * 360;
+        const rad = (angle - 90) * Math.PI / 180;
+        const bx = cx + (r - 6) * Math.cos(rad);
+        const by = cy + (r - 6) * Math.sin(rad);
+        const isSpokeAlign = i % 7.5 === 0;
         return (
-          <text key={`hr-${i}`} x={tx} y={ty} textAnchor="middle" dominantBaseline="middle"
-            fontSize="9" fill="#f5deb3" opacity="0.7" fontFamily="serif">
-            {label}
-          </text>
-        );
-      })}
-
-      {/* 24 Spokes */}
-      {Array.from({ length: SPOKES }).map((_, i) => {
-        const angle = (i / SPOKES) * 360 - 90;
-        const rad = angle * Math.PI / 180;
-        const x1 = cx + hubR * Math.cos(rad);
-        const y1 = cy + hubR * Math.sin(rad);
-        const x2 = cx + (hubR + spokeLength) * Math.cos(rad);
-        const y2 = cy + (hubR + spokeLength) * Math.sin(rad);
-        const isCardinal = i % 6 === 0;
-        return (
-          <line key={`spoke-${i}`} x1={x1} y1={y1} x2={x2} y2={y2}
-            stroke={isCardinal ? "#f0c060" : "#c49a5e"}
-            strokeWidth={isCardinal ? 3 : 1.5}
-            opacity={isCardinal ? 0.9 : 0.55}
+          <circle 
+            key={`bead-${i}`} 
+            cx={bx} 
+            cy={by} 
+            r={isSpokeAlign ? 3.5 : 2} 
+            fill={isSpokeAlign ? "#f59e0b" : "#c49a5e"} 
+            opacity={isSpokeAlign ? 0.9 : 0.5} 
           />
         );
       })}
 
-      {/* ── Shadow cast by gnomon ── */}
+      {/* Major & Minor Spokes */}
+      {Array.from({ length: 16 }).map((_, i) => {
+        const angle = (i / 16) * 360 - 90;
+        const rad = angle * Math.PI / 180;
+        const x1 = cx + hubR * Math.cos(rad);
+        const y1 = cy + hubR * Math.sin(rad);
+        const x2 = cx + (r - 10) * Math.cos(rad);
+        const y2 = cy + (r - 10) * Math.sin(rad);
+        const isMajor = i % 2 === 0;
+        
+        return (
+          <g key={`spoke-group-${i}`} opacity={isMajor ? 0.95 : 0.65}>
+            {/* Structural spoke line */}
+            <line 
+              x1={x1} y1={y1} x2={x2} y2={y2} 
+              stroke={isMajor ? "#fbbf24" : "#c49a5e"} 
+              strokeWidth={isMajor ? 4.5 : 2} 
+            />
+            {/* Spoke carvings/decoration */}
+            {isMajor && (
+              <circle cx={cx + (r - 45) * Math.cos(rad)} cy={cy + (r - 45) * Math.sin(rad)} r="6" fill="#78350f" stroke="#fbbf24" strokeWidth="1" />
+            )}
+          </g>
+        );
+      })}
+
+      {/* ── Shadow Cast by central Gnomon ── */}
       {(() => {
         const t = timeValue / 720; // 0–1
-        const shadowLen = 100 * (1 - 0.6 * Math.sin(t * Math.PI)); // longer at dawn/dusk
-        const shadowRad = (shadowAngle - 90) * Math.PI / 180; // offset for orientation
+        // Shadow is longer in the morning and evening, shortest at Solar Noon
+        const shadowLen = r - 15 - 45 * Math.abs(Math.sin((t - 0.5) * Math.PI));
+        
+        // At Konark, the sun is in the south, casting shadows north.
+        // 6:00 AM sun in East casts shadow directly West (+90 deg offset)
+        const shadowRad = (shadowAngle + 90) * Math.PI / 180;
         const sx = cx + shadowLen * Math.cos(shadowRad);
         const sy = cy + shadowLen * Math.sin(shadowRad);
-        return (
-          <g opacity="0.75">
-            <line x1={cx} y1={cy} x2={sx} y2={sy}
-              stroke="rgba(0,0,0,0.6)" strokeWidth="8" strokeLinecap="round"
-              filter="url(#shadowBlur)" />
-            <line x1={cx} y1={cy} x2={sx} y2={sy}
-              stroke="rgba(30,30,30,0.5)" strokeWidth="4" strokeLinecap="round" />
-            {/* Shadow tip indicator */}
-            <circle cx={sx} cy={sy} r={4} fill="rgba(0,0,0,0.4)" filter="url(#shadowBlur)" />
-            {/* Spoke highlight where shadow lands */}
-            <circle cx={sx} cy={sy} r={5} fill="none" stroke="#f0c060" strokeWidth="1.5" opacity="0.8" />
-          </g>
-        );
-      })()}
 
-      {/* Hub */}
-      <circle cx={cx} cy={cy} r={hubR} fill="url(#hubGrad)" stroke="#f0c060" strokeWidth="3" filter="url(#outerGlow)" />
-      <circle cx={cx} cy={cy} r={8} fill="#f0c060" opacity="0.6" />
-
-      {/* Gnomon (vertical rod casting shadow) */}
-      <line x1={cx} y1={cy} x2={cx} y2={cy - 44} stroke="#f0c060" strokeWidth="3" strokeLinecap="round" filter="url(#outerGlow)" />
-      <circle cx={cx} cy={cy - 44} r={4} fill="#fbbf24" filter="url(#outerGlow)" />
-
-      {/* Sun position indicator */}
-      {(() => {
-        const sunPos = getSunPosition(timeValue);
-        const sunX = 30 + sunPos.x * 3.4;
-        const sunY = sunPos.y * 1.2;
         return (
           <g>
-            {/* Arc path for sun */}
-            <path d={`M 20 ${cy + 120} Q ${cx} ${cy - 180} ${380} ${cy + 120}`}
-              fill="none" stroke="rgba(251,191,36,0.2)" strokeWidth="1" strokeDasharray="4 4" />
-            {/* Sun circle */}
-            <circle cx={sunX} cy={sunY} r={14}
-              fill={isNoon ? "#fbbf24" : isMorning ? "#fb923c" : "#f97316"}
-              filter="url(#outerGlow)" opacity="0.9" />
-            {/* Sun rays */}
-            {[0, 45, 90, 135, 180, 225, 270, 315].map(deg => {
-              const rad = deg * Math.PI / 180;
-              return <line key={`ray-${deg}`} x1={sunX + 15 * Math.cos(rad)} y1={sunY + 15 * Math.sin(rad)}
-                x2={sunX + 20 * Math.cos(rad)} y2={sunY + 20 * Math.sin(rad)}
-                stroke="#fbbf24" strokeWidth="1.5" opacity="0.6" />;
-            })}
+            {/* Blurry base shadow */}
+            <line 
+              x1={cx} y1={cy} x2={sx} y2={sy} 
+              stroke="rgba(0,0,0,0.7)" 
+              strokeWidth="9" 
+              strokeLinecap="round" 
+              filter="url(#shadowBlur)" 
+            />
+            {/* Sharp core shadow */}
+            <line 
+              x1={cx} y1={cy} x2={sx} y2={sy} 
+              stroke="rgba(30,20,10,0.8)" 
+              strokeWidth="4" 
+              strokeLinecap="round" 
+            />
+            {/* Highlight pointer dot where shadow crosses rim */}
+            <circle cx={sx} cy={sy} r="4" fill="#f59e0b" filter="url(#outerGlow)" />
           </g>
         );
       })()}
 
-      {/* Prahara arc label */}
-      <text x={cx} y={cy + r + 28} textAnchor="middle" fontSize="10" fill="#f5deb3" opacity="0.8" fontFamily="serif">
-        ◦ Konark Sun Temple Sundial Wheel ◦
-      </text>
+      {/* Central Hub representing Sun God */}
+      <circle cx={cx} cy={cy} r={hubR} fill="url(#hubGrad)" stroke="#f59e0b" strokeWidth="2.5" />
+      <circle cx={cx} cy={cy} r={hubR - 6} fill="none" stroke="rgba(255,255,255,0.15)" strokeWidth="1" />
+      <circle cx={cx} cy={cy} r={6} fill="#120d09" />
+
+      {/* Actual physical Gnomon rod casting the shadow */}
+      <line x1={cx} y1={cy} x2={cx} y2={cy - 36} stroke="#f59e0b" strokeWidth="3" strokeLinecap="round" filter="url(#outerGlow)" />
+      <circle cx={cx} cy={cy - 36} r="3" fill="#ffffff" />
     </svg>
   );
 };
 
 // ── Page ───────────────────────────────────────────────────────────────────────
 const SundialSimulator = () => {
-  const [sliderValue, setSliderValue] = useState(180); // Defaults to 9 AM
+  const [sliderValue, setSliderValue] = useState(180); // Default 9:00 AM
+  const [activeTab, setActiveTab] = useState<"calc" | "guide">("calc");
+
   const time = getTimeFromSlider(sliderValue);
   const shadowAngle = getShadowAngle(sliderValue);
-  const prahara = getPrahara(time.hours + time.minutes / 60);
-  const minuteAngle = Math.round(((sliderValue % 30) / 30) * 60);
+
+  // Math breakdown for the bead counting explanation
+  // 6:00 AM = 0 offset. Each major spoke represents 3 hours (180 mins).
+  // Total 4 spokes cover the daylight hours: Spoke 0 (6 AM), Spoke 1 (9 AM), Spoke 2 (12 PM), Spoke 3 (3 PM), Spoke 4 (6 PM)
+  const nearestSpokeIdx = Math.floor(sliderValue / 180);
+  const nextSpokeIdx = nearestSpokeIdx + 1;
+  const minutesPastSpoke = sliderValue % 180;
+  
+  // Outer rim has 30 beads between major spokes. 180 minutes / 30 beads = 6 minutes per bead!
+  const beadsCounted = Math.round(minutesPastSpoke / 6);
+  
+  const currentSpokeTime = nearestSpokeIdx * 3 + 6; // 6 AM + index * 3
+  const currentSpokeLabel = currentSpokeTime > 12 ? `${currentSpokeTime - 12}:00 PM` : currentSpokeTime === 12 ? "12:00 PM" : `${currentSpokeTime}:00 AM`;
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-[#0d0905] text-[#f7efe6] font-sans pb-20">
       <Navigation />
 
-      <div className="relative pt-20 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-amber-900/10 via-transparent to-transparent pointer-events-none" />
-        <div className="absolute top-24 left-1/2 -translate-x-1/2 w-[500px] h-[300px] bg-amber-500/5 rounded-full blur-3xl pointer-events-none" />
-
-        <div className="container mx-auto px-4 pt-8 text-center relative z-10">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass-panel text-sm text-amber-400 mb-6 font-medium">
-            <Sun className="w-4 h-4" /> Konark Solar Sundial Simulator
+      {/* Hero */}
+      <div className="relative pt-24 pb-8 overflow-hidden">
+        <div className="absolute inset-0 bg-radial-at-t from-[#c49a5e]/8 via-transparent to-transparent pointer-events-none" />
+        <div className="container mx-auto px-4 pt-6 text-center relative z-10">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-sm text-amber-400 mb-6 font-medium">
+            <Sun className="w-4 h-4" /> Solar Astronomy Simulation
           </div>
-          <h1 className="text-4xl md:text-5xl font-extrabold mb-3 tracking-tight">
-            <span className="bg-gradient-to-r from-amber-300 via-yellow-400 to-orange-400 bg-clip-text text-transparent">Ancient Timekeeping</span>
-            <br /><span className="text-foreground/80 text-3xl md:text-4xl">of the Sun Temple Wheels</span>
+          <h1 className="text-4xl md:text-5xl font-extrabold mb-4 tracking-tight leading-tight">
+            <span className="bg-gradient-to-r from-amber-200 via-orange-400 to-amber-500 bg-clip-text text-transparent">Konark Solar Sundial Simulator</span>
+            <br /><span className="text-white/90 text-3xl md:text-4xl font-light">Interactive Shadow Calculations of the Sun Temple</span>
           </h1>
-          <p className="text-muted-foreground max-w-2xl mx-auto text-base leading-relaxed mb-8">
-            The 24 spokes of each Konark wheel represent the 24 hours of the day. The gnomon (center rod) casts a shadow that ancient priests read to determine time accurate to the minute. Drag the slider to simulate.
+          <p className="text-amber-100/60 max-w-2xl mx-auto text-base leading-relaxed font-light">
+            The chariot wheels of Konark are not just decorations — they are highly precise astronomical calendars. Adjust the sun's position to see how ancient priests calculated time using shadows and beads.
           </p>
         </div>
+      </div>
 
-        {/* Main simulation */}
-        <div className="container mx-auto px-4 pb-16">
-          <div className="grid lg:grid-cols-2 gap-8 items-center max-w-5xl mx-auto">
-
-            {/* Wheel visualization */}
-            <div className="glass-card rounded-3xl p-6">
+      {/* Main dashboard */}
+      <div className="container mx-auto px-4 mt-6">
+        <div className="grid lg:grid-cols-5 gap-8 max-w-6xl mx-auto items-start">
+          
+          {/* Left panel: Wheel view */}
+          <div className="lg:col-span-2 bg-black/40 border border-[#c49a5e]/15 rounded-3xl p-6 backdrop-blur-md text-center">
+            <h3 className="text-xs font-bold uppercase tracking-widest text-amber-400 mb-4 flex items-center justify-center gap-2">
+              <Compass className="w-4 h-4 animate-spin" style={{ animationDuration: "12s" }} /> Interactive Sundial Wheel
+            </h3>
+            
+            <div className="my-4">
               <KonarkWheel shadowAngle={shadowAngle} timeValue={sliderValue} />
             </div>
 
-            {/* Info panel */}
-            <div className="space-y-4">
-              {/* Time display */}
-              <div className="glass-card rounded-2xl p-6 text-center">
-                <div className="text-6xl font-bold font-mono bg-gradient-to-r from-amber-300 to-orange-400 bg-clip-text text-transparent mb-1">
-                  {time.display}
-                </div>
-                <div className="text-sm text-muted-foreground">Current Simulated Time</div>
-                <div className="mt-3 inline-flex items-center gap-2 px-4 py-1.5 bg-amber-500/10 border border-amber-500/20 rounded-full text-amber-400 text-sm font-medium">
-                  <Sun className="w-4 h-4" />
-                  {prahara} Prahara
-                </div>
-              </div>
-
-              {/* Shadow reading */}
-              <div className="glass-card rounded-2xl p-5">
-                <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wider mb-3 flex items-center gap-2">
-                  <Clock className="w-4 h-4 text-primary" /> Shadow Reading
-                </h3>
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="bg-white/5 rounded-xl p-3">
-                    <div className="text-xs text-muted-foreground mb-1">Shadow Angle</div>
-                    <div className="text-xl font-bold text-primary">{Math.abs(Math.round(shadowAngle))}°</div>
-                    <div className="text-xs text-muted-foreground">{shadowAngle < 0 ? "West" : "East"}</div>
-                  </div>
-                  <div className="bg-white/5 rounded-xl p-3">
-                    <div className="text-xs text-muted-foreground mb-1">Minute Indicator</div>
-                    <div className="text-xl font-bold text-amber-400">{minuteAngle}′</div>
-                    <div className="text-xs text-muted-foreground">spoke divisions</div>
-                  </div>
-                  <div className="bg-white/5 rounded-xl p-3 col-span-2">
-                    <div className="text-xs text-muted-foreground mb-1">Spoke Position</div>
-                    <div className="text-sm font-medium">
-                      Spoke {Math.round((Math.abs(shadowAngle) / 360) * SPOKES + 6) % SPOKES + 1} of {SPOKES}
-                    </div>
-                    <div className="text-xs text-muted-foreground mt-0.5">Each spoke = {Math.round(60 * 24 / SPOKES)} minutes</div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Time slider */}
-              <div className="glass-card rounded-2xl p-5">
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-sm text-muted-foreground">6:00 AM</span>
-                  <span className="text-sm font-semibold text-primary">{time.display}</span>
-                  <span className="text-sm text-muted-foreground">6:00 PM</span>
-                </div>
-                <Slider id="sundial-slider" min={0} max={720} step={1} value={[sliderValue]}
-                  onValueChange={v => setSliderValue(v[0])} className="my-2" />
-                <div className="flex justify-between mt-2">
-                  {TIME_LABELS.map((l, i) => (
-                    <span key={i} className={`text-[9px] ${i === 6 ? "text-amber-400 font-semibold" : "text-muted-foreground"}`}>{i === 6 ? "Noon" : ""}</span>
-                  ))}
-                </div>
-              </div>
-
-              {/* Did you know */}
-              <div className="glass-card rounded-2xl p-4 border-l-2 border-amber-500/50">
-                <div className="flex items-start gap-3">
-                  <Info className="w-4 h-4 text-amber-400 mt-0.5 shrink-0" />
-                  <div>
-                    <h4 className="text-sm font-semibold text-amber-400 mb-1">Astronomical Fact</h4>
-                    <p className="text-xs text-muted-foreground leading-relaxed">
-                      The Konark Sun Temple has <strong>12 pairs of wheels</strong> representing the 12 months. Each wheel has 8 major spokes (8 Praharas of 3 hours each) and 8 minor spokes, creating a 24-spoke sundial accurate to <strong>1.5 minutes</strong>.
-                    </p>
-                  </div>
-                </div>
+            {/* Quick Presets */}
+            <div className="mt-6 space-y-2.5">
+              <div className="text-left text-[11px] text-amber-100/40 uppercase tracking-wider font-bold">Quick Solar Presets</div>
+              <div className="grid grid-cols-2 gap-2">
+                {PRESETS.map(preset => (
+                  <button
+                    key={preset.label}
+                    onClick={() => setSliderValue(preset.value)}
+                    className={`text-xs py-2.5 px-3 rounded-xl font-medium transition-all ${
+                      sliderValue === preset.value
+                        ? "bg-amber-500/10 border border-amber-500/30 text-amber-300"
+                        : "bg-black/20 border border-white/5 text-amber-100/50 hover:text-white"
+                    }`}
+                  >
+                    {preset.label.split(" (")[0]}
+                  </button>
+                ))}
               </div>
             </div>
           </div>
 
-          {/* Prahara reference */}
-          <div className="max-w-5xl mx-auto mt-8">
-            <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-4 text-center">The 8 Praharas of the Day</h3>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              {PRAHARAS.map((p, i) => {
-                const startHour = 6 + i * 1.5;
-                const endHour = startHour + 1.5;
-                const isActive = (time.hours + time.minutes / 60) >= startHour && (time.hours + time.minutes / 60) < endHour;
-                return (
-                  <div key={p} className={`glass-card rounded-xl p-3 text-center transition-all duration-300 ${isActive ? "border-amber-500/40 bg-amber-500/10" : "opacity-60"}`}>
-                    <div className="text-lg mb-1">{["🌙", "🌅", "🌄", "☀️", "🌤️", "🌇", "🌆", "🌃"][i]}</div>
-                    <div className={`text-xs font-semibold ${isActive ? "text-amber-400" : "text-foreground/70"}`}>{p}</div>
-                    <div className="text-[10px] text-muted-foreground mt-0.5">{startHour}:00 – {endHour}:00</div>
-                  </div>
-                );
-              })}
+          {/* Right panel: Details & Tabs */}
+          <div className="lg:col-span-3 bg-black/40 border border-[#c49a5e]/15 rounded-3xl overflow-hidden backdrop-blur-md">
+            
+            {/* Tabs */}
+            <div className="flex border-b border-[#c49a5e]/10 bg-black/20">
+              <button
+                onClick={() => setActiveTab("calc")}
+                className={`flex-1 py-4 text-sm font-semibold border-b-2 transition-all flex items-center justify-center gap-2 ${
+                  activeTab === "calc" 
+                    ? "border-amber-400 text-amber-400 bg-amber-400/5" 
+                    : "border-transparent text-amber-100/40 hover:text-amber-100"
+                }`}
+              >
+                <Clock className="w-4 h-4" /> Live Reading Calculator
+              </button>
+              <button
+                onClick={() => setActiveTab("guide")}
+                className={`flex-1 py-4 text-sm font-semibold border-b-2 transition-all flex items-center justify-center gap-2 ${
+                  activeTab === "guide" 
+                    ? "border-amber-400 text-amber-400 bg-amber-400/5" 
+                    : "border-transparent text-amber-100/40 hover:text-amber-100"
+                }`}
+              >
+                <BookOpen className="w-4 h-4" /> How to Read Guide
+              </button>
             </div>
+
+            <div className="p-6 space-y-6">
+              
+              {activeTab === "calc" ? (
+                <>
+                  {/* Digital read-out */}
+                  <div className="bg-black/30 border border-white/5 rounded-2xl p-6 text-center relative overflow-hidden">
+                    <div className="absolute top-2 right-2 flex h-2 w-2">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75" />
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500" />
+                    </div>
+                    
+                    <div className="text-5xl md:text-6xl font-black font-mono bg-gradient-to-r from-amber-300 to-orange-400 bg-clip-text text-transparent">
+                      {time.display}
+                    </div>
+                    <p className="text-[10px] text-amber-100/40 uppercase tracking-widest font-bold mt-2">Simulated Solar Time</p>
+                    
+                    <div className="mt-4 inline-flex items-center gap-2 bg-amber-500/10 border border-amber-500/20 px-4 py-1.5 rounded-full text-xs font-semibold text-amber-300">
+                      🌅 Current Prahara: {PRAHARAS[nearestSpokeIdx]?.name || "Sayahna"}
+                    </div>
+                  </div>
+
+                  {/* Calculations breakdown */}
+                  <div className="space-y-4">
+                    <h4 className="text-xs font-bold text-amber-400 uppercase tracking-widest">Dynamic Time Reading Math</h4>
+                    
+                    <div className="grid gap-3 text-sm">
+                      
+                      <div className="bg-black/30 border border-white/5 rounded-2xl p-4 flex items-center justify-between">
+                        <div>
+                          <h5 className="font-bold text-white">Nearest Major Spoke</h5>
+                          <p className="text-xs text-amber-100/50 mt-0.5">Spoke {nearestSpokeIdx + 1} representing base time</p>
+                        </div>
+                        <span className="font-mono font-bold text-amber-300 bg-white/5 border border-white/5 px-3 py-1 rounded-xl">
+                          {currentSpokeLabel}
+                        </span>
+                      </div>
+
+                      <div className="bg-black/30 border border-white/5 rounded-2xl p-4 flex items-center justify-between">
+                        <div>
+                          <h5 className="font-bold text-white">Bead Index Alignment</h5>
+                          <p className="text-xs text-amber-100/50 mt-0.5">Counting {beadsCounted} beads past Spoke {nearestSpokeIdx + 1}</p>
+                        </div>
+                        <span className="font-mono font-bold text-amber-300 bg-white/5 border border-white/5 px-3 py-1 rounded-xl">
+                          {beadsCounted} Beads
+                        </span>
+                      </div>
+
+                      <div className="bg-[#c49a5e]/5 border border-[#c49a5e]/25 rounded-2xl p-4">
+                        <h5 className="text-xs font-bold text-amber-300 uppercase tracking-wider mb-2">Bead Formula Calculation</h5>
+                        <div className="flex flex-col gap-2 font-mono text-xs text-amber-100/80">
+                          <div className="flex justify-between border-b border-white/5 pb-1.5">
+                            <span>1 Major division (3 hrs)</span>
+                            <span>= 30 Beads</span>
+                          </div>
+                          <div className="flex justify-between border-b border-white/5 pb-1.5">
+                            <span>1 Bead unit value</span>
+                            <span>= 6 Minutes (180 mins / 30 beads)</span>
+                          </div>
+                          <div className="flex justify-between text-white font-bold pt-1">
+                            <span>Final Reading: {currentSpokeLabel} + ({beadsCounted} beads × 6 mins)</span>
+                            <span className="text-amber-400">= {time.display}</span>
+                          </div>
+                        </div>
+                      </div>
+
+                    </div>
+                  </div>
+
+                  {/* Slider Control */}
+                  <div className="bg-black/30 border border-white/5 rounded-2xl p-5">
+                    <div className="flex items-center justify-between text-xs text-amber-100/40 font-bold uppercase tracking-wider mb-3">
+                      <span>Sunrise (6:00 AM)</span>
+                      <span className="text-amber-400 font-mono font-black">{time.display}</span>
+                      <span>Sunset (6:00 PM)</span>
+                    </div>
+                    
+                    <Slider
+                      id="sundial-slider"
+                      min={0}
+                      max={720}
+                      step={6} // Stepping by 6 mins aligns perfectly with the bead markers
+                      value={[sliderValue]}
+                      onValueChange={v => setSliderValue(v[0])}
+                      className="my-3 accent-amber-500"
+                    />
+                    
+                    <p className="text-[10px] text-center text-amber-100/30 leading-snug">
+                      *Note: Each step shifts the slider by exactly 6 minutes, aligning the shadow with the next bead on the temple wheel.
+                    </p>
+                  </div>
+                </>
+              ) : (
+                <div className="space-y-5 text-sm leading-relaxed font-light text-amber-100/70">
+                  <div className="border-b border-[#c49a5e]/10 pb-3 flex items-center justify-between">
+                    <h3 className="font-bold text-amber-400">Reading the Sundial of Surya Temple</h3>
+                    <span className="text-xs text-amber-100/40">Step-by-Step Guide</span>
+                  </div>
+
+                  <div className="space-y-4">
+                    <div className="flex gap-4">
+                      <div className="w-8 h-8 rounded-full bg-amber-500/10 border border-amber-500/20 flex items-center justify-center font-bold text-amber-400 shrink-0">1</div>
+                      <div>
+                        <h4 className="font-bold text-white text-base">Find the Shadow</h4>
+                        <p className="text-xs text-amber-100/50 mt-1">Look at the shadow cast by the central gnomon. The wheel is designed horizontally on the temple plinth, functioning with the sun's altitude angle.</p>
+                      </div>
+                    </div>
+
+                    <div className="flex gap-4">
+                      <div className="w-8 h-8 rounded-full bg-amber-500/10 border border-amber-500/20 flex items-center justify-center font-bold text-amber-400 shrink-0">2</div>
+                      <div>
+                        <h4 className="font-bold text-white text-base">Identify the Major Spoke</h4>
+                        <p className="text-xs text-amber-100/50 mt-1">There are 8 major spokes on the wheel. Each major spoke represents a 3-hour period (Prahara) starting from Sunrise (6:00 AM). Find the last spoke the shadow has passed clockwise.</p>
+                      </div>
+                    </div>
+
+                    <div className="flex gap-4">
+                      <div className="w-8 h-8 rounded-full bg-amber-500/10 border border-amber-500/20 flex items-center justify-center font-bold text-amber-400 shrink-0">3</div>
+                      <div>
+                        <h4 className="font-bold text-white text-base">Count the Beads</h4>
+                        <p className="text-xs text-amber-100/50 mt-1">The outer rim features 30 beads between each major spoke. Each bead signifies exactly 6 minutes. Count the beads starting from the base major spoke to the shadow tip.</p>
+                      </div>
+                    </div>
+
+                    <div className="flex gap-4">
+                      <div className="w-8 h-8 rounded-full bg-amber-500/10 border border-amber-500/20 flex items-center justify-center font-bold text-amber-400 shrink-0">4</div>
+                      <div>
+                        <h4 className="font-bold text-white text-base">Add the Minutes</h4>
+                        <p className="text-xs text-amber-100/50 mt-1">Multiply the bead count by 6 and add it to the base spoke's time. This delivers a solar time accurate to the minute, used by Vedic priests for millennia.</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-[#c49a5e]/5 border border-[#c49a5e]/25 rounded-2xl p-5 mt-4">
+                    <h4 className="text-xs font-bold uppercase tracking-widest text-amber-400 mb-2 flex items-center gap-1.5">
+                      <Info className="w-4 h-4" /> Historical Astronomy Note
+                    </h4>
+                    <p className="text-xs text-amber-100/60 leading-relaxed font-light">
+                      The Konark temple is shaped like a giant solar chariot with <strong>24 wheels</strong> representing the fortnights of the year, pulled by <strong>7 horses</strong> representing the days of the week. The precision of the carvings represents the apex of astronomical observation in 13th-century India.
+                    </p>
+                  </div>
+                </div>
+              )}
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      {/* Praharas schedule reference grid */}
+      <div className="container mx-auto px-4 mt-12 max-w-6xl">
+        <div className="bg-black/40 border border-[#c49a5e]/15 rounded-3xl p-6 md:p-8 backdrop-blur-md">
+          <h3 className="text-sm font-bold text-amber-400 uppercase tracking-widest mb-6 text-center">
+            The 4 Day-Praharas (6:00 AM - 6:00 PM)
+          </h3>
+          
+          <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-4">
+            {PRAHARAS.map((p, i) => {
+              const isActive = nearestSpokeIdx === i;
+              return (
+                <div 
+                  key={p.name} 
+                  className={`border rounded-2xl p-5 text-center transition-all duration-300 ${
+                    isActive 
+                      ? "border-amber-400 bg-amber-400/5 shadow-[0_0_12px_rgba(245,158,11,0.05)] scale-[1.02]" 
+                      : "border-white/5 opacity-55 hover:opacity-75"
+                  }`}
+                >
+                  <div className="text-3xl mb-2">{["🌅", "📿", "☀️", "🌇"][i]}</div>
+                  <h4 className="font-bold text-white text-base">{p.name}</h4>
+                  <div className="text-xs text-amber-400 font-semibold font-mono mt-1">{p.time}</div>
+                  <p className="text-[11px] text-amber-100/40 mt-2 leading-relaxed font-light">
+                    {p.desc}
+                  </p>
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>
