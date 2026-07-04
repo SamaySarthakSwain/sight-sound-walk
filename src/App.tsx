@@ -25,6 +25,10 @@ const ARExperience = lazy(() => import("./pages/ARExperience"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const CrowdDashboard = lazy(() => import("./pages/CrowdDashboard"));
 const LiveRoom = lazy(() => import("./pages/LiveRoom"));
+const Soundscape = lazy(() => import("./pages/Soundscape"));
+const SundialSimulator = lazy(() => import("./pages/SundialSimulator"));
+const ArtisanTrail = lazy(() => import("./pages/ArtisanTrail"));
+const HeritageQuests = lazy(() => import("./pages/HeritageQuests"));
 
 // Lazy load heavy non-critical components
 const FloatingParticles = lazy(() => import("@/components/FloatingParticles"));
@@ -129,6 +133,10 @@ const App = () => {
                     <Route path="/profile" element={<Profile />} />
                     <Route path="/crowd" element={<WebRTCProvider><DetectionProvider><CrowdDashboard /></DetectionProvider></WebRTCProvider>} />
                     <Route path="/crowd/room" element={<LiveRoom />} />
+                    <Route path="/soundscape" element={<Soundscape />} />
+                    <Route path="/sundial" element={<SundialSimulator />} />
+                    <Route path="/artisan-trail" element={<ArtisanTrail />} />
+                    <Route path="/quests" element={<HeritageQuests />} />
                     <Route path="*" element={<NotFound />} />
                   </Routes>
                 </Suspense>

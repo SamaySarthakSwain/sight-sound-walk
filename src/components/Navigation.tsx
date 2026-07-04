@@ -1,6 +1,6 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Home, Map, HelpCircle, LogIn, LogOut, User as UserIcon, Bot, UtensilsCrossed, Car, Building2, Menu, X, Box, Users } from "lucide-react";
+import { Home, Map, HelpCircle, LogIn, LogOut, User as UserIcon, Bot, UtensilsCrossed, Car, Building2, Menu, X, Box, Users, Headphones, Sun, Palette, Trophy } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
@@ -32,6 +32,10 @@ const navItems = [
   { path: "/assistant", label: "Assistant", icon: Bot },
   { path: "/ar", label: "AR", icon: Box },
   { path: "/crowd", label: "Crowd", icon: Users },
+  { path: "/soundscape", label: "Soundscapes", icon: Headphones },
+  { path: "/sundial", label: "Sundial", icon: Sun },
+  { path: "/artisan-trail", label: "Artisan Trail", icon: Palette },
+  { path: "/quests", label: "Quests", icon: Trophy },
   { path: "/help", label: "Help", icon: HelpCircle },
 ];
 
