@@ -1,7 +1,7 @@
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 import { Link } from "react-router-dom";
-import { Landmark, UtensilsCrossed, Car, Building2, Box, Bot, ArrowUpRight, Users } from "lucide-react";
+import { Landmark, UtensilsCrossed, Car, Building2, Box, Bot, ArrowUpRight, Users, Headphones, Sun, Palette, Trophy } from "lucide-react";
 
 const services = [
   {
@@ -10,6 +10,34 @@ const services = [
     desc: "GPS-triggered audio narrations at 50+ historical sites across India.",
     path: "/explore",
     gradient: "from-amber-500/20 to-orange-500/20",
+  },
+  {
+    icon: Headphones,
+    title: "Heritage Soundscapes",
+    desc: "Binaural custom audio mixer with ancient, medieval, and modern atmospheric sounds.",
+    path: "/soundscape",
+    gradient: "from-amber-500/20 to-orange-500/20",
+  },
+  {
+    icon: Sun,
+    title: "Sundial Simulator",
+    desc: "Interact with the Konark Sun Temple sundial to tell time using solar shadow projections.",
+    path: "/sundial",
+    gradient: "from-yellow-500/20 to-amber-500/20",
+  },
+  {
+    icon: Palette,
+    title: "Artisan Handloom Trail",
+    desc: "Support living heritage villages by discovering authentic local craft hubs.",
+    path: "/artisan-trail",
+    gradient: "from-orange-500/20 to-rose-500/20",
+  },
+  {
+    icon: Trophy,
+    title: "Heritage Quests",
+    desc: "Test your historical knowledge in scavenger quests to unlock collectible stamps.",
+    path: "/quests",
+    gradient: "from-emerald-500/20 to-teal-500/20",
   },
   {
     icon: UtensilsCrossed,
