@@ -1,6 +1,7 @@
 # Lets Explore
 
 ## Project info
+
 MVP LINK:https://letsexploreit.netlify.app/
 
 **Use your preferred IDE**
@@ -25,21 +26,18 @@ npm i
 npm run dev
 ```
 
- Edit files directly within the Codespace and commit and push your changes once you're done.
-
+Edit files directly within the Codespace and commit and push your changes once you're done.
 
 ## What technologies are used for this project?
 
 This project is built with:
+
 - HTML,CSS,JS
 - Vite
 - TypeScript
 - React
 - shadcn-ui
 - Tailwind CSS
-
-
-
 
 **URL**: https://lovable.dev/projects/31b4df35-e9aa-4d85-ae89-d8c29e0a0d52
 
@@ -58,3 +56,6 @@ To deploy this project to Vercel and ensure smooth operation:
    - **Output Directory**: `dist`
 4. **Smooth Routing**: A [`vercel.json`](./vercel.json) has been added to handle SPA routing and prevent 404 errors on sub-routes.
 
+Trial
+
+I am Samay
