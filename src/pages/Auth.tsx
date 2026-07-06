@@ -238,9 +238,10 @@ const Auth = () => {
         setGoogleLoading(false);
       }
       
-      // If result.data.url is present, it's a redirect flow
-      if (result?.data?.url) {
-        window.location.assign(result.data.url);
+      // If result.data.url is present (Supabase redirect flow), navigate to it
+      const url = (result as { data?: { url?: string } } | undefined)?.data?.url;
+      if (url) {
+        window.location.assign(url);
       }
     } catch (err) {
       toast.error("OAuth sign-in failed. Please try again.");
