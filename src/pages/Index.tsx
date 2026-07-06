@@ -16,6 +16,7 @@ const Index = () => {
       <AuroraBackground />
       <Navigation />
       <HeroSection />
+<<<<<<< HEAD
       <Suspense fallback={null}>
         <FeaturedDestinations />
         <StatsMarquee />
@@ -23,6 +24,15 @@ const Index = () => {
         <ExploreServices />
         <CTASection />
       </Suspense>
+=======
+      {/* Independent Suspense per section so slow chunks don't block the rest of the page. */}
+      <Suspense fallback={null}><FeaturedDestinations /></Suspense>
+      <Suspense fallback={null}><StatsMarquee /></Suspense>
+      <Suspense fallback={null}><HowItWorks /></Suspense>
+      <Suspense fallback={null}><ExploreServices /></Suspense>
+      <Suspense fallback={null}><DatabaseMonuments /></Suspense>
+      <Suspense fallback={null}><CTASection /></Suspense>
+>>>>>>> 01b43efe12fdd4481dbab268df1d62f70f74faf3
     </div>
   );
 };
