@@ -77,7 +77,7 @@
       {
         "name": "search_hotels",
         "title": "Search hotels",
-        "description": "Search hotels near a city or location in Odisha. Returns public listings (name, location, rating, amenities). Contact numbers are not returned by this tool.",
+        "description": "Search hotels near a city or location in Odisha. Returns public listings (name, location, rating, amenities).",
         "annotations": {
           "readOnlyHint": true,
           "idempotentHint": true,

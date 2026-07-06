@@ -1,13 +1,12 @@
 import { createClient } from "@supabase/supabase-js";
 import { defineTool } from "@lovable.dev/mcp-js";
 import { z } from "zod";
+import { env, envOr } from "../env";
 
 function supa() {
-  return createClient(
-    process.env.SUPABASE_URL!,
-    process.env.SUPABASE_PUBLISHABLE_KEY ?? process.env.SUPABASE_ANON_KEY!,
-    { auth: { persistSession: false, autoRefreshToken: false } },
-  );
+  return createClient(env("SUPABASE_URL"), envOr("SUPABASE_PUBLISHABLE_KEY", envOr("SUPABASE_ANON_KEY", ""))!, {
+    auth: { persistSession: false, autoRefreshToken: false },
+  });
 }
 
 export default defineTool({
@@ -24,13 +23,7 @@ export default defineTool({
   },
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
   handler: async ({ city, query, category, minRating, limit }) => {
-    let q = supa()
-      .from("food_places")
-      .select("id,name:image_url,category,description,famous_dishes,avg_price_min,avg_price_max,google_rating,google_total_ratings,latitude,longitude,is_food_street,image_url");
-    // NOTE: keep base fields — using * is simpler and safer
-    q = supa()
-      .from("food_places")
-      .select("*");
+    let q = supa().from("food_places").select("*");
     if (city) q = q.ilike("location", `%${city}%`);
     if (category) q = q.ilike("category", `%${category}%`);
     if (query) q = q.or(`name.ilike.%${query}%,description.ilike.%${query}%`);
