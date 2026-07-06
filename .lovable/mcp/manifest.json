@@ -1,0 +1,159 @@
+{
+  "version": 1,
+  "sdk_version": "0.20.0",
+  "path": "/mcp",
+  "auth": {
+    "type": "none"
+  },
+  "mcp": {
+    "server": {
+      "name": "lets-explore-mcp",
+      "version": "0.1.0",
+      "title": "Lets Explore (Odisha) MCP"
+    },
+    "tools": [
+      {
+        "name": "search_monuments",
+        "title": "Search monuments",
+        "description": "Search Odisha monuments and historical sites in the Lets Explore catalog. Filter by free-text query (matches title, location, description), city/location, or category.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "Free-text search across title, location, description."
+            },
+            "city": {
+              "type": "string",
+              "description": "Filter by city or location (e.g. 'Puri', 'Bhubaneswar')."
+            },
+            "category": {
+              "type": "string",
+              "description": "Filter by category (e.g. 'Temple', 'Beach', 'Museum')."
+            },
+            "limit": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50,
+              "description": "Max rows to return (default 10)."
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_monument_details",
+        "title": "Get monument details",
+        "description": "Return full details (facts, coordinates, region, description) for a single monument matched by title.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Monument title or partial title to look up."
+            }
+          },
+          "required": [
+            "title"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "search_hotels",
+        "title": "Search hotels",
+        "description": "Search hotels near a city or location in Odisha. Returns public listings (name, location, rating, amenities). Contact numbers are not returned by this tool.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "city": {
+              "type": "string",
+              "description": "City or area to search (matches location field)."
+            },
+            "query": {
+              "type": "string",
+              "description": "Free-text search across name and description."
+            },
+            "minRating": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 5,
+              "description": "Minimum Google rating filter."
+            },
+            "limit": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50,
+              "description": "Max rows (default 10)."
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "search_food_places",
+        "title": "Search food places",
+        "description": "Find restaurants, street food stalls, and food streets in Odisha with ratings and famous dishes.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "city": {
+              "type": "string",
+              "description": "City / area filter (matches location)."
+            },
+            "query": {
+              "type": "string",
+              "description": "Free-text search across name and description."
+            },
+            "category": {
+              "type": "string",
+              "description": "Category filter (e.g. 'Restaurant', 'Street Food')."
+            },
+            "minRating": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 5,
+              "description": "Minimum Google rating."
+            },
+            "limit": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50,
+              "description": "Max rows (default 10)."
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}
