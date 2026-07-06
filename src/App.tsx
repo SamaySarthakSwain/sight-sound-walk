@@ -29,6 +29,7 @@ const Soundscape = lazy(() => import("./pages/Soundscape"));
 const SundialSimulator = lazy(() => import("./pages/SundialSimulator"));
 const ArtisanTrail = lazy(() => import("./pages/ArtisanTrail"));
 const HeritageQuests = lazy(() => import("./pages/HeritageQuests"));
+const Flash = lazy(() => import("./pages/Flash"));
 
 // Lazy load heavy non-critical components
 const FloatingParticles = lazy(() => import("@/components/FloatingParticles"));
@@ -133,10 +134,12 @@ const App = () => {
                     <Route path="/profile" element={<Profile />} />
                     <Route path="/crowd" element={<WebRTCProvider><DetectionProvider><CrowdDashboard /></DetectionProvider></WebRTCProvider>} />
                     <Route path="/crowd/room" element={<LiveRoom />} />
-                    <Route path="/soundscape" element={<Soundscape />} />
-                    <Route path="/sundial" element={<SundialSimulator />} />
-                    <Route path="/artisan-trail" element={<ArtisanTrail />} />
-                    <Route path="/quests" element={<HeritageQuests />} />
+                    <Route path="/more/soundscape" element={<Soundscape />} />
+                    <Route path="/more/sundial" element={<SundialSimulator />} />
+                    <Route path="/more/artisan-trail" element={<ArtisanTrail />} />
+                    <Route path="/more/quests" element={<HeritageQuests />} />
+                    <Route path="/more" element={<HeritageQuests />} />
+                    <Route path="/flash" element={<Flash />} />
                     <Route path="*" element={<NotFound />} />
                   </Routes>
                 </Suspense>

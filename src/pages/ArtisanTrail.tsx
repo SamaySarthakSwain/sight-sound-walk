@@ -1,4 +1,5 @@
 import Navigation from "@/components/Navigation";
+import MoreSubNav from "@/components/MoreSubNav";
 import { useState } from "react";
 import { MapPin, ExternalLink, Palette, Shirt, Gem, Scissors, Sparkles, Calendar, ShoppingBag, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -145,21 +146,31 @@ const ArtisanTrail = () => {
   const [selectedDay, setSelectedDay] = useState<number | null>(null);
 
   return (
-    <div className="min-h-screen bg-[#0d0905] text-[#f7efe6] font-sans pb-20">
+    <div className="min-h-screen bg-background text-foreground font-sans relative">
+      {/* Beautiful Artisan Trail Background */}
+      <div 
+        className="fixed inset-0 z-0 bg-cover bg-center bg-no-repeat transition-all duration-700"
+        style={{ backgroundImage: "url('https://images.unsplash.com/photo-1600100397608-f010f41bc7f5?auto=format&fit=crop&q=80&w=2070')" }}
+      />
+      {/* Gradient Overlay for Readability */}
+      <div className="fixed inset-0 z-0 bg-white/85 dark:bg-[#0d0905]/90 backdrop-blur-[2px] transition-all duration-700" />
+      
+      <div className="relative z-10 pb-20">
       <Navigation />
+      <MoreSubNav />
 
       {/* Hero */}
-      <div className="relative pt-24 pb-8 overflow-hidden">
-        <div className="absolute inset-0 bg-radial-at-t from-[#c49a5e]/8 via-transparent to-transparent pointer-events-none" />
+      <div className="relative pt-36 pb-8 overflow-hidden">
+        <div className="absolute inset-0 bg-radial-at-t from-transparent dark:from-[#c49a5e]/10 via-transparent dark:via-[#0d0905]/50 to-transparent pointer-events-none" />
         <div className="container mx-auto px-4 pt-6 text-center relative z-10">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-sm text-amber-400 mb-6 font-medium">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-sm text-amber-600 dark:text-amber-400 mb-6 font-medium">
             <Palette className="w-4 h-4" /> Sustainable Craft Trails
           </div>
           <h1 className="text-4xl md:text-5xl font-extrabold mb-4 tracking-tight leading-tight">
-            <span className="bg-gradient-to-r from-amber-200 via-orange-400 to-rose-400 bg-clip-text text-transparent">Artisan & Handloom Trails</span>
-            <br /><span className="text-white/90 text-3xl md:text-4xl font-light">Supporting Living Heritage Villages</span>
+            <span className="bg-gradient-to-r from-amber-600 to-orange-500 dark:from-amber-200 dark:via-orange-400 dark:to-rose-400 bg-clip-text text-transparent">Artisan & Handloom Trails</span>
+            <br /><span className="text-foreground/90 text-3xl md:text-4xl font-light">Supporting Living Heritage Villages</span>
           </h1>
-          <p className="text-amber-100/60 max-w-2xl mx-auto text-base leading-relaxed font-light">
+          <p className="text-foreground/70 dark:text-amber-100/60 max-w-2xl mx-auto text-base leading-relaxed font-light">
             Odisha's cultural identity is deeply woven into its villages. Discover local art colonies, locate authentic family workshops, and buy directly from master craftsmen.
           </p>
         </div>
@@ -171,13 +182,13 @@ const ArtisanTrail = () => {
           
           {/* Left panel: Interactive Route & Villages list */}
           <div className="lg:col-span-2 space-y-6">
-            <div className="bg-black/40 border border-[#c49a5e]/15 rounded-3xl p-5 backdrop-blur-md">
-              <h3 className="text-sm font-bold text-amber-400/80 uppercase tracking-wider mb-4 flex items-center gap-2">
+            <div className="bg-white/70 dark:bg-black/40 border border-border/50 dark:border-[#c49a5e]/15 rounded-3xl p-5 backdrop-blur-md shadow-xl dark:shadow-none">
+              <h3 className="text-sm font-bold text-amber-700 dark:text-amber-400/80 uppercase tracking-wider mb-4 flex items-center gap-2">
                 🗺️ Interactive Trail Route
               </h3>
               
               {/* Visual SVG Map Connecting points */}
-              <div className="relative h-44 bg-black/50 border border-white/5 rounded-2xl p-4 flex items-center justify-center overflow-hidden mb-5">
+              <div className="relative h-44 bg-black/5 dark:bg-black/50 border border-black/10 dark:border-white/5 rounded-2xl p-4 flex items-center justify-center overflow-hidden mb-5">
                 <svg viewBox="0 0 300 150" className="w-full h-full opacity-90">
                   {/* Dotted route lines */}
                   <path d="M 50 110 L 110 90 L 190 70 L 250 50" fill="none" stroke="#c49a5e" strokeWidth="2" strokeDasharray="5 5" className="animate-[dash_4s_linear_infinite]" />
@@ -185,30 +196,30 @@ const ArtisanTrail = () => {
                   
                   {/* Bhubaneswar Start */}
                   <circle cx="50" cy="110" r="5" fill="#f59e0b" />
-                  <text x="50" y="125" textAnchor="middle" fontSize="8" fill="#f7efe6" fontWeight="bold">Bhubaneswar</text>
+                  <text x="50" y="125" textAnchor="middle" fontSize="8" fill="currentColor" className="text-foreground dark:text-[#f7efe6]" fontWeight="bold">Bhubaneswar</text>
 
                   {/* Pipili Node */}
                   <g className="cursor-pointer" onClick={() => setSelected(VILLAGES[1])}>
                     <circle cx="110" cy="90" r="7" fill={selected?.id === "pipili" ? "#ec4899" : "#c49a5e"} className="transition-all duration-300" />
-                    <text x="110" y="80" textAnchor="middle" fontSize="8" fill={selected?.id === "pipili" ? "#ec4899" : "#f7efe6"}>Pipili</text>
+                    <text x="110" y="80" textAnchor="middle" fontSize="8" fill={selected?.id === "pipili" ? "#ec4899" : "currentColor"} className={selected?.id === "pipili" ? "" : "text-foreground dark:text-[#f7efe6]"}>Pipili</text>
                   </g>
 
                   {/* Raghurajpur Node */}
                   <g className="cursor-pointer" onClick={() => setSelected(VILLAGES[0])}>
                     <circle cx="140" cy="120" r="7" fill={selected?.id === "raghurajpur" ? "#f97316" : "#c49a5e"} className="transition-all duration-300" />
-                    <text x="140" y="135" textAnchor="middle" fontSize="8" fill={selected?.id === "raghurajpur" ? "#f97316" : "#f7efe6"}>Raghurajpur</text>
+                    <text x="140" y="135" textAnchor="middle" fontSize="8" fill={selected?.id === "raghurajpur" ? "#f97316" : "currentColor"} className={selected?.id === "raghurajpur" ? "" : "text-foreground dark:text-[#f7efe6]"}>Raghurajpur</text>
                   </g>
 
                   {/* Cuttack Node */}
                   <g className="cursor-pointer" onClick={() => setSelected(VILLAGES[2])}>
                     <circle cx="190" cy="70" r="7" fill={selected?.id === "cuttack" ? "#3b82f6" : "#c49a5e"} className="transition-all duration-300" />
-                    <text x="190" y="60" textAnchor="middle" fontSize="8" fill={selected?.id === "cuttack" ? "#3b82f6" : "#f7efe6"}>Cuttack</text>
+                    <text x="190" y="60" textAnchor="middle" fontSize="8" fill={selected?.id === "cuttack" ? "#3b82f6" : "currentColor"} className={selected?.id === "cuttack" ? "" : "text-foreground dark:text-[#f7efe6]"}>Cuttack</text>
                   </g>
 
                   {/* Sambalpur Node */}
                   <g className="cursor-pointer" onClick={() => setSelected(VILLAGES[3])}>
                     <circle cx="250" cy="50" r="7" fill={selected?.id === "sambalpur" ? "#eab308" : "#c49a5e"} className="transition-all duration-300" />
-                    <text x="250" y="40" textAnchor="middle" fontSize="8" fill={selected?.id === "sambalpur" ? "#eab308" : "#f7efe6"}>Sambalpur</text>
+                    <text x="250" y="40" textAnchor="middle" fontSize="8" fill={selected?.id === "sambalpur" ? "#eab308" : "currentColor"} className={selected?.id === "sambalpur" ? "" : "text-foreground dark:text-[#f7efe6]"}>Sambalpur</text>
                   </g>
                 </svg>
               </div>
@@ -223,10 +234,10 @@ const ArtisanTrail = () => {
                       setSelected(village);
                       setActiveTab("details");
                     }}
-                    className={`w-full text-left bg-black/30 border rounded-2xl p-4 transition-all duration-300 ${
+                    className={`w-full text-left bg-black/5 dark:bg-black/30 border rounded-2xl p-4 transition-all duration-300 ${
                       selected?.id === village.id 
-                        ? "border-amber-500/40 bg-amber-500/5 shadow-md" 
-                        : "border-white/5 hover:border-white/10"
+                        ? "border-amber-500/40 bg-amber-500/10 dark:bg-amber-500/5 shadow-md" 
+                        : "border-black/5 dark:border-white/5 hover:border-black/10 dark:hover:border-white/10"
                     }`}
                   >
                     <div className="flex items-center gap-4">
@@ -234,8 +245,8 @@ const ArtisanTrail = () => {
                         {village.emoji}
                       </div>
                       <div className="min-w-0 flex-1">
-                        <h3 className={`font-bold text-sm leading-tight transition-colors ${selected?.id === village.id ? "text-amber-400" : "text-amber-100"}`}>{village.name}</h3>
-                        <p className="text-xs text-amber-100/50 mt-1 flex items-center gap-1">
+                        <h3 className={`font-bold text-sm leading-tight transition-colors ${selected?.id === village.id ? "text-amber-600 dark:text-amber-400" : "text-foreground dark:text-amber-100"}`}>{village.name}</h3>
+                        <p className="text-xs text-foreground/50 dark:text-amber-100/50 mt-1 flex items-center gap-1">
                           <MapPin className="w-3 h-3" />{village.location}
                         </p>
                       </div>
@@ -249,13 +260,13 @@ const ArtisanTrail = () => {
           {/* Right panel: Detail Showcase */}
           <div className="lg:col-span-3">
             {selected && (
-              <div className="bg-black/40 border border-[#c49a5e]/15 rounded-3xl overflow-hidden backdrop-blur-md">
+              <div className="bg-white/70 dark:bg-black/40 border border-border/50 dark:border-[#c49a5e]/15 rounded-3xl overflow-hidden backdrop-blur-md shadow-xl dark:shadow-none">
                 {/* Banner */}
                 <div className={`h-28 bg-gradient-to-br ${selected.color} flex items-center justify-between px-8 relative`}>
                   <div className="text-6xl filter drop-shadow-lg">{selected.emoji}</div>
                   <div className="flex flex-wrap gap-1.5 max-w-[200px] justify-end">
                     {selected.tags.map(tag => (
-                      <span key={tag} className="text-[10px] px-2.5 py-0.5 bg-black/40 border border-white/5 rounded-full text-white/90 font-medium">
+                      <span key={tag} className="text-[10px] px-2.5 py-0.5 bg-black/40 border border-white/20 rounded-full text-white/90 font-medium">
                         {tag}
                       </span>
                     ))}
@@ -263,13 +274,13 @@ const ArtisanTrail = () => {
                 </div>
 
                 {/* Navigation Tabs */}
-                <div className="flex border-b border-[#c49a5e]/10 bg-black/20">
+                <div className="flex border-b border-border/50 dark:border-[#c49a5e]/10 bg-black/5 dark:bg-black/20">
                   <button
                     onClick={() => setActiveTab("details")}
                     className={`flex-1 py-4 text-sm font-semibold border-b-2 transition-all ${
                       activeTab === "details" 
-                        ? "border-amber-400 text-amber-400 bg-amber-400/5" 
-                        : "border-transparent text-amber-100/40 hover:text-amber-100"
+                        ? "border-amber-500 dark:border-amber-400 text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-400/5" 
+                        : "border-transparent text-foreground/50 dark:text-amber-100/40 hover:text-foreground dark:hover:text-amber-100"
                     }`}
                   >
                     🎨 Craft Details
@@ -278,8 +289,8 @@ const ArtisanTrail = () => {
                     onClick={() => setActiveTab("products")}
                     className={`flex-1 py-4 text-sm font-semibold border-b-2 transition-all flex items-center justify-center gap-2 ${
                       activeTab === "products" 
-                        ? "border-amber-400 text-amber-400 bg-amber-400/5" 
-                        : "border-transparent text-amber-100/40 hover:text-amber-100"
+                        ? "border-amber-500 dark:border-amber-400 text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-400/5" 
+                        : "border-transparent text-foreground/50 dark:text-amber-100/40 hover:text-foreground dark:hover:text-amber-100"
                     }`}
                   >
                     <ShoppingBag className="w-4 h-4" /> Showcase Catalog
@@ -291,70 +302,70 @@ const ArtisanTrail = () => {
                     <>
                       <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
                         <div>
-                          <h2 className="text-2xl font-bold text-white">{selected.name}</h2>
+                          <h2 className="text-2xl font-bold text-foreground">{selected.name}</h2>
                           <div className="flex items-center gap-2 mt-1">
-                            <span className="text-sm font-bold text-amber-400">{selected.craft}</span>
-                            <span className="text-xs text-amber-100/30">({selected.craftHindi})</span>
+                            <span className="text-sm font-bold text-amber-700 dark:text-amber-400">{selected.craft}</span>
+                            <span className="text-xs text-foreground/40 dark:text-amber-100/30">({selected.craftHindi})</span>
                           </div>
-                          <p className="text-xs text-amber-100/50 flex items-center gap-1 mt-1.5">
-                            <MapPin className="w-3.5 h-3.5 text-amber-500/80" />{selected.location}
+                          <p className="text-xs text-foreground/50 dark:text-amber-100/50 flex items-center gap-1 mt-1.5">
+                            <MapPin className="w-3.5 h-3.5 text-amber-600 dark:text-amber-500/80" />{selected.location}
                           </p>
                         </div>
                         <a href={selected.mapUrl} target="_blank" rel="noopener noreferrer" className="shrink-0">
-                          <Button variant="outline" className="gap-2 bg-amber-500/10 border-amber-500/30 text-amber-300 hover:bg-amber-500/20 rounded-xl">
+                          <Button variant="outline" className="gap-2 bg-amber-50 dark:bg-amber-500/10 border-amber-300 dark:border-amber-500/30 text-amber-700 dark:text-amber-300 hover:bg-amber-100 dark:hover:bg-amber-500/20 rounded-xl shadow-sm dark:shadow-none">
                             <ExternalLink className="w-4 h-4" /> Get Directions
                           </Button>
                         </a>
                       </div>
 
                       <div className="space-y-4">
-                        <div className="leading-relaxed text-amber-100/70 text-sm font-light">
+                        <div className="leading-relaxed text-foreground/70 dark:text-amber-100/70 text-sm font-light">
                           {selected.description}
                         </div>
 
                         {/* History */}
-                        <div className="bg-black/30 border border-white/5 rounded-2xl p-5">
-                          <h4 className="text-xs font-bold uppercase tracking-wider text-amber-400 mb-2">Historical Significance</h4>
-                          <p className="text-sm text-amber-100/70 leading-relaxed font-light">{selected.history}</p>
+                        <div className="bg-black/5 dark:bg-black/30 border border-black/10 dark:border-white/5 rounded-2xl p-5">
+                          <h4 className="text-xs font-bold uppercase tracking-wider text-amber-700 dark:text-amber-400 mb-2">Historical Significance</h4>
+                          <p className="text-sm text-foreground/80 dark:text-amber-100/70 leading-relaxed font-light">{selected.history}</p>
                         </div>
 
                         {/* Best For */}
-                        <div className="bg-[#c49a5e]/5 border border-[#c49a5e]/25 rounded-2xl p-5 flex items-start gap-3">
-                          <Sparkles className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
+                        <div className="bg-amber-50 dark:bg-[#c49a5e]/5 border border-amber-200 dark:border-[#c49a5e]/25 rounded-2xl p-5 flex items-start gap-3">
+                          <Sparkles className="w-5 h-5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
                           <div>
-                            <h4 className="text-xs font-bold uppercase tracking-wider text-amber-300 mb-1">Authentic Purchases</h4>
-                            <p className="text-sm text-amber-100/80 font-light">{selected.bestFor}</p>
+                            <h4 className="text-xs font-bold uppercase tracking-wider text-amber-800 dark:text-amber-300 mb-1">Authentic Purchases</h4>
+                            <p className="text-sm text-foreground/80 dark:text-amber-100/80 font-light">{selected.bestFor}</p>
                           </div>
                         </div>
                       </div>
                     </>
                   ) : (
                     <div className="space-y-5">
-                      <div className="flex items-center justify-between border-b border-[#c49a5e]/10 pb-3">
-                        <h3 className="font-bold text-amber-400">Local Craft Offerings</h3>
-                        <span className="text-xs text-amber-100/50">Direct purchase supports community families</span>
+                      <div className="flex items-center justify-between border-b border-border/50 dark:border-[#c49a5e]/10 pb-3">
+                        <h3 className="font-bold text-amber-700 dark:text-amber-400">Local Craft Offerings</h3>
+                        <span className="text-xs text-foreground/50 dark:text-amber-100/50">Direct purchase supports community families</span>
                       </div>
                       
                       <div className="grid gap-4">
                         {selected.products.map((product, idx) => (
-                          <div key={idx} className="bg-black/30 border border-white/5 rounded-2xl p-4 flex items-center justify-between gap-4 hover:border-[#c49a5e]/20 transition-all">
+                          <div key={idx} className="bg-black/5 dark:bg-black/30 border border-black/10 dark:border-white/5 rounded-2xl p-4 flex items-center justify-between gap-4 hover:border-amber-200 dark:hover:border-[#c49a5e]/20 transition-all">
                             <div className="flex items-center gap-3">
-                              <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 text-lg">
+                              <div className="w-10 h-10 rounded-xl bg-amber-100 dark:bg-amber-500/10 border border-amber-300 dark:border-amber-500/20 flex items-center justify-center text-amber-600 dark:text-amber-400 text-lg">
                                 📦
                               </div>
                               <div>
-                                <h4 className="font-bold text-sm text-amber-100">{product.name}</h4>
-                                <p className="text-xs text-amber-100/50 mt-0.5">{product.imageDesc}</p>
+                                <h4 className="font-bold text-sm text-foreground dark:text-amber-100">{product.name}</h4>
+                                <p className="text-xs text-foreground/50 dark:text-amber-100/50 mt-0.5">{product.imageDesc}</p>
                               </div>
                             </div>
-                            <span className="font-mono text-sm font-bold text-amber-400 bg-amber-400/10 border border-amber-400/20 px-3 py-1 rounded-xl">
+                            <span className="font-mono text-sm font-bold text-amber-700 dark:text-amber-400 bg-amber-100 dark:bg-amber-400/10 border border-amber-300 dark:border-amber-400/20 px-3 py-1 rounded-xl">
                               {product.price}
                             </span>
                           </div>
                         ))}
                       </div>
 
-                      <div className="p-4 bg-amber-400/5 border border-amber-400/10 rounded-2xl text-center text-xs text-amber-100/50 leading-relaxed font-light">
+                      <div className="p-4 bg-amber-50 dark:bg-amber-400/5 border border-amber-200 dark:border-amber-400/10 rounded-2xl text-center text-xs text-foreground/60 dark:text-amber-100/50 leading-relaxed font-light">
                         💡 <strong>Sustainable Tourism Tip:</strong> Prices vary depending on materials and weeks of handmade labor. Carry cash when visiting villages, as digital payments are supported but cash is preferred.
                       </div>
                     </div>
@@ -368,9 +379,9 @@ const ArtisanTrail = () => {
       </div>
 
       {/* Suggested Itinerary Planner */}
-      <div className="container mx-auto px-4 mt-12 max-w-6xl">
-        <div className="bg-black/40 border border-[#c49a5e]/15 rounded-3xl p-6 md:p-8 backdrop-blur-md">
-          <h3 className="text-xl font-bold text-center mb-6 text-amber-300 flex items-center justify-center gap-2">
+      <div className="container mx-auto px-4 mt-12 max-w-6xl relative z-10">
+        <div className="bg-white/70 dark:bg-black/40 border border-border/50 dark:border-[#c49a5e]/15 rounded-3xl p-6 md:p-8 backdrop-blur-md shadow-xl dark:shadow-none">
+          <h3 className="text-xl font-bold text-center mb-6 text-amber-700 dark:text-amber-300 flex items-center justify-center gap-2">
             <Calendar className="w-5 h-5" /> Suggested 3-Day Sustainable Artisan Trail
           </h3>
           
@@ -378,10 +389,10 @@ const ArtisanTrail = () => {
             {ITINERARY.map((itinerary, i) => (
               <div 
                 key={i} 
-                className={`relative bg-black/50 border rounded-2xl p-5 cursor-pointer transition-all duration-300 ${
+                className={`relative bg-black/5 dark:bg-black/50 border rounded-2xl p-5 cursor-pointer transition-all duration-300 ${
                   selectedDay === i 
-                    ? "border-amber-400 bg-amber-400/5 shadow-[0_0_15px_rgba(245,158,11,0.08)] scale-[1.02]" 
-                    : "border-white/5 hover:border-white/10"
+                    ? "border-amber-500 dark:border-amber-400 bg-amber-100 dark:bg-amber-400/5 shadow-[0_0_15px_rgba(245,158,11,0.08)] scale-[1.02]" 
+                    : "border-black/10 dark:border-white/5 hover:border-amber-200 dark:hover:border-white/10"
                 }`}
                 onClick={() => {
                   setSelectedDay(selectedDay === i ? null : i);
@@ -390,21 +401,22 @@ const ArtisanTrail = () => {
                 }}
               >
                 <div className="flex items-center justify-between mb-3">
-                  <span className="text-xs font-bold text-amber-400 bg-amber-500/10 border border-amber-500/20 px-3 py-1 rounded-full">
+                  <span className="text-xs font-bold text-amber-700 dark:text-amber-400 bg-amber-100 dark:bg-amber-500/10 border border-amber-300 dark:border-amber-500/20 px-3 py-1 rounded-full">
                     {itinerary.day}
                   </span>
-                  <span className="text-[10px] text-amber-100/40">{itinerary.travelTime}</span>
+                  <span className="text-[10px] text-foreground/50 dark:text-amber-100/40">{itinerary.travelTime}</span>
                 </div>
-                <p className="text-sm text-amber-100/70 leading-relaxed font-light mb-3">
+                <p className="text-sm text-foreground/70 dark:text-amber-100/70 leading-relaxed font-light mb-3">
                   {itinerary.highlights}
                 </p>
-                <div className="flex items-center gap-1 text-[11px] text-amber-400 font-semibold mt-auto">
+                <div className="flex items-center gap-1 text-[11px] text-amber-600 dark:text-amber-400 font-semibold mt-auto">
                   Focus on {VILLAGES.find(v => v.id === itinerary.villageId)?.craft} <ArrowRight className="w-3.5 h-3.5" />
                 </div>
               </div>
             ))}
           </div>
         </div>
+      </div>
       </div>
     </div>
   );

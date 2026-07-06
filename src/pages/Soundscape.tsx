@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import Navigation from "@/components/Navigation";
+import MoreSubNav from "@/components/MoreSubNav";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Volume2, VolumeX, Play, Pause, Waves, Music2, Wind, CloudRain, Hammer, Flame, Headphones, Sparkles } from "lucide-react";
@@ -554,11 +555,21 @@ const Soundscape = () => {
   const totalActive = volumes.filter(v => v > 0).length;
 
   return (
-    <div className="min-h-screen bg-[#0d0905] text-[#f7efe6] font-sans">
+    <div className="min-h-screen bg-background text-foreground font-sans relative">
+      {/* Beautiful Atmospheric Background */}
+      <div 
+        className="fixed inset-0 z-0 bg-cover bg-center bg-no-repeat transition-all duration-700"
+        style={{ backgroundImage: "url('https://images.unsplash.com/photo-1518241353330-0f7941c2d1b8?auto=format&fit=crop&q=80&w=2070')" }}
+      />
+      {/* Gradient Overlay for Readability */}
+      <div className="fixed inset-0 z-0 bg-white/80 dark:bg-[#0d0905]/85 backdrop-blur-sm transition-all duration-700" />
+      
+      <div className="relative z-10">
       <Navigation />
-      <div className="relative pt-24 pb-12 overflow-hidden">
+      <MoreSubNav />
+      <div className="relative pt-36 pb-12 overflow-hidden">
         {/* Background elements */}
-        <div className="absolute inset-0 bg-radial-at-t from-[#c49a5e]/10 via-[#0d0905]/80 to-[#0d0905] pointer-events-none" />
+        <div className="absolute inset-0 bg-radial-at-t from-transparent dark:from-[#c49a5e]/10 via-transparent dark:via-[#0d0905]/50 to-transparent pointer-events-none" />
         <div className="absolute top-20 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-gradient-to-r from-amber-500/10 to-orange-600/15 rounded-full blur-3xl pointer-events-none" />
         
         <div className="container mx-auto px-4 pt-6 text-center relative z-10">
@@ -566,14 +577,14 @@ const Soundscape = () => {
             <Headphones className="w-4 h-4 animate-bounce" /> Spatial Heritage Soundscapes
           </div>
           <h1 className="text-4xl md:text-6xl font-extrabold mb-4 tracking-tight leading-tight">
-            <span className="bg-gradient-to-r from-amber-200 via-orange-400 to-amber-500 bg-clip-text text-transparent">Procedural Soundscape Mixer</span>
-            <br /><span className="text-white/95 text-3xl md:text-4xl font-light">Interactive Historical Atmosphere</span>
+            <span className="bg-gradient-to-r from-amber-600 to-orange-500 dark:from-amber-200 dark:via-orange-400 dark:to-amber-500 bg-clip-text text-transparent">Procedural Soundscape Mixer</span>
+            <br /><span className="text-foreground/95 text-3xl md:text-4xl font-light">Interactive Historical Atmosphere</span>
           </h1>
-          <p className="text-amber-100/60 max-w-2xl mx-auto text-base md:text-lg leading-relaxed font-light">
+          <p className="text-foreground/70 dark:text-amber-100/60 max-w-2xl mx-auto text-base md:text-lg leading-relaxed font-light">
             Each ambient layer is synthesized <strong>live in real-time</strong> using standard mathematical models (Web Audio API). Turn up the sliders to blend chisels tapping ancient stone, echoing chants, sea breeze, and coastal waves.
           </p>
 
-          <div className="mt-10 flex flex-col md:flex-row items-center justify-center gap-5 max-w-3xl mx-auto bg-black/40 p-6 rounded-3xl border border-[#c49a5e]/15 backdrop-blur-md">
+          <div className="mt-10 flex flex-col md:flex-row items-center justify-center gap-5 max-w-3xl mx-auto bg-white/60 dark:bg-black/40 p-6 rounded-3xl border border-border/50 dark:border-[#c49a5e]/15 backdrop-blur-md shadow-xl dark:shadow-none">
             <button
               id="soundscape-play-btn"
               onClick={togglePlayback}
@@ -593,11 +604,11 @@ const Soundscape = () => {
               )}
             </button>
 
-            <div className="flex items-center gap-4 bg-white/5 border border-white/5 rounded-2xl px-6 py-4 w-full md:flex-1">
+            <div className="flex items-center gap-4 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/5 rounded-2xl px-6 py-4 w-full md:flex-1">
               {masterVolume === 0 ? (
-                <VolumeX className="w-5 h-5 text-amber-500/40" />
+                <VolumeX className="w-5 h-5 text-amber-600/50 dark:text-amber-500/40" />
               ) : (
-                <Volume2 className="w-5 h-5 text-amber-400" />
+                <Volume2 className="w-5 h-5 text-amber-600 dark:text-amber-400" />
               )}
               <Slider
                 min={0}
@@ -607,15 +618,15 @@ const Soundscape = () => {
                 onValueChange={v => setMasterVolume(v[0])}
                 className="flex-1 accent-amber-500"
               />
-              <span className="text-sm font-mono text-amber-300/80 w-10 text-right">{masterVolume}%</span>
+              <span className="text-sm font-mono text-amber-700 dark:text-amber-300/80 w-10 text-right">{masterVolume}%</span>
             </div>
           </div>
 
           {isPlaying && (
-            <div className="mt-5 inline-flex items-center gap-2 text-sm text-amber-400/80 bg-amber-400/5 px-4 py-1.5 rounded-full border border-amber-400/10">
+            <div className="mt-5 inline-flex items-center gap-2 text-sm text-amber-700 dark:text-amber-400/80 bg-amber-500/10 dark:bg-amber-400/5 px-4 py-1.5 rounded-full border border-amber-500/20 dark:border-amber-400/10">
               <span className="w-2.5 h-2.5 rounded-full bg-green-500 animate-ping" />
               <span>{totalActive} channel{totalActive !== 1 ? "s" : ""} active</span>
-              {activePreset && <span className="text-white/60">· Preset: {activePreset}</span>}
+              {activePreset && <span className="text-foreground/60 dark:text-white/60">· Preset: {activePreset}</span>}
             </div>
           )}
         </div>
@@ -626,21 +637,21 @@ const Soundscape = () => {
         <div className="relative inline-block">
           <Button
             variant="outline"
-            className="gap-2 bg-black/40 border-[#c49a5e]/30 text-amber-400 hover:bg-[#c49a5e]/10 rounded-xl px-6 py-5 font-semibold"
+            className="gap-2 bg-white/60 dark:bg-black/40 border-border/50 dark:border-[#c49a5e]/30 text-amber-700 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-[#c49a5e]/10 rounded-xl px-6 py-5 font-semibold shadow-md dark:shadow-none"
             onClick={() => setShowPresets(!showPresets)}
           >
             🎼 Select Environmental Preset ▾
           </Button>
           {showPresets && (
-            <div className="absolute top-14 left-1/2 -translate-x-1/2 z-30 bg-[#120d09] border border-[#c49a5e]/20 rounded-2xl p-4 grid grid-cols-2 gap-3 min-w-[320px] shadow-2xl backdrop-blur-xl">
+            <div className="absolute top-14 left-1/2 -translate-x-1/2 z-30 bg-white dark:bg-[#120d09] border border-border/50 dark:border-[#c49a5e]/20 rounded-2xl p-4 grid grid-cols-2 gap-3 min-w-[320px] shadow-2xl backdrop-blur-xl">
               {PRESETS.map(p => (
                 <button
                   key={p.name}
                   onClick={() => applyPreset(p)}
                   className={`text-left px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
                     activePreset === p.name 
-                      ? "bg-amber-500/20 text-amber-300 border border-amber-500/30" 
-                      : "hover:bg-white/5 text-amber-100/60 hover:text-white"
+                      ? "bg-amber-100 dark:bg-amber-500/20 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-500/30" 
+                      : "hover:bg-black/5 dark:hover:bg-white/5 text-foreground/70 dark:text-amber-100/60 hover:text-foreground dark:hover:text-white"
                   }`}
                 >
                   {p.name}
@@ -662,8 +673,8 @@ const Soundscape = () => {
             return (
               <div 
                 key={channel.id} 
-                className={`relative bg-gradient-to-br from-black/60 to-black/30 border rounded-2xl p-6 transition-all duration-500 backdrop-blur-md overflow-hidden ${
-                  isActive ? "border-amber-500/30 shadow-[0_0_15px_rgba(245,158,11,0.05)] scale-[1.02]" : "border-[#c49a5e]/10 hover:border-[#c49a5e]/25"
+                className={`relative bg-white/70 dark:bg-gradient-to-br dark:from-black/60 dark:to-black/30 border rounded-2xl p-6 transition-all duration-500 backdrop-blur-md overflow-hidden shadow-lg dark:shadow-none ${
+                  isActive ? "border-amber-400 dark:border-amber-500/30 shadow-xl dark:shadow-[0_0_15px_rgba(245,158,11,0.05)] scale-[1.02]" : "border-border/50 dark:border-[#c49a5e]/10 hover:border-amber-300 dark:hover:border-[#c49a5e]/25"
                 }`}
               >
                 {/* Visual glow indicator */}
@@ -675,24 +686,24 @@ const Soundscape = () => {
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex items-center gap-4">
                       <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-2xl transition-all duration-300 ${
-                        isActive ? "bg-amber-500/20 border border-amber-500/20 shadow-inner" : "bg-white/5 border border-white/5 text-amber-400/40"
+                        isActive ? "bg-amber-100 dark:bg-amber-500/20 border border-amber-300 dark:border-amber-500/20 shadow-inner" : "bg-black/5 dark:bg-white/5 border border-black/5 dark:border-white/5 text-foreground/40 dark:text-amber-400/40"
                       }`}>
                         {channel.emoji}
                       </div>
                       <div>
-                        <h3 className="font-bold text-base text-amber-100">{channel.label}</h3>
-                        <p className="text-xs text-amber-100/50 mt-1 leading-snug">{channel.description}</p>
+                        <h3 className="font-bold text-base text-foreground dark:text-amber-100">{channel.label}</h3>
+                        <p className="text-xs text-foreground/60 dark:text-amber-100/50 mt-1 leading-snug">{channel.description}</p>
                       </div>
                     </div>
                     <span className={`text-xs font-mono font-bold px-2.5 py-1 rounded-lg ${
-                      vol > 0 ? "bg-amber-500/20 text-amber-300 border border-amber-500/20" : "bg-white/5 text-amber-100/40"
+                      vol > 0 ? "bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-300 border border-amber-300 dark:border-amber-500/20" : "bg-black/5 dark:bg-white/5 text-foreground/40 dark:text-amber-100/40"
                     }`}>
                       {vol}%
                     </span>
                   </div>
 
                   {/* Animated Visualizer bars for active channel */}
-                  <div className="h-10 flex items-end justify-between gap-[2px] bg-black/40 rounded-xl px-4 py-2 border border-[#c49a5e]/5">
+                  <div className="h-10 flex items-end justify-between gap-[2px] bg-black/5 dark:bg-black/40 rounded-xl px-4 py-2 border border-border/50 dark:border-[#c49a5e]/5">
                     {isActive ? (
                       Array.from({ length: 14 }).map((_, b) => (
                         <div 
@@ -704,14 +715,14 @@ const Soundscape = () => {
                         />
                       ))
                     ) : (
-                      <div className="w-full text-center text-[10px] text-amber-100/20 font-mono">CHANNEL INACTIVE</div>
+                      <div className="w-full text-center text-[10px] text-foreground/30 dark:text-amber-100/20 font-mono">CHANNEL INACTIVE</div>
                     )}
                   </div>
 
                   <div className="flex items-center gap-4">
                     <button 
                       onClick={() => setChannelVolume(i, [vol > 0 ? 0 : 65])} 
-                      className="text-amber-400/50 hover:text-amber-400 transition-colors shrink-0"
+                      className="text-foreground/40 hover:text-foreground dark:text-amber-400/50 dark:hover:text-amber-400 transition-colors shrink-0"
                     >
                       {vol === 0 ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
                     </button>
@@ -730,13 +741,14 @@ const Soundscape = () => {
           })}
         </div>
 
-        <div className="mt-16 text-center bg-black/40 border border-[#c49a5e]/15 rounded-3xl p-8 max-w-2xl mx-auto backdrop-blur-md">
-          <Headphones className="w-10 h-10 text-amber-400 mx-auto mb-4" />
-          <h3 className="font-bold text-lg mb-2 text-amber-200">🎧 Best Experienced with Headphones</h3>
-          <p className="text-sm text-amber-100/60 leading-relaxed max-w-lg mx-auto">
+        <div className="mt-16 text-center bg-white/60 dark:bg-black/40 border border-border/50 dark:border-[#c49a5e]/15 rounded-3xl p-8 max-w-2xl mx-auto backdrop-blur-md shadow-xl dark:shadow-none">
+          <Headphones className="w-10 h-10 text-amber-600 dark:text-amber-400 mx-auto mb-4" />
+          <h3 className="font-bold text-lg mb-2 text-amber-800 dark:text-amber-200">🎧 Best Experienced with Headphones</h3>
+          <p className="text-sm text-foreground/70 dark:text-amber-100/60 leading-relaxed max-w-lg mx-auto">
             This module generates continuous waves, wind noise, and flute tones directly in your browser. Ensure your sound is turned on and adjust the slider to tailor your immersive historical audio journey.
           </p>
         </div>
+      </div>
       </div>
     </div>
   );

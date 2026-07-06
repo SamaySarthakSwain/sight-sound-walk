@@ -1,6 +1,6 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Home, Map, HelpCircle, LogIn, LogOut, User as UserIcon, Bot, UtensilsCrossed, Car, Building2, Menu, X, Box, Users, Headphones, Sun, Palette, Trophy } from "lucide-react";
+import { Home, Map, HelpCircle, LogIn, LogOut, User as UserIcon, Bot, UtensilsCrossed, Car, Building2, Menu, X, Box, Users, Headphones, Sun, Palette, Trophy, Zap, MoreHorizontal } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
@@ -25,6 +25,7 @@ import { useState } from "react";
 
 const navItems = [
   { path: "/", label: "Home", icon: Home },
+  { path: "/flash", label: "Flash", icon: Zap },
   { path: "/explore", label: "Explore", icon: Map },
   { path: "/food", label: "Food", icon: UtensilsCrossed },
   { path: "/cabs", label: "Cabs", icon: Car },
@@ -32,10 +33,7 @@ const navItems = [
   { path: "/assistant", label: "Assistant", icon: Bot },
   { path: "/ar", label: "AR", icon: Box },
   { path: "/crowd", label: "Crowd", icon: Users },
-  { path: "/soundscape", label: "Soundscapes", icon: Headphones },
-  { path: "/sundial", label: "Sundial", icon: Sun },
-  { path: "/artisan-trail", label: "Artisan Trail", icon: Palette },
-  { path: "/quests", label: "Quests", icon: Trophy },
+  { path: "/more", label: "More", icon: MoreHorizontal },
   { path: "/help", label: "Help", icon: HelpCircle },
 ];
 
@@ -76,10 +74,13 @@ const Navigation = () => {
 
   const NavLink = ({ item, onClick }: { item: typeof navItems[0]; onClick?: () => void }) => {
     const Icon = item.icon;
+    const isActive = item.path === "/"
+      ? location.pathname === "/"
+      : location.pathname.startsWith(item.path);
     return (
       <Link to={item.path} onClick={onClick}>
         <Button
-          variant={location.pathname === item.path ? "default" : "ghost"}
+          variant={isActive ? "default" : "ghost"}
           className="gap-2 w-full justify-start md:w-auto md:justify-center"
         >
           <Icon className="w-4 h-4" />

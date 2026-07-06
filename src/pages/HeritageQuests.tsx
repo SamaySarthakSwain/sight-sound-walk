@@ -1,5 +1,6 @@
 import { useState, useRef } from "react";
 import Navigation from "@/components/Navigation";
+import MoreSubNav from "@/components/MoreSubNav";
 import { Button } from "@/components/ui/button";
 import { Trophy, Star, Lock, CheckCircle2, XCircle, Sparkles, Scroll, ChevronRight, BookOpen } from "lucide-react";
 
@@ -446,8 +447,18 @@ const HeritageQuests = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#0d0905] text-[#f7efe6] font-sans pb-20">
+    <div className="min-h-screen bg-background text-foreground font-sans pb-20 relative">
+      {/* Beautiful Scenery Background */}
+      <div 
+        className="fixed inset-0 z-0 bg-cover bg-center bg-no-repeat transition-all duration-700"
+        style={{ backgroundImage: "url('https://images.unsplash.com/photo-1622308644420-b3191eb13cfa?auto=format&fit=crop&q=80&w=2070')" }}
+      />
+      {/* Gradient Overlay for Readability (Adapts to Light/Dark) */}
+      <div className="fixed inset-0 z-0 bg-white/80 dark:bg-[#0d0905]/85 backdrop-blur-[2px] transition-all duration-700" />
+      
+      <div className="relative z-10">
       <Navigation />
+      <MoreSubNav />
       
       {activeQuest && (
         <QuestModal 
@@ -458,17 +469,17 @@ const HeritageQuests = () => {
       )}
 
       {/* Hero */}
-      <div className="relative pt-24 pb-8 overflow-hidden">
+      <div className="relative pt-36 pb-8 overflow-hidden">
         <div className="absolute inset-0 bg-radial-at-t from-[#c49a5e]/8 via-transparent to-transparent pointer-events-none" />
         <div className="container mx-auto px-4 pt-6 text-center relative z-10">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-sm text-amber-400 mb-6 font-medium">
             <Trophy className="w-4 h-4 animate-bounce" /> Gamified Passport Quests
           </div>
           <h1 className="text-4xl md:text-5xl font-extrabold mb-4 tracking-tight leading-tight">
-            <span className="bg-gradient-to-r from-amber-200 via-orange-400 to-rose-400 bg-clip-text text-transparent">Heritage Scavenger Quests</span>
-            <br /><span className="text-white/90 text-3xl md:text-4xl font-light">Test Your Knowledge & Unlock Collectible Stamps</span>
+            <span className="bg-gradient-to-r from-amber-600 to-orange-500 dark:from-amber-200 dark:via-orange-400 dark:to-rose-400 bg-clip-text text-transparent">Heritage Scavenger Quests</span>
+            <br /><span className="text-foreground/90 text-3xl md:text-4xl font-light">Test Your Knowledge & Unlock Collectible Stamps</span>
           </h1>
-          <p className="text-amber-100/60 max-w-2xl mx-auto text-base leading-relaxed font-light">
+          <p className="text-foreground/70 dark:text-amber-100/60 max-w-2xl mx-auto text-base leading-relaxed font-light">
             Each monument contains celestial secrets, architectural mysteries, and historical scripts. Complete quests on-site or virtually to advance your Explorer Rank.
           </p>
         </div>
@@ -476,34 +487,34 @@ const HeritageQuests = () => {
 
       <div className="container mx-auto px-4 mt-6">
         {/* Explorer Rank Status */}
-        <div className="bg-black/40 border border-[#c49a5e]/15 rounded-3xl p-6 mb-8 max-w-2xl mx-auto backdrop-blur-md">
+        <div className="bg-white/60 dark:bg-black/40 border border-border/50 dark:border-[#c49a5e]/15 rounded-3xl p-6 mb-8 max-w-2xl mx-auto backdrop-blur-md shadow-xl dark:shadow-none">
           <div className="flex flex-col sm:flex-row items-center gap-6">
             <div className="w-16 h-16 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-4xl shadow-inner">
               {level.icon}
             </div>
             <div className="flex-1 w-full text-center sm:text-left">
               <div className="text-xs text-amber-400 uppercase tracking-widest font-bold">Current Rank</div>
-              <h3 className={`text-xl font-black mt-0.5 ${level.color}`}>{level.name}</h3>
-              <p className="text-xs text-amber-100/40 mt-1 font-mono">
+              <h3 className={`text-xl font-black mt-0.5 ${level.color.replace('400', '600').replace('text-yellow-300', 'text-yellow-600')} dark:${level.color}`}>{level.name}</h3>
+              <p className="text-xs text-foreground/60 dark:text-amber-100/40 mt-1 font-mono">
                 {totalXP} XP Accumlated {nextLevel ? `· ${nextLevel.minXP - totalXP} XP left for next rank` : "· Maximum Rank Achieved"}
               </p>
-              <div className="mt-3 h-2.5 bg-black/40 border border-white/5 rounded-full overflow-hidden">
+              <div className="mt-3 h-2.5 bg-muted dark:bg-black/40 border border-border/50 dark:border-white/5 rounded-full overflow-hidden">
                 <div 
                   className="h-full bg-gradient-to-r from-amber-500 to-orange-500 rounded-full transition-all duration-1000" 
                   style={{ width: `${progress}%` }} 
                 />
               </div>
             </div>
-            <div className="border-t sm:border-t-0 sm:border-l border-[#c49a5e]/10 pt-4 sm:pt-0 sm:pl-6 text-center shrink-0">
-              <div className="text-3xl font-black text-amber-400 font-mono">{completedQuests.length}</div>
-              <div className="text-[10px] text-amber-100/40 uppercase tracking-wider font-bold mt-1">Quests Completed</div>
+            <div className="border-t sm:border-t-0 sm:border-l border-border/50 dark:border-[#c49a5e]/10 pt-4 sm:pt-0 sm:pl-6 text-center shrink-0">
+              <div className="text-3xl font-black text-amber-600 dark:text-amber-400 font-mono">{completedQuests.length}</div>
+              <div className="text-[10px] text-foreground/60 dark:text-amber-100/40 uppercase tracking-wider font-bold mt-1">Quests Completed</div>
             </div>
           </div>
         </div>
 
         {/* Digital Passport Stamp Binder */}
-        <div className="bg-black/40 border border-[#c49a5e]/15 rounded-3xl p-6 mb-10 max-w-3xl mx-auto backdrop-blur-md">
-          <h3 className="text-xs font-bold text-amber-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+        <div className="bg-white/60 dark:bg-black/40 border border-border/50 dark:border-[#c49a5e]/15 rounded-3xl p-6 mb-10 max-w-3xl mx-auto backdrop-blur-md shadow-xl dark:shadow-none">
+          <h3 className="text-xs font-bold text-amber-600 dark:text-amber-400 uppercase tracking-widest mb-4 flex items-center gap-2">
             <BookOpen className="w-4 h-4" /> Digital Passport Stamps
           </h3>
           
@@ -515,18 +526,18 @@ const HeritageQuests = () => {
                   key={q.id} 
                   className={`border rounded-2xl p-4 flex flex-col items-center justify-center text-center gap-2 transition-all duration-300 ${
                     isEarned 
-                      ? "bg-amber-500/5 border-amber-500/25 shadow-inner" 
-                      : "bg-black/20 border-white/5 opacity-40"
+                      ? "bg-amber-100/50 dark:bg-amber-500/5 border-amber-500/30 dark:border-amber-500/25 shadow-inner" 
+                      : "bg-black/5 dark:bg-black/20 border-black/10 dark:border-white/5 opacity-60 dark:opacity-40"
                   }`}
                 >
                   <div className={`w-14 h-14 rounded-full flex items-center justify-center text-3xl transition-transform ${
-                    isEarned ? "bg-amber-400/10 border border-amber-400/20 rotate-0 hover:rotate-12" : "bg-white/5 border border-white/5"
+                    isEarned ? "bg-amber-500/20 dark:bg-amber-400/10 border border-amber-500/40 dark:border-amber-400/20 rotate-0 hover:rotate-12" : "bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/5"
                   }`}>
                     {isEarned ? q.stamp : "🔒"}
                   </div>
                   <div className="min-w-0">
-                    <h4 className="text-xs font-bold text-white truncate max-w-[120px]">{q.stampName.replace(" Stamp", "")}</h4>
-                    <p className="text-[9px] text-amber-400/60 uppercase font-mono tracking-wider mt-0.5">
+                    <h4 className="text-xs font-bold text-foreground truncate max-w-[120px]">{q.stampName.replace(" Stamp", "")}</h4>
+                    <p className="text-[9px] text-amber-600 dark:text-amber-400/60 uppercase font-mono tracking-wider mt-0.5">
                       {isEarned ? "UNLOCKED" : "LOCKED"}
                     </p>
                   </div>
@@ -544,12 +555,12 @@ const HeritageQuests = () => {
               <div 
                 key={quest.id} 
                 id={`quest-${quest.id}`}
-                className={`relative bg-gradient-to-br from-black/60 to-black/30 border rounded-3xl overflow-hidden transition-all duration-300 backdrop-blur-md flex flex-col justify-between ${
+                className={`relative bg-white/70 dark:bg-gradient-to-br dark:from-black/60 dark:to-black/30 border rounded-3xl overflow-hidden transition-all duration-300 backdrop-blur-md flex flex-col justify-between shadow-xl dark:shadow-none ${
                   done 
-                    ? "border-green-500/20 shadow-[0_0_15px_rgba(34,197,94,0.02)]" 
+                    ? "border-green-500/40 dark:border-green-500/20 shadow-[0_0_15px_rgba(34,197,94,0.1)] dark:shadow-[0_0_15px_rgba(34,197,94,0.02)]" 
                     : quest.unlocked 
-                      ? "border-[#c49a5e]/10 hover:border-[#c49a5e]/25 hover:shadow-lg" 
-                      : "border-white/5 opacity-55"
+                      ? "border-border/60 dark:border-[#c49a5e]/10 hover:border-amber-500/40 dark:hover:border-[#c49a5e]/25 hover:shadow-2xl" 
+                      : "border-black/5 dark:border-white/5 opacity-60 dark:opacity-55"
                 }`}
               >
                 {/* Visual strip */}
@@ -559,31 +570,31 @@ const HeritageQuests = () => {
                   <div>
                     <div className="flex items-start justify-between gap-3">
                       <div>
-                        <div className="text-[10px] text-amber-400/60 font-bold uppercase tracking-wider font-mono">{quest.monument}</div>
-                        <h3 className="font-extrabold text-lg text-white mt-1 leading-snug">{quest.title}</h3>
+                        <div className="text-[10px] text-amber-600 dark:text-amber-400/60 font-bold uppercase tracking-wider font-mono">{quest.monument}</div>
+                        <h3 className="font-extrabold text-lg text-foreground mt-1 leading-snug">{quest.title}</h3>
                       </div>
                       <div className="flex flex-col items-end gap-1 shrink-0">
                         <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider font-mono ${
-                          quest.difficulty === "Novice" ? "bg-green-500/10 text-green-400 border border-green-500/20" :
-                          quest.difficulty === "Explorer" ? "bg-blue-500/10 text-blue-400 border border-blue-500/20" :
-                          quest.difficulty === "Scholar" ? "bg-purple-500/10 text-purple-400 border border-purple-500/20" :
-                          "bg-amber-500/10 text-amber-400 border border-amber-500/20"
+                          quest.difficulty === "Novice" ? "bg-green-100 dark:bg-green-500/10 text-green-700 dark:text-green-400 border border-green-500/30 dark:border-green-500/20" :
+                          quest.difficulty === "Explorer" ? "bg-blue-100 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400 border border-blue-500/30 dark:border-blue-500/20" :
+                          quest.difficulty === "Scholar" ? "bg-purple-100 dark:bg-purple-500/10 text-purple-700 dark:text-purple-400 border border-purple-500/30 dark:border-purple-500/20" :
+                          "bg-amber-100 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/30 dark:border-amber-500/20"
                         }`}>{quest.difficulty}</span>
-                        <span className="text-xs text-amber-400 font-mono font-bold">+{quest.xpReward} XP</span>
+                        <span className="text-xs text-amber-600 dark:text-amber-400 font-mono font-bold">+{quest.xpReward} XP</span>
                       </div>
                     </div>
 
-                    <p className="text-sm text-amber-100/60 leading-relaxed font-light mt-3">{quest.description}</p>
+                    <p className="text-sm text-foreground/70 dark:text-amber-100/60 leading-relaxed font-light mt-3">{quest.description}</p>
                   </div>
 
-                  <div className="flex items-center justify-between border-t border-white/5 pt-4">
+                  <div className="flex items-center justify-between border-t border-border/50 dark:border-white/5 pt-4">
                     <div className="flex items-center gap-2.5">
                       <span className="text-2xl">{quest.stamp}</span>
-                      <span className="text-xs text-amber-100/40 truncate max-w-[120px] font-medium">{quest.stampName}</span>
+                      <span className="text-xs text-foreground/60 dark:text-amber-100/40 truncate max-w-[120px] font-medium">{quest.stampName}</span>
                     </div>
 
                     {done ? (
-                      <div className="flex items-center gap-1.5 text-green-400 text-sm font-bold bg-green-500/10 border border-green-500/20 px-3 py-1.5 rounded-xl">
+                      <div className="flex items-center gap-1.5 text-green-600 dark:text-green-400 text-sm font-bold bg-green-100 dark:bg-green-500/10 border border-green-500/30 dark:border-green-500/20 px-3 py-1.5 rounded-xl">
                         <CheckCircle2 className="w-4 h-4" /> Complete
                       </div>
                     ) : quest.unlocked ? (
@@ -595,7 +606,7 @@ const HeritageQuests = () => {
                         Start Quest <ChevronRight className="w-4 h-4 ml-1" />
                       </Button>
                     ) : (
-                      <div className="flex items-center gap-1.5 text-amber-100/30 text-sm bg-white/5 border border-transparent px-3 py-1.5 rounded-xl">
+                      <div className="flex items-center gap-1.5 text-foreground/40 dark:text-amber-100/30 text-sm bg-black/5 dark:bg-white/5 border border-transparent px-3 py-1.5 rounded-xl">
                         <Lock className="w-4 h-4" /> Locked
                       </div>
                     )}
@@ -605,6 +616,7 @@ const HeritageQuests = () => {
             );
           })}
         </div>
+      </div>
       </div>
     </div>
   );

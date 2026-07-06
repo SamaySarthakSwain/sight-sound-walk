@@ -8,7 +8,7 @@ const StatsMarquee = lazy(() => import("@/components/landing/StatsMarquee"));
 const HowItWorks = lazy(() => import("@/components/landing/HowItWorks"));
 const ExploreServices = lazy(() => import("@/components/landing/ExploreServices"));
 const CTASection = lazy(() => import("@/components/landing/CTASection"));
-const DatabaseMonuments = lazy(() => import("@/components/DatabaseMonuments"));
+
 
 const Index = () => {
   return (
@@ -21,7 +21,6 @@ const Index = () => {
         <StatsMarquee />
         <HowItWorks />
         <ExploreServices />
-        <DatabaseMonuments />
         <CTASection />
       </Suspense>
     </div>

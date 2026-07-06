@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Navigation from "@/components/Navigation";
+import MoreSubNav from "@/components/MoreSubNav";
 import { Slider } from "@/components/ui/slider";
 import { Sun, Clock, Info, BookOpen, Compass, ArrowRight } from "lucide-react";
 
@@ -189,21 +190,31 @@ const SundialSimulator = () => {
   const currentSpokeLabel = currentSpokeTime > 12 ? `${currentSpokeTime - 12}:00 PM` : currentSpokeTime === 12 ? "12:00 PM" : `${currentSpokeTime}:00 AM`;
 
   return (
-    <div className="min-h-screen bg-[#0d0905] text-[#f7efe6] font-sans pb-20">
+    <div className="min-h-screen bg-background text-foreground font-sans relative">
+      {/* Beautiful Sun Temple Background */}
+      <div 
+        className="fixed inset-0 z-0 bg-cover bg-center bg-no-repeat transition-all duration-700"
+        style={{ backgroundImage: "url('https://images.unsplash.com/photo-1582293041079-7814c2b120db?auto=format&fit=crop&q=80&w=2000')" }}
+      />
+      {/* Gradient Overlay for Readability */}
+      <div className="fixed inset-0 z-0 bg-white/85 dark:bg-[#0d0905]/90 backdrop-blur-[2px] transition-all duration-700" />
+      
+      <div className="relative z-10 pb-20">
       <Navigation />
+      <MoreSubNav />
 
       {/* Hero */}
-      <div className="relative pt-24 pb-8 overflow-hidden">
-        <div className="absolute inset-0 bg-radial-at-t from-[#c49a5e]/8 via-transparent to-transparent pointer-events-none" />
+      <div className="relative pt-36 pb-8 overflow-hidden">
+        <div className="absolute inset-0 bg-radial-at-t from-transparent dark:from-[#c49a5e]/10 via-transparent dark:via-[#0d0905]/50 to-transparent pointer-events-none" />
         <div className="container mx-auto px-4 pt-6 text-center relative z-10">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-sm text-amber-400 mb-6 font-medium">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-sm text-amber-600 dark:text-amber-400 mb-6 font-medium">
             <Sun className="w-4 h-4" /> Solar Astronomy Simulation
           </div>
           <h1 className="text-4xl md:text-5xl font-extrabold mb-4 tracking-tight leading-tight">
-            <span className="bg-gradient-to-r from-amber-200 via-orange-400 to-amber-500 bg-clip-text text-transparent">Konark Solar Sundial Simulator</span>
-            <br /><span className="text-white/90 text-3xl md:text-4xl font-light">Interactive Shadow Calculations of the Sun Temple</span>
+            <span className="bg-gradient-to-r from-amber-600 to-orange-500 dark:from-amber-200 dark:via-orange-400 dark:to-amber-500 bg-clip-text text-transparent">Konark Solar Sundial Simulator</span>
+            <br /><span className="text-foreground/90 text-3xl md:text-4xl font-light">Interactive Shadow Calculations of the Sun Temple</span>
           </h1>
-          <p className="text-amber-100/60 max-w-2xl mx-auto text-base leading-relaxed font-light">
+          <p className="text-foreground/70 dark:text-amber-100/60 max-w-2xl mx-auto text-base leading-relaxed font-light">
             The chariot wheels of Konark are not just decorations — they are highly precise astronomical calendars. Adjust the sun's position to see how ancient priests calculated time using shadows and beads.
           </p>
         </div>
@@ -214,8 +225,8 @@ const SundialSimulator = () => {
         <div className="grid lg:grid-cols-5 gap-8 max-w-6xl mx-auto items-start">
           
           {/* Left panel: Wheel view */}
-          <div className="lg:col-span-2 bg-black/40 border border-[#c49a5e]/15 rounded-3xl p-6 backdrop-blur-md text-center">
-            <h3 className="text-xs font-bold uppercase tracking-widest text-amber-400 mb-4 flex items-center justify-center gap-2">
+          <div className="lg:col-span-2 bg-white/70 dark:bg-black/40 border border-border/50 dark:border-[#c49a5e]/15 rounded-3xl p-6 backdrop-blur-md text-center shadow-xl dark:shadow-none">
+            <h3 className="text-xs font-bold uppercase tracking-widest text-amber-700 dark:text-amber-400 mb-4 flex items-center justify-center gap-2">
               <Compass className="w-4 h-4 animate-spin" style={{ animationDuration: "12s" }} /> Interactive Sundial Wheel
             </h3>
             
@@ -225,7 +236,7 @@ const SundialSimulator = () => {
 
             {/* Quick Presets */}
             <div className="mt-6 space-y-2.5">
-              <div className="text-left text-[11px] text-amber-100/40 uppercase tracking-wider font-bold">Quick Solar Presets</div>
+              <div className="text-left text-[11px] text-foreground/50 dark:text-amber-100/40 uppercase tracking-wider font-bold">Quick Solar Presets</div>
               <div className="grid grid-cols-2 gap-2">
                 {PRESETS.map(preset => (
                   <button
@@ -233,8 +244,8 @@ const SundialSimulator = () => {
                     onClick={() => setSliderValue(preset.value)}
                     className={`text-xs py-2.5 px-3 rounded-xl font-medium transition-all ${
                       sliderValue === preset.value
-                        ? "bg-amber-500/10 border border-amber-500/30 text-amber-300"
-                        : "bg-black/20 border border-white/5 text-amber-100/50 hover:text-white"
+                        ? "bg-amber-100 dark:bg-amber-500/10 border border-amber-300 dark:border-amber-500/30 text-amber-700 dark:text-amber-300"
+                        : "bg-black/5 dark:bg-black/20 border border-black/5 dark:border-white/5 text-foreground/60 dark:text-amber-100/50 hover:text-foreground dark:hover:text-white"
                     }`}
                   >
                     {preset.label.split(" (")[0]}
@@ -245,16 +256,16 @@ const SundialSimulator = () => {
           </div>
 
           {/* Right panel: Details & Tabs */}
-          <div className="lg:col-span-3 bg-black/40 border border-[#c49a5e]/15 rounded-3xl overflow-hidden backdrop-blur-md">
+          <div className="lg:col-span-3 bg-white/70 dark:bg-black/40 border border-border/50 dark:border-[#c49a5e]/15 rounded-3xl overflow-hidden backdrop-blur-md shadow-xl dark:shadow-none">
             
             {/* Tabs */}
-            <div className="flex border-b border-[#c49a5e]/10 bg-black/20">
+            <div className="flex border-b border-border/50 dark:border-[#c49a5e]/10 bg-black/5 dark:bg-black/20">
               <button
                 onClick={() => setActiveTab("calc")}
                 className={`flex-1 py-4 text-sm font-semibold border-b-2 transition-all flex items-center justify-center gap-2 ${
                   activeTab === "calc" 
-                    ? "border-amber-400 text-amber-400 bg-amber-400/5" 
-                    : "border-transparent text-amber-100/40 hover:text-amber-100"
+                    ? "border-amber-500 dark:border-amber-400 text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-400/5" 
+                    : "border-transparent text-foreground/50 dark:text-amber-100/40 hover:text-foreground dark:hover:text-amber-100"
                 }`}
               >
                 <Clock className="w-4 h-4" /> Live Reading Calculator
@@ -263,8 +274,8 @@ const SundialSimulator = () => {
                 onClick={() => setActiveTab("guide")}
                 className={`flex-1 py-4 text-sm font-semibold border-b-2 transition-all flex items-center justify-center gap-2 ${
                   activeTab === "guide" 
-                    ? "border-amber-400 text-amber-400 bg-amber-400/5" 
-                    : "border-transparent text-amber-100/40 hover:text-amber-100"
+                    ? "border-amber-500 dark:border-amber-400 text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-400/5" 
+                    : "border-transparent text-foreground/50 dark:text-amber-100/40 hover:text-foreground dark:hover:text-amber-100"
                 }`}
               >
                 <BookOpen className="w-4 h-4" /> How to Read Guide
@@ -276,62 +287,62 @@ const SundialSimulator = () => {
               {activeTab === "calc" ? (
                 <>
                   {/* Digital read-out */}
-                  <div className="bg-black/30 border border-white/5 rounded-2xl p-6 text-center relative overflow-hidden">
+                  <div className="bg-black/5 dark:bg-black/30 border border-black/10 dark:border-white/5 rounded-2xl p-6 text-center relative overflow-hidden">
                     <div className="absolute top-2 right-2 flex h-2 w-2">
                       <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75" />
                       <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500" />
                     </div>
                     
-                    <div className="text-5xl md:text-6xl font-black font-mono bg-gradient-to-r from-amber-300 to-orange-400 bg-clip-text text-transparent">
+                    <div className="text-5xl md:text-6xl font-black font-mono bg-gradient-to-r from-amber-500 to-orange-500 dark:from-amber-300 dark:to-orange-400 bg-clip-text text-transparent">
                       {time.display}
                     </div>
-                    <p className="text-[10px] text-amber-100/40 uppercase tracking-widest font-bold mt-2">Simulated Solar Time</p>
+                    <p className="text-[10px] text-foreground/50 dark:text-amber-100/40 uppercase tracking-widest font-bold mt-2">Simulated Solar Time</p>
                     
-                    <div className="mt-4 inline-flex items-center gap-2 bg-amber-500/10 border border-amber-500/20 px-4 py-1.5 rounded-full text-xs font-semibold text-amber-300">
+                    <div className="mt-4 inline-flex items-center gap-2 bg-amber-100 dark:bg-amber-500/10 border border-amber-300 dark:border-amber-500/20 px-4 py-1.5 rounded-full text-xs font-semibold text-amber-700 dark:text-amber-300">
                       🌅 Current Prahara: {PRAHARAS[nearestSpokeIdx]?.name || "Sayahna"}
                     </div>
                   </div>
 
                   {/* Calculations breakdown */}
                   <div className="space-y-4">
-                    <h4 className="text-xs font-bold text-amber-400 uppercase tracking-widest">Dynamic Time Reading Math</h4>
+                    <h4 className="text-xs font-bold text-amber-700 dark:text-amber-400 uppercase tracking-widest">Dynamic Time Reading Math</h4>
                     
                     <div className="grid gap-3 text-sm">
                       
-                      <div className="bg-black/30 border border-white/5 rounded-2xl p-4 flex items-center justify-between">
+                      <div className="bg-black/5 dark:bg-black/30 border border-black/10 dark:border-white/5 rounded-2xl p-4 flex items-center justify-between">
                         <div>
-                          <h5 className="font-bold text-white">Nearest Major Spoke</h5>
-                          <p className="text-xs text-amber-100/50 mt-0.5">Spoke {nearestSpokeIdx + 1} representing base time</p>
+                          <h5 className="font-bold text-foreground">Nearest Major Spoke</h5>
+                          <p className="text-xs text-foreground/60 dark:text-amber-100/50 mt-0.5">Spoke {nearestSpokeIdx + 1} representing base time</p>
                         </div>
-                        <span className="font-mono font-bold text-amber-300 bg-white/5 border border-white/5 px-3 py-1 rounded-xl">
+                        <span className="font-mono font-bold text-amber-700 dark:text-amber-300 bg-black/5 dark:bg-white/5 border border-black/5 dark:border-white/5 px-3 py-1 rounded-xl">
                           {currentSpokeLabel}
                         </span>
                       </div>
 
-                      <div className="bg-black/30 border border-white/5 rounded-2xl p-4 flex items-center justify-between">
+                      <div className="bg-black/5 dark:bg-black/30 border border-black/10 dark:border-white/5 rounded-2xl p-4 flex items-center justify-between">
                         <div>
-                          <h5 className="font-bold text-white">Bead Index Alignment</h5>
-                          <p className="text-xs text-amber-100/50 mt-0.5">Counting {beadsCounted} beads past Spoke {nearestSpokeIdx + 1}</p>
+                          <h5 className="font-bold text-foreground">Bead Index Alignment</h5>
+                          <p className="text-xs text-foreground/60 dark:text-amber-100/50 mt-0.5">Counting {beadsCounted} beads past Spoke {nearestSpokeIdx + 1}</p>
                         </div>
-                        <span className="font-mono font-bold text-amber-300 bg-white/5 border border-white/5 px-3 py-1 rounded-xl">
+                        <span className="font-mono font-bold text-amber-700 dark:text-amber-300 bg-black/5 dark:bg-white/5 border border-black/5 dark:border-white/5 px-3 py-1 rounded-xl">
                           {beadsCounted} Beads
                         </span>
                       </div>
 
-                      <div className="bg-[#c49a5e]/5 border border-[#c49a5e]/25 rounded-2xl p-4">
-                        <h5 className="text-xs font-bold text-amber-300 uppercase tracking-wider mb-2">Bead Formula Calculation</h5>
-                        <div className="flex flex-col gap-2 font-mono text-xs text-amber-100/80">
-                          <div className="flex justify-between border-b border-white/5 pb-1.5">
+                      <div className="bg-amber-50 dark:bg-[#c49a5e]/5 border border-amber-200 dark:border-[#c49a5e]/25 rounded-2xl p-4">
+                        <h5 className="text-xs font-bold text-amber-700 dark:text-amber-300 uppercase tracking-wider mb-2">Bead Formula Calculation</h5>
+                        <div className="flex flex-col gap-2 font-mono text-xs text-foreground/80 dark:text-amber-100/80">
+                          <div className="flex justify-between border-b border-black/10 dark:border-white/5 pb-1.5">
                             <span>1 Major division (3 hrs)</span>
                             <span>= 30 Beads</span>
                           </div>
-                          <div className="flex justify-between border-b border-white/5 pb-1.5">
+                          <div className="flex justify-between border-b border-black/10 dark:border-white/5 pb-1.5">
                             <span>1 Bead unit value</span>
                             <span>= 6 Minutes (180 mins / 30 beads)</span>
                           </div>
-                          <div className="flex justify-between text-white font-bold pt-1">
+                          <div className="flex justify-between text-foreground font-bold pt-1">
                             <span>Final Reading: {currentSpokeLabel} + ({beadsCounted} beads × 6 mins)</span>
-                            <span className="text-amber-400">= {time.display}</span>
+                            <span className="text-amber-600 dark:text-amber-400">= {time.display}</span>
                           </div>
                         </div>
                       </div>
@@ -340,10 +351,10 @@ const SundialSimulator = () => {
                   </div>
 
                   {/* Slider Control */}
-                  <div className="bg-black/30 border border-white/5 rounded-2xl p-5">
-                    <div className="flex items-center justify-between text-xs text-amber-100/40 font-bold uppercase tracking-wider mb-3">
+                  <div className="bg-black/5 dark:bg-black/30 border border-black/10 dark:border-white/5 rounded-2xl p-5">
+                    <div className="flex items-center justify-between text-xs text-foreground/50 dark:text-amber-100/40 font-bold uppercase tracking-wider mb-3">
                       <span>Sunrise (6:00 AM)</span>
-                      <span className="text-amber-400 font-mono font-black">{time.display}</span>
+                      <span className="text-amber-600 dark:text-amber-400 font-mono font-black">{time.display}</span>
                       <span>Sunset (6:00 PM)</span>
                     </div>
                     
@@ -357,57 +368,57 @@ const SundialSimulator = () => {
                       className="my-3 accent-amber-500"
                     />
                     
-                    <p className="text-[10px] text-center text-amber-100/30 leading-snug">
+                    <p className="text-[10px] text-center text-foreground/50 dark:text-amber-100/30 leading-snug">
                       *Note: Each step shifts the slider by exactly 6 minutes, aligning the shadow with the next bead on the temple wheel.
                     </p>
                   </div>
                 </>
               ) : (
-                <div className="space-y-5 text-sm leading-relaxed font-light text-amber-100/70">
-                  <div className="border-b border-[#c49a5e]/10 pb-3 flex items-center justify-between">
-                    <h3 className="font-bold text-amber-400">Reading the Sundial of Surya Temple</h3>
-                    <span className="text-xs text-amber-100/40">Step-by-Step Guide</span>
+                <div className="space-y-5 text-sm leading-relaxed font-light text-foreground/80 dark:text-amber-100/70">
+                  <div className="border-b border-border/50 dark:border-[#c49a5e]/10 pb-3 flex items-center justify-between">
+                    <h3 className="font-bold text-amber-700 dark:text-amber-400">Reading the Sundial of Surya Temple</h3>
+                    <span className="text-xs text-foreground/50 dark:text-amber-100/40">Step-by-Step Guide</span>
                   </div>
 
                   <div className="space-y-4">
                     <div className="flex gap-4">
-                      <div className="w-8 h-8 rounded-full bg-amber-500/10 border border-amber-500/20 flex items-center justify-center font-bold text-amber-400 shrink-0">1</div>
+                      <div className="w-8 h-8 rounded-full bg-amber-100 dark:bg-amber-500/10 border border-amber-300 dark:border-amber-500/20 flex items-center justify-center font-bold text-amber-600 dark:text-amber-400 shrink-0">1</div>
                       <div>
-                        <h4 className="font-bold text-white text-base">Find the Shadow</h4>
-                        <p className="text-xs text-amber-100/50 mt-1">Look at the shadow cast by the central gnomon. The wheel is designed horizontally on the temple plinth, functioning with the sun's altitude angle.</p>
+                        <h4 className="font-bold text-foreground text-base">Find the Shadow</h4>
+                        <p className="text-xs text-foreground/70 dark:text-amber-100/50 mt-1">Look at the shadow cast by the central gnomon. The wheel is designed horizontally on the temple plinth, functioning with the sun's altitude angle.</p>
                       </div>
                     </div>
 
                     <div className="flex gap-4">
-                      <div className="w-8 h-8 rounded-full bg-amber-500/10 border border-amber-500/20 flex items-center justify-center font-bold text-amber-400 shrink-0">2</div>
+                      <div className="w-8 h-8 rounded-full bg-amber-100 dark:bg-amber-500/10 border border-amber-300 dark:border-amber-500/20 flex items-center justify-center font-bold text-amber-600 dark:text-amber-400 shrink-0">2</div>
                       <div>
-                        <h4 className="font-bold text-white text-base">Identify the Major Spoke</h4>
-                        <p className="text-xs text-amber-100/50 mt-1">There are 8 major spokes on the wheel. Each major spoke represents a 3-hour period (Prahara) starting from Sunrise (6:00 AM). Find the last spoke the shadow has passed clockwise.</p>
+                        <h4 className="font-bold text-foreground text-base">Identify the Major Spoke</h4>
+                        <p className="text-xs text-foreground/70 dark:text-amber-100/50 mt-1">There are 8 major spokes on the wheel. Each major spoke represents a 3-hour period (Prahara) starting from Sunrise (6:00 AM). Find the last spoke the shadow has passed clockwise.</p>
                       </div>
                     </div>
 
                     <div className="flex gap-4">
-                      <div className="w-8 h-8 rounded-full bg-amber-500/10 border border-amber-500/20 flex items-center justify-center font-bold text-amber-400 shrink-0">3</div>
+                      <div className="w-8 h-8 rounded-full bg-amber-100 dark:bg-amber-500/10 border border-amber-300 dark:border-amber-500/20 flex items-center justify-center font-bold text-amber-600 dark:text-amber-400 shrink-0">3</div>
                       <div>
-                        <h4 className="font-bold text-white text-base">Count the Beads</h4>
-                        <p className="text-xs text-amber-100/50 mt-1">The outer rim features 30 beads between each major spoke. Each bead signifies exactly 6 minutes. Count the beads starting from the base major spoke to the shadow tip.</p>
+                        <h4 className="font-bold text-foreground text-base">Count the Beads</h4>
+                        <p className="text-xs text-foreground/70 dark:text-amber-100/50 mt-1">The outer rim features 30 beads between each major spoke. Each bead signifies exactly 6 minutes. Count the beads starting from the base major spoke to the shadow tip.</p>
                       </div>
                     </div>
 
                     <div className="flex gap-4">
-                      <div className="w-8 h-8 rounded-full bg-amber-500/10 border border-amber-500/20 flex items-center justify-center font-bold text-amber-400 shrink-0">4</div>
+                      <div className="w-8 h-8 rounded-full bg-amber-100 dark:bg-amber-500/10 border border-amber-300 dark:border-amber-500/20 flex items-center justify-center font-bold text-amber-600 dark:text-amber-400 shrink-0">4</div>
                       <div>
-                        <h4 className="font-bold text-white text-base">Add the Minutes</h4>
-                        <p className="text-xs text-amber-100/50 mt-1">Multiply the bead count by 6 and add it to the base spoke's time. This delivers a solar time accurate to the minute, used by Vedic priests for millennia.</p>
+                        <h4 className="font-bold text-foreground text-base">Add the Minutes</h4>
+                        <p className="text-xs text-foreground/70 dark:text-amber-100/50 mt-1">Multiply the bead count by 6 and add it to the base spoke's time. This delivers a solar time accurate to the minute, used by Vedic priests for millennia.</p>
                       </div>
                     </div>
                   </div>
 
-                  <div className="bg-[#c49a5e]/5 border border-[#c49a5e]/25 rounded-2xl p-5 mt-4">
-                    <h4 className="text-xs font-bold uppercase tracking-widest text-amber-400 mb-2 flex items-center gap-1.5">
+                  <div className="bg-amber-50 dark:bg-[#c49a5e]/5 border border-amber-200 dark:border-[#c49a5e]/25 rounded-2xl p-5 mt-4">
+                    <h4 className="text-xs font-bold uppercase tracking-widest text-amber-700 dark:text-amber-400 mb-2 flex items-center gap-1.5">
                       <Info className="w-4 h-4" /> Historical Astronomy Note
                     </h4>
-                    <p className="text-xs text-amber-100/60 leading-relaxed font-light">
+                    <p className="text-xs text-foreground/70 dark:text-amber-100/60 leading-relaxed font-light">
                       The Konark temple is shaped like a giant solar chariot with <strong>24 wheels</strong> representing the fortnights of the year, pulled by <strong>7 horses</strong> representing the days of the week. The precision of the carvings represents the apex of astronomical observation in 13th-century India.
                     </p>
                   </div>
@@ -421,9 +432,9 @@ const SundialSimulator = () => {
       </div>
 
       {/* Praharas schedule reference grid */}
-      <div className="container mx-auto px-4 mt-12 max-w-6xl">
-        <div className="bg-black/40 border border-[#c49a5e]/15 rounded-3xl p-6 md:p-8 backdrop-blur-md">
-          <h3 className="text-sm font-bold text-amber-400 uppercase tracking-widest mb-6 text-center">
+      <div className="container mx-auto px-4 mt-12 max-w-6xl relative z-10">
+        <div className="bg-white/70 dark:bg-black/40 border border-border/50 dark:border-[#c49a5e]/15 rounded-3xl p-6 md:p-8 backdrop-blur-md shadow-xl dark:shadow-none">
+          <h3 className="text-sm font-bold text-amber-700 dark:text-amber-400 uppercase tracking-widest mb-6 text-center">
             The 4 Day-Praharas (6:00 AM - 6:00 PM)
           </h3>
           
@@ -435,14 +446,14 @@ const SundialSimulator = () => {
                   key={p.name} 
                   className={`border rounded-2xl p-5 text-center transition-all duration-300 ${
                     isActive 
-                      ? "border-amber-400 bg-amber-400/5 shadow-[0_0_12px_rgba(245,158,11,0.05)] scale-[1.02]" 
-                      : "border-white/5 opacity-55 hover:opacity-75"
+                      ? "border-amber-400 dark:border-amber-400 bg-amber-50 dark:bg-amber-400/5 shadow-[0_0_12px_rgba(245,158,11,0.1)] scale-[1.02]" 
+                      : "border-black/10 dark:border-white/5 opacity-55 hover:opacity-75"
                   }`}
                 >
                   <div className="text-3xl mb-2">{["🌅", "📿", "☀️", "🌇"][i]}</div>
-                  <h4 className="font-bold text-white text-base">{p.name}</h4>
-                  <div className="text-xs text-amber-400 font-semibold font-mono mt-1">{p.time}</div>
-                  <p className="text-[11px] text-amber-100/40 mt-2 leading-relaxed font-light">
+                  <h4 className="font-bold text-foreground text-base">{p.name}</h4>
+                  <div className="text-xs text-amber-600 dark:text-amber-400 font-semibold font-mono mt-1">{p.time}</div>
+                  <p className="text-[11px] text-foreground/50 dark:text-amber-100/40 mt-2 leading-relaxed font-light">
                     {p.desc}
                   </p>
                 </div>
@@ -450,6 +461,7 @@ const SundialSimulator = () => {
             })}
           </div>
         </div>
+      </div>
       </div>
     </div>
   );

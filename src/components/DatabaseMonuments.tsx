@@ -78,7 +78,7 @@ const DatabaseMonuments = () => {
   }
 
   return (
-    <section className="py-12 md:py-20 bg-background relative">
+    <section id="Flash" className="py-12 md:py-20 bg-background relative">
       <div className="container mx-auto px-4">
         <ScrollReveal>
           <div className="text-center mb-8 md:mb-16 space-y-3 md:space-y-4">
