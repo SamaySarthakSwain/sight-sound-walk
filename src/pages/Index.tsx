@@ -8,6 +8,7 @@ const StatsMarquee = lazy(() => import("@/components/landing/StatsMarquee"));
 const HowItWorks = lazy(() => import("@/components/landing/HowItWorks"));
 const ExploreServices = lazy(() => import("@/components/landing/ExploreServices"));
 const CTASection = lazy(() => import("@/components/landing/CTASection"));
+const DatabaseMonuments = lazy(() => import("@/components/DatabaseMonuments"));
 
 
 const Index = () => {
@@ -16,15 +17,6 @@ const Index = () => {
       <AuroraBackground />
       <Navigation />
       <HeroSection />
-<<<<<<< HEAD
-      <Suspense fallback={null}>
-        <FeaturedDestinations />
-        <StatsMarquee />
-        <HowItWorks />
-        <ExploreServices />
-        <CTASection />
-      </Suspense>
-=======
       {/* Independent Suspense per section so slow chunks don't block the rest of the page. */}
       <Suspense fallback={null}><FeaturedDestinations /></Suspense>
       <Suspense fallback={null}><StatsMarquee /></Suspense>
@@ -32,7 +24,6 @@ const Index = () => {
       <Suspense fallback={null}><ExploreServices /></Suspense>
       <Suspense fallback={null}><DatabaseMonuments /></Suspense>
       <Suspense fallback={null}><CTASection /></Suspense>
->>>>>>> 01b43efe12fdd4481dbab268df1d62f70f74faf3
     </div>
   );
 };

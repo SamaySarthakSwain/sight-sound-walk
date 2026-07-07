@@ -8,8 +8,8 @@ import { mcpPlugin } from "@lovable.dev/mcp-js/stacks/supabase/vite";
 export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
-    port: 5173,
-    strictPort: true,
+    port: 8080,
+    strictPort: false,
     proxy: {
       '/api': {
         target: 'http://localhost:5000',
