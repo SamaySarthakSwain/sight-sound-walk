@@ -2,7 +2,164 @@
 // To take ownership, delete this banner line; the plugin then leaves the file alone.
 // supabase function: mcp
 // Bundled from src/lib/mcp/index.ts by @lovable.dev/mcp-js.
+// src/lib/mcp/index.ts
+import { defineMcp } from "npm:@lovable.dev/mcp-js@0.20.0";
+
+// src/lib/mcp/tools/search-monuments.ts
+import { createClient } from "npm:@supabase/supabase-js@^2.84.0";
+import { defineTool } from "npm:@lovable.dev/mcp-js@0.20.0";
+import { z } from "npm:zod@^3.25.76";
+
+// src/lib/mcp/env.ts
+function env(name) {
+  const g = globalThis;
+  const v = g.process?.env?.[name];
+  if (!v) throw new Error(`Missing environment variable: ${name}`);
+  return v;
+}
+function envOr(name, fallback) {
+  const g = globalThis;
+  return g.process?.env?.[name] ?? fallback;
+}
+
+// src/lib/mcp/tools/search-monuments.ts
+function supa() {
+  return createClient(env("SUPABASE_URL"), envOr("SUPABASE_PUBLISHABLE_KEY", envOr("SUPABASE_ANON_KEY", "")), {
+    auth: { persistSession: false, autoRefreshToken: false }
+  });
+}
+var search_monuments_default = defineTool({
+  name: "search_monuments",
+  title: "Search monuments",
+  description: "Search Odisha monuments and historical sites in the Lets Explore catalog. Filter by free-text query (matches title, location, description), city/location, or category.",
+  inputSchema: {
+    query: z.string().optional().describe("Free-text search across title, location, description."),
+    city: z.string().optional().describe("Filter by city or location (e.g. 'Puri', 'Bhubaneswar')."),
+    category: z.string().optional().describe("Filter by category (e.g. 'Temple', 'Beach', 'Museum')."),
+    limit: z.number().int().min(1).max(50).optional().describe("Max rows to return (default 10).")
+  },
+  annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
+  handler: async ({ query, city, category, limit }) => {
+    let q = supa().from("monuments").select("id,title,category,location,region,state,description,latitude,longitude,image_url,is_featured");
+    if (city) q = q.ilike("location", `%${city}%`);
+    if (category) q = q.ilike("category", `%${category}%`);
+    if (query) q = q.or(`title.ilike.%${query}%,location.ilike.%${query}%,description.ilike.%${query}%`);
+    const { data, error } = await q.limit(limit ?? 10);
+    if (error) return { content: [{ type: "text", text: error.message }], isError: true };
+    return {
+      content: [{ type: "text", text: JSON.stringify(data, null, 2) }],
+      structuredContent: { monuments: data ?? [] }
+    };
+  }
+});
+
+// src/lib/mcp/tools/get-monument.ts
+import { createClient as createClient2 } from "npm:@supabase/supabase-js@^2.84.0";
+import { defineTool as defineTool2 } from "npm:@lovable.dev/mcp-js@0.20.0";
+import { z as z2 } from "npm:zod@^3.25.76";
+function supa2() {
+  return createClient2(env("SUPABASE_URL"), envOr("SUPABASE_PUBLISHABLE_KEY", envOr("SUPABASE_ANON_KEY", "")), {
+    auth: { persistSession: false, autoRefreshToken: false }
+  });
+}
+var get_monument_default = defineTool2({
+  name: "get_monument_details",
+  title: "Get monument details",
+  description: "Return full details (facts, coordinates, region, description) for a single monument matched by title.",
+  inputSchema: {
+    title: z2.string().min(1).describe("Monument title or partial title to look up.")
+  },
+  annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
+  handler: async ({ title }) => {
+    const { data, error } = await supa2().from("monuments").select("id,title,category,location,region,state,description,facts,latitude,longitude,image_url,distance_from_berhampur,is_featured").ilike("title", `%${title}%`).limit(1).maybeSingle();
+    if (error) return { content: [{ type: "text", text: error.message }], isError: true };
+    if (!data) return { content: [{ type: "text", text: `No monument found matching "${title}".` }] };
+    return {
+      content: [{ type: "text", text: JSON.stringify(data, null, 2) }],
+      structuredContent: { monument: data }
+    };
+  }
+});
+
+// src/lib/mcp/tools/search-hotels.ts
+import { createClient as createClient3 } from "npm:@supabase/supabase-js@^2.84.0";
+import { defineTool as defineTool3 } from "npm:@lovable.dev/mcp-js@0.20.0";
+import { z as z3 } from "npm:zod@^3.25.76";
+function supa3() {
+  return createClient3(env("SUPABASE_URL"), envOr("SUPABASE_PUBLISHABLE_KEY", envOr("SUPABASE_ANON_KEY", "")), {
+    auth: { persistSession: false, autoRefreshToken: false }
+  });
+}
+var search_hotels_default = defineTool3({
+  name: "search_hotels",
+  title: "Search hotels",
+  description: "Search hotels near a city or location in Odisha. Returns public listings (name, location, rating, amenities).",
+  inputSchema: {
+    city: z3.string().optional().describe("City or area to search (matches location field)."),
+    query: z3.string().optional().describe("Free-text search across name and description."),
+    minRating: z3.number().min(0).max(5).optional().describe("Minimum Google rating filter."),
+    limit: z3.number().int().min(1).max(50).optional().describe("Max rows (default 10).")
+  },
+  annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
+  handler: async ({ city, query, minRating, limit }) => {
+    let q = supa3().from("hotels_public").select("id,name,location,address,description,amenities,google_rating,google_total_ratings,image_url,latitude,longitude");
+    if (city) q = q.ilike("location", `%${city}%`);
+    if (query) q = q.or(`name.ilike.%${query}%,description.ilike.%${query}%`);
+    if (typeof minRating === "number") q = q.gte("google_rating", minRating);
+    const { data, error } = await q.limit(limit ?? 10);
+    if (error) return { content: [{ type: "text", text: error.message }], isError: true };
+    return {
+      content: [{ type: "text", text: JSON.stringify(data, null, 2) }],
+      structuredContent: { hotels: data ?? [] }
+    };
+  }
+});
+
+// src/lib/mcp/tools/search-food.ts
+import { createClient as createClient4 } from "npm:@supabase/supabase-js@^2.84.0";
+import { defineTool as defineTool4 } from "npm:@lovable.dev/mcp-js@0.20.0";
+import { z as z4 } from "npm:zod@^3.25.76";
+function supa4() {
+  return createClient4(env("SUPABASE_URL"), envOr("SUPABASE_PUBLISHABLE_KEY", envOr("SUPABASE_ANON_KEY", "")), {
+    auth: { persistSession: false, autoRefreshToken: false }
+  });
+}
+var search_food_default = defineTool4({
+  name: "search_food_places",
+  title: "Search food places",
+  description: "Find restaurants, street food stalls, and food streets in Odisha with ratings and famous dishes.",
+  inputSchema: {
+    city: z4.string().optional().describe("City / area filter (matches location)."),
+    query: z4.string().optional().describe("Free-text search across name and description."),
+    category: z4.string().optional().describe("Category filter (e.g. 'Restaurant', 'Street Food')."),
+    minRating: z4.number().min(0).max(5).optional().describe("Minimum Google rating."),
+    limit: z4.number().int().min(1).max(50).optional().describe("Max rows (default 10).")
+  },
+  annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
+  handler: async ({ city, query, category, minRating, limit }) => {
+    let q = supa4().from("food_places").select("*");
+    if (city) q = q.ilike("location", `%${city}%`);
+    if (category) q = q.ilike("category", `%${category}%`);
+    if (query) q = q.or(`name.ilike.%${query}%,description.ilike.%${query}%`);
+    if (typeof minRating === "number") q = q.gte("google_rating", minRating);
+    const { data, error } = await q.limit(limit ?? 10);
+    if (error) return { content: [{ type: "text", text: error.message }], isError: true };
+    return {
+      content: [{ type: "text", text: JSON.stringify(data, null, 2) }],
+      structuredContent: { food_places: data ?? [] }
+    };
+  }
+});
+
+// src/lib/mcp/index.ts
+var mcp_default = defineMcp({
+  name: "lets-explore-mcp",
+  title: "Lets Explore (Odisha) MCP",
+  version: "0.1.0",
+  instructions: "Tools for the Lets Explore Odisha educational tourism app. Use `search_monuments` and `get_monument_details` for temples, beaches, and heritage sites; `search_hotels` for stays; `search_food_places` for restaurants and street food. All tools are read-only over the public catalog.",
+  tools: [search_monuments_default, get_monument_default, search_hotels_default, search_food_default]
+});
+
 // lovable-mcp-supabase-entry.ts
-import mcp from "npm:C:\\Users\\Lenovo\\OneDrive\\Desktop\\Antigravity\\Lets Explore\\sight-sound-walk\\src\\lib\\mcp\\index.ts";
 import { createSupabaseHandler } from "npm:@lovable.dev/mcp-js@0.20.0/stacks/supabase";
-Deno.serve(createSupabaseHandler(mcp, { functionName: "mcp" }));
+Deno.serve(createSupabaseHandler(mcp_default, { functionName: "mcp" }));
