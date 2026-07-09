@@ -246,7 +246,9 @@ const MonumentsMap: React.FC<MonumentsMapProps> = ({ routeData, selectedMonument
             ) : (
               <>
                 {/* Map — uses global script so renders instantly */}
-                <div className="relative">
+                <div className="relative rounded-2xl overflow-hidden ring-1 ring-white/10 shadow-[0_20px_60px_-20px_hsl(var(--primary)/0.35)]">
+                  {/* Soft primary glow around map edges */}
+                  <div className="pointer-events-none absolute -inset-px rounded-2xl bg-gradient-to-br from-primary/10 via-transparent to-primary/10 z-[1]" />
                   {monumentsLoading && (
                     <div className="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-background/60">
                       <Loader2 className="w-8 h-8 animate-spin text-primary" />
