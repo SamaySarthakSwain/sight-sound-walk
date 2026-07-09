@@ -28,8 +28,8 @@ interface Monument {
 
 const mapContainerStyle = {
   width: '100%',
-  height: '600px',
-  borderRadius: '0.5rem'
+  height: '620px',
+  borderRadius: '1rem'
 };
 
 // Bhubaneswar coordinates
