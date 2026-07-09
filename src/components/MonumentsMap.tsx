@@ -6,6 +6,7 @@ import { Map as MapIcon, Loader2, Navigation as NavButtonIcon } from "lucide-rea
 import { supabase } from "@/integrations/supabase/client";
 import DownloadMapButton from "./DownloadMapButton";
 import { useGoogleMaps } from "@/contexts/GoogleMapsContext";
+import PlacesAutocomplete from "./PlacesAutocomplete";
 
 interface RouteData {
   start: { lat: number; lng: number };
@@ -226,6 +227,17 @@ const MonumentsMap: React.FC<MonumentsMapProps> = ({ routeData, selectedMonument
           </CardHeader>
 
           <CardContent className="space-y-6">
+            {/* Beautiful autocomplete search bar — Google Places (New) */}
+            <PlacesAutocomplete
+              placeholder="Search a monument, temple, city or address in Odisha…"
+              onSelect={(p) => {
+                if (p.location) {
+                  setMapCenter(p.location);
+                  setMapZoom(15);
+                }
+              }}
+            />
+
             {!mapsLoaded ? (
               <div className="flex flex-col items-center justify-center h-[600px] gap-3 rounded-lg bg-muted/30">
                 <Loader2 className="w-10 h-10 animate-spin text-primary" />
