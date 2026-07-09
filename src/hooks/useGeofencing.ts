@@ -48,7 +48,9 @@ export const useGeofencing = (monuments: Monument[], options: GeofencingOptions 
                 }
             },
             (error) => {
-                console.error("Geofencing error:", error);
+                // Geolocation permission denied / unavailable — silent, expected on many devices.
+                if (error && (error.code === error.PERMISSION_DENIED || error.code === error.POSITION_UNAVAILABLE)) return;
+                console.warn("[Geofencing]", error?.message || "location unavailable");
             },
             {
                 enableHighAccuracy: true,
