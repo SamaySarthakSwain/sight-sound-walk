@@ -7,6 +7,7 @@ import { useCity } from "@/contexts/CityContext";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2, UtensilsCrossed } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const Food = () => {
   const { foodPlaces, loading, submitRating, refetch } = useFoodPlaces();
@@ -92,8 +93,16 @@ const Food = () => {
           </Tabs>
 
           {loading ? (
-            <div className="flex items-center justify-center py-12">
-              <Loader2 className="w-8 h-8 animate-spin text-primary" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 py-8">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <div key={i} className="flex flex-col space-y-3 p-4 border rounded-xl bg-card">
+                  <Skeleton className="h-40 w-full rounded-lg" />
+                  <div className="space-y-2">
+                    <Skeleton className="h-4 w-[250px]" />
+                    <Skeleton className="h-4 w-[200px]" />
+                  </div>
+                </div>
+              ))}
             </div>
           ) : filteredPlaces.length === 0 ? (
             <div className="text-center py-12">

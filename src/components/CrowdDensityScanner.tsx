@@ -191,21 +191,21 @@ const CrowdDensityScanner = () => {
   }));
 
   return (
-    <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 shadow-2xl overflow-hidden mt-12 w-full max-w-5xl mx-auto mb-12">
+    <div className="bg-white/70 dark:bg-black/40 backdrop-blur-xl border border-border/50 dark:border-white/10 rounded-2xl p-6 shadow-2xl overflow-hidden mt-12 w-full max-w-5xl mx-auto mb-12">
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 gap-4">
         <div>
           <h2 className="text-2xl font-bold bg-gradient-to-r from-teal-400 to-emerald-300 bg-clip-text text-transparent flex items-center gap-3">
             <LayoutDashboard className="w-6 h-6 text-teal-400" />
             Live Crowd & Traffic Density (Beta)
           </h2>
-          <p className="text-white/60 mt-2 text-sm max-w-xl">
+          <p className="text-muted-foreground mt-2 text-sm max-w-xl">
             Real-time on-device AI analysis to monitor crowd and traffic flow safely. Your video stream is analyzed locally and never leaves your device.
           </p>
         </div>
         
         <div className="flex items-center gap-3">
           {isModelLoading && (
-            <span className="text-xs text-white/50 animate-pulse flex items-center gap-2">
+            <span className="text-xs text-muted-foreground animate-pulse flex items-center gap-2">
               <RefreshCw className="w-3 h-3 animate-spin" />
               Loading AI Core...
             </span>
@@ -240,9 +240,9 @@ const CrowdDensityScanner = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">
           {/* Camera View */}
-          <div className="relative aspect-video bg-black/40 rounded-xl overflow-hidden border border-white/5 shadow-inner">
+          <div className="relative aspect-video bg-black/5 dark:bg-black/40 rounded-xl overflow-hidden border border-border/50 dark:border-white/5 shadow-inner">
             {!isCameraActive && (
-              <div className="absolute inset-0 flex flex-col items-center justify-center text-white/30 p-6 text-center">
+              <div className="absolute inset-0 flex flex-col items-center justify-center text-muted-foreground p-6 text-center">
                 <Camera className="w-12 h-12 mb-4 opacity-50" />
                 <p>Scanner inactive. Click Start to begin tracking.</p>
               </div>

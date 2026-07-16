@@ -286,27 +286,27 @@ const QuestModal = ({ quest, onClose, onComplete }: { quest: Quest; onClose: () 
   if (finished) {
     const earned = Math.round((correctCount / quest.questions.length) * quest.xpReward);
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4">
-        <div className="bg-[#120d09] border border-[#c49a5e]/30 rounded-3xl p-8 max-w-md w-full text-center space-y-6 shadow-2xl relative">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 rounded-full bg-amber-500/10 border border-[#c49a5e]/40 flex items-center justify-center text-4xl shadow-lg">
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 dark:bg-black/80 backdrop-blur-md p-4">
+        <div className="bg-card dark:bg-[#120d09] border border-border dark:border-[#c49a5e]/30 rounded-3xl p-8 max-w-md w-full text-center space-y-6 shadow-2xl relative">
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 rounded-full bg-amber-100 dark:bg-amber-500/10 border border-amber-300 dark:border-[#c49a5e]/40 flex items-center justify-center text-4xl shadow-lg">
             {correctCount === quest.questions.length ? "🏆" : "⭐"}
           </div>
           <div className="pt-6">
-            <h2 className="text-2xl font-bold text-amber-100">{correctCount === quest.questions.length ? "Perfect Score!" : "Quest Complete!"}</h2>
-            <p className="text-amber-100/50 text-sm mt-2">You answered {correctCount} of {quest.questions.length} questions correctly.</p>
+            <h2 className="text-2xl font-bold text-amber-900 dark:text-amber-100">{correctCount === quest.questions.length ? "Perfect Score!" : "Quest Complete!"}</h2>
+            <p className="text-amber-800/60 dark:text-amber-100/50 text-sm mt-2">You answered {correctCount} of {quest.questions.length} questions correctly.</p>
           </div>
           
-          <div className="bg-black/40 border border-white/5 rounded-2xl p-5">
-            <div className="text-4xl font-black text-amber-400">+{earned} XP</div>
-            <div className="text-xs text-amber-100/40 mt-1 uppercase tracking-wider">Heritage Experience Points</div>
+          <div className="bg-muted dark:bg-black/40 border border-border dark:border-white/5 rounded-2xl p-5">
+            <div className="text-4xl font-black text-amber-600 dark:text-amber-400">+{earned} XP</div>
+            <div className="text-xs text-amber-700/60 dark:text-amber-100/40 mt-1 uppercase tracking-wider">Heritage Experience Points</div>
             
             {correctCount === quest.questions.length && (
-              <div className="mt-4 pt-4 border-t border-[#c49a5e]/10 flex flex-col items-center gap-2">
-                <div className="w-16 h-16 rounded-full bg-amber-400/10 border border-amber-400/30 flex items-center justify-center text-3xl shadow-inner animate-pulse">
+              <div className="mt-4 pt-4 border-t border-border dark:border-[#c49a5e]/10 flex flex-col items-center gap-2">
+                <div className="w-16 h-16 rounded-full bg-amber-100 dark:bg-amber-400/10 border border-amber-400/30 flex items-center justify-center text-3xl shadow-inner animate-pulse">
                   {quest.stamp}
                 </div>
-                <div className="text-xs font-bold text-amber-300 uppercase tracking-widest">Stamp Unlocked!</div>
-                <div className="text-sm font-semibold text-white">{quest.stampName}</div>
+                <div className="text-xs font-bold text-amber-600 dark:text-amber-300 uppercase tracking-widest">Stamp Unlocked!</div>
+                <div className="text-sm font-semibold text-foreground dark:text-white">{quest.stampName}</div>
               </div>
             )}
           </div>
@@ -326,16 +326,16 @@ const QuestModal = ({ quest, onClose, onComplete }: { quest: Quest; onClose: () 
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4">
-      <div className="bg-[#120d09] border border-[#c49a5e]/20 rounded-3xl max-w-lg w-full shadow-2xl overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 dark:bg-black/80 backdrop-blur-md p-4">
+      <div className="bg-card dark:bg-[#120d09] border border-border dark:border-[#c49a5e]/20 rounded-3xl max-w-lg w-full shadow-2xl overflow-hidden">
         {/* Header */}
-        <div className={`bg-gradient-to-br ${quest.color} p-6 border-b border-[#c49a5e]/10`}>
+        <div className={`bg-gradient-to-br ${quest.color} p-6 border-b border-border dark:border-[#c49a5e]/10`}>
           <div className="flex items-center justify-between">
             <div>
-              <div className="text-xs text-amber-400/60 uppercase tracking-wider font-semibold">{quest.monument}</div>
-              <h3 className="font-extrabold text-xl text-amber-100 mt-1">{quest.title}</h3>
+              <div className="text-xs text-amber-700/80 dark:text-amber-400/60 uppercase tracking-wider font-semibold">{quest.monument}</div>
+              <h3 className="font-extrabold text-xl text-amber-900 dark:text-amber-100 mt-1">{quest.title}</h3>
             </div>
-            <button onClick={onClose} className="text-amber-100/50 hover:text-white transition-colors text-lg">✕</button>
+            <button onClick={onClose} className="text-amber-900/50 dark:text-amber-100/50 hover:text-foreground dark:hover:text-white transition-colors text-lg">✕</button>
           </div>
           
           {/* Progress bar */}
@@ -349,25 +349,25 @@ const QuestModal = ({ quest, onClose, onComplete }: { quest: Quest; onClose: () 
               />
             ))}
           </div>
-          <div className="text-[10px] text-amber-100/40 mt-2 font-mono uppercase tracking-wider">Question {step + 1} of {quest.questions.length}</div>
+          <div className="text-[10px] text-amber-800/60 dark:text-amber-100/40 mt-2 font-mono uppercase tracking-wider">Question {step + 1} of {quest.questions.length}</div>
         </div>
 
         <div className="p-6 space-y-5">
-          <p className="font-bold text-lg text-white leading-relaxed">{q.question}</p>
-          <div className="text-xs text-amber-200/60 italic flex items-center gap-1.5 bg-amber-400/5 p-3 rounded-xl border border-amber-400/10">
+          <p className="font-bold text-lg text-foreground dark:text-white leading-relaxed">{q.question}</p>
+          <div className="text-xs text-amber-700/80 dark:text-amber-200/60 italic flex items-center gap-1.5 bg-amber-50 dark:bg-amber-400/5 p-3 rounded-xl border border-amber-200 dark:border-amber-400/10">
             <span>💡</span>
             <span><strong>Hint:</strong> {q.hint}</span>
           </div>
 
           <div className="space-y-3">
             {q.options.map((opt, i) => {
-              let style = "bg-white/5 border-white/5 hover:bg-white/10 text-amber-100 hover:border-white/10";
+              let style = "bg-muted dark:bg-white/5 border-border dark:border-white/5 hover:bg-muted/80 dark:hover:bg-white/10 text-foreground dark:text-amber-100 hover:border-foreground/20 dark:hover:border-white/10";
               if (answered) {
-                if (i === q.correct) style = "bg-green-500/15 border-green-500/40 text-green-300";
-                else if (i === selected) style = "bg-red-500/15 border-red-500/40 text-red-300";
-                else style = "bg-white/5 border-transparent text-amber-100/30 opacity-40";
+                if (i === q.correct) style = "bg-green-100 dark:bg-green-500/15 border-green-500/40 text-green-700 dark:text-green-300";
+                else if (i === selected) style = "bg-red-100 dark:bg-red-500/15 border-red-500/40 text-red-700 dark:text-red-300";
+                else style = "bg-muted dark:bg-white/5 border-transparent text-foreground/40 dark:text-amber-100/30 opacity-60 dark:opacity-40";
               } else if (i === selected) {
-                style = "bg-amber-500/15 border-amber-500/40 text-amber-300";
+                style = "bg-amber-100 dark:bg-amber-500/15 border-amber-500/40 text-amber-700 dark:text-amber-300";
               }
               
               return (
@@ -395,8 +395,8 @@ const QuestModal = ({ quest, onClose, onComplete }: { quest: Quest; onClose: () 
           {answered && (
             <div className={`rounded-xl p-4 text-xs leading-relaxed border ${
               selected === q.correct 
-                ? "bg-green-500/5 border-green-500/20 text-green-200/80" 
-                : "bg-red-500/5 border-red-500/20 text-red-200/80"
+                ? "bg-green-100 dark:bg-green-500/5 border-green-500/30 dark:border-green-500/20 text-green-800 dark:text-green-200/80" 
+                : "bg-red-100 dark:bg-red-500/5 border-red-500/30 dark:border-red-500/20 text-red-800 dark:text-red-200/80"
             }`}>
               <strong>{selected === q.correct ? "✓ Correct! " : "✗ Not quite. "}</strong>{q.explanation}
             </div>

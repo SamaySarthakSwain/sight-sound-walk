@@ -207,8 +207,8 @@ const ITOSDashboard = () => {
                   onClick={() => setWeather(w.value as WeatherType)}
                   className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all ${
                     weather === w.value
-                      ? "bg-teal-500/20 border-teal-500/50 text-teal-400 shadow-[0_0_10px_rgba(20,184,166,0.2)]"
-                      : "bg-black/40 border-white/10 text-white/50 hover:border-white/30"
+                      ? "bg-teal-500/20 border-teal-500/50 text-teal-600 dark:text-teal-400 shadow-[0_0_10px_rgba(20,184,166,0.2)]"
+                      : "bg-muted border-border text-muted-foreground hover:border-border/80"
                   }`}
                 >
                   {w.icon} {w.label}
@@ -274,8 +274,8 @@ const ITOSDashboard = () => {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
           
           {/* Map */}
-          <div className="lg:col-span-3 bg-black/20 border border-white/10 rounded-xl overflow-hidden" style={{ height: 450 }}>
-            <MapContainer center={BHUBANESWAR} zoom={13} style={{ height: "100%", width: "100%", background: '#0a0a0a' }} zoomControl={false}>
+          <div className="lg:col-span-3 bg-muted/20 border border-border rounded-xl overflow-hidden" style={{ height: 450 }}>
+            <MapContainer center={BHUBANESWAR} zoom={13} style={{ height: "100%", width: "100%", background: 'var(--background)' }} zoomControl={false}>
               <TileLayer
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>'
                 url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
@@ -351,25 +351,25 @@ const ITOSDashboard = () => {
 
           <div className="flex flex-col gap-4 h-full">
             {/* Incidents Panel */}
-            <div className="bg-black/20 border border-white/10 rounded-xl p-4 flex-1 overflow-auto max-h-[220px] lg:max-h-full">
+            <div className="bg-muted/30 border border-border rounded-xl p-4 flex-1 overflow-auto max-h-[220px] lg:max-h-full">
               <div className="flex items-center gap-2 mb-3">
                 <AlertTriangle className="w-4 h-4 text-destructive" />
-                <h3 className="text-xs font-bold text-white uppercase tracking-wider">Live Incidents</h3>
+                <h3 className="text-xs font-bold text-foreground uppercase tracking-wider">Live Incidents</h3>
               </div>
               <div className="space-y-2">
                 {incidents.length === 0 ? (
-                  <p className="text-xs text-white/40 text-center py-2">No active incidents</p>
+                  <p className="text-xs text-muted-foreground text-center py-2">No active incidents</p>
                 ) : (
                   incidents.map((inc) => (
                     <div
                       key={inc.id}
-                      className="flex items-center gap-2 p-2 rounded-lg bg-black/40 border"
+                      className="flex items-center gap-2 p-2 rounded-lg bg-background border"
                       style={{ borderColor: `${getSeverityColor(inc.severity)}30` }}
                     >
                       <div className="w-2 h-2 rounded-full animate-pulse shrink-0" style={{ backgroundColor: getSeverityColor(inc.severity) }} />
                       <div className="flex-1 min-w-0">
-                        <p className="text-[10px] font-semibold text-white truncate">{inc.message}</p>
-                        <p className="text-[9px] text-white/50 font-mono mt-0.5">
+                        <p className="text-[10px] font-semibold text-foreground truncate">{inc.message}</p>
+                        <p className="text-[9px] text-muted-foreground font-mono mt-0.5">
                           {new Date(inc.timestamp).toLocaleTimeString()}
                         </p>
                       </div>
@@ -380,10 +380,10 @@ const ITOSDashboard = () => {
             </div>
 
             {/* Selected Signal View */}
-            <div className="bg-black/20 border border-white/10 rounded-xl p-4 min-h-[150px]">
+            <div className="bg-muted/30 border border-border rounded-xl p-4 min-h-[150px]">
               <div className="flex items-center gap-2 mb-3">
-                <Brain className="w-4 h-4 text-teal-400" />
-                <h3 className="text-xs font-bold text-white uppercase tracking-wider">Top Optimize</h3>
+                <Brain className="w-4 h-4 text-teal-500" />
+                <h3 className="text-xs font-bold text-foreground uppercase tracking-wider">Top Optimize</h3>
               </div>
               {signals.size > 0 ? (() => {
                 const topSig = Array.from(signals.entries()).sort((a,b) => b[1].reward - a[1].reward)[0];
@@ -391,20 +391,20 @@ const ITOSDashboard = () => {
                 if (!node) return null;
                 return (
                   <div>
-                    <p className="text-xs font-bold text-white truncate">{node.name}</p>
+                    <p className="text-xs font-bold text-foreground truncate">{node.name}</p>
                     <div className="grid grid-cols-2 gap-2 mt-2">
-                      <div className="bg-black/40 rounded p-1.5 text-center">
-                        <p className="text-[9px] text-white/50">NS GREEN</p>
-                        <p className="text-sm font-mono text-emerald-400">{topSig[1].action.greenNS}s</p>
+                      <div className="bg-background border border-border rounded p-1.5 text-center">
+                        <p className="text-[9px] text-muted-foreground">NS GREEN</p>
+                        <p className="text-sm font-mono text-emerald-500">{topSig[1].action.greenNS}s</p>
                       </div>
-                      <div className="bg-black/40 rounded p-1.5 text-center">
-                        <p className="text-[9px] text-white/50">EW GREEN</p>
-                        <p className="text-sm font-mono text-emerald-400">{topSig[1].action.greenEW}s</p>
+                      <div className="bg-background border border-border rounded p-1.5 text-center">
+                        <p className="text-[9px] text-muted-foreground">EW GREEN</p>
+                        <p className="text-sm font-mono text-emerald-500">{topSig[1].action.greenEW}s</p>
                       </div>
                     </div>
                   </div>
                 );
-              })() : <p className="text-[10px] text-white/40">Calculating RL signals...</p>}
+              })() : <p className="text-[10px] text-muted-foreground">Calculating RL signals...</p>}
             </div>
           </div>
         </div>

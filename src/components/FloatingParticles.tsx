@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { useTheme } from "next-themes";
 
 interface Particle {
   x: number;
@@ -14,6 +15,7 @@ const FloatingParticles = ({ count = 40 }: { count?: number }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const particlesRef = useRef<Particle[]>([]);
   const animRef = useRef<number>(0);
+  const { resolvedTheme } = useTheme();
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -42,6 +44,8 @@ const FloatingParticles = ({ count = 40 }: { count?: number }) => {
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       
+      const isLight = resolvedTheme === 'light';
+
       for (const p of particlesRef.current) {
         p.x += p.speedX;
         p.y += p.speedY;
@@ -58,7 +62,13 @@ const FloatingParticles = ({ count = 40 }: { count?: number }) => {
 
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx.fillStyle = `hsla(${p.hue}, 60%, 70%, ${p.opacity})`;
+        
+        if (isLight) {
+            ctx.fillStyle = `hsla(${p.hue}, 80%, 40%, ${p.opacity * 1.5})`;
+        } else {
+            ctx.fillStyle = `hsla(${p.hue}, 60%, 70%, ${p.opacity})`;
+        }
+        
         ctx.fill();
       }
 
@@ -71,12 +81,12 @@ const FloatingParticles = ({ count = 40 }: { count?: number }) => {
       window.removeEventListener("resize", resize);
       cancelAnimationFrame(animRef.current);
     };
-  }, [count]);
+  }, [count, resolvedTheme]);
 
   return (
     <canvas
       ref={canvasRef}
-      className="fixed inset-0 pointer-events-none z-0 hidden dark:block"
+      className="fixed inset-0 pointer-events-none z-0 transition-opacity duration-700"
       aria-hidden="true"
     />
   );

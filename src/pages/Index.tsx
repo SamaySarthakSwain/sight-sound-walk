@@ -8,8 +8,7 @@ const StatsMarquee = lazy(() => import("@/components/landing/StatsMarquee"));
 const HowItWorks = lazy(() => import("@/components/landing/HowItWorks"));
 const ExploreServices = lazy(() => import("@/components/landing/ExploreServices"));
 const CTASection = lazy(() => import("@/components/landing/CTASection"));
-const DatabaseMonuments = lazy(() => import("@/components/DatabaseMonuments"));
-
+const Footer = lazy(() => import("@/components/landing/Footer"));
 
 const Index = () => {
   return (
@@ -22,8 +21,8 @@ const Index = () => {
       <Suspense fallback={null}><StatsMarquee /></Suspense>
       <Suspense fallback={null}><HowItWorks /></Suspense>
       <Suspense fallback={null}><ExploreServices /></Suspense>
-      <Suspense fallback={null}><DatabaseMonuments /></Suspense>
       <Suspense fallback={null}><CTASection /></Suspense>
+      <Suspense fallback={null}><Footer /></Suspense>
     </div>
   );
 };

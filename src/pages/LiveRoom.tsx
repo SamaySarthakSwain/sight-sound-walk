@@ -151,7 +151,7 @@ const LiveRoomContent = () => {
     };
 
     return (
-        <div className="min-h-screen bg-[#202124] flex flex-col">
+        <div className="min-h-screen bg-background flex flex-col">
             <JoinSessionModal />
 
             {/* Red Alert Banner */}
@@ -199,9 +199,9 @@ const LiveRoomContent = () => {
                                 exit={{ opacity: 0, height: 0 }}
                                 className="overflow-hidden"
                             >
-                                <div className="bg-[#2d2e31] rounded-xl border border-[#3c4043] p-6">
+                                <div className="bg-card rounded-xl border border-border p-6 shadow-lg">
                                     <div className="flex flex-col sm:flex-row items-center gap-6">
-                                        <div className="p-4 rounded-xl bg-white shrink-0">
+                                        <div className="p-4 rounded-xl bg-white shrink-0 border border-border">
                                             <QRCodeSVG
                                                 value={sessionUrl}
                                                 size={160}
@@ -212,15 +212,15 @@ const LiveRoomContent = () => {
                                             />
                                         </div>
                                         <div className="flex-1 space-y-3 text-center sm:text-left">
-                                            <h3 className="text-lg font-bold text-white">Invite Others to This Room</h3>
-                                            <p className="text-sm text-gray-400">
+                                            <h3 className="text-lg font-bold text-foreground">Invite Others to This Room</h3>
+                                            <p className="text-sm text-muted-foreground">
                                                 Anyone who scans this QR code will join this room. Their camera feed will appear here automatically for everyone to see.
                                             </p>
                                             <div className="flex items-center gap-2">
                                                 <input
                                                     readOnly
                                                     value={sessionUrl}
-                                                    className="flex-1 bg-[#202124] border border-[#3c4043] rounded-lg px-3 py-2 text-xs text-gray-300 font-mono"
+                                                    className="flex-1 bg-background border border-border rounded-lg px-3 py-2 text-xs text-foreground font-mono"
                                                 />
                                                 <button
                                                     onClick={handleCopy}
@@ -230,7 +230,7 @@ const LiveRoomContent = () => {
                                                     {copied ? "Copied!" : "Copy Link"}
                                                 </button>
                                             </div>
-                                            <div className="flex gap-2 text-[10px] text-gray-500 font-mono">
+                                            <div className="flex gap-2 text-[10px] text-muted-foreground font-mono">
                                                 <span>• Camera auto-starts on join</span>
                                                 <span>• Detection runs on each device</span>
                                                 <span>• All feeds visible to everyone</span>
@@ -255,7 +255,7 @@ const LiveRoomContent = () => {
                                     animate={{ opacity: 1, scale: 1 }}
                                     exit={{ opacity: 0, scale: 0.95 }}
                                     transition={{ delay: i * 0.05 }}
-                                    className={`relative rounded-lg overflow-hidden bg-[#3c4043] aspect-video ${isHighCrowd ? "ring-2 ring-red-500 ring-offset-1 ring-offset-[#202124]" : ""}`}
+                                    className={`relative rounded-lg overflow-hidden bg-muted border border-border aspect-video ${isHighCrowd ? "ring-2 ring-red-500 ring-offset-1 ring-offset-background" : ""}`}
                                 >
                                     {/* Pulsing red border for high crowd */}
                                     {isHighCrowd && (
@@ -271,9 +271,9 @@ const LiveRoomContent = () => {
                                         {peer.stream ? (
                                             <VideoPlayer stream={peer.stream} showDetection={true} personCount={peer.personCount} bboxes={peer.bboxes} className="w-full h-full object-cover" />
                                         ) : (
-                                            <div className="w-full h-full flex items-center justify-center bg-[#3c4043]">
-                                                <div className="w-16 h-16 rounded-full bg-[#5f6368] flex items-center justify-center">
-                                                    <span className="text-2xl font-bold text-white">
+                                            <div className="w-full h-full flex items-center justify-center bg-muted">
+                                                <div className="w-16 h-16 rounded-full bg-background border border-border flex items-center justify-center shadow-sm">
+                                                    <span className="text-2xl font-bold text-foreground">
                                                         {(peer.username || "U").charAt(0).toUpperCase()}
                                                     </span>
                                                 </div>
@@ -298,27 +298,27 @@ const LiveRoomContent = () => {
 
                                     {/* Continuous live counts — bottom-left */}
                                     <div className="absolute bottom-8 left-2 z-20 flex gap-1.5">
-                                        <div className="flex items-center gap-1 px-2 py-1 rounded-md bg-black/70 backdrop-blur-sm border border-white/10">
+                                        <div className="flex items-center gap-1 px-2 py-1 rounded-md bg-black/60 dark:bg-black/70 backdrop-blur-md border border-white/20 dark:border-white/10 shadow-lg">
                                             <Users className="w-3 h-3 text-blue-400" />
                                             <span className="text-xs font-bold font-mono text-white">{peer.personCount}</span>
                                         </div>
-                                        <div className="flex items-center gap-1 px-2 py-1 rounded-md bg-black/70 backdrop-blur-sm border border-white/10">
+                                        <div className="flex items-center gap-1 px-2 py-1 rounded-md bg-black/60 dark:bg-black/70 backdrop-blur-md border border-white/20 dark:border-white/10 shadow-lg">
                                             <Car className="w-3 h-3 text-purple-400" />
                                             <span className="text-xs font-bold font-mono text-white">{peer.vehicleCount}</span>
                                         </div>
                                     </div>
 
                                     {/* Username label — bottom-left (Google Meet style) */}
-                                    <div className="absolute bottom-1.5 left-2 z-20 flex items-center gap-1.5">
+                                    <div className="absolute bottom-1.5 left-2 z-20 flex items-center gap-1.5 px-2 py-0.5 rounded bg-black/40 backdrop-blur-sm">
                                         <span className="text-xs text-white font-medium drop-shadow-lg truncate max-w-[140px]">
                                             {peer.username}{peer.isLocal ? " (You)" : ""}
                                         </span>
                                     </div>
 
                                     {/* Location pin — top-left */}
-                                    <div className="absolute top-2 left-2 z-20 flex items-center gap-1 px-2 py-1 rounded-md bg-black/50 backdrop-blur-sm">
+                                    <div className="absolute top-2 left-2 z-20 flex items-center gap-1 px-2 py-1 rounded-md bg-black/60 backdrop-blur-md shadow-lg border border-white/10">
                                         <MapPin className="w-3 h-3 text-blue-400" />
-                                        <span className="text-[10px] text-gray-300 font-medium truncate max-w-[100px]">{peer.location}</span>
+                                        <span className="text-[10px] text-gray-200 font-medium truncate max-w-[100px]">{peer.location}</span>
                                     </div>
                                 </motion.div>
                             );
@@ -329,14 +329,14 @@ const LiveRoomContent = () => {
             </main>
 
             {/* Bottom Control Bar (Google Meet style) */}
-            <footer className="bg-[#202124] border-t border-[#3c4043] py-3 px-4 flex items-center justify-between shrink-0">
+            <footer className="bg-background border-t border-border py-3 px-4 flex items-center justify-between shrink-0 shadow-lg">
                 {/* Left: Meeting info */}
                 <div className="flex items-center gap-3">
-                    <span className="text-sm text-gray-300 font-medium">
+                    <span className="text-sm text-foreground font-medium">
                         {currentTime.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
                     </span>
-                    <span className="text-xs text-gray-500">|</span>
-                    <span className="text-xs text-gray-400">CrowdFlow Live Room</span>
+                    <span className="text-xs text-muted-foreground">|</span>
+                    <span className="text-xs text-muted-foreground">CrowdFlow Live Room</span>
                 </div>
 
                 {/* Center: Controls */}
@@ -352,61 +352,61 @@ const LiveRoomContent = () => {
 
                     <button
                         onClick={() => setShowQR(!showQR)}
-                        className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors ${showQR ? "bg-blue-500 hover:bg-blue-600" : "bg-[#3c4043] hover:bg-[#4a4e51]"}`}
+                        className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors shadow-sm ${showQR ? "bg-blue-500 text-white hover:bg-blue-600" : "bg-muted hover:bg-accent text-foreground border border-border"}`}
                         title="Share QR Code"
                     >
-                        <Share2 className="w-5 h-5 text-white" />
+                        <Share2 className="w-5 h-5" />
                     </button>
-                    <button className="w-10 h-10 rounded-full bg-[#3c4043] hover:bg-[#4a4e51] flex items-center justify-center transition-colors">
-                        <Mic className="w-5 h-5 text-white" />
+                    <button className="w-10 h-10 rounded-full bg-muted hover:bg-accent border border-border flex items-center justify-center transition-colors shadow-sm">
+                        <Mic className="w-5 h-5 text-foreground" />
                     </button>
                     <button
                         onClick={toggleCamera}
                         disabled={isStartingCamera}
-                        className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors relative ${localStream ? "bg-red-500 hover:bg-red-600 shadow-[0_4px_12px_rgba(239,68,68,0.3)]" : "bg-[#3c4043] hover:bg-[#4a4e51]"
+                        className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors relative shadow-sm border ${localStream ? "bg-red-500 hover:bg-red-600 border-red-500 shadow-[0_4px_12px_rgba(239,68,68,0.3)] text-white" : "bg-muted hover:bg-accent border-border text-foreground"
                             }`}
                     >
                         {isStartingCamera ? (
-                            <Loader2 className="w-5 h-5 animate-spin text-white" />
+                            <Loader2 className="w-5 h-5 animate-spin" />
                         ) : localStream ? (
-                            <CameraOff className="w-5 h-5 text-white" />
+                            <CameraOff className="w-5 h-5" />
                         ) : (
-                            <Video className="w-5 h-5 text-white" />
+                            <Video className="w-5 h-5" />
                         )}
                         <AnimatePresence>
                             {!localStream && !isStartingCamera && (
                                 <motion.div
                                     initial={{ scale: 0 }}
                                     animate={{ scale: 1 }}
-                                    className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full border-2 border-[#202124]"
+                                    className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full border-2 border-background"
                                 />
                             )}
                         </AnimatePresence>
                     </button>
                     <button
                         onClick={switchCamera}
-                        className="w-10 h-10 rounded-full bg-[#3c4043] hover:bg-[#4a4e51] flex items-center justify-center transition-colors"
+                        className="w-10 h-10 rounded-full bg-muted hover:bg-accent border border-border flex items-center justify-center transition-colors shadow-sm text-foreground"
                         title="Switch Camera (Front/Rear)"
                     >
-                        <RefreshCw className={`w-5 h-5 text-white ${isStartingCamera ? 'animate-spin' : ''}`} />
+                        <RefreshCw className={`w-5 h-5 ${isStartingCamera ? 'animate-spin' : ''}`} />
                     </button>
-                    <button className="w-10 h-10 rounded-full bg-[#3c4043] hover:bg-[#4a4e51] flex items-center justify-center transition-colors">
-                        <Monitor className="w-5 h-5 text-white" />
+                    <button className="w-10 h-10 rounded-full bg-muted hover:bg-accent border border-border flex items-center justify-center transition-colors shadow-sm text-foreground">
+                        <Monitor className="w-5 h-5" />
                     </button>
-                    <button className="w-10 h-10 rounded-full bg-[#3c4043] hover:bg-[#4a4e51] flex items-center justify-center transition-colors">
-                        <MoreVertical className="w-5 h-5 text-white" />
+                    <button className="w-10 h-10 rounded-full bg-muted hover:bg-accent border border-border flex items-center justify-center transition-colors shadow-sm text-foreground">
+                        <MoreVertical className="w-5 h-5" />
                     </button>
                     <button
                         onClick={() => navigate("/")}
-                        className="w-14 h-10 rounded-full bg-red-500 hover:bg-red-600 flex items-center justify-center transition-colors ml-2"
+                        className="w-14 h-10 rounded-full bg-red-500 hover:bg-red-600 flex items-center justify-center transition-colors ml-2 shadow-sm border border-red-500 text-white"
                     >
-                        <PhoneOff className="w-5 h-5 text-white" />
+                        <PhoneOff className="w-5 h-5" />
                     </button>
                 </div>
 
                 {/* Right: Participant count */}
                 <div className="flex items-center gap-3">
-                    <div className="flex items-center gap-1.5 text-gray-400">
+                    <div className="flex items-center gap-1.5 text-muted-foreground">
                         <Users className="w-4 h-4" />
                         <span className="text-sm font-medium">{allPeers.length}</span>
                     </div>
