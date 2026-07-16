@@ -1,4 +1,4 @@
-import { motion, useInView } from "framer-motion";
+import { motion, useInView, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 import { MapPin, Headphones, Compass, Camera, Sparkles } from "lucide-react";
 
@@ -15,13 +15,20 @@ const StepCard = ({ step, index }: { step: typeof steps[0]; index: number }) => 
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-80px" });
 
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["0 1", "1.5 1"]
+  });
+
+  const scale = useTransform(scrollYProgress, [0, 1], [0.8, 1]);
+  const rotateX = useTransform(scrollYProgress, [0, 1], [30, 0]);
+  const opacity = useTransform(scrollYProgress, [0, 1], [0, 1]);
+
   return (
     <motion.div
       ref={ref}
       className={`flex items-start gap-6 md:gap-0 ${index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'}`}
-      initial={{ opacity: 0, x: index % 2 === 0 ? -40 : 40 }}
-      animate={isInView ? { opacity: 1, x: 0 } : {}}
-      transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+      style={{ scale, rotateX, opacity, perspective: 1200, transformStyle: "preserve-3d" }}
     >
       {/* Content */}
       <div className={`flex-1 ${index % 2 === 0 ? 'md:pr-16 md:text-right' : 'md:pl-16'}`}>

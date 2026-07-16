@@ -10,17 +10,23 @@ const ExploreServices = lazy(() => import("@/components/landing/ExploreServices"
 const CTASection = lazy(() => import("@/components/landing/CTASection"));
 const Footer = lazy(() => import("@/components/landing/Footer"));
 
+// A subtle glowing pulse to serve as a beautiful placeholder while chunks load
+const SectionSkeleton = () => (
+  <div className="w-full h-[50vh] flex items-center justify-center bg-background/50 animate-pulse">
+    <div className="w-16 h-16 rounded-full border-4 border-primary/20 border-t-primary animate-spin" />
+  </div>
+);
+
 const Index = () => {
   return (
     <div className="min-h-screen relative bg-background/50">
       <AuroraBackground />
       <Navigation />
       <HeroSection />
-      {/* Independent Suspense per section so slow chunks don't block the rest of the page. */}
-      <Suspense fallback={null}><FeaturedDestinations /></Suspense>
+      <Suspense fallback={<SectionSkeleton />}><FeaturedDestinations /></Suspense>
       <Suspense fallback={null}><StatsMarquee /></Suspense>
-      <Suspense fallback={null}><HowItWorks /></Suspense>
-      <Suspense fallback={null}><ExploreServices /></Suspense>
+      <Suspense fallback={<SectionSkeleton />}><HowItWorks /></Suspense>
+      <Suspense fallback={<SectionSkeleton />}><ExploreServices /></Suspense>
       <Suspense fallback={null}><CTASection /></Suspense>
       <Suspense fallback={null}><Footer /></Suspense>
     </div>

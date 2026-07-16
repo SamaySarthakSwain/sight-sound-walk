@@ -11,8 +11,8 @@ const letterVariants = {
     y: 0,
     rotateX: 0,
     transition: {
-      delay: 0.6 + i * 0.05,
-      duration: 0.8,
+      delay: 0.1 + i * 0.03,
+      duration: 0.7,
       ease: [0.16, 1, 0.3, 1] as [number, number, number, number],
     },
   }),
@@ -85,7 +85,7 @@ const HeroSection = () => {
         className="absolute top-24 right-8 z-20 flex items-center gap-2 text-white/50 dark:text-foreground/50"
         initial={{ opacity: 0, x: 20 }}
         animate={{ opacity: 1, x: 0 }}
-        transition={{ delay: 2.5, duration: 0.8 }}
+        transition={{ delay: 1.0, duration: 0.8 }}
       >
         <span className="text-xs font-mono tracking-widest uppercase hidden md:inline">Sound On</span>
         <Volume2 className="w-4 h-4" />
@@ -101,7 +101,7 @@ const HeroSection = () => {
           <motion.div
             initial={{ opacity: 0, y: 20, filter: "blur(10px)" }}
             animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-            transition={{ delay: 0.3, duration: 0.8 }}
+            transition={{ delay: 0.2, duration: 0.6 }}
             className="mb-6"
           >
             <CitySearchBox />
@@ -125,7 +125,7 @@ const HeroSection = () => {
             className="mt-6 text-base md:text-lg text-foreground/70 dark:text-foreground/50 max-w-xl font-light tracking-wide drop-shadow-[0_1px_3px_rgba(0,0,0,0.2)]"
             initial={{ opacity: 0, y: 20, filter: "blur(8px)" }}
             animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-            transition={{ delay: 1.5, duration: 0.8 }}
+            transition={{ delay: 0.7, duration: 0.8 }}
           >
             GPS-guided narration through India's most magnificent monuments.
             Every step reveals a story waiting to be heard.
@@ -138,7 +138,7 @@ const HeroSection = () => {
         className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-2 text-foreground/30"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 2, duration: 0.8 }}
+        transition={{ delay: 1.2, duration: 0.8 }}
       >
         <motion.span
           className="text-[10px] font-mono tracking-[0.4em] uppercase"

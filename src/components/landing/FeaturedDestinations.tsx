@@ -1,4 +1,4 @@
-import { motion, useInView } from "framer-motion";
+import { motion, useInView, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 import dest1 from "@/assets/destination-featured-1.jpg";
 import dest2 from "@/assets/destination-featured-2.jpg";
@@ -48,14 +48,21 @@ const destinations = [
 const DestinationCard = ({ dest, index }: { dest: typeof destinations[0]; index: number }) => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-80px" });
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["0 1.2", "1 1"]
+  });
+
+  // 3D Scroll Effects
+  const scale = useTransform(scrollYProgress, [0, 1], [0.85, 1]);
+  const rotateX = useTransform(scrollYProgress, [0, 1], [15, 0]);
+  const opacity = useTransform(scrollYProgress, [0, 1], [0, 1]);
 
   return (
     <motion.div
       ref={ref}
       className={`flex flex-col ${index % 2 === 1 ? 'md:flex-row-reverse' : 'md:flex-row'} gap-8 md:gap-16 items-center`}
-      initial={{ opacity: 0, y: 60 }}
-      animate={isInView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+      style={{ scale, rotateX, opacity, perspective: 1200, transformStyle: "preserve-3d" }}
     >
       {/* Image */}
       <motion.div
@@ -94,17 +101,19 @@ const DestinationCard = ({ dest, index }: { dest: typeof destinations[0]; index:
       <div className="w-full md:w-2/5 space-y-6">
         <motion.h3
           className="text-3xl md:text-4xl font-bold tracking-tight text-foreground"
-          initial={{ opacity: 0, x: index % 2 === 0 ? 30 : -30 }}
-          animate={isInView ? { opacity: 1, x: 0 } : {}}
-          transition={{ delay: 0.3, duration: 0.6 }}
+          style={{ 
+             y: useTransform(scrollYProgress, [0, 1], [50, 0]), 
+             opacity: useTransform(scrollYProgress, [0, 1], [0, 1]) 
+          }}
         >
           {dest.title}
         </motion.h3>
         <motion.p
           className="text-muted-foreground leading-relaxed text-sm md:text-base"
-          initial={{ opacity: 0 }}
-          animate={isInView ? { opacity: 1 } : {}}
-          transition={{ delay: 0.5, duration: 0.6 }}
+          style={{ 
+             y: useTransform(scrollYProgress, [0, 1], [30, 0]), 
+             opacity: useTransform(scrollYProgress, [0.3, 1], [0, 1]) 
+          }}
         >
           {dest.desc}
         </motion.p>
@@ -114,9 +123,10 @@ const DestinationCard = ({ dest, index }: { dest: typeof destinations[0]; index:
             <motion.div
               key={j}
               className="space-y-1"
-              initial={{ opacity: 0, y: 10 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ delay: 0.5 + j * 0.1, duration: 0.4 }}
+              style={{ 
+                 y: useTransform(scrollYProgress, [0.5, 1], [20 + j * 10, 0]), 
+                 opacity: useTransform(scrollYProgress, [0.5, 1], [0, 1]) 
+              }}
             >
               <span className="text-[10px] font-mono tracking-[0.2em] uppercase text-muted-foreground/60">
                 {tag.label}

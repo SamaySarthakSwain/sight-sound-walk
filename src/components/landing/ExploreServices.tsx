@@ -1,4 +1,4 @@
-import { motion, useInView } from "framer-motion";
+import { motion, useInView, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 import { Link } from "react-router-dom";
 import { Landmark, UtensilsCrossed, Car, Building2, Box, Bot, ArrowUpRight, Users, Headphones, Sun, Palette, Trophy } from "lucide-react";
@@ -88,12 +88,19 @@ const ServiceCard = ({ service, index }: { service: typeof services[0]; index: n
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-60px" });
 
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["0 1.15", "1 1"]
+  });
+
+  const scale = useTransform(scrollYProgress, [0, 1], [0.85, 1]);
+  const opacity = useTransform(scrollYProgress, [0, 1], [0, 1]);
+  const y = useTransform(scrollYProgress, [0, 1], [50, 0]);
+
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, y: 40, scale: 0.95 }}
-      animate={isInView ? { opacity: 1, y: 0, scale: 1 } : {}}
-      transition={{ delay: index * 0.08, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+      style={{ scale, opacity, y, perspective: 1000 }}
     >
       <Link to={service.path}>
         <motion.div
