@@ -3,14 +3,14 @@ import { useLocation } from "react-router-dom";
 import { Send, Trash2, Bot, Sparkles, Globe, CloudSun, MessageSquare, Mic } from "lucide-react";
 import Navigation from "@/components/Navigation";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
+import { useTravelChat, SupportedLanguage, languageLabels } from "@/hooks/useTravelChat";
 import ChatMessage from "@/components/ChatMessage";
 import VoiceGuide from "@/components/VoiceGuide";
 import WeatherReport from "@/components/WeatherReport";
-import { useTravelChat, languageLabels, type SupportedLanguage } from "@/hooks/useTravelChat";
-import { toast } from "sonner";
 import {
   Select,
   SelectContent,
@@ -18,6 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { motion, AnimatePresence } from "framer-motion";
 
 const suggestedQuestions = [
   "What are the must-visit temples in Odisha?",
@@ -175,23 +176,38 @@ const Assistant = () => {
                 </div>
               ) : (
                 <div className="divide-y divide-border/50">
-                  {messages.map((msg, i) => (
-                    <ChatMessage key={i} role={msg.role} content={msg.content} language={language} />
-                  ))}
-                  {isLoading && messages[messages.length - 1]?.role === "user" && (
-                    <div className="flex gap-3 p-4">
-                      <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
-                        <Bot className="w-5 h-5 text-primary-foreground" />
-                      </div>
-                      <div className="bg-muted rounded-2xl rounded-bl-sm px-4 py-3">
-                        <div className="flex gap-1">
-                          <span className="w-2 h-2 bg-muted-foreground/50 rounded-full animate-bounce" />
-                          <span className="w-2 h-2 bg-muted-foreground/50 rounded-full animate-bounce [animation-delay:0.1s]" />
-                          <span className="w-2 h-2 bg-muted-foreground/50 rounded-full animate-bounce [animation-delay:0.2s]" />
+                  <AnimatePresence initial={false}>
+                    {messages.map((msg, i) => (
+                      <motion.div
+                        key={i}
+                        initial={{ opacity: 0, y: 10, scale: 0.98 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.98 }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        <ChatMessage role={msg.role} content={msg.content} language={language} />
+                      </motion.div>
+                    ))}
+                    {isLoading && messages[messages.length - 1]?.role === "user" && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.98 }}
+                        className="flex gap-3 p-4"
+                      >
+                        <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
+                          <Bot className="w-5 h-5 text-primary-foreground" />
                         </div>
-                      </div>
-                    </div>
-                  )}
+                        <div className="bg-muted rounded-2xl rounded-bl-sm px-4 py-3">
+                          <div className="flex gap-1">
+                            <span className="w-2 h-2 bg-muted-foreground/50 rounded-full animate-bounce" />
+                            <span className="w-2 h-2 bg-muted-foreground/50 rounded-full animate-bounce [animation-delay:0.1s]" />
+                            <span className="w-2 h-2 bg-muted-foreground/50 rounded-full animate-bounce [animation-delay:0.2s]" />
+                          </div>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
               )}
             </ScrollArea>

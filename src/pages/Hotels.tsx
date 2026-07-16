@@ -25,6 +25,8 @@ const Hotels = () => {
   const [starFilter, setStarFilter] = useState<number[]>([]);
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 30000]);
   const [amenityFilter, setAmenityFilter] = useState<string[]>([]);
+  const [aiHotels, setAiHotels] = useState<any[] | null>(null);
+  const [isAiLoading, setIsAiLoading] = useState(false);
 
   const cityDisplayName = selectedCity.split(",")[0] || "Odisha";
 
@@ -68,6 +70,40 @@ const Hotels = () => {
     });
   }, [hotels, searchQuery, starFilter, priceRange, amenityFilter]);
 
+  const handleAiSearch = async () => {
+    if (!searchQuery.trim()) return;
+    setIsAiLoading(true);
+    toast.info("AI is searching real-world datasets...");
+    try {
+      const res = await fetch("/api/hotels", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ city: cityDisplayName, query: searchQuery }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.hotels) {
+          // Map backend structure to frontend structure
+          const mapped = data.hotels.map((h: any, idx: number) => ({
+            id: `ai-hotel-${idx}`,
+            name: h.name,
+            description: h.description,
+            location: h.city,
+            amenities: h.amenities ? h.amenities.split(',').map((s: string) => s.trim()) : [],
+            star_rating: Math.floor(Math.random() * 2) + 3, // mock 3-5 stars
+            price_per_night_min: Math.floor(Math.random() * 2000) + 1500,
+            image_url: null,
+          }));
+          setAiHotels(mapped);
+          toast.success(`Found ${mapped.length} AI matches!`);
+        }
+      }
+    } catch (e) {
+      toast.error("Failed to connect to AI backend.");
+    }
+    setIsAiLoading(false);
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
@@ -101,18 +137,26 @@ const Hotels = () => {
                   placeholder="Ask AI for specific hotel vibes..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  onKeyDown={(e) => {
+                  onKeyDown={async (e) => {
                     if (e.key === 'Enter') {
-                       // We can trigger AI search here
-                       toast.info("AI is searching real-world datasets...");
+                       await handleAiSearch();
                     }
                   }}
                   className="bg-background/50"
+                  disabled={isAiLoading}
                 />
-                <Button variant="secondary" onClick={() => toast.success("AI Search activated!")}>
-                  AI Match
+                <Button variant="secondary" onClick={handleAiSearch} disabled={isAiLoading}>
+                  {isAiLoading ? "Searching..." : "AI Match"}
                 </Button>
               </div>
+              {aiHotels !== null && (
+                <div className="mt-4 flex items-center justify-between">
+                  <span className="text-sm text-primary">Found {aiHotels.length} AI recommendations</span>
+                  <Button variant="ghost" size="sm" onClick={() => { setAiHotels(null); setSearchQuery(''); }}>
+                    Clear AI Search
+                  </Button>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -145,7 +189,7 @@ const Hotels = () => {
                 </p>
               </div>
 
-              {loading ? (
+              {loading || isAiLoading ? (
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   {Array.from({ length: 6 }).map((_, i) => (
                     <div key={i} className="space-y-3">
@@ -159,7 +203,7 @@ const Hotels = () => {
                 <div className="text-center py-12">
                   <p className="text-destructive">{error}</p>
                 </div>
-              ) : filteredHotels.length === 0 ? (
+              ) : (aiHotels !== null ? aiHotels : filteredHotels).length === 0 ? (
                 <div className="text-center py-12">
                   <Building2 className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
                   <h3 className="text-lg font-semibold mb-2">No hotels found</h3>
@@ -169,8 +213,8 @@ const Hotels = () => {
                 </div>
               ) : (
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  {filteredHotels.map((hotel) => (
-                    <HotelCard key={hotel.id} hotel={hotel} />
+                  {(aiHotels !== null ? aiHotels : filteredHotels).map((hotel: any) => (
+                    <HotelCard key={hotel.id || hotel.name} hotel={hotel} />
                   ))}
                 </div>
               )}

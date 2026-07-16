@@ -1,0 +1,9 @@
+{
+  "$schema": "https://app.kilo.ai/config.json",
+  "mcp": {
+    "bigquery-mcp": {
+      "type": "remote",
+      "url": "https://bigquery.googleapis.com/mcp"
+    }
+  }
+}

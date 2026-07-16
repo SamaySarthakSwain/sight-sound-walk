@@ -11,25 +11,7 @@ import { DetectionProvider } from "@/contexts/DetectionContext";
 import { ThemeProvider } from "next-themes";
 import Index from "./pages/Index";
 import { toast } from "sonner";
-
-// Lazy load all non-home pages
-const Explore = lazy(() => import("./pages/Explore"));
-const Food = lazy(() => import("./pages/Food"));
-const Cabs = lazy(() => import("./pages/Cabs"));
-const Hotels = lazy(() => import("./pages/Hotels"));
-const Auth = lazy(() => import("./pages/Auth"));
-const Help = lazy(() => import("./pages/Help"));
-const Profile = lazy(() => import("./pages/Profile"));
-const Assistant = lazy(() => import("./pages/Assistant"));
-const ARExperience = lazy(() => import("./pages/ARExperience"));
-const NotFound = lazy(() => import("./pages/NotFound"));
-const CrowdDashboard = lazy(() => import("./pages/CrowdDashboard"));
-const LiveRoom = lazy(() => import("./pages/LiveRoom"));
-const Soundscape = lazy(() => import("./pages/Soundscape"));
-const SundialSimulator = lazy(() => import("./pages/SundialSimulator"));
-const ArtisanTrail = lazy(() => import("./pages/ArtisanTrail"));
-const HeritageQuests = lazy(() => import("./pages/HeritageQuests"));
-const Flash = lazy(() => import("./pages/Flash"));
+import { AnimatedRoutes } from "@/components/AnimatedRoutes";
 
 // Lazy load heavy non-critical components
 const FloatingParticles = lazy(() => import("@/components/FloatingParticles"));
@@ -88,11 +70,6 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boole
   }
 }
 
-const PageLoader = () => (
-  <div className="min-h-screen flex items-center justify-center">
-    <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
-  </div>
-);
 
 const App = () => {
   // Global unhandled promise rejection handler
@@ -120,29 +97,7 @@ const App = () => {
                   </Suspense>
                   <Toaster />
                   <Sonner />
-                  <Suspense fallback={<PageLoader />}>
-                    <Routes>
-                    <Route path="/" element={<Index />} />
-                    <Route path="/explore" element={<Explore />} />
-                    <Route path="/food" element={<Food />} />
-                    <Route path="/cabs" element={<Cabs />} />
-                    <Route path="/hotels" element={<Hotels />} />
-                    <Route path="/assistant" element={<Assistant />} />
-                    <Route path="/auth" element={<Auth />} />
-                    <Route path="/help" element={<Help />} />
-                    <Route path="/ar" element={<ARExperience />} />
-                    <Route path="/profile" element={<Profile />} />
-                    <Route path="/crowd" element={<WebRTCProvider><DetectionProvider><CrowdDashboard /></DetectionProvider></WebRTCProvider>} />
-                    <Route path="/crowd/room" element={<LiveRoom />} />
-                    <Route path="/more/soundscape" element={<Soundscape />} />
-                    <Route path="/more/sundial" element={<SundialSimulator />} />
-                    <Route path="/more/artisan-trail" element={<ArtisanTrail />} />
-                    <Route path="/more/quests" element={<HeritageQuests />} />
-                    <Route path="/more" element={<HeritageQuests />} />
-                    <Route path="/flash" element={<Flash />} />
-                    <Route path="*" element={<NotFound />} />
-                  </Routes>
-                </Suspense>
+                  <AnimatedRoutes />
                 </GoogleMapsProvider>
               </BrowserRouter>
             </CityProvider>
