@@ -6,6 +6,7 @@ import { Map as MapIcon, Loader2, Navigation as NavButtonIcon } from "lucide-rea
 import { supabase } from "@/integrations/supabase/client";
 import DownloadMapButton from "./DownloadMapButton";
 import { useGoogleMaps } from "@/contexts/GoogleMapsContext";
+import PlacesAutocomplete from "./PlacesAutocomplete";
 
 interface RouteData {
   start: { lat: number; lng: number };
@@ -27,8 +28,8 @@ interface Monument {
 
 const mapContainerStyle = {
   width: '100%',
-  height: '600px',
-  borderRadius: '0.5rem'
+  height: '620px',
+  borderRadius: '1rem'
 };
 
 // Bhubaneswar coordinates
@@ -226,6 +227,17 @@ const MonumentsMap: React.FC<MonumentsMapProps> = ({ routeData, selectedMonument
           </CardHeader>
 
           <CardContent className="space-y-6">
+            {/* Beautiful autocomplete search bar — Google Places (New) */}
+            <PlacesAutocomplete
+              placeholder="Search a monument, temple, city or address in Odisha…"
+              onSelect={(p) => {
+                if (p.location) {
+                  setMapCenter(p.location);
+                  setMapZoom(15);
+                }
+              }}
+            />
+
             {!mapsLoaded ? (
               <div className="flex flex-col items-center justify-center h-[600px] gap-3 rounded-lg bg-muted/30">
                 <Loader2 className="w-10 h-10 animate-spin text-primary" />
@@ -234,7 +246,9 @@ const MonumentsMap: React.FC<MonumentsMapProps> = ({ routeData, selectedMonument
             ) : (
               <>
                 {/* Map — uses global script so renders instantly */}
-                <div className="relative">
+                <div className="relative rounded-2xl overflow-hidden ring-1 ring-white/10 shadow-[0_20px_60px_-20px_hsl(var(--primary)/0.35)]">
+                  {/* Soft primary glow around map edges */}
+                  <div className="pointer-events-none absolute -inset-px rounded-2xl bg-gradient-to-br from-primary/10 via-transparent to-primary/10 z-[1]" />
                   {monumentsLoading && (
                     <div className="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-background/60">
                       <Loader2 className="w-8 h-8 animate-spin text-primary" />

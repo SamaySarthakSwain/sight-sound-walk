@@ -1,11 +1,11 @@
 import { useState, useCallback, useRef, useEffect, useMemo } from "react";
-import { GoogleMap, Marker, DirectionsRenderer, Autocomplete } from "@react-google-maps/api";
+import { GoogleMap, Marker, DirectionsRenderer } from "@react-google-maps/api";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { MapPin, Plus, X, Navigation, Locate } from "lucide-react";
 import { toast } from "sonner";
 import { useCity } from "@/contexts/CityContext";
+import PlacesAutocomplete from "./PlacesAutocomplete";
 
 interface Location {
   lat: number;
@@ -44,8 +44,6 @@ const CabMapSelector = ({ onRouteCalculated }: CabMapSelectorProps) => {
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
 
   const mapRef = useRef<google.maps.Map | null>(null);
-  const startAutocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
-  const endAutocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
 
   // Get user's current location
   useEffect(() => {
@@ -132,27 +130,17 @@ const CabMapSelector = ({ onRouteCalculated }: CabMapSelectorProps) => {
     []
   );
 
-  const handlePlaceSelect = useCallback(
-    (autocomplete: google.maps.places.Autocomplete | null, type: "start" | "end") => {
-      if (!autocomplete) return;
-
-      const place = autocomplete.getPlace();
-      if (!place.geometry?.location) return;
-
-      const location: Location = {
-        lat: place.geometry.location.lat(),
-        lng: place.geometry.location.lng(),
-        name: place.formatted_address || place.name || "",
-      };
-
-      if (type === "start") {
-        setStartLocation(location);
-      } else {
-        setEndLocation(location);
-      }
-
-      if (mapRef.current && place.geometry.location) {
-        mapRef.current.panTo(place.geometry.location);
+  const applyPlace = useCallback(
+    (
+      type: "start" | "end",
+      loc: { lat: number; lng: number },
+      name: string
+    ) => {
+      const location: Location = { lat: loc.lat, lng: loc.lng, name };
+      if (type === "start") setStartLocation(location);
+      else setEndLocation(location);
+      if (mapRef.current) {
+        mapRef.current.panTo(loc);
         mapRef.current.setZoom(14);
       }
     },
@@ -243,25 +231,21 @@ const CabMapSelector = ({ onRouteCalculated }: CabMapSelectorProps) => {
           <div className="space-y-2">
             <label className="text-sm font-medium">Starting Point</label>
             <div className="flex gap-2">
-              <Autocomplete
-                onLoad={(autocomplete) => {
-                  startAutocompleteRef.current = autocomplete;
-                }}
-                onPlaceChanged={() =>
-                  handlePlaceSelect(startAutocompleteRef.current, "start")
-                }
-                className="flex-1"
-              >
-                <Input
-                  placeholder="Search or click on map..."
-                  value={startLocation?.name || ""}
-                  onChange={(e) =>
-                    setStartLocation((prev) =>
-                      prev ? { ...prev, name: e.target.value } : null
-                    )
-                  }
+              <div className="flex-1">
+                <PlacesAutocomplete
+                  placeholder={startLocation?.name || "Search or click on map…"}
+                  bias={{ lat: cityLat, lng: cityLng, radiusMeters: 50_000 }}
+                  onSelect={(p) => {
+                    if (p.location) {
+                      applyPlace(
+                        "start",
+                        p.location,
+                        p.formattedAddress || p.primaryText
+                      );
+                    }
+                  }}
                 />
-              </Autocomplete>
+              </div>
               <Button
                 variant="outline"
                 size="icon"
@@ -275,24 +259,19 @@ const CabMapSelector = ({ onRouteCalculated }: CabMapSelectorProps) => {
 
           <div className="space-y-2">
             <label className="text-sm font-medium">Destination</label>
-            <Autocomplete
-              onLoad={(autocomplete) => {
-                endAutocompleteRef.current = autocomplete;
-              }}
-              onPlaceChanged={() =>
-                handlePlaceSelect(endAutocompleteRef.current, "end")
-              }
-            >
-              <Input
-                placeholder="Search or click on map..."
-                value={endLocation?.name || ""}
-                onChange={(e) =>
-                  setEndLocation((prev) =>
-                    prev ? { ...prev, name: e.target.value } : null
-                  )
+            <PlacesAutocomplete
+              placeholder={endLocation?.name || "Search or click on map…"}
+              bias={{ lat: cityLat, lng: cityLng, radiusMeters: 50_000 }}
+              onSelect={(p) => {
+                if (p.location) {
+                  applyPlace(
+                    "end",
+                    p.location,
+                    p.formattedAddress || p.primaryText
+                  );
                 }
-              />
-            </Autocomplete>
+              }}
+            />
           </div>
         </div>
 
