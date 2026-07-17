@@ -23,7 +23,7 @@ const AgentPlanner = () => {
     setItinerary("");
     try {
       const { data, error } = await supabase.functions.invoke("agent-planner", {
-        body: { prompt: p, city: city?.name || "Bhubaneswar" },
+        body: { prompt: p, city: selectedCity?.split(",")[0] || "Bhubaneswar" },
       });
       if (error) throw error;
       setItinerary(data.itinerary || "No itinerary returned.");
