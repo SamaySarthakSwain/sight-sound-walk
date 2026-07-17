@@ -65,9 +65,7 @@ const RagGuide = () => {
                     : "bg-white/5 border border-white/10 text-foreground"
                 }`}
               >
-                <div className="prose prose-invert prose-sm max-w-none prose-p:my-1 prose-ul:my-1">
-                  <ReactMarkdown>{m.content}</ReactMarkdown>
-                </div>
+                <div className="whitespace-pre-wrap">{m.content}</div>
                 {m.citations && m.citations.length > 0 && (
                   <div className="mt-2 flex flex-wrap gap-1.5">
                     {m.citations.map((c, ci) => (
