@@ -25,6 +25,18 @@ const SundialSimulator = lazy(() => import("@/pages/SundialSimulator"));
 const ArtisanTrail = lazy(() => import("@/pages/ArtisanTrail"));
 const HeritageQuests = lazy(() => import("@/pages/HeritageQuests"));
 const Flash = lazy(() => import("@/pages/Flash"));
+const MoreHub = lazy(() => import("@/pages/MoreHub"));
+const RagGuide = lazy(() => import("@/pages/more/RagGuide"));
+const AgentPlanner = lazy(() => import("@/pages/more/AgentPlanner"));
+const ARRecognize = lazy(() => import("@/pages/more/ARRecognize"));
+const ARTranslate = lazy(() => import("@/pages/more/ARTranslate"));
+const SpatialAudio = lazy(() => import("@/pages/more/SpatialAudio"));
+const VRTours = lazy(() => import("@/pages/more/VRTours"));
+const Monument3D = lazy(() => import("@/pages/more/Monument3D"));
+const AccessibilityPage = lazy(() => import("@/pages/more/AccessibilityPage"));
+const ForYou = lazy(() => import("@/pages/more/ForYou"));
+const PricingInsights = lazy(() => import("@/pages/more/PricingInsights"));
+const ComingSoon = lazy(() => import("@/pages/more/ComingSoon"));
 
 export const AnimatedRoutes = () => {
   const location = useLocation();
@@ -51,7 +63,20 @@ export const AnimatedRoutes = () => {
         <Route path="/more/sundial" element={<PageTransition><Suspense fallback={<PageLoadingSkeleton />}><SundialSimulator /></Suspense></PageTransition>} />
         <Route path="/more/artisan-trail" element={<PageTransition><Suspense fallback={<PageLoadingSkeleton />}><ArtisanTrail /></Suspense></PageTransition>} />
         <Route path="/more/quests" element={<PageTransition><Suspense fallback={<PageLoadingSkeleton />}><HeritageQuests /></Suspense></PageTransition>} />
-        <Route path="/more" element={<PageTransition><Suspense fallback={<PageLoadingSkeleton />}><HeritageQuests /></Suspense></PageTransition>} />
+        <Route path="/more" element={<PageTransition><Suspense fallback={<PageLoadingSkeleton />}><MoreHub /></Suspense></PageTransition>} />
+        <Route path="/more/rag-guide" element={<PageTransition><Suspense fallback={<PageLoadingSkeleton />}><RagGuide /></Suspense></PageTransition>} />
+        <Route path="/more/agent-planner" element={<PageTransition><Suspense fallback={<PageLoadingSkeleton />}><AgentPlanner /></Suspense></PageTransition>} />
+        <Route path="/more/ar-recognize" element={<PageTransition><Suspense fallback={<PageLoadingSkeleton />}><ARRecognize /></Suspense></PageTransition>} />
+        <Route path="/more/ar-translate" element={<PageTransition><Suspense fallback={<PageLoadingSkeleton />}><ARTranslate /></Suspense></PageTransition>} />
+        <Route path="/more/spatial-audio" element={<PageTransition><Suspense fallback={<PageLoadingSkeleton />}><SpatialAudio /></Suspense></PageTransition>} />
+        <Route path="/more/vr-tours" element={<PageTransition><Suspense fallback={<PageLoadingSkeleton />}><VRTours /></Suspense></PageTransition>} />
+        <Route path="/more/monument-3d" element={<PageTransition><Suspense fallback={<PageLoadingSkeleton />}><Monument3D /></Suspense></PageTransition>} />
+        <Route path="/more/accessibility" element={<PageTransition><Suspense fallback={<PageLoadingSkeleton />}><AccessibilityPage /></Suspense></PageTransition>} />
+        <Route path="/more/for-you" element={<PageTransition><Suspense fallback={<PageLoadingSkeleton />}><ForYou /></Suspense></PageTransition>} />
+        <Route path="/more/pricing-insights" element={<PageTransition><Suspense fallback={<PageLoadingSkeleton />}><PricingInsights /></Suspense></PageTransition>} />
+        <Route path="/more/offline-maps" element={<PageTransition><Suspense fallback={<PageLoadingSkeleton />}><ComingSoon /></Suspense></PageTransition>} />
+        <Route path="/more/webxr" element={<PageTransition><Suspense fallback={<PageLoadingSkeleton />}><ComingSoon /></Suspense></PageTransition>} />
+        <Route path="/more/nft-passport" element={<PageTransition><Suspense fallback={<PageLoadingSkeleton />}><ComingSoon /></Suspense></PageTransition>} />
         <Route path="/flash" element={<PageTransition><Suspense fallback={<PageLoadingSkeleton />}><Flash /></Suspense></PageTransition>} />
         <Route path="*" element={<PageTransition><Suspense fallback={<PageLoadingSkeleton />}><NotFound /></Suspense></PageTransition>} />
       </Routes>
