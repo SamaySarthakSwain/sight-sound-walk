@@ -18,35 +18,40 @@ const statusLabel: Record<MoreFeature["status"], string> = {
 
 const FeatureCard = ({ feature, index }: { feature: MoreFeature; index: number }) => {
   const Icon = feature.icon;
-  const Card = feature.status === "soon" ? "div" : Link;
+  const isSoon = feature.status === "soon";
+  const className = `group relative block h-full overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-white/[0.06] to-white/[0.02] p-5 backdrop-blur-xl transition-all ${
+    isSoon
+      ? "cursor-default opacity-70"
+      : "hover:border-primary/40 hover:from-primary/[0.08] hover:shadow-[0_0_40px_-10px] hover:shadow-primary/40 hover:-translate-y-0.5"
+  }`;
+  const inner = (
+    <>
+      <div className="pointer-events-none absolute -right-8 -top-8 h-24 w-24 rounded-full bg-primary/20 blur-3xl opacity-0 group-hover:opacity-100 transition-opacity" />
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/15 text-primary ring-1 ring-primary/25">
+          <Icon className="h-5 w-5" />
+        </div>
+        <span
+          className={`text-[10px] uppercase tracking-wider font-semibold px-2 py-1 rounded-full border ${statusStyles[feature.status]}`}
+        >
+          {statusLabel[feature.status]}
+        </span>
+      </div>
+      <h3 className="mt-4 text-base font-semibold text-foreground">{feature.label}</h3>
+      <p className="mt-1 text-sm text-muted-foreground leading-relaxed">{feature.description}</p>
+    </>
+  );
   return (
     <motion.div
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: Math.min(index * 0.03, 0.4), duration: 0.35, ease: "easeOut" }}
     >
-      <Card
-        {...(feature.status !== "soon" ? { to: feature.path } : {})}
-        className={`group relative block h-full overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-white/[0.06] to-white/[0.02] p-5 backdrop-blur-xl transition-all ${
-          feature.status === "soon"
-            ? "cursor-default opacity-70"
-            : "hover:border-primary/40 hover:from-primary/[0.08] hover:shadow-[0_0_40px_-10px] hover:shadow-primary/40 hover:-translate-y-0.5"
-        }`}
-      >
-        <div className="pointer-events-none absolute -right-8 -top-8 h-24 w-24 rounded-full bg-primary/20 blur-3xl opacity-0 group-hover:opacity-100 transition-opacity" />
-        <div className="flex items-start justify-between gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/15 text-primary ring-1 ring-primary/25">
-            <Icon className="h-5 w-5" />
-          </div>
-          <span
-            className={`text-[10px] uppercase tracking-wider font-semibold px-2 py-1 rounded-full border ${statusStyles[feature.status]}`}
-          >
-            {statusLabel[feature.status]}
-          </span>
-        </div>
-        <h3 className="mt-4 text-base font-semibold text-foreground">{feature.label}</h3>
-        <p className="mt-1 text-sm text-muted-foreground leading-relaxed">{feature.description}</p>
-      </Card>
+      {isSoon ? (
+        <div className={className}>{inner}</div>
+      ) : (
+        <Link to={feature.path} className={className}>{inner}</Link>
+      )}
     </motion.div>
   );
 };
