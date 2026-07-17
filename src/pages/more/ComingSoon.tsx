@@ -19,8 +19,9 @@ const COPY: Record<string, { what: string; when: string }> = {
 };
 
 const ComingSoon = () => {
-  const { id } = useParams<{ id: string }>();
-  const feature = MORE_FEATURES.find((f) => f.id === id);
+  const { pathname } = useLocation();
+  const id = pathname.replace(/^\/more\//, "");
+  const feature = MORE_FEATURES.find((f) => f.path === pathname || f.id === id);
   const copy = (id && COPY[id]) || {
     what: "This experience is being crafted right now.",
     when: "Check back soon.",
