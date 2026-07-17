@@ -25,6 +25,18 @@ const SundialSimulator = lazy(() => import("@/pages/SundialSimulator"));
 const ArtisanTrail = lazy(() => import("@/pages/ArtisanTrail"));
 const HeritageQuests = lazy(() => import("@/pages/HeritageQuests"));
 const Flash = lazy(() => import("@/pages/Flash"));
+const MoreHub = lazy(() => import("@/pages/MoreHub"));
+const RagGuide = lazy(() => import("@/pages/more/RagGuide"));
+const AgentPlanner = lazy(() => import("@/pages/more/AgentPlanner"));
+const ARRecognize = lazy(() => import("@/pages/more/ARRecognize"));
+const ARTranslate = lazy(() => import("@/pages/more/ARTranslate"));
+const SpatialAudio = lazy(() => import("@/pages/more/SpatialAudio"));
+const VRTours = lazy(() => import("@/pages/more/VRTours"));
+const Monument3D = lazy(() => import("@/pages/more/Monument3D"));
+const AccessibilityPage = lazy(() => import("@/pages/more/AccessibilityPage"));
+const ForYou = lazy(() => import("@/pages/more/ForYou"));
+const PricingInsights = lazy(() => import("@/pages/more/PricingInsights"));
+const ComingSoon = lazy(() => import("@/pages/more/ComingSoon"));
 
 export const AnimatedRoutes = () => {
   const location = useLocation();
