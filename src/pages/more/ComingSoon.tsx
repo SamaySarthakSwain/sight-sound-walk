@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { Clock } from "lucide-react";
 import { MORE_FEATURES } from "@/data/moreFeatures";
 import MorePageShell from "@/components/MorePageShell";
