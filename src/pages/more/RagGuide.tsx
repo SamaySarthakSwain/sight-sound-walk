@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { Sparkles, Send, Loader2 } from "lucide-react";
 import MorePageShell from "@/components/MorePageShell";
 import { supabase } from "@/integrations/supabase/client";
-import ReactMarkdown from "react-markdown";
+
 
 interface Msg { role: "user" | "assistant"; content: string; citations?: string[] }
 
