@@ -77,6 +77,7 @@ export const AnimatedRoutes = () => {
         <Route path="/more/offline-maps" element={<PageTransition><Suspense fallback={<PageLoadingSkeleton />}><ComingSoon /></Suspense></PageTransition>} />
         <Route path="/more/webxr" element={<PageTransition><Suspense fallback={<PageLoadingSkeleton />}><ComingSoon /></Suspense></PageTransition>} />
         <Route path="/more/nft-passport" element={<PageTransition><Suspense fallback={<PageLoadingSkeleton />}><ComingSoon /></Suspense></PageTransition>} />
+        <Route path="/flash" element={<PageTransition><Suspense fallback={<PageLoadingSkeleton />}><Flash /></Suspense></PageTransition>} />
         <Route path="*" element={<PageTransition><Suspense fallback={<PageLoadingSkeleton />}><NotFound /></Suspense></PageTransition>} />
       </Routes>
     </AnimatePresence>
