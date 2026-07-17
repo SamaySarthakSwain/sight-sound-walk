@@ -12,7 +12,7 @@ const PRESETS = [
 ];
 
 const AgentPlanner = () => {
-  const { city } = useCity();
+  const { selectedCity } = useCity();
   const [prompt, setPrompt] = useState("");
   const [loading, setLoading] = useState(false);
   const [itinerary, setItinerary] = useState<string>("");
