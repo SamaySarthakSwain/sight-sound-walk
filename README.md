@@ -2,6 +2,8 @@
 
 ## Project info
 
+[Read the full Website Summary & Features here](WEBSITE_SUMMARY.md)
+
 MVP LINK:https://letsexploreit.netlify.app/
 
 **Use your preferred IDE**
