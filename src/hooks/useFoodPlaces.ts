@@ -91,8 +91,9 @@ export const useFoodPlaces = () => {
       }
 
       const { data: ratings } = await supabase
-        .from("food_ratings")
+        .from("food_ratings_public" as any)
         .select("*");
+
 
       // Filter based on city
       let filteredPlaces = places || [];
