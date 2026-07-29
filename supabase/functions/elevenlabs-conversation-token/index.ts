@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { requireUser } from "../_shared/auth.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -11,46 +12,41 @@ serve(async (req) => {
   }
 
   try {
+    const auth = await requireUser(req, corsHeaders);
+    if (!auth.ok) return auth.response!;
+
     const ELEVENLABS_API_KEY = Deno.env.get("ELEVENLABS_API_KEY");
     const ELEVENLABS_AGENT_ID = Deno.env.get("ELEVENLABS_AGENT_ID");
 
-    if (!ELEVENLABS_API_KEY) {
-      throw new Error("ELEVENLABS_API_KEY is not configured");
-    }
-
-    if (!ELEVENLABS_AGENT_ID) {
-      throw new Error("ELEVENLABS_AGENT_ID is not configured");
+    if (!ELEVENLABS_API_KEY || !ELEVENLABS_AGENT_ID) {
+      return new Response(
+        JSON.stringify({ error: "Service not configured" }),
+        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
     }
 
     const response = await fetch(
       `https://api.elevenlabs.io/v1/convai/conversation/get-signed-url?agent_id=${ELEVENLABS_AGENT_ID}`,
-      {
-        headers: {
-          "xi-api-key": ELEVENLABS_API_KEY,
-        },
-      }
+      { headers: { "xi-api-key": ELEVENLABS_API_KEY } }
     );
 
     if (!response.ok) {
-      const errorText = await response.text();
-      console.error("ElevenLabs API error:", errorText);
-      throw new Error(`Failed to get signed URL: ${response.status}`);
+      console.error("ElevenLabs API error status:", response.status);
+      return new Response(
+        JSON.stringify({ error: "Provider error", status: response.status }),
+        { status: response.status, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
     }
 
     const data = await response.json();
-
     return new Response(JSON.stringify({ signed_url: data.signed_url }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (error) {
     console.error("Error:", error);
-    const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
     return new Response(
-      JSON.stringify({ error: errorMessage }),
-      {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      }
+      JSON.stringify({ error: "Unexpected error" }),
+      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
 });
