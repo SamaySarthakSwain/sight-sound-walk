@@ -1,5 +1,6 @@
 // deno-lint-ignore-file no-explicit-any
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
+import { requireUser } from "../_shared/auth.ts";
 
 // Inlined knowledge base — kept in sync with src/lib/knowledge/odisha.ts.
 interface KB { id: string; topic: string; tags: string[]; content: string }
@@ -38,7 +39,10 @@ function retrieve(query: string, k = 4): KB[] {
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
+  const auth = await requireUser(req, corsHeaders);
+  if (!auth.ok) return auth.response!;
   try {
+
     const { messages = [] } = await req.json();
     const lastUser = [...messages].reverse().find((m: any) => m.role === "user");
     if (!lastUser?.content) {
