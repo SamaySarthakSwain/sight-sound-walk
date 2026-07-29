@@ -47,7 +47,7 @@ export const useHotels = () => {
         .order('star_rating', { ascending: false });
 
 
-      let hotelData: Hotel[] = (data as Hotel[]) || [];
+      let hotelData: Hotel[] = ((data as unknown) as Hotel[]) || [];
 
       if (fetchError || hotelData.length === 0) {
         console.log('Using fallback hotels data...');
