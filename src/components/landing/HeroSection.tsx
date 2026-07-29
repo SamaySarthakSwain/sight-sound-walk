@@ -52,8 +52,8 @@ const HeroSection = () => {
       {/* Background Image with Parallax */}
       <motion.div className="absolute inset-0 z-0" style={{ y: imageY }}>
         <img
-          src={heroCinematic}
-          alt="Ancient monument at golden hour"
+          src="/images/himalayas_hero.png"
+          alt="Himalayas Hero Background"
           loading="eager"
           decoding="async"
           fetchPriority="high"
