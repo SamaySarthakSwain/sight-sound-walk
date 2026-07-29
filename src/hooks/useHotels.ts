@@ -42,11 +42,12 @@ export const useHotels = () => {
       const cityName = selectedCity.split(",")[0].toLowerCase().trim();
       
       const { data, error: fetchError } = await supabase
-        .from('hotels')
+        .from('hotels_public' as any)
         .select('*')
         .order('star_rating', { ascending: false });
 
-      let hotelData: Hotel[] = (data as Hotel[]) || [];
+
+      let hotelData: Hotel[] = ((data as unknown) as Hotel[]) || [];
 
       if (fetchError || hotelData.length === 0) {
         console.log('Using fallback hotels data...');

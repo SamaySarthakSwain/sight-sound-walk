@@ -1,12 +1,20 @@
 // deno-lint-ignore-file no-explicit-any
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
+import { requireUser } from "../_shared/auth.ts";
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
   try {
-    const { prompt = "", city = "Bhubaneswar" } = await req.json();
+    const auth = await requireUser(req, corsHeaders);
+    if (!auth.ok) return auth.response!;
+
+    const body = await req.json();
+    const prompt = typeof body?.prompt === "string" ? body.prompt.slice(0, 2000) : "";
+    const city = typeof body?.city === "string" ? body.city.slice(0, 100) : "Bhubaneswar";
     const key = Deno.env.get("LOVABLE_API_KEY");
     if (!key) throw new Error("Missing LOVABLE_API_KEY");
+
+
 
     const system = `You are the Odisha Trip Planner — coordinating three specialist agents (Route, Weather, Fares) into a friendly, day-by-day itinerary.
 Base city: ${city}. Never mention AI. Keep it warm and specific.
