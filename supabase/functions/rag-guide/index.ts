@@ -1,5 +1,6 @@
 // deno-lint-ignore-file no-explicit-any
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
+import { requireUser } from "../_shared/auth.ts";
 
 // Inlined knowledge base — kept in sync with src/lib/knowledge/odisha.ts.
 interface KB { id: string; topic: string; tags: string[]; content: string }
