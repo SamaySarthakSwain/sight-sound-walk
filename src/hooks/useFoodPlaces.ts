@@ -90,9 +90,11 @@ export const useFoodPlaces = () => {
         places = fallbackFoodPlaces as any;
       }
 
-      const { data: ratings } = await supabase
+      const { data: ratingsData } = await supabase
         .from("food_ratings_public" as any)
         .select("*");
+      const ratings = (ratingsData as any[]) || [];
+
 
 
       // Filter based on city
