@@ -39,7 +39,10 @@ function retrieve(query: string, k = 4): KB[] {
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
+  const auth = await requireUser(req, corsHeaders);
+  if (!auth.ok) return auth.response!;
   try {
+
     const { messages = [] } = await req.json();
     const lastUser = [...messages].reverse().find((m: any) => m.role === "user");
     if (!lastUser?.content) {

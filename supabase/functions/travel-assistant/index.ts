@@ -107,6 +107,11 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
+  const auth = await requireUser(req, corsHeaders);
+  if (!auth.ok) return auth.response!;
+
+
+
   try {
     const { messages, language = "en", includeWeather = false, weatherLocation = "" } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
