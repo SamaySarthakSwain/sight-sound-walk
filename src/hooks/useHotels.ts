@@ -42,9 +42,10 @@ export const useHotels = () => {
       const cityName = selectedCity.split(",")[0].toLowerCase().trim();
       
       const { data, error: fetchError } = await supabase
-        .from('hotels')
+        .from('hotels_public' as any)
         .select('*')
         .order('star_rating', { ascending: false });
+
 
       let hotelData: Hotel[] = (data as Hotel[]) || [];
 
