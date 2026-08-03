@@ -44,7 +44,7 @@ const Footer = () => {
       <div className="container mx-auto px-6 md:px-12 relative z-10">
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-10 mb-16">
           
-          {/* Column 1 */}
+          {/* Column 1: Explore */}
           <div className="flex flex-col space-y-3">
             <h4 className="font-semibold text-sm mb-2 text-foreground/90 dark:text-white/90">Explore</h4>
             <Link to="/explore" className="text-muted-foreground hover:text-foreground dark:text-white/70 dark:hover:text-white text-sm transition-colors">Destinations</Link>
@@ -56,42 +56,42 @@ const Footer = () => {
             <Link to="/cabs" className="text-muted-foreground hover:text-foreground dark:text-white/70 dark:hover:text-white text-sm transition-colors">Cabs</Link>
           </div>
 
-          {/* Column 2 */}
+          {/* Column 2: Immersive Features */}
           <div className="flex flex-col space-y-3">
-            <h4 className="font-semibold text-sm mb-2 text-foreground/90 dark:text-white/90">Learn</h4>
-            <a href="#" onClick={handleComingSoon} className="text-muted-foreground hover:text-foreground dark:text-white/70 dark:hover:text-white text-sm transition-colors">Our Story</a>
-            <a href="#" onClick={handleComingSoon} className="text-muted-foreground hover:text-foreground dark:text-white/70 dark:hover:text-white text-sm transition-colors">Blog</a>
-            <a href="#" onClick={handleComingSoon} className="text-muted-foreground hover:text-foreground dark:text-white/70 dark:hover:text-white text-sm transition-colors">Heritage Context</a>
-            <a href="#" onClick={handleComingSoon} className="text-muted-foreground hover:text-foreground dark:text-white/70 dark:hover:text-white text-sm transition-colors">Sustainability</a>
-            <a href="#" onClick={handleComingSoon} className="text-muted-foreground hover:text-foreground dark:text-white/70 dark:hover:text-white text-sm transition-colors">Artisan Network</a>
-            <a href="#" onClick={handleComingSoon} className="text-muted-foreground hover:text-foreground dark:text-white/70 dark:hover:text-white text-sm transition-colors">Quality & Safety</a>
+            <h4 className="font-semibold text-sm mb-2 text-foreground/90 dark:text-white/90">Immersive</h4>
+            <Link to="/more/soundscape" className="text-muted-foreground hover:text-foreground dark:text-white/70 dark:hover:text-white text-sm transition-colors">Soundscapes</Link>
+            <Link to="/more/monument-3d" className="text-muted-foreground hover:text-foreground dark:text-white/70 dark:hover:text-white text-sm transition-colors">Monument 3D</Link>
+            <Link to="/more/vr-tours" className="text-muted-foreground hover:text-foreground dark:text-white/70 dark:hover:text-white text-sm transition-colors">VR Tours</Link>
+            <Link to="/more/sundial" className="text-muted-foreground hover:text-foreground dark:text-white/70 dark:hover:text-white text-sm transition-colors">Sundial Simulator</Link>
+            <Link to="/more/spatial-audio" className="text-muted-foreground hover:text-foreground dark:text-white/70 dark:hover:text-white text-sm transition-colors">Spatial Audio</Link>
+            <Link to="/more/artisan-trail" className="text-muted-foreground hover:text-foreground dark:text-white/70 dark:hover:text-white text-sm transition-colors">Artisan Trail</Link>
           </div>
 
-          {/* Column 3 */}
+          {/* Column 3: Tools & Guides */}
           <div className="flex flex-col space-y-3">
-            <h4 className="font-semibold text-sm mb-2 text-foreground/90 dark:text-white/90">Help</h4>
-            <Link to="/help" className="text-muted-foreground hover:text-foreground dark:text-white/70 dark:hover:text-white text-sm transition-colors">FAQ</Link>
-            <a href="#" onClick={handleComingSoon} className="text-muted-foreground hover:text-foreground dark:text-white/70 dark:hover:text-white text-sm transition-colors">Contact Us</a>
-            <a href="#" onClick={handleComingSoon} className="text-muted-foreground hover:text-foreground dark:text-white/70 dark:hover:text-white text-sm transition-colors">Accessibility</a>
-            <a href="#" onClick={handleComingSoon} className="text-muted-foreground hover:text-foreground dark:text-white/70 dark:hover:text-white text-sm transition-colors">Satisfaction Guarantee</a>
-            <a href="#" onClick={handleComingSoon} className="text-muted-foreground hover:text-foreground dark:text-white/70 dark:hover:text-white text-sm transition-colors">Manage Bookings</a>
+            <h4 className="font-semibold text-sm mb-2 text-foreground/90 dark:text-white/90">Tools</h4>
+            <Link to="/assistant" className="text-muted-foreground hover:text-foreground dark:text-white/70 dark:hover:text-white text-sm transition-colors">AI Assistant</Link>
+            <Link to="/more/agent-planner" className="text-muted-foreground hover:text-foreground dark:text-white/70 dark:hover:text-white text-sm transition-colors">Agent Planner</Link>
+            <Link to="/more/rag-guide" className="text-muted-foreground hover:text-foreground dark:text-white/70 dark:hover:text-white text-sm transition-colors">RAG Guide</Link>
+            <Link to="/more/ar-recognize" className="text-muted-foreground hover:text-foreground dark:text-white/70 dark:hover:text-white text-sm transition-colors">AR Recognize</Link>
+            <Link to="/more/ar-translate" className="text-muted-foreground hover:text-foreground dark:text-white/70 dark:hover:text-white text-sm transition-colors">AR Translate</Link>
+            <Link to="/more/pricing-insights" className="text-muted-foreground hover:text-foreground dark:text-white/70 dark:hover:text-white text-sm transition-colors">Pricing Insights</Link>
           </div>
 
-          {/* Column 4 */}
+          {/* Column 4: Help & Account */}
           <div className="flex flex-col space-y-3">
-            <h4 className="font-semibold text-sm mb-2 text-foreground/90 dark:text-white/90">Lets Explore</h4>
+            <h4 className="font-semibold text-sm mb-2 text-foreground/90 dark:text-white/90">Support & Account</h4>
             <Link to="/profile" className="text-muted-foreground hover:text-foreground dark:text-white/70 dark:hover:text-white text-sm transition-colors">My Account</Link>
-            <a href="#" onClick={handleComingSoon} className="text-muted-foreground hover:text-foreground dark:text-white/70 dark:hover:text-white text-sm transition-colors">Travel Agent Line</a>
-            <a href="#" onClick={handleComingSoon} className="text-muted-foreground hover:text-foreground dark:text-white/70 dark:hover:text-white text-sm transition-colors">Press</a>
-            <a href="#" onClick={handleComingSoon} className="text-muted-foreground hover:text-foreground dark:text-white/70 dark:hover:text-white text-sm transition-colors">Careers</a>
-            <a href="#" onClick={handleComingSoon} className="text-muted-foreground hover:text-foreground dark:text-white/70 dark:hover:text-white text-sm transition-colors">Affiliate Program</a>
-            <a href="#" onClick={handleComingSoon} className="text-muted-foreground hover:text-foreground dark:text-white/70 dark:hover:text-white text-sm transition-colors">Guide Program</a>
+            <Link to="/more/for-you" className="text-muted-foreground hover:text-foreground dark:text-white/70 dark:hover:text-white text-sm transition-colors">For You</Link>
+            <Link to="/more/quests" className="text-muted-foreground hover:text-foreground dark:text-white/70 dark:hover:text-white text-sm transition-colors">Heritage Quests</Link>
+            <Link to="/more/accessibility" className="text-muted-foreground hover:text-foreground dark:text-white/70 dark:hover:text-white text-sm transition-colors">Accessibility</Link>
+            <Link to="/help" className="text-muted-foreground hover:text-foreground dark:text-white/70 dark:hover:text-white text-sm transition-colors">FAQ / Help</Link>
           </div>
 
           {/* Newsletter Column */}
           <div className="col-span-2 md:col-span-4 lg:col-span-1 flex flex-col items-start lg:items-end w-full mt-6 lg:mt-0">
             <h4 className="font-medium text-sm mb-4 text-foreground dark:text-white text-left lg:text-right w-full">
-              Sign up to get 15% off your first guided tour
+              Join our totally free community for the latest updates
             </h4>
             <form onSubmit={handleSubscribe} className="flex w-full max-w-sm flex-col sm:flex-row gap-2 sm:gap-3">
               <Input
@@ -128,11 +128,11 @@ const Footer = () => {
             {/* Trust Badge Placeholder */}
             <div className="mt-8 flex justify-start lg:justify-end w-full">
               <div className="flex flex-col items-center">
-                <span className="text-[10px] font-medium text-muted-foreground dark:text-white/80 mb-1">Certified</span>
+                <span className="text-[10px] font-medium text-muted-foreground dark:text-white/80 mb-1">Totally Free</span>
                 <div className="w-12 h-12 border-2 border-muted-foreground dark:border-white/80 rounded-full flex items-center justify-center">
-                  <span className="text-xl font-bold text-muted-foreground dark:text-white/80">B</span>
+                  <span className="text-xl font-bold text-muted-foreground dark:text-white/80">$0</span>
                 </div>
-                <span className="text-[8px] mt-1 text-muted-foreground dark:text-white/80">Corporation</span>
+                <span className="text-[8px] mt-1 text-muted-foreground dark:text-white/80">Forever</span>
               </div>
             </div>
           </div>

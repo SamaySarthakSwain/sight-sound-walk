@@ -1,5 +1,4 @@
-import { useState, useEffect, useCallback, useMemo, useRef } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useCity } from "@/contexts/CityContext";
 import { fallbackMonuments } from "@/data/fallbackMonuments";
 
@@ -25,6 +24,7 @@ export interface Monument {
 // In-memory cache to avoid redundant fetches across hook instances
 let monumentCache: { data: Monument[]; city: string; timestamp: number } | null = null;
 const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
 export const useMonuments = () => {
   const [monuments, setMonuments] = useState<Monument[]>(monumentCache?.data || []);
@@ -83,19 +83,37 @@ export const useMonuments = () => {
       setLoading(true);
       setError(null);
 
-      const { data, error: fetchError } = await supabase
-        .from("monuments")
-        .select("*")
-        .order("is_featured", { ascending: false });
+      // Fetch from MongoDB backend
+      const response = await fetch(`${API_URL}/monuments`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch monuments from backend");
+      }
+      
+      const dbMonuments = await response.json();
+      
+      // Map MongoDB documents to expected format
+      const mappedData: Monument[] = dbMonuments.map((m: any) => ({
+        id: m.original_id || m._id,
+        title: m.title,
+        description: m.description,
+        location: m.location,
+        state: m.state,
+        category: m.category,
+        image_url: m.image_gridfs_id ? `${API_URL}/image/${m.image_gridfs_id}` : m.image_url,
+        latitude: m.latitude,
+        longitude: m.longitude,
+        facts: m.facts,
+        is_featured: m.is_featured,
+        distance_from_berhampur: m.distance_from_berhampur,
+        region: m.region
+      }));
 
-      let finalRawData: Monument[] = (data as Monument[]) || [];
+      let finalRawData = mappedData;
 
-      // If database is empty or error occurs, use fallback data
-      if (fetchError || !data || data.length === 0) {
-        console.warn("Using fallback monument data", fetchError);
+      if (finalRawData.length === 0) {
+        console.warn("Using fallback monument data, database returned 0 items");
         finalRawData = fallbackMonuments as Monument[];
       } else {
-        // Merge fallback monuments that might be missing in the database
         const dbIds = new Set(finalRawData.map((m) => m.id));
         const missingFallbacks = (fallbackMonuments as Monument[]).filter((m) => !dbIds.has(m.id));
         if (missingFallbacks.length > 0) {
@@ -103,21 +121,22 @@ export const useMonuments = () => {
         }
       }
 
+      // Sort by featured
+      finalRawData.sort((a, b) => (b.is_featured ? 1 : 0) - (a.is_featured ? 1 : 0));
+
       const filtered = filterMonuments(finalRawData, cityName);
       const finalMonuments = filtered.length > 0 ? filtered : finalRawData;
       
       monumentCache = { data: finalMonuments, city: cityName, timestamp: Date.now() };
       setMonuments(finalMonuments);
     } catch (err) {
-      console.warn("Error fetching from Supabase, using fallback:", err);
-      // Even if fetch fails completely, use fallback
+      console.warn("Error fetching from MongoDB API, using fallback:", err);
       const finalRawData = fallbackMonuments as Monument[];
       const filtered = filterMonuments(finalRawData, cityName);
       const finalMonuments = filtered.length > 0 ? filtered : finalRawData;
       
       monumentCache = { data: finalMonuments, city: cityName, timestamp: Date.now() };
       setMonuments(finalMonuments);
-      // Don't set error state if we have fallback data to show
       setError(null);
     } finally {
       setLoading(false);

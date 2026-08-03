@@ -6,16 +6,89 @@ import { Star, MapPin, Utensils, Sparkles, Shield, Heart, ExternalLink } from "l
 import { FoodPlace } from "@/hooks/useFoodPlaces";
 import FoodRatingForm from "./FoodRatingForm";
 
-// Import fallback images
-import restaurantGeneric from "@/assets/restaurant-generic.jpg";
-import streetFoodGeneric from "@/assets/street-food-generic.jpg";
+// Rich, diverse fallback image pools — every image is unique and beautiful
+const streetFoodImages = [
+  "https://images.unsplash.com/photo-1601050690597-df056fb1ce24?auto=format&fit=crop&q=80&w=800",
+  "https://images.unsplash.com/photo-1567337710282-00832b415979?auto=format&fit=crop&q=80&w=800",
+  "https://images.unsplash.com/photo-1625398407796-82650a8c135f?auto=format&fit=crop&q=80&w=800",
+  "https://images.unsplash.com/photo-1626074353765-517a681e40be?auto=format&fit=crop&q=80&w=800",
+  "https://images.unsplash.com/photo-1606491956689-2ea866880c84?auto=format&fit=crop&q=80&w=800",
+  "https://images.unsplash.com/photo-1529006557810-274b9b2fc783?auto=format&fit=crop&q=80&w=800",
+  "https://images.unsplash.com/photo-1587314168485-3236d6710814?auto=format&fit=crop&q=80&w=800",
+  "https://images.unsplash.com/photo-1558326567-98ae2405596b?auto=format&fit=crop&q=80&w=800",
+  "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&q=80&w=800",
+  "https://images.unsplash.com/photo-1589182373726-e4f658ab50f0?auto=format&fit=crop&q=80&w=800",
+  "https://images.unsplash.com/photo-1565299585323-38d6b0865b47?auto=format&fit=crop&q=80&w=800",
+  "https://images.unsplash.com/photo-1605333396915-47ed6b68a00e?auto=format&fit=crop&q=80&w=800",
+];
 
-// Get fallback image based on category
-const getFoodFallbackImage = (place: FoodPlace) => {
-  if (place.is_food_street || place.category?.toLowerCase().includes("street")) {
-    return streetFoodGeneric;
+const restaurantImages = [
+  "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&q=80&w=800",
+  "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&q=80&w=800",
+  "https://images.unsplash.com/photo-1550966842-28c464efd60c?auto=format&fit=crop&q=80&w=800",
+  "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&q=80&w=800",
+  "https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&q=80&w=800",
+  "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&q=80&w=800",
+  "https://images.unsplash.com/photo-1574484284002-952d92456975?auto=format&fit=crop&q=80&w=800",
+  "https://images.unsplash.com/photo-1596797038530-2c107229654b?auto=format&fit=crop&q=80&w=800",
+  "https://images.unsplash.com/photo-1551218808-94e220e084d2?auto=format&fit=crop&q=80&w=800",
+  "https://images.unsplash.com/photo-1585937421612-70a008356fbe?auto=format&fit=crop&q=80&w=800",
+  "https://images.unsplash.com/photo-1563636619-e9143da7973b?auto=format&fit=crop&q=80&w=800",
+  "https://images.unsplash.com/photo-1631515243349-e0cb75fb8d3a?auto=format&fit=crop&q=80&w=800",
+  "https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?auto=format&fit=crop&q=80&w=800",
+  "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&q=80&w=800",
+  "https://images.unsplash.com/photo-1604328698692-f76ea9498e76?auto=format&fit=crop&q=80&w=800",
+  "https://images.unsplash.com/photo-1631452180519-c014fe946bc7?auto=format&fit=crop&q=80&w=800",
+];
+
+const cafeImages = [
+  "https://images.unsplash.com/photo-1559305616-3f99cd43e353?auto=format&fit=crop&q=80&w=800",
+  "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&q=80&w=800",
+  "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&q=80&w=800",
+  "https://images.unsplash.com/photo-1554118811-1e2d86a3d6a9?auto=format&fit=crop&q=80&w=800",
+  "https://images.unsplash.com/photo-1521017432531-fbd92d744264?auto=format&fit=crop&q=80&w=800",
+  "https://images.unsplash.com/photo-1466978913421-dad2ebd01d17?auto=format&fit=crop&q=80&w=800",
+  "https://images.unsplash.com/photo-1445116572660-236099ec97a0?auto=format&fit=crop&q=80&w=800",
+  "https://images.unsplash.com/photo-1559925393-8be0ec4767c8?auto=format&fit=crop&q=80&w=800",
+];
+
+const foodHubImages = [
+  "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&q=80&w=800",
+  "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?auto=format&fit=crop&q=80&w=800",
+  "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&q=80&w=800",
+  "https://images.unsplash.com/photo-1565958011703-44f9829ba187?auto=format&fit=crop&q=80&w=800",
+  "https://images.unsplash.com/photo-1498837167922-ddd27525d352?auto=format&fit=crop&q=80&w=800",
+  "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&q=80&w=800",
+  "https://images.unsplash.com/photo-1476224203421-9ac39bcb3327?auto=format&fit=crop&q=80&w=800",
+  "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&q=80&w=800",
+];
+
+// Deterministic hash from place name so each place always gets the same unique image
+const hashString = (str: string): number => {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    const char = str.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash |= 0;
   }
-  return restaurantGeneric;
+  return Math.abs(hash);
+};
+
+// Get a unique fallback image based on category + place name
+const getFoodFallbackImage = (place: FoodPlace) => {
+  const cat = (place.category || "").toLowerCase();
+  const hash = hashString(place.name + place.id);
+
+  if (place.is_food_street || cat.includes("street")) {
+    return streetFoodImages[hash % streetFoodImages.length];
+  }
+  if (cat.includes("cafe")) {
+    return cafeImages[hash % cafeImages.length];
+  }
+  if (cat.includes("food_hub") || cat.includes("hub")) {
+    return foodHubImages[hash % foodHubImages.length];
+  }
+  return restaurantImages[hash % restaurantImages.length];
 };
 
 interface FoodPlaceCardProps {
