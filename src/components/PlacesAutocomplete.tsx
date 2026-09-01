@@ -160,13 +160,23 @@ export function PlacesAutocomplete({
     return () => {
       cancelled = true;
     };
-  }, [debounced, isLoaded, bias.lat, bias.lng, bias.radiusMeters]);
+  }, [debounced, isLoaded, useFallback, bias.lat, bias.lng, bias.radiusMeters]);
 
   const handleSelect = async (idx: number) => {
     const s = suggestions[idx];
     if (!s) return;
     setInput(s.primary);
     setOpen(false);
+    if (s.loc) {
+      onSelect({
+        placeId: s.placeId,
+        primaryText: s.primary,
+        secondaryText: s.secondary,
+        location: s.loc,
+        formattedAddress: [s.primary, s.secondary].filter(Boolean).join(", "),
+      });
+      return;
+    }
     try {
       const placesLib = (await google.maps.importLibrary(
         "places"
