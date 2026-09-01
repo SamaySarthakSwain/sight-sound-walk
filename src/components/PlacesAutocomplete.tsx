@@ -41,12 +41,12 @@ export function PlacesAutocomplete({
   bias = DEFAULT_BIAS,
   onSelect,
 }: Props) {
-  const { isLoaded } = useGoogleMaps();
+  const { isLoaded, useFallback } = useGoogleMaps();
   const [input, setInput] = useState("");
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [suggestions, setSuggestions] = useState<
-    Array<{ placeId: string; primary: string; secondary: string }>
+    Array<{ placeId: string; primary: string; secondary: string; loc?: { lat: number; lng: number } }>
   >([]);
   const [highlight, setHighlight] = useState(0);
   const sessionTokenRef = useRef<google.maps.places.AutocompleteSessionToken | null>(null);
