@@ -6,6 +6,8 @@ import { MapPin, Plus, X, Navigation, Locate } from "lucide-react";
 import { toast } from "sonner";
 import { useCity } from "@/contexts/CityContext";
 import PlacesAutocomplete from "./PlacesAutocomplete";
+import OpenStreetMapFallback from "./OpenStreetMapFallback";
+import { useGoogleMaps } from "@/contexts/GoogleMapsContext";
 
 interface Location {
   lat: number;
@@ -30,6 +32,7 @@ const mapContainerStyle = {
 
 const CabMapSelector = ({ onRouteCalculated }: CabMapSelectorProps) => {
   const { cityLat, cityLng } = useCity();
+  const { useFallback } = useGoogleMaps();
   
   const defaultCenter = useMemo(() => ({
     lat: cityLat,
@@ -42,6 +45,7 @@ const CabMapSelector = ({ onRouteCalculated }: CabMapSelectorProps) => {
   const [directions, setDirections] = useState<google.maps.DirectionsResult | null>(null);
   const [selectionMode, setSelectionMode] = useState<"start" | "end" | "stop" | null>(null);
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const [fallbackPath, setFallbackPath] = useState<{ lat: number; lng: number }[]>([]);
 
   const mapRef = useRef<google.maps.Map | null>(null);
 
@@ -153,6 +157,11 @@ const CabMapSelector = ({ onRouteCalculated }: CabMapSelectorProps) => {
 
   const useCurrentLocation = () => {
     if (userLocation) {
+      if (useFallback || typeof google === "undefined") {
+        setStartLocation({ ...userLocation, name: "Your Location" });
+        toast.success("Using your current location!");
+        return;
+      }
       const geocoder = new google.maps.Geocoder();
       geocoder.geocode({ location: userLocation }, (results, status) => {
         const name =
@@ -174,6 +183,30 @@ const CabMapSelector = ({ onRouteCalculated }: CabMapSelectorProps) => {
   const calculateRoute = useCallback(() => {
     if (!startLocation || !endLocation) {
       toast.error("Please select start and end locations");
+      return;
+    }
+
+    if (useFallback) {
+      const coords = [startLocation, ...stops, endLocation]
+        .map((l) => `${l.lng},${l.lat}`)
+        .join(";");
+      fetch(`https://router.project-osrm.org/route/v1/driving/${coords}?overview=full&geometries=geojson`)
+        .then((r) => r.json())
+        .then((data) => {
+          const route = data?.routes?.[0];
+          if (!route) throw new Error("no route");
+          const distanceKm = route.distance / 1000;
+          const durationMins = Math.ceil(route.duration / 60);
+          setFallbackPath(
+            (route.geometry?.coordinates || []).map((c: [number, number]) => ({
+              lat: c[1],
+              lng: c[0],
+            }))
+          );
+          onRouteCalculated(startLocation, endLocation, stops, distanceKm, durationMins);
+          toast.success(`Route calculated: ${distanceKm.toFixed(1)} km, ~${durationMins} min`);
+        })
+        .catch(() => toast.error("Could not calculate route"));
       return;
     }
 
@@ -215,7 +248,7 @@ const CabMapSelector = ({ onRouteCalculated }: CabMapSelectorProps) => {
         }
       }
     );
-  }, [startLocation, endLocation, stops, onRouteCalculated]);
+  }, [startLocation, endLocation, stops, onRouteCalculated, useFallback]);
 
   return (
     <Card>
@@ -325,6 +358,47 @@ const CabMapSelector = ({ onRouteCalculated }: CabMapSelectorProps) => {
 
         {/* Map */}
         <div className="rounded-lg overflow-hidden border">
+          {useFallback ? (
+            <OpenStreetMapFallback
+              height="400px"
+              center={startLocation || userLocation || defaultCenter}
+              zoom={12}
+              markers={[
+                ...(startLocation
+                  ? [{ id: "start", position: { lat: startLocation.lat, lng: startLocation.lng }, title: "Start", description: startLocation.name }]
+                  : []),
+                ...(endLocation
+                  ? [{ id: "end", position: { lat: endLocation.lat, lng: endLocation.lng }, title: "Destination", description: endLocation.name }]
+                  : []),
+                ...stops.map((s, i) => ({
+                  id: `stop-${i}`,
+                  position: { lat: s.lat, lng: s.lng },
+                  title: `Stop ${i + 1}`,
+                  description: s.name,
+                })),
+              ]}
+              userLocation={userLocation}
+              routePath={fallbackPath}
+              onMapClick={(pos) => {
+                if (!selectionMode) return;
+                const location: Location = {
+                  ...pos,
+                  name: `${pos.lat.toFixed(4)}, ${pos.lng.toFixed(4)}`,
+                };
+                if (selectionMode === "start") {
+                  setStartLocation(location);
+                  toast.success("Starting point set!");
+                } else if (selectionMode === "end") {
+                  setEndLocation(location);
+                  toast.success("Destination set!");
+                } else {
+                  setStops((prev) => [...prev, location]);
+                  toast.success("Stop added!");
+                }
+                setSelectionMode(null);
+              }}
+            />
+          ) : (
           <GoogleMap
             mapContainerStyle={mapContainerStyle}
             center={userLocation || defaultCenter}
@@ -381,6 +455,7 @@ const CabMapSelector = ({ onRouteCalculated }: CabMapSelectorProps) => {
               />
             )}
           </GoogleMap>
+          )}
         </div>
 
         {/* Calculate Button */}
