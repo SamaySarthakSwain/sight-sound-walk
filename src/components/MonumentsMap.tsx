@@ -39,7 +39,7 @@ const center = {
 };
 
 const MonumentsMap: React.FC<MonumentsMapProps> = ({ routeData, selectedMonumentId }) => {
-  const { isLoaded: mapsLoaded } = useGoogleMaps();
+  const { isLoaded: mapsLoaded, useFallback } = useGoogleMaps();
   const [monuments, setMonuments] = useState<Monument[]>([]);
   const [monumentsLoading, setMonumentsLoading] = useState(true);
   const [selectedMonument, setSelectedMonument] = useState<Monument | null>(null);
