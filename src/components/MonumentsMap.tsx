@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import DownloadMapButton from "./DownloadMapButton";
 import { useGoogleMaps } from "@/contexts/GoogleMapsContext";
 import PlacesAutocomplete from "./PlacesAutocomplete";
+import OpenStreetMapFallback from "./OpenStreetMapFallback";
 
 interface RouteData {
   start: { lat: number; lng: number };
