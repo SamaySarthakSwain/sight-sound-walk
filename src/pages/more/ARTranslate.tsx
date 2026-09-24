@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import { getApiUrl } from "@/lib/apiConfig";
 import { Languages, Loader2, Camera } from "lucide-react";
 import MorePageShell from "@/components/MorePageShell";
 
@@ -12,7 +13,7 @@ const ARTranslate = () => {
   const translateText = async (input: string) => {
     setLoading(true);
     try {
-      const response = await fetch("http://localhost:5000/api/ai/rag-guide", {
+      const response = await fetch(getApiUrl("/api/ai/rag-guide"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ query: input, mode: "translate" }),

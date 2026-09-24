@@ -7,11 +7,12 @@ export const getApiUrl = (endpoint: string): string => {
   const envUrl = import.meta.env.VITE_API_URL;
   const cleanEndpoint = endpoint.startsWith("/") ? endpoint : `/${endpoint}`;
 
-  if (!envUrl) {
-    return cleanEndpoint.startsWith("/api") ? cleanEndpoint : `/api${cleanEndpoint}`;
+  let base = envUrl;
+  if (!base) {
+    base = import.meta.env.DEV ? "http://localhost:5000" : "https://sight-sound-walk-api.onrender.com";
   }
 
-  const base = envUrl.replace(/\/$/, "");
+  base = base.replace(/\/$/, "");
 
   // If base already ends with /api and endpoint also starts with /api, deduplicate
   if (base.endsWith("/api") && cleanEndpoint.startsWith("/api")) {
@@ -25,3 +26,4 @@ export const getApiUrl = (endpoint: string): string => {
 
   return `${base}${cleanEndpoint}`;
 };
+

@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { Map, ArrowLeft, Loader2 } from "lucide-react";
 import { AuroraBackground } from "@/components/ui/aurora-background";
 import { GoogleLogin } from '@react-oauth/google';
+import { getApiUrl } from "@/lib/apiConfig";
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -22,8 +23,8 @@ const Auth = () => {
   const handleGoogleSuccess = async (credentialResponse: any) => {
     setLoading(true);
     try {
-      // Send token to our new Node.js backend
-      const response = await fetch("http://localhost:5000/api/auth/google", {
+      // Send token to our Node.js backend
+      const response = await fetch(getApiUrl("/api/auth/google"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ credential: credentialResponse.credential }),

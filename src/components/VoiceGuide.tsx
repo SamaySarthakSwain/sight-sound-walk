@@ -1,4 +1,5 @@
 import { useState, useCallback, useRef, useEffect } from "react";
+import { getApiUrl } from "@/lib/apiConfig";
 import { Mic, MicOff, Volume2, Loader2, Camera, CameraOff, X, Sparkles, Settings2, AudioLines, Radio } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -74,7 +75,7 @@ const speechLangCodes: Record<SupportedLanguage, string> = {
   bn: "bn-IN",
 };
 
-const CHAT_URL = "http://localhost:5000/api/ai/voice-guide";
+const getVoiceGuideUrl = () => getApiUrl("/api/ai/voice-guide");
 
 const VoiceGuide = () => {
   const { preferredVoice, lang: ttsLang } = useTTSVoice();
@@ -254,7 +255,7 @@ const VoiceGuide = () => {
     let fullResponse = "";
 
     try {
-      const resp = await fetch(CHAT_URL, {
+      const resp = await fetch(getVoiceGuideUrl(), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -339,7 +340,7 @@ const VoiceGuide = () => {
     let fullResponse = "";
 
     try {
-      const resp = await fetch(CHAT_URL, {
+      const resp = await fetch(getVoiceGuideUrl(), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

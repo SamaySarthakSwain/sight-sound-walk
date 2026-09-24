@@ -1,5 +1,6 @@
 import { GoogleMap, Marker, InfoWindow, DirectionsRenderer } from "@react-google-maps/api";
 import { useState, useEffect } from "react";
+import { getApiUrl } from "@/lib/apiConfig";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Map as MapIcon, Loader2, Navigation as NavButtonIcon } from "lucide-react";
@@ -57,7 +58,7 @@ const MonumentsMap: React.FC<MonumentsMapProps> = ({ routeData, selectedMonument
     let cancelled = false;
     const fetchMonuments = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/monuments");
+        const response = await fetch(getApiUrl("/api/monuments"));
         if (!response.ok) throw new Error("Failed to fetch");
         const allData = await response.json();
         

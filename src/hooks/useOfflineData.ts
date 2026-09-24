@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { getApiUrl } from "@/lib/apiConfig";
 
 
 const CACHE_KEYS = {
@@ -18,19 +19,19 @@ export const useOfflineData = () => {
 
       try {
         // Sequential to avoid overwhelming the connection
-        const monRes = await fetch("http://localhost:5000/api/monuments");
+        const monRes = await fetch(getApiUrl("/api/monuments"));
         if (monRes.ok) {
           const monData = await monRes.json();
           localStorage.setItem(CACHE_KEYS.monuments, JSON.stringify(monData));
         }
 
-        const foodRes = await fetch("http://localhost:5000/api/food-places");
+        const foodRes = await fetch(getApiUrl("/api/food-places"));
         if (foodRes.ok) {
           const foodData = await foodRes.json();
           localStorage.setItem(CACHE_KEYS.foodPlaces, JSON.stringify(foodData));
         }
 
-        const hotelRes = await fetch("http://localhost:5000/api/hotels");
+        const hotelRes = await fetch(getApiUrl("/api/hotels"));
         if (hotelRes.ok) {
           const hotelData = await hotelRes.json();
           localStorage.setItem(CACHE_KEYS.hotels, JSON.stringify(hotelData));

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-
+import { getApiUrl } from '@/lib/apiConfig';
 import { useCity } from '@/contexts/CityContext';
 import { fallbackHotels } from '@/data/fallbackHotels';
 
@@ -43,7 +43,7 @@ export const useHotels = () => {
       
       let hotelData: Hotel[] = [];
       try {
-        const res = await fetch("http://localhost:5000/api/hotels");
+        const res = await fetch(getApiUrl("/api/hotels"));
         if (res.ok) {
           hotelData = await res.json();
         } else {

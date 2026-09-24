@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { getApiUrl } from "@/lib/apiConfig";
 import { Sparkles, Send, Loader2 } from "lucide-react";
 import MorePageShell from "@/components/MorePageShell";
 
@@ -31,7 +32,7 @@ const RagGuide = () => {
     setInput("");
     setLoading(true);
     try {
-      const response = await fetch("http://localhost:5000/api/ai/rag-guide", {
+      const response = await fetch(getApiUrl("/api/ai/rag-guide"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ query: text, mode: "qa" }),

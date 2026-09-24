@@ -1,4 +1,5 @@
 import { useState, useCallback } from "react";
+import { getApiUrl } from "@/lib/apiConfig";
 
 export interface ChatMessage {
   role: "user" | "assistant";
@@ -15,7 +16,7 @@ export const languageLabels: Record<SupportedLanguage, string> = {
   bn: "বাংলা (Bengali)",
 };
 
-const CHAT_URL = "http://localhost:5000/api/ai/travel-assistant";
+const getChatUrl = () => getApiUrl("/api/ai/travel-assistant");
 
 // Keywords that might indicate weather-related queries
 const weatherKeywords = ["weather", "temperature", "rain", "hot", "cold", "humid", "monsoon", "climate", "forecast"];
@@ -66,7 +67,7 @@ export const useTravelChat = () => {
     }
 
     try {
-      const resp = await fetch(CHAT_URL, {
+      const resp = await fetch(getChatUrl(), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

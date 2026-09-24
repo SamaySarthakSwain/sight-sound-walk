@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
+import { getApiUrl } from "@/lib/apiConfig";
 import { useCity } from "@/contexts/CityContext";
 import { fallbackMonuments } from "@/data/fallbackMonuments";
 
@@ -83,7 +84,7 @@ export const useMonuments = () => {
       setError(null);
 
       // Fetch from the app's Node.js/MongoDB backend
-      const res = await fetch("http://localhost:5000/api/monuments");
+      const res = await fetch(getApiUrl("/api/monuments"));
       if (!res.ok) throw new Error("Failed to fetch monuments");
       
       const dbData = await res.json();

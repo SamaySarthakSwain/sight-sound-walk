@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { getApiUrl } from "@/lib/apiConfig";
 import { Bot, Loader2, Sparkles } from "lucide-react";
 import MorePageShell from "@/components/MorePageShell";
 import { useCity } from "@/contexts/CityContext";
@@ -21,7 +22,7 @@ const AgentPlanner = () => {
     setLoading(true);
     setItinerary("");
     try {
-      const response = await fetch("http://localhost:5000/api/ai/planner", {
+      const response = await fetch(getApiUrl("/api/ai/planner"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 

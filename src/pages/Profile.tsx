@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { getApiUrl } from "@/lib/apiConfig";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import Navigation from "@/components/Navigation";
@@ -151,7 +152,7 @@ const Profile = () => {
       setProfile(newProfile);
 
       // Fetch visit history
-      const visitsRes = await fetch(`http://localhost:5000/api/visits/${uId}`);
+      const visitsRes = await fetch(getApiUrl(`/api/visits/${uId}`));
       let visits = [];
       if (visitsRes.ok) visits = await visitsRes.json();
       setVisitHistory(visits);
@@ -166,7 +167,7 @@ const Profile = () => {
         const visitedNames = visits.map(v => v.place_name);
 
         if (visitedCategories.length > 0) {
-          const monRes = await fetch(`http://localhost:5000/api/monuments`);
+          const monRes = await fetch(getApiUrl(`/api/monuments`));
           if (monRes.ok) {
             const allMons = await monRes.json();
             const suggestions = allMons

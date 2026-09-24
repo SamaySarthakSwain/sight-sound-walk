@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import { getApiUrl } from "@/lib/apiConfig";
 import { Camera, Loader2, Upload } from "lucide-react";
 import MorePageShell from "@/components/MorePageShell";
 
@@ -16,7 +17,7 @@ const ARRecognize = () => {
       const dataUrl = reader.result as string;
       setPreview(dataUrl);
       try {
-        const response = await fetch("http://localhost:5000/api/ai/rag-guide", {
+        const response = await fetch(getApiUrl("/api/ai/rag-guide"), {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ 

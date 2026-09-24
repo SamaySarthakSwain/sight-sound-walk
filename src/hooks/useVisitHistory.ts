@@ -1,5 +1,6 @@
 import { useAuth } from "./useAuth";
 import { toast } from "sonner";
+import { getApiUrl } from "@/lib/apiConfig";
 
 interface VisitData {
   place_name: string;
@@ -14,7 +15,7 @@ export const useVisitHistory = () => {
     if (!user) return;
 
     try {
-      const response = await fetch("http://localhost:5000/api/visits", {
+      const response = await fetch(getApiUrl("/api/visits"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

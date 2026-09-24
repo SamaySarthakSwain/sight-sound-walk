@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { getApiUrl } from "@/lib/apiConfig";
 
 import { useAuth } from "@/hooks/useAuth";
 import { useCity } from "@/contexts/CityContext";
@@ -82,7 +83,7 @@ export const useFoodPlaces = () => {
       // Fetch from Node backend
       let places = [];
       try {
-        const monRes = await fetch("http://localhost:5000/api/food-places");
+        const monRes = await fetch(getApiUrl("/api/food-places"));
         if (monRes.ok) {
           places = await monRes.json();
         } else {
