@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useCity } from "@/contexts/CityContext";
 import { fallbackMonuments } from "@/data/fallbackMonuments";
-import { getApiUrl } from "@/lib/apiConfig";
+import { supabase } from "@/integrations/supabase/client";
 
 export interface Monument {
   id: string;
@@ -83,30 +83,12 @@ export const useMonuments = () => {
       setLoading(true);
       setError(null);
 
-      // Fetch from backend
-      const response = await fetch(getApiUrl("/api/monuments"));
-      if (!response.ok) {
-        throw new Error("Failed to fetch monuments from backend");
-      }
-      
-      const dbMonuments = await response.json();
-      
-      // Map MongoDB documents to expected format
-      const mappedData: Monument[] = dbMonuments.map((m: any) => ({
-        id: m.original_id || m._id,
-        title: m.title,
-        description: m.description,
-        location: m.location,
-        state: m.state,
-        category: m.category,
-        image_url: m.image_gridfs_id ? getApiUrl(`/image/${m.image_gridfs_id}`) : m.image_url,
-        latitude: m.latitude,
-        longitude: m.longitude,
-        facts: m.facts,
-        is_featured: m.is_featured,
-        distance_from_berhampur: m.distance_from_berhampur,
-        region: m.region
-      }));
+      // Fetch from the app's database (has verified real photos)
+      const { data: dbData, error: dbError } = await supabase
+        .from("monuments")
+        .select("id,title,description,location,state,category,image_url,latitude,longitude,facts,is_featured,distance_from_berhampur,region");
+      if (dbError) throw dbError;
+      const mappedData = (dbData || []) as unknown as Monument[];
 
       let finalRawData = mappedData;
 
@@ -130,7 +112,7 @@ export const useMonuments = () => {
       monumentCache = { data: finalMonuments, city: cityName, timestamp: Date.now() };
       setMonuments(finalMonuments);
     } catch (err) {
-      console.warn("Error fetching from MongoDB API, using fallback:", err);
+      console.warn("Error fetching monuments, using fallback:", err);
       const finalRawData = fallbackMonuments as Monument[];
       const filtered = filterMonuments(finalRawData, cityName);
       const finalMonuments = filtered.length > 0 ? filtered : finalRawData;
