@@ -286,7 +286,7 @@ const Help = () => {
                   <Phone className="w-5 h-5 text-primary" />
                 </div>
                 <div>
-                  <h3 className="font-semibold mb-1">Phone Number</h3>
+                  <h2 className="font-semibold mb-1">Phone Number</h2>
                   <a href="tel:+918327780375" className="text-primary hover:underline">+91 83277 80375</a>
                 </div>
               </div>
@@ -295,7 +295,7 @@ const Help = () => {
                   <Mail className="w-5 h-5 text-primary" />
                 </div>
                 <div>
-                  <h3 className="font-semibold mb-1">Contact Person</h3>
+                  <h2 className="font-semibold mb-1">Contact Person</h2>
                   <p className="text-muted-foreground">Samay Sarthak Swain</p>
                 </div>
               </div>
@@ -304,7 +304,7 @@ const Help = () => {
                   <MapPin className="w-5 h-5 text-primary" />
                 </div>
                 <div>
-                  <h3 className="font-semibold mb-1">Location</h3>
+                  <h2 className="font-semibold mb-1">Location</h2>
                   <p className="text-muted-foreground">Berhampur, Odisha, India</p>
                 </div>
               </div>
@@ -321,7 +321,7 @@ const Help = () => {
                 Lets Explore is an educational tourism app designed for Odisha that combines GPS location tracking with text-to-speech narration to create location-based learning experiences.
               </p>
               <div className="space-y-2">
-                <h4 className="font-semibold">Key Features:</h4>
+                <h3 className="font-semibold">Key Features:</h3>
                 <ul className="list-disc list-inside space-y-1 text-muted-foreground">
                   <li>Real-time GPS tracking of your location</li>
                   <li>Route planning with monuments along the way</li>
