@@ -6,6 +6,7 @@ import numpy as np
 import os
 
 import urllib.request
+import urllib.error
 import json
 from werkzeug.exceptions import HTTPException
 
@@ -46,10 +47,13 @@ def google_auth():
             
         verify_url = f"https://oauth2.googleapis.com/tokeninfo?id_token={credential}"
         req = urllib.request.Request(verify_url)
-        with urllib.request.urlopen(req) as response:
-            if response.status != 200:
-                return jsonify({"error": "Invalid Google Token"}), 401
-            payload = json.loads(response.read().decode('utf-8'))
+        try:
+            with urllib.request.urlopen(req) as response:
+                payload = json.loads(response.read().decode('utf-8'))
+        except urllib.error.HTTPError as err:
+            return jsonify({"error": "Invalid Google token"}), 401
+        except Exception as err:
+            return jsonify({"error": "Failed to verify token with Google"}), 400
             
         user_info = {
             "id": payload.get("sub"),
@@ -64,6 +68,7 @@ def google_auth():
     except Exception as e:
         print(f"Google Auth Error: {e}")
         return jsonify({"error": "Failed to authenticate with Google"}), 400
+
 
 
 
