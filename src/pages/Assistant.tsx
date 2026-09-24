@@ -223,7 +223,7 @@ const Assistant = () => {
                   disabled={isLoading}
                   className="flex-1"
                 />
-                <Button type="submit" disabled={!input.trim() || isLoading}>
+                <Button type="submit" aria-label="Send message" disabled={!input.trim() || isLoading}>
                   <Send className="w-4 h-4" />
                 </Button>
               </form>
