@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import DownloadMapButton from "./DownloadMapButton";
 import { useGoogleMaps } from "@/contexts/GoogleMapsContext";
 import PlacesAutocomplete from "./PlacesAutocomplete";
+import OpenStreetMapFallback from "./OpenStreetMapFallback";
 
 interface RouteData {
   start: { lat: number; lng: number };
@@ -39,7 +40,7 @@ const center = {
 };
 
 const MonumentsMap: React.FC<MonumentsMapProps> = ({ routeData, selectedMonumentId }) => {
-  const { isLoaded: mapsLoaded } = useGoogleMaps();
+  const { isLoaded: mapsLoaded, useFallback } = useGoogleMaps();
   const [monuments, setMonuments] = useState<Monument[]>([]);
   const [monumentsLoading, setMonumentsLoading] = useState(true);
   const [selectedMonument, setSelectedMonument] = useState<Monument | null>(null);
@@ -238,7 +239,51 @@ const MonumentsMap: React.FC<MonumentsMapProps> = ({ routeData, selectedMonument
               }}
             />
 
-            {!mapsLoaded ? (
+            {useFallback ? (
+              <>
+                <div className="rounded-xl border border-primary/20 bg-primary/5 px-4 py-3 text-sm text-muted-foreground">
+                  Showing the OpenStreetMap view — the Google Maps key isn't authorised for{" "}
+                  <span className="font-medium text-foreground">
+                    {typeof window !== "undefined" ? window.location.origin : "this domain"}
+                  </span>
+                  . Add this origin to the key's allowed referrers (or set{" "}
+                  <code className="text-xs">VITE_GOOGLE_MAPS_API_KEY</code>) to restore Google Maps.
+                </div>
+                <div className="relative rounded-2xl overflow-hidden ring-1 ring-white/10 shadow-[0_20px_60px_-20px_hsl(var(--primary)/0.35)]">
+                  <OpenStreetMapFallback
+                    center={mapCenter}
+                    zoom={mapZoom}
+                    markers={monuments.map((m) => ({
+                      id: m.id,
+                      position: m.position,
+                      title: m.name,
+                      description: m.description,
+                    }))}
+                    userLocation={userLocation}
+                    onMarkerClick={(id) => {
+                      const m = monuments.find((x) => x.id === id);
+                      if (m) setSelectedMonument(m);
+                    }}
+                  />
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {monuments.map((monument) => (
+                    <div
+                      key={monument.id}
+                      className="p-4 rounded-xl glass-panel glass-card-hover cursor-pointer border-transparent"
+                      onClick={() => {
+                        setMapCenter(monument.position);
+                        setMapZoom(15);
+                        setSelectedMonument(monument);
+                      }}
+                    >
+                      <h4 className="font-semibold text-base">{monument.name}</h4>
+                      <p className="text-sm text-muted-foreground mt-1">{monument.description}</p>
+                    </div>
+                  ))}
+                </div>
+              </>
+            ) : !mapsLoaded ? (
               <div className="flex flex-col items-center justify-center h-[600px] gap-3 rounded-lg bg-muted/30">
                 <Loader2 className="w-10 h-10 animate-spin text-primary" />
                 <p className="text-sm text-muted-foreground">Loading map…</p>

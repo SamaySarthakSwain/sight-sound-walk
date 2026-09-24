@@ -41,12 +41,12 @@ export function PlacesAutocomplete({
   bias = DEFAULT_BIAS,
   onSelect,
 }: Props) {
-  const { isLoaded } = useGoogleMaps();
+  const { isLoaded, useFallback } = useGoogleMaps();
   const [input, setInput] = useState("");
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [suggestions, setSuggestions] = useState<
-    Array<{ placeId: string; primary: string; secondary: string }>
+    Array<{ placeId: string; primary: string; secondary: string; loc?: { lat: number; lng: number } }>
   >([]);
   const [highlight, setHighlight] = useState(0);
   const sessionTokenRef = useRef<google.maps.places.AutocompleteSessionToken | null>(null);
@@ -64,11 +64,58 @@ export function PlacesAutocomplete({
 
   // Fetch predictions
   useEffect(() => {
-    if (!isLoaded || !debounced.trim() || debounced.trim().length < 2) {
+    if (!debounced.trim() || debounced.trim().length < 2) {
       setSuggestions([]);
       return;
     }
     let cancelled = false;
+
+    // Keyless fallback (OpenStreetMap Nominatim) when Google Maps isn't available.
+    if (useFallback) {
+      (async () => {
+        try {
+          setLoading(true);
+          const res = await fetch(
+            `https://nominatim.openstreetmap.org/search?format=jsonv2&limit=6&countrycodes=in&q=${encodeURIComponent(
+              debounced
+            )}`,
+            { headers: { Accept: "application/json" } }
+          );
+          const data = (await res.json()) as Array<{
+            place_id: number;
+            display_name: string;
+            lat: string;
+            lon: string;
+          }>;
+          if (cancelled) return;
+          setSuggestions(
+            (data || []).map((d) => {
+              const [head, ...rest] = d.display_name.split(",");
+              return {
+                placeId: String(d.place_id),
+                primary: head.trim(),
+                secondary: rest.join(",").trim(),
+                loc: { lat: Number(d.lat), lng: Number(d.lon) },
+              };
+            })
+          );
+          setHighlight(0);
+        } catch (err) {
+          console.warn("[PlacesAutocomplete] OSM search failed", err);
+          if (!cancelled) setSuggestions([]);
+        } finally {
+          if (!cancelled) setLoading(false);
+        }
+      })();
+      return () => {
+        cancelled = true;
+      };
+    }
+
+    if (!isLoaded) {
+      setSuggestions([]);
+      return;
+    }
     (async () => {
       try {
         setLoading(true);
@@ -113,13 +160,23 @@ export function PlacesAutocomplete({
     return () => {
       cancelled = true;
     };
-  }, [debounced, isLoaded, bias.lat, bias.lng, bias.radiusMeters]);
+  }, [debounced, isLoaded, useFallback, bias.lat, bias.lng, bias.radiusMeters]);
 
   const handleSelect = async (idx: number) => {
     const s = suggestions[idx];
     if (!s) return;
     setInput(s.primary);
     setOpen(false);
+    if (s.loc) {
+      onSelect({
+        placeId: s.placeId,
+        primaryText: s.primary,
+        secondaryText: s.secondary,
+        location: s.loc,
+        formattedAddress: [s.primary, s.secondary].filter(Boolean).join(", "),
+      });
+      return;
+    }
     try {
       const placesLib = (await google.maps.importLibrary(
         "places"
