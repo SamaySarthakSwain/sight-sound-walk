@@ -213,7 +213,7 @@ const LiveRoomContent = () => {
                                             />
                                         </div>
                                         <div className="flex-1 space-y-3 text-center sm:text-left">
-                                            <h3 className="text-lg font-bold text-foreground">Invite Others to This Room</h3>
+                                            <h2 className="text-lg font-bold text-foreground">Invite Others to This Room</h2>
                                             <p className="text-sm text-muted-foreground">
                                                 Anyone who scans this QR code will join this room. Their camera feed will appear here automatically for everyone to see.
                                             </p>
