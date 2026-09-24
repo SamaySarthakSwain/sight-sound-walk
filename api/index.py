@@ -5,6 +5,10 @@ import pandas as pd
 import numpy as np
 import os
 
+import urllib.request
+import json
+from werkzeug.exceptions import HTTPException
+
 app = Flask(__name__)
 CORS(app)
 
@@ -23,9 +27,44 @@ except Exception as e:
 
 @app.errorhandler(Exception)
 def handle_error(e):
-    # Never leak stack traces / internals to clients
+    if isinstance(e, HTTPException):
+        return jsonify({"error": e.description}), e.code
     print(f"Unhandled error: {e}")
     return jsonify({"error": "Internal server error"}), 500
+
+
+@app.route('/api/auth/google', methods=['POST', 'OPTIONS'])
+def google_auth():
+    if request.method == 'OPTIONS':
+        return jsonify({"status": "ok"}), 200
+    try:
+        data = request.get_json(silent=True) or {}
+        credential = data.get('credential')
+        
+        if not credential:
+            return jsonify({"error": "Missing Google credential"}), 400
+            
+        verify_url = f"https://oauth2.googleapis.com/tokeninfo?id_token={credential}"
+        req = urllib.request.Request(verify_url)
+        with urllib.request.urlopen(req) as response:
+            if response.status != 200:
+                return jsonify({"error": "Invalid Google Token"}), 401
+            payload = json.loads(response.read().decode('utf-8'))
+            
+        user_info = {
+            "id": payload.get("sub"),
+            "googleId": payload.get("sub"),
+            "email": payload.get("email"),
+            "name": payload.get("name"),
+            "picture": payload.get("picture")
+        }
+        
+        token = f"token_{payload.get('sub')}"
+        return jsonify({"token": token, "user": user_info}), 200
+    except Exception as e:
+        print(f"Google Auth Error: {e}")
+        return jsonify({"error": "Failed to authenticate with Google"}), 400
+
 
 
 @app.route('/api/recommend', methods=['POST'])
