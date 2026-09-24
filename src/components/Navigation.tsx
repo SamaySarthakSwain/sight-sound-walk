@@ -1,7 +1,6 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Home, Map, HelpCircle, LogIn, LogOut, User as UserIcon, Bot, UtensilsCrossed, Car, Building2, Menu, X, Box, Users, Headphones, Sun, Palette, Trophy, Zap, MoreHorizontal } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -40,20 +39,16 @@ const navItems = [
 const Navigation = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // All items except those requiring logic (currently showing all)
   const visibleNavItems = navItems;
 
-  const handleLogout = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) {
-      toast.error("Error logging out");
-    } else {
-      toast.success("Logged out successfully");
-      navigate("/");
-    }
+  const handleLogout = () => {
+    logout();
+    toast.success("Logged out successfully");
+    navigate("/");
   };
 
   const getInitials = () => {

@@ -12,6 +12,9 @@ import { ThemeProvider } from "next-themes";
 import Index from "./pages/Index";
 import { toast } from "sonner";
 import { AnimatedRoutes } from "@/components/AnimatedRoutes";
+import { GoogleOAuthProvider } from '@react-oauth/google';
+
+const GOOGLE_CLIENT_ID = "218816203507-tcapj0lr8hkrp0567q3phr5b0tj16ac8.apps.googleusercontent.com";
 
 // Lazy load heavy non-critical components
 const FloatingParticles = lazy(() => import("@/components/FloatingParticles"));
@@ -84,26 +87,28 @@ const App = () => {
 
   return (
     <ErrorBoundary>
-      <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
-        <QueryClientProvider client={queryClient}>
-          <TooltipProvider>
-            <CityProvider>
-              <BrowserRouter>
-                <GoogleMapsProvider>
-                  <Suspense fallback={null}>
-                    <FloatingParticles />
-                    <ProactiveNudgeTrigger />
-                    <OfflineBanner />
-                  </Suspense>
-                  <Toaster />
-                  <Sonner />
-                  <AnimatedRoutes />
-                </GoogleMapsProvider>
-              </BrowserRouter>
-            </CityProvider>
-          </TooltipProvider>
-        </QueryClientProvider>
-      </ThemeProvider>
+      <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
+          <QueryClientProvider client={queryClient}>
+            <TooltipProvider>
+              <CityProvider>
+                <BrowserRouter>
+                  <GoogleMapsProvider>
+                    <Suspense fallback={null}>
+                      <FloatingParticles />
+                      <ProactiveNudgeTrigger />
+                      <OfflineBanner />
+                    </Suspense>
+                    <Toaster />
+                    <Sonner />
+                    <AnimatedRoutes />
+                  </GoogleMapsProvider>
+                </BrowserRouter>
+              </CityProvider>
+            </TooltipProvider>
+          </QueryClientProvider>
+        </ThemeProvider>
+      </GoogleOAuthProvider>
     </ErrorBoundary>
   );
 };

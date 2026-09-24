@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useCity } from "@/contexts/CityContext";
 import { fallbackMonuments } from "@/data/fallbackMonuments";
-import { supabase } from "@/integrations/supabase/client";
 
 export interface Monument {
   id: string;
@@ -83,11 +82,11 @@ export const useMonuments = () => {
       setLoading(true);
       setError(null);
 
-      // Fetch from the app's database (has verified real photos)
-      const { data: dbData, error: dbError } = await supabase
-        .from("monuments")
-        .select("id,title,description,location,state,category,image_url,latitude,longitude,facts,is_featured,distance_from_berhampur,region");
-      if (dbError) throw dbError;
+      // Fetch from the app's Node.js/MongoDB backend
+      const res = await fetch("http://localhost:5000/api/monuments");
+      if (!res.ok) throw new Error("Failed to fetch monuments");
+      
+      const dbData = await res.json();
       const mappedData = (dbData || []) as unknown as Monument[];
 
       let finalRawData = mappedData;

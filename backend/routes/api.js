@@ -3,6 +3,12 @@ import mongoose from 'mongoose';
 import Monument from '../models/Monument.js';
 import FoodPlace from '../models/FoodPlace.js';
 import Hotel from '../models/Hotel.js';
+import User from '../models/User.js';
+import { OAuth2Client } from 'google-auth-library';
+import jwt from 'jsonwebtoken';
+
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+const JWT_SECRET = process.env.JWT_SECRET || 'super_secret_fallback_key';
 
 const router = express.Router();
 
@@ -61,6 +67,34 @@ router.get('/image/:id', async (req, res) => {
     downloadStream.pipe(res);
   } catch (err) {
     res.status(500).json({ error: err.message });
+  }
+});
+
+// Auth Route
+router.post('/auth/google', async (req, res) => {
+  const { credential } = req.body;
+  try {
+    const ticket = await client.verifyIdToken({
+      idToken: credential,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+    const payload = ticket.getPayload();
+    const { email, name, picture, sub: googleId } = payload;
+
+    // Find or create user
+    let user = await User.findOne({ googleId });
+    if (!user) {
+      user = new User({ email, name, picture, googleId });
+      await user.save();
+    }
+
+    // Create session token
+    const token = jwt.sign({ userId: user._id }, JWT_SECRET, { expiresIn: '7d' });
+    
+    res.json({ token, user });
+  } catch (err) {
+    console.error('Auth Error:', err);
+    res.status(401).json({ error: 'Invalid Google Token' });
   }
 });
 

@@ -1,31 +1,50 @@
 import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import type { User, Session } from "@supabase/supabase-js";
+
+export interface User {
+  id: string;
+  email: string;
+  name?: string;
+  picture?: string;
+}
 
 export const useAuth = () => {
   const [user, setUser] = useState<User | null>(null);
-  const [session, setSession] = useState<Session | null>(null);
+  const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Set up auth state listener FIRST
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-        setLoading(false);
+    const checkAuth = () => {
+      const storedToken = localStorage.getItem("auth_token");
+      const storedUser = localStorage.getItem("user");
+      
+      if (storedToken && storedUser) {
+        setToken(storedToken);
+        try {
+          setUser(JSON.parse(storedUser));
+        } catch (e) {
+          console.error("Failed to parse user data from localStorage");
+          setUser(null);
+        }
+      } else {
+        setToken(null);
+        setUser(null);
       }
-    );
-
-    // THEN check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
       setLoading(false);
-    });
+    };
 
-    return () => subscription.unsubscribe();
+    checkAuth();
+    
+    // Listen for cross-tab login/logout events
+    window.addEventListener("storage", checkAuth);
+    return () => window.removeEventListener("storage", checkAuth);
   }, []);
 
-  return { user, session, loading };
+  const logout = () => {
+    localStorage.removeItem("auth_token");
+    localStorage.removeItem("user");
+    setUser(null);
+    setToken(null);
+  };
+
+  return { user, session: { access_token: token }, loading, logout };
 };

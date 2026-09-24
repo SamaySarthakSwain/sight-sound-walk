@@ -1,298 +1,56 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable/index";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "sonner";
-import { Phone, Mail, AlertCircle, Map, ArrowLeft, Loader2 } from "lucide-react";
-import { emailAuthSchema, phoneAuthSchema } from "@/lib/validations";
+import { Map, ArrowLeft, Loader2 } from "lucide-react";
 import { AuroraBackground } from "@/components/ui/aurora-background";
-
-const getOAuthRedirectUrl = () => `${window.location.origin}/auth`;
-
-const isLovableHostedSite = () => {
-  const host = window.location.hostname;
-  return host.endsWith(".lovable.app");
-};
-
-
-const GoogleIcon = () => (
-  <svg className="w-5 h-5" viewBox="0 0 24 24">
-    <path
-      fill="#4285F4"
-      d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-    />
-    <path
-      fill="#34A853"
-      d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-    />
-    <path
-      fill="#FBBC05"
-      d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
-    />
-    <path
-      fill="#EA4335"
-      d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-    />
-  </svg>
-);
+import { GoogleLogin } from '@react-oauth/google';
 
 const Auth = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  const [googleLoading, setGoogleLoading] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [isForgotPassword, setIsForgotPassword] = useState(false);
-  const [verificationSent, setVerificationSent] = useState(false);
-  const [errors, setErrors] = useState<{ email?: string; password?: string; phone?: string }>({});
 
   useEffect(() => {
-    let hasRedirected = false;
-    const safeRedirect = () => {
-      if (hasRedirected) return;
-      hasRedirected = true;
+    // If we already have a google token saved locally, redirect to home
+    const existingToken = localStorage.getItem("auth_token");
+    if (existingToken) {
       navigate("/", { replace: true });
-    };
-
-    const exchangeCodeIfNeeded = async () => {
-      const url = new URL(window.location.href);
-      const code = url.searchParams.get("code");
-      if (!code) return;
-
-      const { error } = await supabase.auth.exchangeCodeForSession(code);
-      if (error) {
-        console.error("OAuth code exchange failed:", error);
-        toast.error("Google sign-in could not be completed. Please try again.");
-        setGoogleLoading(false);
-        return;
-      }
-
-      url.searchParams.delete("code");
-      url.searchParams.delete("state");
-      url.searchParams.delete("scope");
-      url.searchParams.delete("authuser");
-      url.searchParams.delete("prompt");
-      window.history.replaceState({}, "", url.toString());
-    };
-
-    void exchangeCodeIfNeeded();
-
-    // Listen for auth changes FIRST
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session) safeRedirect();
-    });
-
-    // THEN check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) safeRedirect();
-    });
-
-    return () => subscription.unsubscribe();
+    }
   }, [navigate]);
 
-  const validateEmailAuth = () => {
-    const result = emailAuthSchema.safeParse({ email, password });
-    if (!result.success) {
-      const fieldErrors: { email?: string; password?: string } = {};
-      result.error.errors.forEach((err) => {
-        if (err.path[0] === "email") fieldErrors.email = err.message;
-        if (err.path[0] === "password") fieldErrors.password = err.message;
-      });
-      setErrors(fieldErrors);
-      return false;
-    }
-    setErrors({});
-    return true;
-  };
-
-  const validatePhoneAuth = () => {
-    const result = phoneAuthSchema.safeParse({ phone: phoneNumber, password });
-    if (!result.success) {
-      const fieldErrors: { phone?: string; password?: string } = {};
-      result.error.errors.forEach((err) => {
-        if (err.path[0] === "phone") fieldErrors.phone = err.message;
-        if (err.path[0] === "password") fieldErrors.password = err.message;
-      });
-      setErrors(fieldErrors);
-      return false;
-    }
-    setErrors({});
-    return true;
-  };
-
-  const handleEmailSignUp = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!validateEmailAuth()) return;
-
+  const handleGoogleSuccess = async (credentialResponse: any) => {
     setLoading(true);
     try {
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          emailRedirectTo: `${window.location.origin}/auth`,
-        },
+      // Send token to our new Node.js backend
+      const response = await fetch("http://localhost:5000/api/auth/google", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ credential: credentialResponse.credential }),
       });
 
-      if (error) {
-        if (error.message.includes("already registered")) {
-          toast.error("This email is already registered. Please log in instead.");
-        } else {
-          toast.error(error.message);
-        }
-        return;
-      }
+      const data = await response.json();
+      
+      if (!response.ok) throw new Error(data.error || "Login failed");
 
-      if (data.session) {
-        toast.success("Account created successfully!");
-        navigate("/");
-      } else {
-        setVerificationSent(true);
-        toast.success("Verification email sent! Please check your inbox.");
-      }
-    } catch (err) {
-      toast.error("An unexpected error occurred during sign up.");
-      console.error(err);
+      // Save token and user details to localStorage
+      localStorage.setItem("auth_token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
+      
+      toast.success("Logged in successfully!");
+      navigate("/");
+    } catch (err: any) {
+      toast.error(err.message || "Failed to authenticate with backend.");
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleEmailLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!validateEmailAuth()) return;
-
-    setLoading(true);
-    try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-
-      if (error) {
-        if (error.message.includes("Invalid login credentials") || error.message.includes("Email not confirmed")) {
-          toast.error(error.message === "Email not confirmed" 
-            ? "Please confirm your email before logging in." 
-            : "Invalid email or password. Please try again.");
-        } else {
-          toast.error(error.message);
-        }
-      } else {
-        toast.success("Logged in successfully!");
-      }
-    } catch (err) {
-      toast.error("An unexpected error occurred during login.");
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleForgotPassword = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email) {
-      toast.error("Please enter your email address");
-      return;
-    }
-
-    setLoading(true);
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/auth?reset=true`,
-    });
-
-    setLoading(false);
-    if (error) {
-      toast.error(error.message);
-    } else {
-      toast.success("Password reset link sent to your email!");
-      setIsForgotPassword(false);
-    }
-  };
-
-  const handleOAuthSignIn = async (provider: "google") => {
-    setGoogleLoading(true);
-    try {
-      const useLovableManagedFlow = isLovableHostedSite();
-      
-      const result = useLovableManagedFlow
-        ? await lovable.auth.signInWithOAuth(provider, {
-            redirect_uri: getOAuthRedirectUrl(),
-            extraParams: { prompt: "select_account" },
-          })
-        : await supabase.auth.signInWithOAuth({
-            provider: provider,
-            options: {
-              redirectTo: getOAuthRedirectUrl(),
-              queryParams: { prompt: "select_account" },
-            },
-          });
-
-      if (result?.error) {
-        toast.error(result.error.message);
-        setGoogleLoading(false);
-      }
-      
-      // If result.data.url is present (Supabase redirect flow), navigate to it
-      const url = (result as { data?: { url?: string } } | undefined)?.data?.url;
-      if (url) {
-        window.location.assign(url);
-      }
-    } catch (err) {
-      toast.error("OAuth sign-in failed. Please try again.");
-      setGoogleLoading(false);
-    }
-  };
-
-  const handlePhoneSignUp = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!validatePhoneAuth()) return;
-
-    setLoading(true);
-    const { error } = await supabase.auth.signUp({
-      phone: phoneNumber,
-      password,
-      options: {
-        data: {
-          phone_number: phoneNumber,
-        },
-      },
-    });
-
-    setLoading(false);
-    if (error) {
-      toast.error(error.message);
-    } else {
-      toast.success("Account created! Please verify your phone number.");
-    }
-  };
-
-  const PasswordRequirements = () => (
-    <p className="text-xs text-muted-foreground mt-1">
-      Min 8 characters, 1 uppercase letter, 1 number
-    </p>
-  );
-
-  const ErrorMessage = ({ message }: { message?: string }) => {
-    if (!message) return null;
-    return (
-      <p className="text-xs text-destructive flex items-center gap-1 mt-1">
-        <AlertCircle className="w-3 h-3" />
-        {message}
-      </p>
-    );
   };
 
   return (
     <div className="min-h-screen flex flex-col relative bg-background/50">
       <AuroraBackground />
       {/* Header */}
-      <header className="p-4 md:p-6">
+      <header className="p-4 md:p-6 z-10">
         <Link to="/" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
           <ArrowLeft className="w-4 h-4" />
           <span className="text-sm">Back to home</span>
@@ -300,7 +58,7 @@ const Auth = () => {
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 flex items-center justify-center p-4 pb-8">
+      <main className="flex-1 flex items-center justify-center p-4 pb-8 z-10">
         <div className="w-full max-w-md space-y-6">
           {/* Logo */}
           <div className="text-center space-y-2">
@@ -311,260 +69,36 @@ const Auth = () => {
             <p className="text-muted-foreground text-sm md:text-base">
               Sign in to save travel history & get personalized suggestions
             </p>
-            <p className="text-xs text-muted-foreground mt-1">
-              You can explore everything without signing in too!
-            </p>
           </div>
 
-          {/* Google Sign In */}
-          <Button
-            type="button"
-            variant="outline"
-            size="lg"
-            className="w-full h-12 md:h-14 text-base font-medium border-2 hover:bg-muted/50 transition-all flex items-center justify-center gap-3"
-            onClick={() => handleOAuthSignIn("google")}
-            disabled={googleLoading || loading}
-          >
-            {googleLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <GoogleIcon />}
-            <span>Continue with Google</span>
-          </Button>
-
-          {/* Divider */}
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t" />
-            </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-background px-3 text-muted-foreground">Or continue with email</span>
-            </div>
-          </div>
-
-          {/* Auth Card */}
-          <Card className="border-0 shadow-lg glass-card">
-            <CardContent className="p-4 md:p-6">
-              <Tabs defaultValue="login" className="w-full">
-                <TabsList className="grid w-full grid-cols-2 mb-4">
-                  <TabsTrigger value="login" className="text-sm md:text-base">Login</TabsTrigger>
-                  <TabsTrigger value="signup" className="text-sm md:text-base">Sign Up</TabsTrigger>
-                </TabsList>
-
-                <TabsContent value="login" className="space-y-4 mt-0">
-                  {isForgotPassword ? (
-                    <form onSubmit={handleForgotPassword} className="space-y-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="reset-email" className="text-sm font-medium">Email Address</Label>
-                        <Input
-                          id="reset-email"
-                          type="email"
-                          placeholder="you@example.com"
-                          value={email}
-                          onChange={(e) => setEmail(e.target.value)}
-                          disabled={loading}
-                          className="h-11"
-                        />
-                      </div>
-                      <div className="flex flex-col gap-2">
-                        <Button type="submit" className="w-full h-11" disabled={loading}>
-                          {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : "Send Reset Link"}
-                        </Button>
-                        <Button 
-                          type="button" 
-                          variant="ghost" 
-                          onClick={() => setIsForgotPassword(false)}
-                          className="text-xs"
-                        >
-                          Back to Login
-                        </Button>
-                      </div>
-                    </form>
-                  ) : (
-                    <form onSubmit={handleEmailLogin} className="space-y-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="email-login" className="text-sm font-medium">Email</Label>
-                        <Input
-                          id="email-login"
-                          type="email"
-                          placeholder="you@example.com"
-                          value={email}
-                          onChange={(e) => {
-                            setEmail(e.target.value);
-                            setErrors((prev) => ({ ...prev, email: undefined }));
-                          }}
-                          disabled={loading}
-                          className={`h-11 ${errors.email ? "border-destructive" : ""}`}
-                        />
-                        <ErrorMessage message={errors.email} />
-                      </div>
-                      <div className="space-y-2">
-                        <div className="flex items-center justify-between">
-                          <Label htmlFor="password-login" className="text-sm font-medium">Password</Label>
-                          <button 
-                            type="button"
-                            onClick={() => setIsForgotPassword(true)}
-                            className="text-xs text-primary hover:underline"
-                          >
-                            Forgot?
-                          </button>
-                        </div>
-                        <Input
-                          id="password-login"
-                          type="password"
-                          placeholder="••••••••"
-                          value={password}
-                          onChange={(e) => {
-                            setPassword(e.target.value);
-                            setErrors((prev) => ({ ...prev, password: undefined }));
-                          }}
-                          disabled={loading}
-                          className={`h-11 ${errors.password ? "border-destructive" : ""}`}
-                        />
-                        <ErrorMessage message={errors.password} />
-                      </div>
-                      <Button type="submit" className="w-full h-11" disabled={loading}>
-                        {loading ? (
-                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                        ) : (
-                          <Mail className="w-4 h-4 mr-2" />
-                        )}
-                        Login with Email
-                      </Button>
-                    </form>
-                  )}
-                </TabsContent>
-
-                <TabsContent value="signup" className="space-y-4 mt-0">
-                  <Tabs defaultValue="email-signup" className="w-full">
-                    <TabsList className="grid w-full grid-cols-2 h-9">
-                      <TabsTrigger value="email-signup" className="text-xs md:text-sm">
-                        <Mail className="w-3 h-3 mr-1.5" />
-                        Email
-                      </TabsTrigger>
-                      <TabsTrigger value="phone-signup" className="text-xs md:text-sm">
-                        <Phone className="w-3 h-3 mr-1.5" />
-                        Phone
-                      </TabsTrigger>
-                    </TabsList>
-
-                    <TabsContent value="email-signup" className="space-y-4 mt-4">
-                      {verificationSent ? (
-                        <div className="text-center py-6 space-y-4">
-                          <div className="w-12 h-12 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-full flex items-center justify-center mx-auto">
-                            <Mail className="w-6 h-6" />
-                          </div>
-                          <div className="space-y-2">
-                            <h3 className="font-semibold">Check your email</h3>
-                            <p className="text-sm text-muted-foreground">
-                              We've sent a verification link to <strong>{email}</strong>. 
-                              Please click the link to activate your account.
-                            </p>
-                          </div>
-                          <Button 
-                            variant="outline" 
-                            onClick={() => setVerificationSent(false)}
-                            className="w-full"
-                          >
-                            Back to Sign Up
-                          </Button>
-                        </div>
-                      ) : (
-                        <form onSubmit={handleEmailSignUp} className="space-y-4">
-                          <div className="space-y-2">
-                            <Label htmlFor="email-signup" className="text-sm font-medium">Email</Label>
-                            <Input
-                              id="email-signup"
-                              type="email"
-                              placeholder="you@example.com"
-                              value={email}
-                              onChange={(e) => {
-                                setEmail(e.target.value);
-                                setErrors((prev) => ({ ...prev, email: undefined }));
-                              }}
-                              disabled={loading}
-                              className={`h-11 ${errors.email ? "border-destructive" : ""}`}
-                            />
-                            <ErrorMessage message={errors.email} />
-                          </div>
-                          <div className="space-y-2">
-                            <Label htmlFor="password-signup" className="text-sm font-medium">Password</Label>
-                            <Input
-                              id="password-signup"
-                              type="password"
-                              placeholder="••••••••"
-                              value={password}
-                              onChange={(e) => {
-                                setPassword(e.target.value);
-                                setErrors((prev) => ({ ...prev, password: undefined }));
-                              }}
-                              disabled={loading}
-                              className={`h-11 ${errors.password ? "border-destructive" : ""}`}
-                            />
-                            <ErrorMessage message={errors.password} />
-                            <PasswordRequirements />
-                          </div>
-                          <Button type="submit" className="w-full h-11" disabled={loading}>
-                            {loading ? (
-                              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                            ) : (
-                              <Mail className="w-4 h-4 mr-2" />
-                            )}
-                            Create Account
-                          </Button>
-                        </form>
-                      )}
-                    </TabsContent>
-
-                    <TabsContent value="phone-signup" className="space-y-4 mt-4">
-                      <form onSubmit={handlePhoneSignUp} className="space-y-4">
-                        <div className="space-y-2">
-                          <Label htmlFor="phone-signup" className="text-sm font-medium">Phone Number</Label>
-                          <Input
-                            id="phone-signup"
-                            type="tel"
-                            placeholder="+91 1234567890"
-                            value={phoneNumber}
-                            onChange={(e) => {
-                              setPhoneNumber(e.target.value);
-                              setErrors((prev) => ({ ...prev, phone: undefined }));
-                            }}
-                            disabled={loading}
-                            className={`h-11 ${errors.phone ? "border-destructive" : ""}`}
-                          />
-                          <ErrorMessage message={errors.phone} />
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="password-phone" className="text-sm font-medium">Password</Label>
-                          <Input
-                            id="password-phone"
-                            type="password"
-                            placeholder="••••••••"
-                            value={password}
-                            onChange={(e) => {
-                              setPassword(e.target.value);
-                              setErrors((prev) => ({ ...prev, password: undefined }));
-                            }}
-                            disabled={loading}
-                            className={`h-11 ${errors.password ? "border-destructive" : ""}`}
-                          />
-                          <ErrorMessage message={errors.password} />
-                          <PasswordRequirements />
-                        </div>
-                        <Button type="submit" className="w-full h-11" disabled={loading}>
-                          {loading ? (
-                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                          ) : (
-                            <Phone className="w-4 h-4 mr-2" />
-                          )}
-                          Create Account
-                        </Button>
-                      </form>
-                    </TabsContent>
-                  </Tabs>
-                </TabsContent>
-              </Tabs>
+          <Card className="border-0 shadow-lg glass-card overflow-hidden">
+            <CardContent className="p-6 md:p-8 flex flex-col items-center justify-center min-h-[200px]">
+              {loading ? (
+                <div className="flex flex-col items-center gap-4 text-muted-foreground">
+                  <Loader2 className="w-8 h-8 animate-spin text-primary" />
+                  <p>Authenticating...</p>
+                </div>
+              ) : (
+                <div className="w-full flex flex-col items-center space-y-6">
+                  <div className="text-center space-y-2">
+                    <h2 className="text-xl font-semibold">Welcome Back</h2>
+                    <p className="text-sm text-muted-foreground">One click to continue</p>
+                  </div>
+                  
+                  <div className="w-full flex justify-center scale-110">
+                    <GoogleLogin
+                      onSuccess={handleGoogleSuccess}
+                      onError={() => toast.error("Google Login popup failed or was closed")}
+                      theme="filled_black"
+                      shape="pill"
+                      text="continue_with"
+                    />
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>
 
-          {/* Footer */}
           <p className="text-center text-xs text-muted-foreground">
             By continuing, you agree to our Terms of Service and Privacy Policy
           </p>

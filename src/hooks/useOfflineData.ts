@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
+
 
 const CACHE_KEYS = {
   monuments: "offline_monuments",
@@ -18,14 +18,23 @@ export const useOfflineData = () => {
 
       try {
         // Sequential to avoid overwhelming the connection
-        const monuments = await supabase.from("monuments").select("id,title,location,category,latitude,longitude,image_url,is_featured");
-        if (monuments.data) localStorage.setItem(CACHE_KEYS.monuments, JSON.stringify(monuments.data));
+        const monRes = await fetch("http://localhost:5000/api/monuments");
+        if (monRes.ok) {
+          const monData = await monRes.json();
+          localStorage.setItem(CACHE_KEYS.monuments, JSON.stringify(monData));
+        }
 
-        const foodPlaces = await supabase.from("food_places").select("id,name,location,category,latitude,longitude,image_url,google_rating");
-        if (foodPlaces.data) localStorage.setItem(CACHE_KEYS.foodPlaces, JSON.stringify(foodPlaces.data));
+        const foodRes = await fetch("http://localhost:5000/api/food-places");
+        if (foodRes.ok) {
+          const foodData = await foodRes.json();
+          localStorage.setItem(CACHE_KEYS.foodPlaces, JSON.stringify(foodData));
+        }
 
-        const hotels = await supabase.from("hotels").select("id,name,location,star_rating,price_per_night_min,image_url,google_rating");
-        if (hotels.data) localStorage.setItem(CACHE_KEYS.hotels, JSON.stringify(hotels.data));
+        const hotelRes = await fetch("http://localhost:5000/api/hotels");
+        if (hotelRes.ok) {
+          const hotelData = await hotelRes.json();
+          localStorage.setItem(CACHE_KEYS.hotels, JSON.stringify(hotelData));
+        }
 
         localStorage.setItem(CACHE_KEYS.timestamp, String(Date.now()));
       } catch (e) {
