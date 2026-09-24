@@ -42,6 +42,8 @@ export const AnimatedRoutes = () => {
   const location = useLocation();
 
   return (
+    <>
+    <RouteMeta path={location.pathname} />
     <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
         <Route path="/" element={<PageTransition><Index /></PageTransition>} />
