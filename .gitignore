@@ -33,3 +33,7 @@ graphify-out/
 
 # Temp files
 temp_clone*/
+
+# Env files
+.env
+.env.*

@@ -14,7 +14,7 @@ import { toast } from "sonner";
 import { AnimatedRoutes } from "@/components/AnimatedRoutes";
 import { GoogleOAuthProvider } from '@react-oauth/google';
 
-const GOOGLE_CLIENT_ID = "218816203507-tcapj0lr8hkrp0567q3phr5b0tj16ac8.apps.googleusercontent.com";
+const GOOGLE_CLIENT_ID = "218816203507-1q868u09qmugc5rh3cmad18fckqu03gt.apps.googleusercontent.com";
 
 // Lazy load heavy non-critical components
 const FloatingParticles = lazy(() => import("@/components/FloatingParticles"));
