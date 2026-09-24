@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Bot, Loader2, Sparkles } from "lucide-react";
 import MorePageShell from "@/components/MorePageShell";
-import { supabase } from "@/integrations/supabase/client";
 import { useCity } from "@/contexts/CityContext";
 
 const PRESETS = [
@@ -22,11 +21,24 @@ const AgentPlanner = () => {
     setLoading(true);
     setItinerary("");
     try {
-      const { data, error } = await supabase.functions.invoke("agent-planner", {
-        body: { prompt: p, city: selectedCity?.split(",")[0] || "Bhubaneswar" },
+      const response = await fetch("http://localhost:5000/api/ai/planner", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+          query: p, 
+          userPreferences: { city: selectedCity?.split(",")[0] || "Bhubaneswar" } 
+        }),
       });
-      if (error) throw error;
-      setItinerary(data.itinerary || "No itinerary returned.");
+      
+      if (!response.ok) throw new Error("Failed to reach planner");
+      
+      const data = await response.json();
+      
+      // Our backend returns a structured JSON Object. We format it nicely.
+      const formatted = `### ${data.title}\n\n${data.description}\n\n**Budget:** ${data.budget}\n\n` + 
+        data.days.map((d: any) => `#### Day ${d.day}: ${d.title}\n${d.activities.join("\n")}`).join("\n\n");
+      
+      setItinerary(formatted || "No itinerary returned.");
     } catch {
       setItinerary("Couldn't reach the planner just now. Please try again.");
     } finally {

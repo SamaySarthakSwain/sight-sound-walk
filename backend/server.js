@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import apiRouter from './routes/api.js';
+import aiRouter from './routes/ai.js';
 
 dotenv.config();
 
@@ -19,6 +20,7 @@ mongoose.connect(mongoURI)
   .catch(err => console.error('MongoDB connection error:', err));
 
 app.use('/api', apiRouter);
+app.use('/api/ai', aiRouter);
 
 // Basic route
 app.get('/', (req, res) => {

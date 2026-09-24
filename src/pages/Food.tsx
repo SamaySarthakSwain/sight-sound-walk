@@ -6,7 +6,6 @@ import { useAuth } from "@/hooks/useAuth";
 import { useCity } from "@/contexts/CityContext";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2, UtensilsCrossed } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const Food = () => {
@@ -17,19 +16,7 @@ const Food = () => {
 
   const cityDisplayName = selectedCity.split(",")[0] || "Odisha";
 
-  // Fetch Google ratings on mount (runs once in background)
-  useEffect(() => {
-    const fetchGoogleRatings = async () => {
-      try {
-        await supabase.functions.invoke("fetch-google-ratings");
-        // Refetch to get updated Google ratings
-        setTimeout(() => refetch(), 2000);
-      } catch (error) {
-        console.error("Failed to fetch Google ratings:", error);
-      }
-    };
-    fetchGoogleRatings();
-  }, []);
+
 
   const filteredPlaces =
     activeCategory === "all"

@@ -6,6 +6,7 @@ import { WebRTCProvider } from "@/contexts/WebRTCContext";
 import { DetectionProvider } from "@/contexts/DetectionContext";
 import { PageLoadingSkeleton } from "@/components/PageLoadingSkeleton";
 import Index from "@/pages/Index";
+import { RouteMeta } from "@/components/RouteMeta";
 
 // Lazy load all non-home pages
 const Explore = lazy(() => import("@/pages/Explore"));
@@ -83,5 +84,6 @@ export const AnimatedRoutes = () => {
         <Route path="*" element={<PageTransition><Suspense fallback={<PageLoadingSkeleton />}><NotFound /></Suspense></PageTransition>} />
       </Routes>
     </AnimatePresence>
+    </>
   );
 };

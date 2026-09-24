@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
+
 import { useCity } from '@/contexts/CityContext';
 import { fallbackHotels } from '@/data/fallbackHotels';
 
@@ -41,18 +41,18 @@ export const useHotels = () => {
       
       const cityName = selectedCity.split(",")[0].toLowerCase().trim();
       
-      const { data, error: fetchError } = await supabase
-        .from('hotels_public' as any)
-        .select('*')
-        .order('star_rating', { ascending: false });
-
-
-      let hotelData: Hotel[] = ((data as unknown) as Hotel[]) || [];
-
-      if (fetchError || hotelData.length === 0) {
-        console.log('Using fallback hotels data...');
+      let hotelData: Hotel[] = [];
+      try {
+        const res = await fetch("http://localhost:5000/api/hotels");
+        if (res.ok) {
+          hotelData = await res.json();
+        } else {
+          hotelData = fallbackHotels;
+        }
+      } catch (e) {
         hotelData = fallbackHotels;
       }
+
       
       let filteredHotels = hotelData;
       

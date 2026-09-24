@@ -4,6 +4,7 @@ import Monument from '../models/Monument.js';
 import FoodPlace from '../models/FoodPlace.js';
 import Hotel from '../models/Hotel.js';
 import User from '../models/User.js';
+import Visit from '../models/Visit.js';
 import { OAuth2Client } from 'google-auth-library';
 import jwt from 'jsonwebtoken';
 
@@ -95,6 +96,26 @@ router.post('/auth/google', async (req, res) => {
   } catch (err) {
     console.error('Auth Error:', err);
     res.status(401).json({ error: 'Invalid Google Token' });
+  }
+});
+
+// Visits Routes
+router.post('/visits', async (req, res) => {
+  try {
+    const visit = new Visit(req.body);
+    await visit.save();
+    res.json(visit);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.get('/visits/:userId', async (req, res) => {
+  try {
+    const visits = await Visit.find({ user_id: req.params.userId }).sort({ visited_at: -1 });
+    res.json(visits);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
 

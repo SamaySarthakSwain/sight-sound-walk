@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { User } from "@supabase/supabase-js";
 
 export interface Achievement {
     id: string;
@@ -23,7 +22,7 @@ const defaultAchievements: Achievement[] = [
   { id: "4", title: "History Buff", description: "Visit 10 monuments", badge_icon: "Trophy", category_requirement: null, count_requirement: 10 },
 ];
 
-export const useAchievements = (user: User | null) => {
+export const useAchievements = (user: any | null) => {
     const [achievements] = useState<Achievement[]>(defaultAchievements);
     const [userAchievements] = useState<UserAchievement[]>([]);
     const [loading] = useState(false);

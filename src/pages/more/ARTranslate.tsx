@@ -1,7 +1,6 @@
 import { useRef, useState } from "react";
 import { Languages, Loader2, Camera } from "lucide-react";
 import MorePageShell from "@/components/MorePageShell";
-import { supabase } from "@/integrations/supabase/client";
 
 const ARTranslate = () => {
   const [preview, setPreview] = useState<string | null>(null);
@@ -13,11 +12,14 @@ const ARTranslate = () => {
   const translateText = async (input: string) => {
     setLoading(true);
     try {
-      const { data, error } = await supabase.functions.invoke("rag-guide", {
-        body: { messages: [{ role: "user", content: `Translate this text between Odia and English. If it's Odia, translate to English. If it's English, translate to Odia. Reply with only the translation, no explanation.\n\nText: ${input}` }] },
+      const response = await fetch("http://localhost:5000/api/ai/rag-guide", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ query: input, mode: "translate" }),
       });
-      if (error) throw error;
-      setTranslated(data.answer || "");
+      if (!response.ok) throw new Error("Failed to translate");
+      const data = await response.json();
+      setTranslated(data.result || "");
     } catch {
       setTranslated("Translation unavailable right now.");
     } finally {

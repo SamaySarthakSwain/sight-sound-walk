@@ -15,7 +15,7 @@ export const languageLabels: Record<SupportedLanguage, string> = {
   bn: "বাংলা (Bengali)",
 };
 
-const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/travel-assistant`;
+const CHAT_URL = "http://localhost:5000/api/ai/travel-assistant";
 
 // Keywords that might indicate weather-related queries
 const weatherKeywords = ["weather", "temperature", "rain", "hot", "cold", "humid", "monsoon", "climate", "forecast"];
@@ -70,7 +70,6 @@ export const useTravelChat = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
         },
         body: JSON.stringify({ 
           messages: [...messages, userMsg],

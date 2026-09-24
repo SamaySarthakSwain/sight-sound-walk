@@ -3,7 +3,6 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Trophy, Award, Map as MapIcon, Star, CheckCircle2, Lock, Landmark, Waves, History, Mic, type LucideIcon } from "lucide-react";
 import { useAchievements, Achievement } from "@/hooks/useAchievements";
-import { User } from "@supabase/supabase-js";
 import { cn } from "@/lib/utils";
 
 const iconMap: Record<string, LucideIcon> = {
@@ -46,7 +45,7 @@ const AchievementBadge = ({ achievement, earnedAt }: { achievement: Achievement;
     );
 };
 
-export const DigitalPassport = ({ user, visitCount = 0 }: { user: User, visitCount?: number }) => {
+export const DigitalPassport = ({ user, visitCount = 0 }: { user: any, visitCount?: number }) => {
     const { achievements, userAchievements, loading } = useAchievements(user);
 
     if (loading) return <div>Loading passport...</div>;

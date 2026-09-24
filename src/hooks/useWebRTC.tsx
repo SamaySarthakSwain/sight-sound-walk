@@ -1,6 +1,4 @@
 import { useEffect, useRef, useState, useCallback } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import type { RealtimeChannel } from "@supabase/supabase-js";
 
 export type PeerData = {
     id: string;
@@ -14,351 +12,72 @@ export type PeerData = {
     gpsCoords?: { lat: number; lng: number } | null;
 };
 
-const ICE_SERVERS: RTCConfiguration = {
-    iceServers: [
-        { urls: "stun:stun.l.google.com:19302" },
-        { urls: "stun:stun1.l.google.com:19302" },
-        { urls: "stun:stun2.l.google.com:19302" },
-        {
-            urls: "turn:openrelay.metered.ca:80",
-            username: "openrelayproject",
-            credential: "openrelayproject",
-        },
-        {
-            urls: "turn:openrelay.metered.ca:443",
-            username: "openrelayproject",
-            credential: "openrelayproject",
-        },
-        {
-            urls: "turn:openrelay.metered.ca:443?transport=tcp",
-            username: "openrelayproject",
-            credential: "openrelayproject",
-        },
-    ],
-    iceCandidatePoolSize: 10,
-};
-
-export const useWebRTC = (sessionId: string | null, username: string | null, location: string | null) => {
-    const [peers, setPeers] = useState<Record<string, PeerData>>({});
-    const [localStream, setLocalStreamState] = useState<MediaStream | null>(null);
-    const peersRef = useRef<Record<string, PeerData>>({});
-    const connectionsRef = useRef<Record<string, RTCPeerConnection>>({});
-    const dataChannelsRef = useRef<Record<string, RTCDataChannel>>({});
+export const useWebRTC = (
+    sessionId: string | null, 
+    userId: string | null, 
+    username: string, 
+    location: string, 
+    onPeerDataUpdate: (peers: PeerData[]) => void
+) => {
+    const [isStreaming, setIsStreaming] = useState(false);
     const localStreamRef = useRef<MediaStream | null>(null);
-    const channelRef = useRef<RealtimeChannel | null>(null);
-    const clientId = useRef(Math.random().toString(36).substring(2, 9)).current;
 
-    // We need to keep refs synced with state so we can access current state in event listeners
-    useEffect(() => {
-        peersRef.current = peers;
-    }, [peers]);
-
-    const updatePeer = useCallback((id: string, updates: Partial<PeerData>) => {
-        setPeers((prev) => {
-            const existing = prev[id] || {
-                id,
-                username: "Unknown",
-                location: "Unknown",
-                stream: null,
-                personCount: 0,
-                vehicleCount: 0,
-                bboxes: [],
-            };
-            return { ...prev, [id]: { ...existing, ...updates } };
-        });
-    }, []);
-
-    const removePeer = useCallback((id: string) => {
-        if (connectionsRef.current[id]) {
-            connectionsRef.current[id].close();
-            delete connectionsRef.current[id];
-        }
-        if (dataChannelsRef.current[id]) {
-            dataChannelsRef.current[id].close();
-            delete dataChannelsRef.current[id];
-        }
-        setPeers((prev) => {
-            const copy = { ...prev };
-            delete copy[id];
-            return copy;
-        });
-    }, []);
-
-    const broadcastMessage = useCallback((payload: Record<string, unknown>) => {
-        if (channelRef.current) {
-            channelRef.current.send({
-                type: "broadcast",
-                event: "webrtc",
-                payload: { ...payload, senderId: clientId },
-            });
-        }
-    }, [clientId]);
-
-    const createPeerConnection = useCallback((peerId: string) => {
-        if (connectionsRef.current[peerId]) {
-            connectionsRef.current[peerId].close();
-        }
-
-        const pc = new RTCPeerConnection(ICE_SERVERS);
-        connectionsRef.current[peerId] = pc;
-
-        // Create data channel for high-frequency telemetry
-        const dc = pc.createDataChannel("telemetry", { ordered: false, maxRetransmits: 0 });
-        dc.onmessage = (event) => {
-            try {
-                const data = JSON.parse(event.data);
-                if (data.type === "telemetry") {
-                    updatePeer(peerId, { 
-                        personCount: data.personCount, 
-                        vehicleCount: data.vehicleCount, 
-                        bboxes: data.bboxes 
-                    });
-                }
-            } catch {
-                // ignore parse errors from data channel
+    const startStreaming = useCallback(async (
+        personCount: number,
+        vehicleCount: number,
+        bboxes: unknown[],
+        gpsCoords: { lat: number; lng: number } | null
+    ) => {
+        if (!userId) return;
+        
+        try {
+            if (!localStreamRef.current) {
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: {
+                        facingMode: "environment",
+                        width: { ideal: 640 },
+                        height: { ideal: 480 },
+                        frameRate: { ideal: 15 },
+                    },
+                    audio: false
+                });
+                localStreamRef.current = stream;
             }
-        };
-        dataChannelsRef.current[peerId] = dc;
+            
+            setIsStreaming(true);
 
-        pc.ondatachannel = (event) => {
-            const receiveChannel = event.channel;
-            receiveChannel.onmessage = (e) => {
-                try {
-                    const data = JSON.parse(e.data);
-                    if (data.type === "telemetry") {
-                        updatePeer(peerId, { 
-                            personCount: data.personCount, 
-                            vehicleCount: data.vehicleCount, 
-                            bboxes: data.bboxes 
-                        });
-                    }
-                } catch {
-                    // ignore parse errors from received data
-                }
-            };
-            // Override with receiver channel if it exists
-            dataChannelsRef.current[peerId] = receiveChannel;
-        };
+            // Mock updating local peer data
+            onPeerDataUpdate([{
+                id: userId,
+                username,
+                location,
+                stream: localStreamRef.current,
+                personCount,
+                vehicleCount,
+                bboxes,
+                isLocal: true,
+                gpsCoords,
+            }]);
 
+        } catch (error) {
+            console.error("Error accessing camera:", error);
+        }
+    }, [userId, username, location, onPeerDataUpdate]);
+
+    const stopStreaming = useCallback(() => {
+        setIsStreaming(false);
         if (localStreamRef.current) {
-            localStreamRef.current.getTracks().forEach((track) => {
-                pc.addTrack(track, localStreamRef.current!);
-            });
+            localStreamRef.current.getTracks().forEach(track => track.stop());
+            localStreamRef.current = null;
         }
-
-        pc.onicecandidate = (event) => {
-            if (event.candidate) {
-                broadcastMessage({
-                    type: "ice-candidate",
-                    targetId: peerId,
-                    candidate: event.candidate,
-                });
-            }
-        };
-
-        pc.ontrack = (event) => {
-            updatePeer(peerId, { stream: event.streams[0] });
-        };
-
-        pc.oniceconnectionstatechange = () => {
-            if (pc.iceConnectionState === "disconnected" || pc.iceConnectionState === "failed" || pc.iceConnectionState === "closed") {
-                removePeer(peerId);
-            }
-        };
-
-        return pc;
-    }, [broadcastMessage, updatePeer, removePeer]);
-
-    const handleMetadataUpdate = useCallback((personCount: number, vehicleCount: number, bboxes?: unknown[], gpsCoords?: { lat: number; lng: number } | null) => {
-            if (!sessionId || !username) return;
-
-            // Send high-frequency data (bboxes, counts) via WebRTC Data Channels
-            const telemetryPayload = JSON.stringify({ type: "telemetry", personCount, vehicleCount, bboxes: bboxes || [] });
-            Object.values(dataChannelsRef.current).forEach(dc => {
-                if (dc.readyState === "open") {
-                    dc.send(telemetryPayload);
-                }
-            });
-
-            // Send low-frequency data (gpsCoords) via Supabase
-            if (gpsCoords) {
-                broadcastMessage({
-                    type: "metadata-update",
-                    gpsCoords,
-                });
-            }
-    }, [sessionId, username, broadcastMessage]);
+        onPeerDataUpdate([]);
+    }, [onPeerDataUpdate]);
 
     useEffect(() => {
-        if (!sessionId || !username || !location) return;
-
-        const channel = supabase.channel(`webrtc-${sessionId}`, {
-            config: { broadcast: { self: false } },
-        });
-        channelRef.current = channel;
-
-        channel
-            .on("broadcast", { event: "webrtc" }, async ({ payload }) => {
-                const { type, senderId, targetId, offer, answer, candidate, u, l, gpsCoords } = payload as Record<string, unknown>;
-
-                if (senderId === clientId) return;
-                if (targetId && targetId !== clientId) return;
-
-                console.log(`Received ${type} from ${senderId}`);
-
-                if (type === "peer-join") {
-                    updatePeer(senderId as string, { username: u as string, location: l as string });
-                    const pc = createPeerConnection(senderId as string);
-                    const newOffer = await pc.createOffer();
-                    await pc.setLocalDescription(newOffer);
-
-                    broadcastMessage({
-                        type: "sdp-offer",
-                        targetId: senderId as string,
-                        offer: newOffer,
-                        u: username,
-                        l: location,
-                    });
-                }
-                else if (type === "sdp-offer") {
-                    updatePeer(senderId as string, { username: u as string, location: l as string });
-                    const pc = createPeerConnection(senderId as string);
-                    await pc.setRemoteDescription(new RTCSessionDescription(offer as RTCSessionDescriptionInit));
-                    const newAnswer = await pc.createAnswer();
-                    await pc.setLocalDescription(newAnswer);
-
-                    broadcastMessage({
-                        type: "sdp-answer",
-                        targetId: senderId as string,
-                        answer: newAnswer,
-                    });
-                }
-                else if (type === "sdp-answer") {
-                    const pc = connectionsRef.current[senderId as string];
-                    if (pc) {
-                        await pc.setRemoteDescription(new RTCSessionDescription(answer as RTCSessionDescriptionInit));
-                    }
-                }
-                else if (type === "ice-candidate") {
-                    const pc = connectionsRef.current[senderId as string];
-                    if (pc) {
-                        await pc.addIceCandidate(new RTCIceCandidate(candidate as RTCIceCandidateInit)).catch(console.error);
-                    }
-                }
-                else if (type === "metadata-update") {
-                    updatePeer(senderId as string, { gpsCoords: (gpsCoords as { lat: number; lng: number } | null | undefined) ?? null });
-                }
-                else if (type === "peer-leave") {
-                    removePeer(senderId as string);
-                }
-            })
-            .subscribe((status) => {
-                if (status === "SUBSCRIBED") {
-                    console.log(`Joined channel webrtc-${sessionId}`);
-                    // Broadcast join to all existing peers
-                    broadcastMessage({
-                        type: "peer-join",
-                        u: username,
-                        l: location,
-                    });
-                }
-            });
-
-        // Broadcast peer-leave on page unload / tab close
-        const handleBeforeUnload = () => {
-            broadcastMessage({ type: "peer-leave" });
-        };
-        window.addEventListener("beforeunload", handleBeforeUnload);
-
         return () => {
-            broadcastMessage({ type: "peer-leave" });
-            window.removeEventListener("beforeunload", handleBeforeUnload);
-            channel.unsubscribe();
-            Object.values(connectionsRef.current).forEach((pc) => pc.close());
-            connectionsRef.current = {};
-            setPeers({});
+            stopStreaming();
         };
-    }, [sessionId, username, location, broadcastMessage, createPeerConnection, updatePeer, removePeer, clientId]);
+    }, [stopStreaming]);
 
-    const userInfoRef = useRef({ username, location });
-    useEffect(() => {
-        userInfoRef.current = { username, location };
-    }, [username, location]);
-
-    const setLocalStream = useCallback((stream: MediaStream | null) => {
-        localStreamRef.current = stream;
-        setLocalStreamState(stream);
-
-        if (!stream) {
-            // Remove tracks from all existing peer connections
-            Object.entries(connectionsRef.current).forEach(([peerId, pc]) => {
-                const senders = pc.getSenders();
-                senders.forEach(sender => {
-                    if (sender.track) {
-                        pc.removeTrack(sender);
-                    }
-                });
-
-                // Trigger renegotiation manually
-                pc.createOffer()
-                    .then(offer => pc.setLocalDescription(offer))
-                    .then(() => {
-                        broadcastMessage({
-                            type: "sdp-offer",
-                            targetId: peerId,
-                            offer: pc.localDescription,
-                            u: userInfoRef.current.username,
-                            l: userInfoRef.current.location,
-                        });
-                    })
-                    .catch(console.error);
-            });
-            return;
-        }
-
-        const existingPeers = Object.keys(connectionsRef.current);
-        if (existingPeers.length === 0) {
-            // No existing connections — re-announce so others can connect with our stream
-            broadcastMessage({
-                type: "peer-join",
-                u: userInfoRef.current.username,
-                l: userInfoRef.current.location,
-            });
-            return;
-        }
-
-        // Add tracks to all existing peer connections (if stream changed)
-        Object.entries(connectionsRef.current).forEach(([peerId, pc]) => {
-            const senders = pc.getSenders();
-            let tracksAdded = false;
-
-            stream.getTracks().forEach((track) => {
-                const sender = senders.find((s) => s.track?.kind === track.kind);
-                if (sender) {
-                    sender.replaceTrack(track);
-                } else {
-                    pc.addTrack(track, stream);
-                    tracksAdded = true;
-                }
-            });
-
-            if (tracksAdded) {
-                // Trigger renegotiation manually
-                pc.createOffer()
-                    .then(offer => pc.setLocalDescription(offer))
-                    .then(() => {
-                        broadcastMessage({
-                            type: "sdp-offer",
-                            targetId: peerId,
-                            offer: pc.localDescription,
-                            u: userInfoRef.current.username,
-                            l: userInfoRef.current.location,
-                        });
-                    })
-                    .catch(console.error);
-            }
-        });
-    }, [broadcastMessage]);
-
-    return { localStream, peers, setLocalStream, handleMetadataUpdate };
+    return { startStreaming, stopStreaming, isStreaming };
 };

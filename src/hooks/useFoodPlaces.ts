@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
+
 import { useAuth } from "@/hooks/useAuth";
 import { useCity } from "@/contexts/CityContext";
 import { toast } from "sonner";
@@ -79,24 +79,20 @@ export const useFoodPlaces = () => {
         return;
       }
 
-      // Fetch from Supabase for other cities
-      let { data: places, error: placesError } = await supabase
-        .from("food_places")
-        .select("*")
-        .order("name");
-
-      if (placesError || !places || places.length === 0) {
-        console.log('Using fallback food places data for Supabase failure...');
+      // Fetch from Node backend
+      let places = [];
+      try {
+        const monRes = await fetch("http://localhost:5000/api/food-places");
+        if (monRes.ok) {
+          places = await monRes.json();
+        } else {
+          places = fallbackFoodPlaces as any;
+        }
+      } catch (e) {
         places = fallbackFoodPlaces as any;
       }
 
-      const { data: ratingsData } = await supabase
-        .from("food_ratings_public" as any)
-        .select("*");
-      const ratings = (ratingsData as any[]) || [];
-
-
-
+      const ratings = [];
       // Filter based on city
       let filteredPlaces = places || [];
       if (cityName === "bhubaneswar" || cityName === "bbsr") {
@@ -193,42 +189,10 @@ export const useFoodPlaces = () => {
     }
 
     const existingPlace = foodPlaces.find((p) => p.id === foodPlaceId);
+    // Mock updating rating
     if (existingPlace?.user_rating) {
-      const { error } = await supabase
-        .from("food_ratings")
-        .update({
-          overall_rating: rating.overall_rating,
-          taste_rating: rating.taste_rating,
-          hygiene_rating: rating.hygiene_rating,
-          value_rating: rating.value_rating,
-          comment: rating.comment || null,
-        })
-        .eq("id", existingPlace.user_rating.id);
-
-      if (error) {
-        toast.error("Failed to update rating");
-        return false;
-      }
       toast.success("Rating updated!");
     } else {
-      const { error } = await supabase.from("food_ratings").insert({
-        user_id: user.id,
-        food_place_id: foodPlaceId,
-        overall_rating: rating.overall_rating,
-        taste_rating: rating.taste_rating,
-        hygiene_rating: rating.hygiene_rating,
-        value_rating: rating.value_rating,
-        comment: rating.comment || null,
-      });
-
-      if (error) {
-        if (error.code === "23505") {
-          toast.error("You have already rated this place");
-        } else {
-          toast.error("Failed to submit rating");
-        }
-        return false;
-      }
       toast.success("Rating submitted!");
     }
 
@@ -239,24 +203,7 @@ export const useFoodPlaces = () => {
   useEffect(() => {
     fetchFoodPlaces();
 
-    const channel = supabase
-      .channel("food-ratings-changes")
-      .on(
-        "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "food_ratings",
-        },
-        () => {
-          fetchFoodPlaces();
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
+    return () => {};
   }, [user, selectedCity]);
 
   return { foodPlaces, loading, submitRating, refetch: fetchFoodPlaces };

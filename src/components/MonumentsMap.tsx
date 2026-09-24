@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Map as MapIcon, Loader2, Navigation as NavButtonIcon } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+
 import DownloadMapButton from "./DownloadMapButton";
 import { useGoogleMaps } from "@/contexts/GoogleMapsContext";
 import PlacesAutocomplete from "./PlacesAutocomplete";
@@ -57,13 +57,14 @@ const MonumentsMap: React.FC<MonumentsMapProps> = ({ routeData, selectedMonument
     let cancelled = false;
     const fetchMonuments = async () => {
       try {
-        const { data, error } = await supabase
-          .from("monuments")
-          .select("id, title, description, latitude, longitude")
-          .not("latitude", "is", null)
-          .not("longitude", "is", null);
+        const response = await fetch("http://localhost:5000/api/monuments");
+        if (!response.ok) throw new Error("Failed to fetch");
+        const allData = await response.json();
+        
+        // Filter out those without coords
+        const data = allData.filter(m => m.latitude && m.longitude);
 
-        if (error) throw error;
+
         if (cancelled) return;
 
         const formattedMonuments: Monument[] = (data || []).map((m) => ({

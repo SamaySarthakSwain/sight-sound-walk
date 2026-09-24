@@ -74,7 +74,7 @@ const speechLangCodes: Record<SupportedLanguage, string> = {
   bn: "bn-IN",
 };
 
-const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/gemini-voice-guide`;
+const CHAT_URL = "http://localhost:5000/api/ai/voice-guide";
 
 const VoiceGuide = () => {
   const { preferredVoice, lang: ttsLang } = useTTSVoice();
@@ -258,7 +258,6 @@ const VoiceGuide = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
         },
         body: JSON.stringify({
           message: userMessage,
@@ -344,7 +343,6 @@ const VoiceGuide = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
         },
         body: JSON.stringify({
           isProactive: true,

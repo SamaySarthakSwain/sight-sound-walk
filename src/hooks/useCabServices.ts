@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+
 import { useAuth } from "./useAuth";
 
 export interface CabService {
@@ -79,13 +79,11 @@ export const useCabServices = () => {
   return useQuery({
     queryKey: ["cab-services"],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("cab_services")
-        .select("*")
-        .order("name");
-
-      if (error) throw error;
-      return data as CabService[];
+      // Mock data for Hackathon demo
+      return [
+        { id: "1", name: "Ola", phone_number: "123", rating: 4.5, is_local: false },
+        { id: "2", name: "Uber", phone_number: "456", rating: 4.6, is_local: false }
+      ] as CabService[];
     },
   });
 };
@@ -94,13 +92,11 @@ export const useVehicleTypes = () => {
   return useQuery({
     queryKey: ["vehicle-types"],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("vehicle_types")
-        .select("*")
-        .order("capacity");
-
-      if (error) throw error;
-      return data as VehicleType[];
+      // Mock vehicle types
+      return [
+        { id: "1", type: "Sedan", capacity: 4, base_rate: 50, rate_per_km: 15 },
+        { id: "2", type: "SUV", capacity: 6, base_rate: 100, rate_per_km: 20 },
+      ] as VehicleType[];
     },
   });
 };
@@ -112,17 +108,7 @@ export const useTripHistory = () => {
     queryKey: ["trip-history", user?.id],
     queryFn: async () => {
       if (!user) return [];
-      const { data, error } = await supabase
-        .from("trip_history")
-        .select("*")
-        .eq("user_id", user.id)
-        .order("created_at", { ascending: false });
-
-      if (error) throw error;
-      return data.map((trip) => ({
-        ...trip,
-        stops: (trip.stops as { name: string; lat: number; lng: number }[]) || [],
-      })) as TripHistory[];
+      return []; // Return empty trip history
     },
     enabled: !!user,
   });
@@ -136,17 +122,7 @@ export const useSaveTrip = () => {
     mutationFn: async (trip: Omit<TripHistory, "id" | "user_id" | "created_at">) => {
       if (!user) throw new Error("Must be logged in to save trip");
 
-      const { data, error } = await supabase
-        .from("trip_history")
-        .insert({
-          ...trip,
-          user_id: user.id,
-        })
-        .select()
-        .single();
-
-      if (error) throw error;
-      return data;
+      return { id: "1", ...trip };
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["trip-history"] });
@@ -162,17 +138,7 @@ export const useSaveFeedback = () => {
     mutationFn: async (feedback: Omit<TripFeedback, "id" | "user_id" | "created_at">) => {
       if (!user) throw new Error("Must be logged in to submit feedback");
 
-      const { data, error } = await supabase
-        .from("trip_feedback")
-        .insert({
-          ...feedback,
-          user_id: user.id,
-        })
-        .select()
-        .single();
-
-      if (error) throw error;
-      return data;
+      return { id: "1", ...feedback };
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["trip-history"] });

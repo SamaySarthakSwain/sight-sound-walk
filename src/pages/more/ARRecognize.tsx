@@ -1,7 +1,6 @@
 import { useRef, useState } from "react";
 import { Camera, Loader2, Upload } from "lucide-react";
 import MorePageShell from "@/components/MorePageShell";
-import { supabase } from "@/integrations/supabase/client";
 
 const ARRecognize = () => {
   const [preview, setPreview] = useState<string | null>(null);
@@ -17,12 +16,20 @@ const ARRecognize = () => {
       const dataUrl = reader.result as string;
       setPreview(dataUrl);
       try {
-        // Reuse existing describe-image style call via rag-guide? Simpler: gemini-vision through gateway.
-        const { data, error } = await supabase.functions.invoke("rag-guide", {
-          body: { messages: [{ role: "user", content: `A traveler in Odisha shows you a photo. Guess the monument or place based on architectural style typical of Odisha (Konark, Jagannath, Lingaraj, Udayagiri, Dhauli, Chilika). If uncertain, describe what heritage feature you notice. Photo filename hint: ${file.name}.` }] },
+        const response = await fetch("http://localhost:5000/api/ai/rag-guide", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ 
+            query: `Identify this monument or place based on architectural style typical of Odisha (Konark, Jagannath, Lingaraj, etc). If uncertain, describe what heritage feature you notice. Photo filename hint: ${file.name}.`,
+            mode: "recognize",
+            image: dataUrl
+          }),
         });
-        if (error) throw error;
-        setResult(data.answer || "Couldn't identify the monument.");
+        
+        if (!response.ok) throw new Error("Failed to recognize");
+        
+        const data = await response.json();
+        setResult(data.result || "Couldn't identify the monument.");
       } catch {
         setResult("Recognition service is offline. Please try again.");
       } finally {

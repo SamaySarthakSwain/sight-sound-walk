@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import Navigation from "@/components/Navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -140,62 +139,42 @@ const Profile = () => {
 
     setLoading(true);
     try {
-      // Fetch profile
-      const { data: profileData } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("id", user.id)
-        .maybeSingle();
-
-      if (!profileData) {
-        const newProfile: Profile = {
-          id: user.id,
-          full_name: user.user_metadata?.full_name || user.user_metadata?.name || null,
-          email: user.email || null,
-          avatar_url: user.user_metadata?.avatar_url || null,
-          phone_number: user.phone || null,
-        };
-        setProfile(newProfile);
-      } else {
-        setProfile(profileData);
-      }
+      const uId = user.id || user.email;
+      
+      const newProfile: Profile = {
+        id: uId,
+        full_name: user.user_metadata?.full_name || user.user_metadata?.name || user.name || null,
+        email: user.email || null,
+        avatar_url: user.user_metadata?.avatar_url || user.picture || null,
+        phone_number: user.phone || null,
+      };
+      setProfile(newProfile);
 
       // Fetch visit history
-      const { data: visits } = await supabase
-        .from("visit_history")
-        .select("*")
-        .eq("user_id", user.id)
-        .order("visited_at", { ascending: false })
-        .limit(10);
+      const visitsRes = await fetch(`http://localhost:5000/api/visits/${uId}`);
+      let visits = [];
+      if (visitsRes.ok) visits = await visitsRes.json();
+      setVisitHistory(visits);
 
-      setVisitHistory(visits || []);
+      // Get search history from localStorage
+      const localSearches = JSON.parse(localStorage.getItem('search_history') || '[]');
+      setSearchHistory(localSearches);
 
-      // Fetch search history
-      const { data: searches } = await supabase
-        .from("search_history")
-        .select("*")
-        .eq("user_id", user.id)
-        .order("searched_at", { ascending: false })
-        .limit(10);
-
-      setSearchHistory(searches || []);
-
-      // Get suggested places based on visit history categories
-      if (visits && visits.length > 0) {
+      // Get suggested places
+      if (visits.length > 0) {
         const visitedCategories = [...new Set(visits.map(v => v.place_category).filter(Boolean))];
         const visitedNames = visits.map(v => v.place_name);
 
         if (visitedCategories.length > 0) {
-          const { data: suggestions } = await supabase
-            .from("monuments")
-            .select("*")
-            .in("category", visitedCategories)
-            .limit(6);
-
-          // Filter out already visited places
-          setSuggestedPlaces(
-            ((suggestions || []) as SuggestedPlace[]).filter((s) => !visitedNames.includes(s.title))
-          );
+          const monRes = await fetch(`http://localhost:5000/api/monuments`);
+          if (monRes.ok) {
+            const allMons = await monRes.json();
+            const suggestions = allMons
+              .filter(m => visitedCategories.includes(m.category))
+              .filter(s => !visitedNames.includes(s.title))
+              .slice(0, 6);
+            setSuggestedPlaces(suggestions);
+          }
         }
       }
     } catch (error) {
@@ -206,18 +185,9 @@ const Profile = () => {
   };
 
   const clearSearchHistory = async () => {
-    if (!user) return;
-    try {
-      const { error } = await supabase
-        .from("search_history")
-        .delete()
-        .eq("user_id", user.id);
-      if (error) throw error;
-      setSearchHistory([]);
-      toast.success("Search history cleared");
-    } catch (error) {
-      toast.error("Failed to clear search history");
-    }
+    localStorage.setItem('search_history', '[]');
+    setSearchHistory([]);
+    toast.success("Search history cleared");
   };
 
   const getInitials = (name: string | null, email: string | null) => {

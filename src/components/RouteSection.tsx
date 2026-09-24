@@ -13,7 +13,7 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Navigation, MapPin, Route, Clock, Landmark, ChevronDown, Loader2 } from "lucide-react";
 import { useState, useMemo } from "react";
-import { supabase } from "@/integrations/supabase/client";
+
 import { useMonuments } from "@/hooks/useMonuments";
 import { cn } from "@/lib/utils";
 
@@ -140,21 +140,14 @@ const RouteSection: React.FC<RouteSectionProps> = ({ onRouteSelected }) => {
         setShowResults(true);
         setSelectedWaypoints([]);
 
-        // Save search history if user is logged in
-        const { data: { user } } = await supabase.auth.getUser();
-        if (user) {
-          const { error } = await supabase
-            .from('search_history')
-            .insert({
-              user_id: user.id,
-              start_location: start.name,
-              end_location: end.name,
-            });
-
-          if (error) {
-            console.error('Error saving search history:', error);
-          }
-        }
+        // Save search history in localStorage
+        const localHistory = JSON.parse(localStorage.getItem('search_history') || '[]');
+        localHistory.unshift({
+          start_location: start.name,
+          end_location: end.name,
+          searched_at: new Date().toISOString()
+        });
+        localStorage.setItem('search_history', JSON.stringify(localHistory.slice(0, 10)));
 
         // Notify parent component to display route on embedded map
         if (onRouteSelected) {

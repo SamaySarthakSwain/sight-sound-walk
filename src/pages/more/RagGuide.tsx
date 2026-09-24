@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Sparkles, Send, Loader2 } from "lucide-react";
 import MorePageShell from "@/components/MorePageShell";
-import { supabase } from "@/integrations/supabase/client";
 
 
 interface Msg { role: "user" | "assistant"; content: string; citations?: string[] }
@@ -32,11 +31,16 @@ const RagGuide = () => {
     setInput("");
     setLoading(true);
     try {
-      const { data, error } = await supabase.functions.invoke("rag-guide", {
-        body: { messages: next.map(({ role, content }) => ({ role, content })) },
+      const response = await fetch("http://localhost:5000/api/ai/rag-guide", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ query: text, mode: "qa" }),
       });
-      if (error) throw error;
-      setMessages([...next, { role: "assistant", content: data.answer, citations: data.citations }]);
+      
+      if (!response.ok) throw new Error("Failed to reach guide");
+      
+      const data = await response.json();
+      setMessages([...next, { role: "assistant", content: data.result, citations: [] }]);
     } catch (e) {
       setMessages([...next, { role: "assistant", content: "I couldn't reach the knowledge base just now. Please try again in a moment." }]);
     } finally {
