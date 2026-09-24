@@ -153,6 +153,7 @@ const LiveRoomContent = () => {
     return (
         <div className="min-h-screen bg-background flex flex-col">
             <JoinSessionModal />
+            <h1 className="sr-only">Live Room</h1>
 
             {/* Red Alert Banner */}
             <AnimatePresence>
@@ -350,17 +351,17 @@ const LiveRoomContent = () => {
                         <span className="text-xs font-bold font-mono text-purple-400">{totalVehicles}</span>
                     </div>
 
-                    <button
+                    <button aria-label="Share QR code"
                         onClick={() => setShowQR(!showQR)}
                         className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors shadow-sm ${showQR ? "bg-blue-500 text-white hover:bg-blue-600" : "bg-muted hover:bg-accent text-foreground border border-border"}`}
                         title="Share QR Code"
                     >
                         <Share2 className="w-5 h-5" />
                     </button>
-                    <button className="w-10 h-10 rounded-full bg-muted hover:bg-accent border border-border flex items-center justify-center transition-colors shadow-sm">
+                    <button aria-label="Microphone" className="w-10 h-10 rounded-full bg-muted hover:bg-accent border border-border flex items-center justify-center transition-colors shadow-sm">
                         <Mic className="w-5 h-5 text-foreground" />
                     </button>
-                    <button
+                    <button aria-label={localStream ? "Turn camera off" : "Turn camera on"}
                         onClick={toggleCamera}
                         disabled={isStartingCamera}
                         className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors relative shadow-sm border ${localStream ? "bg-red-500 hover:bg-red-600 border-red-500 shadow-[0_4px_12px_rgba(239,68,68,0.3)] text-white" : "bg-muted hover:bg-accent border-border text-foreground"
@@ -383,20 +384,20 @@ const LiveRoomContent = () => {
                             )}
                         </AnimatePresence>
                     </button>
-                    <button
+                    <button aria-label="Switch camera"
                         onClick={switchCamera}
                         className="w-10 h-10 rounded-full bg-muted hover:bg-accent border border-border flex items-center justify-center transition-colors shadow-sm text-foreground"
                         title="Switch Camera (Front/Rear)"
                     >
                         <RefreshCw className={`w-5 h-5 ${isStartingCamera ? 'animate-spin' : ''}`} />
                     </button>
-                    <button className="w-10 h-10 rounded-full bg-muted hover:bg-accent border border-border flex items-center justify-center transition-colors shadow-sm text-foreground">
+                    <button aria-label="Share screen" className="w-10 h-10 rounded-full bg-muted hover:bg-accent border border-border flex items-center justify-center transition-colors shadow-sm text-foreground">
                         <Monitor className="w-5 h-5" />
                     </button>
-                    <button className="w-10 h-10 rounded-full bg-muted hover:bg-accent border border-border flex items-center justify-center transition-colors shadow-sm text-foreground">
+                    <button aria-label="More options" className="w-10 h-10 rounded-full bg-muted hover:bg-accent border border-border flex items-center justify-center transition-colors shadow-sm text-foreground">
                         <MoreVertical className="w-5 h-5" />
                     </button>
-                    <button
+                    <button aria-label="End call"
                         onClick={() => navigate("/")}
                         className="w-14 h-10 rounded-full bg-red-500 hover:bg-red-600 flex items-center justify-center transition-colors ml-2 shadow-sm border border-red-500 text-white"
                     >
