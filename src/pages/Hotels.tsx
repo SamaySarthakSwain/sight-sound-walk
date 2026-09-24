@@ -9,6 +9,7 @@ import { useCity } from '@/contexts/CityContext';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
+import { getApiUrl } from '@/lib/apiConfig';
 import {
   Sheet,
   SheetContent,
@@ -75,7 +76,7 @@ const Hotels = () => {
     setIsAiLoading(true);
     toast.info("AI is searching real-world datasets...");
     try {
-      const res = await fetch("/api/hotels", {
+      const res = await fetch(getApiUrl("/api/hotels"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ city: cityDisplayName, query: searchQuery }),

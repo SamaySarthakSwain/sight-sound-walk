@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useCity } from "@/contexts/CityContext";
 import { fallbackMonuments } from "@/data/fallbackMonuments";
+import { getApiUrl } from "@/lib/apiConfig";
 
 export interface Monument {
   id: string;
@@ -24,7 +25,6 @@ export interface Monument {
 // In-memory cache to avoid redundant fetches across hook instances
 let monumentCache: { data: Monument[]; city: string; timestamp: number } | null = null;
 const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
 export const useMonuments = () => {
   const [monuments, setMonuments] = useState<Monument[]>(monumentCache?.data || []);
@@ -83,8 +83,8 @@ export const useMonuments = () => {
       setLoading(true);
       setError(null);
 
-      // Fetch from MongoDB backend
-      const response = await fetch(`${API_URL}/monuments`);
+      // Fetch from backend
+      const response = await fetch(getApiUrl("/api/monuments"));
       if (!response.ok) {
         throw new Error("Failed to fetch monuments from backend");
       }
@@ -99,7 +99,7 @@ export const useMonuments = () => {
         location: m.location,
         state: m.state,
         category: m.category,
-        image_url: m.image_gridfs_id ? `${API_URL}/image/${m.image_gridfs_id}` : m.image_url,
+        image_url: m.image_gridfs_id ? getApiUrl(`/image/${m.image_gridfs_id}`) : m.image_url,
         latitude: m.latitude,
         longitude: m.longitude,
         facts: m.facts,

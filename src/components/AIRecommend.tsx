@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { MapPin, Sparkles, Loader2, ArrowRight, Calendar } from "lucide-react";
 import { toast } from "sonner";
+import { getApiUrl } from "@/lib/apiConfig";
 
 interface Recommendation {
   name: string;
@@ -26,7 +27,7 @@ const AIRecommend = ({ onSelectMonument }: { onSelectMonument?: (name: string) =
 
     setLoading(true);
     try {
-      const response = await fetch("/api/recommend", {
+      const response = await fetch(getApiUrl("/api/recommend"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ interests })

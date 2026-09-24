@@ -32,6 +32,7 @@ import {
 import { useCity } from "@/contexts/CityContext";
 import { useMonuments } from "@/hooks/useMonuments";
 import { cn } from "@/lib/utils";
+import { getApiUrl } from "@/lib/apiConfig";
 import { Autocomplete } from "@react-google-maps/api";
 import { useGoogleMaps } from "@/contexts/GoogleMapsContext";
 import {
@@ -90,7 +91,7 @@ const Cabs = () => {
   // Function to get AI Fare from the backend
   const fetchAiFare = async (distanceKm: number, durationMins: number) => {
     try {
-      const response = await fetch("/api/estimate-fare", {
+      const response = await fetch(getApiUrl("/api/estimate-fare"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ distance_km: distanceKm, duration_min: durationMins })

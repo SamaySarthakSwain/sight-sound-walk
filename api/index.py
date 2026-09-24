@@ -117,6 +117,23 @@ def estimate_fare():
         return jsonify({"error": "Failed to process request"}), 500
 
 
+@app.route('/', methods=['GET'])
+@app.route('/health', methods=['GET'])
+def health_check():
+    return jsonify({
+        "status": "healthy",
+        "service": "Sight-Sound-Walk AI API",
+        "version": "1.0.0",
+        "endpoints": [
+            "/api/recommend",
+            "/api/hotels",
+            "/api/estimate-fare",
+            "/health"
+        ]
+    }), 200
+
+
 if __name__ == '__main__':
+    port = int(os.environ.get('PORT', 5000))
     debug_mode = os.environ.get('FLASK_DEBUG', '0') == '1'
-    app.run(port=5000, debug=debug_mode)
+    app.run(host='0.0.0.0', port=port, debug=debug_mode)
