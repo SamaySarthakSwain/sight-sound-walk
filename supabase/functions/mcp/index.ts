@@ -161,11 +161,5 @@ var mcp_default = defineMcp({
 });
 
 // lovable-mcp-supabase-entry.ts
-<<<<<<< HEAD
-import mcp from "npm:C:\\Users\\Lenovo\\OneDrive\\Desktop\\New Lets Explore\\sight-sound-walk\\src\\lib\\mcp\\index.ts";
-import { createSupabaseHandler } from "npm:@lovable.dev/mcp-js@0.20.1/stacks/supabase";
-Deno.serve(createSupabaseHandler(mcp, { functionName: "mcp" }));
-=======
 import { createSupabaseHandler } from "npm:@lovable.dev/mcp-js@0.20.0/stacks/supabase";
 Deno.serve(createSupabaseHandler(mcp_default, { functionName: "mcp" }));
->>>>>>> 6740fdcfc3af843e8c57becd02516eebffcc59af
