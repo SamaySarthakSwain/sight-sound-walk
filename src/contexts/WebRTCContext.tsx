@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useWebRTC as useWebRTCHook, PeerData } from '@/hooks/useWebRTC';
 
@@ -62,7 +62,43 @@ export const WebRTCProvider = ({ children }: { children: ReactNode }) => {
         setLocation(loc);
     };
 
-    const { localStream, peers, setLocalStream, handleMetadataUpdate } = useWebRTCHook(sessionId, username, location);
+    const [peers, setPeers] = useState<Record<string, PeerData>>({});
+    const [localStream, setLocalStream] = useState<MediaStream | null>(null);
+
+    const handlePeerDataUpdate = useCallback((peerList: PeerData[]) => {
+        setPeers(prev => {
+            const newPeers: Record<string, PeerData> = { ...prev };
+            peerList.forEach(p => {
+                newPeers[p.id] = p;
+            });
+            return newPeers;
+        });
+    }, []);
+
+    const { startStreaming, stopStreaming } = useWebRTCHook(
+        sessionId,
+        "local-user-id", // mock user id
+        username || "Host",
+        location || "Main Device",
+        handlePeerDataUpdate
+    );
+
+    const handleMetadataUpdate = useCallback((personCount: number, vehicleCount: number, bboxes?: unknown[], gpsCoords?: { lat: number; lng: number } | null) => {
+        setPeers(prev => {
+            const newPeers = { ...prev };
+            const localPeerKey = Object.keys(newPeers).find(key => newPeers[key].isLocal);
+            if (localPeerKey) {
+                newPeers[localPeerKey] = {
+                    ...newPeers[localPeerKey],
+                    personCount,
+                    vehicleCount,
+                    bboxes,
+                    gpsCoords: gpsCoords || newPeers[localPeerKey].gpsCoords
+                };
+            }
+            return newPeers;
+        });
+    }, []);
 
     return (
         <WebRTCContext.Provider value={{ sessionId, username, location, gpsCoords, setGpsCoords, setUserInfo, peers, localStream, setLocalStream, handleMetadataUpdate }}>

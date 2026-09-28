@@ -94,14 +94,18 @@ const App = () => {
               <CityProvider>
                 <BrowserRouter>
                   <GoogleMapsProvider>
-                    <Suspense fallback={null}>
-                      <FloatingParticles />
-                      <ProactiveNudgeTrigger />
-                      <OfflineBanner />
-                    </Suspense>
-                    <Toaster />
-                    <Sonner />
-                    <AnimatedRoutes />
+                    <DetectionProvider>
+                      <WebRTCProvider>
+                        <Suspense fallback={null}>
+                          <FloatingParticles />
+                          <ProactiveNudgeTrigger />
+                          <OfflineBanner />
+                        </Suspense>
+                        <Toaster />
+                        <Sonner />
+                        <AnimatedRoutes />
+                      </WebRTCProvider>
+                    </DetectionProvider>
                   </GoogleMapsProvider>
                 </BrowserRouter>
               </CityProvider>
