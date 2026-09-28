@@ -68,7 +68,7 @@ const LiveCameraDetection = () => {
     const loadModel = async () => {
       try {
         await tf.ready();
-        const loaded = await cocoSsd.load({ base: "mobilenet_v2" });
+        const loaded = await cocoSsd.load({ base: "lite_mobilenet_v2" });
         if (!cancelled) { setModel(loaded); setLoading(false); }
       } catch (e) {
         console.error("Model load error:", e);

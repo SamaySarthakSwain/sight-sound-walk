@@ -104,7 +104,7 @@ All colors MUST be HSL.
 
 /* Premium Glassmorphism Utilities */
 .glass-panel {
-  @apply bg-white/10 dark:bg-white/[0.03] backdrop-blur-xl border border-white/20 dark:border-white/[0.08];
+  @apply bg-white/10 dark:bg-white/[0.03] backdrop-blur-md border border-white/20 dark:border-white/[0.08];
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
 }
 
@@ -113,11 +113,11 @@ All colors MUST be HSL.
 }
 
 .glass-navbar {
-  @apply bg-white/70 dark:bg-black/60 backdrop-blur-2xl border-b border-white/20 dark:border-white/[0.06] shadow-sm transition-all duration-300;
+  @apply bg-white/70 dark:bg-black/60 backdrop-blur-md border-b border-white/20 dark:border-white/[0.06] shadow-sm transition-all duration-300;
 }
 
 .glass-card {
-  @apply bg-white/40 dark:bg-white/[0.03] backdrop-blur-xl border border-white/30 dark:border-white/[0.08] rounded-2xl transition-all duration-500;
+  @apply bg-white/40 dark:bg-white/[0.03] backdrop-blur-md border border-white/30 dark:border-white/[0.08] rounded-2xl transition-all duration-500;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
 }
 

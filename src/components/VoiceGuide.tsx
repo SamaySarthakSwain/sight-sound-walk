@@ -89,7 +89,6 @@ const VoiceGuide = () => {
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
   const [conversationHistory, setConversationHistory] = useState<ConversationMessage[]>([]);
   const [isConversationActive, setIsConversationActive] = useState(false);
-  const [audioLevel, setAudioLevel] = useState(0);
 
   const recognitionRef = useRef<SpeechRecognition | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -99,6 +98,10 @@ const VoiceGuide = () => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
   const animFrameRef = useRef<number>(0);
+  
+  const ring1Ref = useRef<HTMLDivElement>(null);
+  const ring2Ref = useRef<HTMLDivElement>(null);
+  const ring3Ref = useRef<HTMLDivElement>(null);
 
   const { toast } = useToast();
   const location = useLocation();
@@ -183,14 +186,21 @@ const VoiceGuide = () => {
       const visualize = () => {
         analyser.getByteFrequencyData(dataArray);
         const avg = dataArray.reduce((a, b) => a + b, 0) / dataArray.length;
-        setAudioLevel(avg / 255);
+        const level = avg / 255;
+        
+        if (ring1Ref.current) ring1Ref.current.style.transform = `scale(${1 + level * 0.4})`;
+        if (ring2Ref.current) ring2Ref.current.style.transform = `scale(${1 + level * 0.7})`;
+        if (ring3Ref.current) ring3Ref.current.style.transform = `scale(${1 + level * 1.0})`;
+        
         animFrameRef.current = requestAnimationFrame(visualize);
       };
       visualize();
 
       audio.onended = () => {
         setIsSpeaking(false);
-        setAudioLevel(0);
+        if (ring1Ref.current) ring1Ref.current.style.transform = 'scale(1)';
+        if (ring2Ref.current) ring2Ref.current.style.transform = 'scale(1)';
+        if (ring3Ref.current) ring3Ref.current.style.transform = 'scale(1)';
         cancelAnimationFrame(animFrameRef.current);
         revoke();
         audioCtx.close();
@@ -201,7 +211,9 @@ const VoiceGuide = () => {
 
       audio.onerror = () => {
         setIsSpeaking(false);
-        setAudioLevel(0);
+        if (ring1Ref.current) ring1Ref.current.style.transform = 'scale(1)';
+        if (ring2Ref.current) ring2Ref.current.style.transform = 'scale(1)';
+        if (ring3Ref.current) ring3Ref.current.style.transform = 'scale(1)';
         cancelAnimationFrame(animFrameRef.current);
         revoke();
         audioCtx.close();
@@ -214,7 +226,6 @@ const VoiceGuide = () => {
     } catch (err) {
       console.error("ElevenLabs TTS error:", err);
       setIsSpeaking(false);
-      setAudioLevel(0);
       speakWithWebSpeech(text);
     }
   };
@@ -531,11 +542,6 @@ const VoiceGuide = () => {
 
   const isActive = isListening || isSpeaking || isProcessing;
 
-  // Dynamic ring sizes for audio visualization
-  const ringScale1 = 1 + audioLevel * 0.4;
-  const ringScale2 = 1 + audioLevel * 0.7;
-  const ringScale3 = 1 + audioLevel * 1.0;
-
   return (
     <div className="max-w-2xl mx-auto p-4">
       <Card className="glass-card shadow-2xl overflow-hidden border-none text-foreground">
@@ -565,16 +571,19 @@ const VoiceGuide = () => {
             {isActive && (
               <>
                 <div
+                  ref={ring3Ref}
                   className="absolute inset-0 rounded-full border-2 border-primary/10 transition-transform duration-150"
-                  style={{ transform: `scale(${ringScale3})`, opacity: 0.2 }}
+                  style={{ opacity: 0.2 }}
                 />
                 <div
+                  ref={ring2Ref}
                   className="absolute inset-0 rounded-full border-2 border-primary/20 transition-transform duration-150"
-                  style={{ transform: `scale(${ringScale2})`, opacity: 0.3 }}
+                  style={{ opacity: 0.3 }}
                 />
                 <div
+                  ref={ring1Ref}
                   className="absolute inset-0 rounded-full border-2 border-primary/30 transition-transform duration-150"
-                  style={{ transform: `scale(${ringScale1})`, opacity: 0.5 }}
+                  style={{ opacity: 0.5 }}
                 />
               </>
             )}

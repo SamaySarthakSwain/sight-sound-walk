@@ -15,6 +15,7 @@ const CTASection = () => {
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-primary/5 blur-[150px] pointer-events-none"
         animate={{ scale: [1, 1.3, 1], opacity: [0.3, 0.6, 0.3] }}
         transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+        style={{ willChange: "transform, opacity" }}
       />
 
       <div className="container mx-auto px-6 md:px-12" ref={ref}>

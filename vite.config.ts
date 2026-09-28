@@ -77,6 +77,7 @@ export default defineConfig(({ mode }) => ({
           ui: ["@radix-ui/react-dialog", "@radix-ui/react-dropdown-menu", "@radix-ui/react-tabs", "@radix-ui/react-tooltip"],
           motion: ["framer-motion"],
           query: ["@tanstack/react-query"],
+          tensorflow: ["@tensorflow/tfjs", "@tensorflow-models/coco-ssd"],
         },
       },
     },

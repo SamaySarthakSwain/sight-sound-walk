@@ -97,7 +97,6 @@ const App = () => {
                     <DetectionProvider>
                       <WebRTCProvider>
                         <Suspense fallback={null}>
-                          <FloatingParticles />
                           <ProactiveNudgeTrigger />
                           <OfflineBanner />
                         </Suspense>

@@ -27,10 +27,10 @@ const AnimatedWord = ({ text, className, startIndex = 0 }: { text: string; class
         variants={letterVariants}
         initial="hidden"
         animate="visible"
-        className="inline-block"
+        className="inline-block will-change-transform"
         style={{ transformOrigin: "bottom" }}
       >
-        {char}
+        {char === " " ? "\u00A0" : char}
       </motion.span>
     ))}
   </span>
@@ -49,36 +49,26 @@ const HeroSection = () => {
 
   return (
     <section ref={sectionRef} className="relative h-screen w-full overflow-hidden">
-      {/* Background Image with Parallax */}
-      <motion.div className="absolute inset-0 z-0" style={{ y: imageY }}>
+      {/* Background Image with Parallax & Entry Animation */}
+      <motion.div 
+        className="absolute inset-0 z-0" 
+        style={{ y: imageY }}
+        initial={{ scale: 1.1, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ duration: 1.2, ease: [0.25, 0.1, 0.25, 1] }}
+      >
         <img
           src="/images/himalayas_hero.png"
           alt="Himalayas Hero Background"
           loading="eager"
           decoding="async"
           fetchPriority="high"
-          className="w-full h-[120%] object-cover"
+          className="w-full h-[120%] object-cover will-change-transform"
         />
-        {/* Light mode overlay */}
+        {/* Light/Dark mode overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-transparent dark:from-[#0A0A0C] dark:via-[#0A0A0C]/60 dark:to-transparent" />
         <div className="absolute inset-0 bg-gradient-to-r from-background/70 via-transparent to-transparent dark:from-[#0A0A0C]/80 dark:via-transparent dark:to-transparent" />
-        {/* Film grain effect */}
-        <div className="absolute inset-0 opacity-[0.03] mix-blend-overlay"
-          style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 256 256\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noise\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noise)\'/%3E%3C/svg%3E")' }}
-        />
       </motion.div>
-
-      {/* Ambient glow orbs */}
-      <motion.div
-        className="absolute top-1/4 right-1/4 w-96 h-96 rounded-full bg-primary/5 blur-[120px] pointer-events-none z-[1]"
-        animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3] }}
-        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-      />
-      <motion.div
-        className="absolute bottom-1/4 left-1/3 w-64 h-64 rounded-full bg-accent/5 blur-[100px] pointer-events-none z-[1]"
-        animate={{ scale: [1.2, 1, 1.2], opacity: [0.2, 0.4, 0.2] }}
-        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-      />
 
       {/* Sound toggle hint */}
       <motion.div

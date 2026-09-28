@@ -28,7 +28,7 @@ const StepCard = ({ step, index }: { step: typeof steps[0]; index: number }) => 
     <motion.div
       ref={ref}
       className={`flex items-start gap-6 md:gap-0 ${index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'}`}
-      style={{ scale, rotateX, opacity, perspective: 1200, transformStyle: "preserve-3d" }}
+      style={{ scale, rotateX, opacity, perspective: 1200, transformStyle: "preserve-3d", willChange: "transform, opacity" }}
     >
       {/* Content */}
       <div className={`flex-1 ${index % 2 === 0 ? 'md:pr-16 md:text-right' : 'md:pl-16'}`}>

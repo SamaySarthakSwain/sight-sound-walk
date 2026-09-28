@@ -45,7 +45,7 @@ const StatsMarquee = () => {
           transition={{
             x: { repeat: Infinity, duration: 30, ease: "linear" },
           }}
-          style={{ width: "fit-content" }}
+          style={{ width: "fit-content", willChange: "transform" }}
         >
           {marqueeItems.map((stat, i) => (
             <motion.div

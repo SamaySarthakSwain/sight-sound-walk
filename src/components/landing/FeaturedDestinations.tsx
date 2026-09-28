@@ -62,7 +62,7 @@ const DestinationCard = ({ dest, index }: { dest: typeof destinations[0]; index:
     <motion.div
       ref={ref}
       className={`flex flex-col ${index % 2 === 1 ? 'md:flex-row-reverse' : 'md:flex-row'} gap-8 md:gap-16 items-center`}
-      style={{ scale, rotateX, opacity, perspective: 1200, transformStyle: "preserve-3d" }}
+      style={{ scale, rotateX, opacity, perspective: 1200, transformStyle: "preserve-3d", willChange: "transform, opacity" }}
     >
       {/* Image */}
       <motion.div

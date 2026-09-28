@@ -100,7 +100,7 @@ const ServiceCard = ({ service, index }: { service: typeof services[0]; index: n
   return (
     <motion.div
       ref={ref}
-      style={{ scale, opacity, y, perspective: 1000 }}
+      style={{ scale, opacity, y, perspective: 1000, willChange: "transform, opacity" }}
     >
       <Link to={service.path}>
         <motion.div
