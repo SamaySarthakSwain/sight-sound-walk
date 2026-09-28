@@ -69,7 +69,150 @@ def google_auth():
         print(f"Google Auth Error: {e}")
         return jsonify({"error": "Failed to authenticate with Google"}), 400
 
+@app.route('/api/ai/voice-guide', methods=['POST'])
+def voice_guide():
+    data = request.get_json(silent=True) or {}
+    message = data.get('message', '')
+    language = data.get('language', 'en')
+    isProactive = data.get('isProactive', False)
+    monumentName = data.get('monumentName', '')
 
+    languageInstructions = {
+        'en': "Respond in English.",
+        'hi': "Respond in Hindi (हिंदी में जवाब दें).",
+        'or': "Respond in Odia (ଓଡ଼ିଆରେ ଉତ୍ତର ଦିଅନ୍ତୁ).",
+        'te': "Respond in Telugu (తెలుగులో సమాధానం ఇవ్వండి).",
+        'bn': "Respond in Bengali (বাংলায় উত্তর দিন)."
+    }
+    lang_inst = languageInstructions.get(language, languageInstructions['en'])
+
+    systemPrompt = f"""You are "Odisha Explorer", a friendly, knowledgeable local travel guide for Odisha, India.
+- Speak warmly and enthusiastically like a local guide.
+- Keep responses EXTREMELY SHORT (1 sentence max) for much faster voice playback. Be direct and helpful.
+- Never mention AI or technology.
+{lang_inst}"""
+
+    if isProactive:
+        systemPrompt += f"\nPROACTIVE MODE: The user has just arrived near {monumentName}. Give a warm, enthusiastic welcome greeting that mentions {monumentName} specifically. Max 20 words."
+
+    prompt = message or f"Tell me about {monumentName or 'this place'}"
+    if isProactive:
+        prompt = f"I have just arrived near {monumentName}. Greet me."
+
+    from google import genai
+    from google.genai import types
+    from flask import Response
+    client = genai.Client()
+
+    def generate():
+        try:
+            response_stream = client.models.generate_content_stream(
+                model='gemini-2.5-flash-lite',
+                contents=prompt,
+                config=types.GenerateContentConfig(
+                    system_instruction=systemPrompt
+                )
+            )
+            for chunk in response_stream:
+                if chunk.text:
+                    chunkData = {"choices": [{"delta": {"content": chunk.text}}]}
+                    yield f"data: {json.dumps(chunkData)}\n\n"
+            yield "data: [DONE]\n\n"
+        except Exception as e:
+            print(f"Voice Guide Error: {e}")
+            yield f"data: {json.dumps({'error': 'Failed to generate'})}\n\n"
+
+    return Response(generate(), mimetype='text/event-stream')
+
+@app.route('/api/ai/travel-assistant', methods=['POST'])
+def travel_assistant():
+    data = request.get_json(silent=True) or {}
+    messages = data.get('messages', [])
+    
+    systemPrompt = "You are a helpful travel assistant for Odisha. Provide concise, friendly answers about Odisha's culture, food, and places."
+    
+    gemini_contents = []
+    from google.genai import types
+    for m in messages:
+        if m.get('role') != 'system':
+            role = 'model' if m.get('role') == 'assistant' else 'user'
+            gemini_contents.append(
+                types.Content(role=role, parts=[types.Part.from_text(text=m.get('content'))])
+            )
+            
+    from google import genai
+    from flask import Response
+    client = genai.Client()
+
+    def generate():
+        try:
+            response_stream = client.models.generate_content_stream(
+                model='gemini-2.5-flash',
+                contents=gemini_contents,
+                config=types.GenerateContentConfig(
+                    system_instruction=systemPrompt
+                )
+            )
+            for chunk in response_stream:
+                if chunk.text:
+                    chunkData = {"choices": [{"delta": {"content": chunk.text}}]}
+                    yield f"data: {json.dumps(chunkData)}\n\n"
+            yield "data: [DONE]\n\n"
+        except Exception as e:
+            print(f"Assistant Error: {e}")
+            yield "data: [DONE]\n\n"
+
+    return Response(generate(), mimetype='text/event-stream')
+
+@app.route('/api/ai/planner', methods=['POST'])
+def ai_planner():
+    data = request.get_json(silent=True) or {}
+    query = data.get('query', '')
+    userPreferences = data.get('userPreferences', {})
+    
+    from google import genai
+    from google.genai import types
+    client = genai.Client()
+    
+    try:
+        response = client.models.generate_content(
+            model='gemini-2.5-flash',
+            contents=f"Plan a trip based on this request: \"{query}\". Preferences: {json.dumps(userPreferences)}. Return ONLY a JSON object representing a beautiful, realistic itinerary. Include 'title', 'description', 'budget', and 'days' (array of day objects).",
+            config=types.GenerateContentConfig(
+                response_mime_type="application/json"
+            )
+        )
+        return jsonify(json.loads(response.text))
+    except Exception as e:
+        print(f"Planner Error: {e}")
+        return jsonify({"error": "Failed to plan trip"}), 500
+
+@app.route('/api/ai/rag-guide', methods=['POST'])
+def rag_guide():
+    data = request.get_json(silent=True) or {}
+    query = data.get('query', '')
+    mode = data.get('mode', '')
+    image = data.get('image', None)
+    
+    prompt = query
+    if mode == "translate":
+        prompt = f"Translate this into English: {query}"
+    if mode == "recognize":
+        prompt = "Identify this monument or object in the image and tell me exactly what it is."
+        
+    from google import genai
+    client = genai.Client()
+    
+    try:
+        model_name = "gemini-2.5-flash" if image else "gemini-2.5-flash-lite"
+        response = client.models.generate_content(
+            model=model_name,
+            contents=prompt
+        )
+        return jsonify({"result": response.text})
+    except Exception as e:
+        print(f"RAG Error: {e}")
+        return jsonify({"error": "Failed to process RAG"}), 500
 
 
 @app.route('/api/recommend', methods=['POST'])

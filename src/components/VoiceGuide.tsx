@@ -644,7 +644,7 @@ const VoiceGuide = () => {
           {transcript && (
             <div className="glass-panel rounded-xl p-3 border-transparent">
               <p className="text-[10px] uppercase tracking-wider text-muted-foreground/70 mb-1 font-semibold">You said</p>
-              <p className="text-sm text-foreground">{transcript}</p>
+              <p className="text-xs text-muted-foreground italic">{transcript}</p>
             </div>
           )}
 
@@ -655,7 +655,7 @@ const VoiceGuide = () => {
                 <Sparkles className="w-3 h-3 text-primary" />
                 <p className="text-[10px] uppercase tracking-wider text-primary/70 font-semibold">Guide</p>
               </div>
-              <p className="text-sm text-foreground leading-relaxed">{response}</p>
+              <p className="text-xs text-muted-foreground leading-relaxed">{response}</p>
             </div>
           )}
 
