@@ -12,7 +12,7 @@ export default defineConfig(({ mode }) => ({
     strictPort: false,
     proxy: {
       '/api': {
-        target: 'http://localhost:5000',
+        target: 'http://127.0.0.1:5000',
         changeOrigin: true
       }
     }
@@ -25,8 +25,8 @@ export default defineConfig(({ mode }) => ({
       registerType: "autoUpdate",
       includeAssets: ["favicon.ico", "robots.txt"],
       manifest: {
-        name: "Lets Explore - Educational Tourism",
-        short_name: "LetsExplore",
+        name: "Let's Explore - Educational Tourism",
+        short_name: "Let's Explore",
         description: "Discover historical monuments with GPS-guided narration across Odisha",
         theme_color: "#e07a3f",
         background_color: "#0a0a0c",

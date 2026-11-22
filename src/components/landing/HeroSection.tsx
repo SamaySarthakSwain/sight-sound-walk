@@ -1,7 +1,9 @@
 import { motion, useScroll, useTransform } from "framer-motion";
-import { ChevronDown, Volume2 } from "lucide-react";
+import { ChevronDown, Volume2, Sparkles, Users } from "lucide-react";
 import heroCinematic from "@/assets/hero-cinematic.jpg";
 import CitySearchBox from "@/components/CitySearchBox";
+import { Button } from "@/components/ui/button";
+import ShimmerButton from "@/components/magicui/shimmer-button";
 import { useRef } from "react";
 
 const letterVariants = {
@@ -87,6 +89,23 @@ const HeroSection = () => {
         style={{ opacity: contentOpacity, y: contentY }}
       >
         <div className="container mx-auto px-6 md:px-12">
+          {/* High-tech status indicator */}
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1, duration: 0.5 }}
+            className="mb-4 inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/40 border border-white/15 backdrop-blur-md text-[11px] font-mono text-muted-foreground shadow-lg"
+          >
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
+            <span className="text-emerald-400 font-bold">SENTINEL ACTIVE</span>
+            <span>•</span>
+            <span className="text-foreground font-semibold">90+ Heritage Sites</span>
+            <span>•</span>
+            <span className="text-primary font-semibold">Sub-50ms Geofence</span>
+            <span className="hidden sm:inline">•</span>
+            <span className="text-amber-400 font-semibold hidden sm:inline">YOLOv8 Crowd Radar</span>
+          </motion.div>
+
           {/* City selector */}
           <motion.div
             initial={{ opacity: 0, y: 20, filter: "blur(10px)" }}
@@ -120,6 +139,54 @@ const HeroSection = () => {
             GPS-guided narration through India's most magnificent monuments.
             Every step reveals a story waiting to be heard.
           </motion.p>
+
+          {/* Action CTAs with MagicUI ShimmerButton */}
+          <motion.div
+            className="mt-6 flex flex-wrap items-center gap-3.5"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.85, duration: 0.6 }}
+          >
+            <a href="/flash">
+              <ShimmerButton
+                shimmerColor="#ffffff"
+                shimmerSize="0.1em"
+                background="linear-gradient(to right, hsl(var(--primary)), #f59e0b)"
+                className="shadow-xl"
+              >
+                <span className="flex items-center gap-2 text-sm font-bold tracking-wide">
+                  <Sparkles className="w-4 h-4 text-amber-200" />
+                  Explore Flashcards
+                </span>
+              </ShimmerButton>
+            </a>
+            <a href="/crowd">
+              <Button
+                variant="outline"
+                className="h-11 px-6 rounded-full glass-card border-white/20 hover:border-primary text-foreground font-semibold backdrop-blur-md gap-2"
+              >
+                <Users className="w-4 h-4 text-primary" />
+                Crowd Intelligence
+              </Button>
+            </a>
+          </motion.div>
+
+          {/* Quick Coordinates HUD */}
+          <motion.div
+            className="mt-4 flex flex-wrap items-center gap-3 text-xs font-mono text-muted-foreground/80"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.0, duration: 0.8 }}
+          >
+            <span className="flex items-center gap-1.5 text-foreground/90 font-medium">
+              <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+              19.8876° N, 86.0945° E (Konark Focal Point)
+            </span>
+            <span>•</span>
+            <span className="text-emerald-400 font-semibold">100% Verified Photography</span>
+            <span className="hidden sm:inline">•</span>
+            <span className="text-amber-400 hidden sm:inline">Offline-Ready PWA</span>
+          </motion.div>
         </div>
       </motion.div>
 

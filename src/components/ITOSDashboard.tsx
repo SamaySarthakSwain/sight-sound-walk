@@ -58,7 +58,7 @@ const ITOSDashboard = () => {
         congestion: Math.max(5, Math.min(99, n.congestion + Math.floor(Math.random() * 15) - 7)),
       }))
     );
-  }, [weather]);
+  }, []);
 
   // RL optimization loop
   const runRL = useCallback(() => {
@@ -277,8 +277,9 @@ const ITOSDashboard = () => {
           <div className="lg:col-span-3 bg-muted/20 border border-border rounded-xl overflow-hidden" style={{ height: 450 }}>
             <MapContainer center={BHUBANESWAR} zoom={13} style={{ height: "100%", width: "100%", background: 'var(--background)' }} zoomControl={false}>
               <TileLayer
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>'
-                url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+                attribution='&copy; <a href="https://www.esri.com">Esri</a>, USGS, NOAA'
+                url="https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}"
+                maxZoom={16}
               />
 
               {/* Road connections as lines */}

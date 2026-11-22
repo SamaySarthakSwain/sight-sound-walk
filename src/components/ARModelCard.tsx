@@ -2,11 +2,12 @@ import { useState, useRef, useCallback } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Maximize2, RotateCcw, Eye, MapPin, ExternalLink, Headset, Sparkles } from "lucide-react";
+import { Maximize2, RotateCcw, Eye, MapPin, ExternalLink, Headset, Sparkles, Box, Globe } from "lucide-react";
 import type { ARModel } from "@/data/arModels";
 import VRMonumentViewer from "@/components/VRMonumentViewer";
 import KonarkTimeTravelViewer from "@/components/KonarkTimeTravelViewer";
 import TimeTravelPhotoViewer from "@/components/TimeTravelPhotoViewer";
+import Local3DModelViewer from "@/components/Local3DModelViewer";
 import { useVRSession } from "@/hooks/useVRSession";
 
 interface ARModelCardProps {
@@ -19,7 +20,9 @@ const ARModelCard = ({ model }: ARModelCardProps) => {
   const [vrOpen, setVrOpen] = useState(false);
   const [immersive3DOpen, setImmersive3DOpen] = useState(false);
   const [photoTimeTravelOpen, setPhotoTimeTravelOpen] = useState(false);
+  const [viewMode, setViewMode] = useState<"local" | "embed">("local");
   const iframeRef = useRef<HTMLIFrameElement>(null);
+  const viewerContainerRef = useRef<HTMLDivElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
   const { isVRSupported } = useVRSession();
 
@@ -42,11 +45,15 @@ const ARModelCard = ({ model }: ARModelCardProps) => {
   );
 
   const handleFullscreen = () => {
-    iframeRef.current?.requestFullscreen?.();
+    if (viewMode === "embed" && iframeRef.current) {
+      iframeRef.current.requestFullscreen?.();
+    } else if (viewerContainerRef.current) {
+      viewerContainerRef.current.requestFullscreen?.();
+    }
   };
 
   const handleReload = () => {
-    if (iframeRef.current) {
+    if (viewMode === "embed" && iframeRef.current) {
       setLoaded(false);
       const src = iframeRef.current.src;
       iframeRef.current.src = "";
@@ -78,28 +85,64 @@ const ARModelCard = ({ model }: ARModelCardProps) => {
         }}
         className="group overflow-hidden glass-card glass-card-hover border-transparent transition-all duration-300"
       >
-        {/* 3D Viewer */}
-        <div className="relative w-full aspect-[4/3] bg-muted">
+        {/* 3D Viewer Container */}
+        <div ref={viewerContainerRef} className="relative w-full aspect-[4/3] bg-muted overflow-hidden">
           {inView ? (
             <>
-              {!loaded && (
-                <div className="absolute inset-0 flex items-center justify-center bg-muted z-10">
-                  <div className="flex flex-col items-center gap-2">
-                    <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-                    <span className="text-sm text-muted-foreground">Loading 3D model…</span>
-                  </div>
+              {viewMode === "local" && model.glbUrl ? (
+                <Local3DModelViewer glbUrl={model.glbUrl} name={model.name} />
+              ) : (
+                <>
+                  {!loaded && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-muted z-10">
+                      <div className="flex flex-col items-center gap-2">
+                        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+                        <span className="text-sm text-muted-foreground">Loading 3D model…</span>
+                      </div>
+                    </div>
+                  )}
+                  <iframe
+                    ref={iframeRef}
+                    title={model.name}
+                    src={model.embedUrl}
+                    className="absolute inset-0 w-full h-full"
+                    frameBorder="0"
+                    allow="autoplay; fullscreen; xr-spatial-tracking"
+                    allowFullScreen
+                    onLoad={() => setLoaded(true)}
+                  />
+                </>
+              )}
+
+              {/* View Mode Toggle (Database Native vs Cloud Embed) */}
+              {model.glbUrl && model.embedUrl && (
+                <div className="absolute top-2.5 right-2.5 z-20 flex items-center bg-slate-900/85 backdrop-blur-md p-0.5 rounded-lg border border-slate-700/60 shadow-lg text-xs">
+                  <button
+                    onClick={() => setViewMode("local")}
+                    className={`px-2 py-0.5 rounded-md flex items-center gap-1 font-medium transition-all ${
+                      viewMode === "local"
+                        ? "bg-amber-500 text-slate-950 shadow-sm"
+                        : "text-slate-300 hover:text-white"
+                    }`}
+                    title="View local database-stored 3D model"
+                  >
+                    <Box className="h-3 w-3" />
+                    Local 3D
+                  </button>
+                  <button
+                    onClick={() => setViewMode("embed")}
+                    className={`px-2 py-0.5 rounded-md flex items-center gap-1 font-medium transition-all ${
+                      viewMode === "embed"
+                        ? "bg-amber-500 text-slate-950 shadow-sm"
+                        : "text-slate-300 hover:text-white"
+                    }`}
+                    title="View cloud embed"
+                  >
+                    <Globe className="h-3 w-3" />
+                    Cloud
+                  </button>
                 </div>
               )}
-              <iframe
-                ref={iframeRef}
-                title={model.name}
-                src={model.embedUrl}
-                className="absolute inset-0 w-full h-full"
-                frameBorder="0"
-                allow="autoplay; fullscreen; xr-spatial-tracking"
-                allowFullScreen
-                onLoad={() => setLoaded(true)}
-              />
             </>
           ) : (
             <div className="absolute inset-0 flex items-center justify-center">
@@ -107,8 +150,8 @@ const ARModelCard = ({ model }: ARModelCardProps) => {
             </div>
           )}
 
-          {/* VR Badge - visible when WebXR is supported */}
-          {isVRSupported && (
+          {/* VR Badge - visible when WebXR is supported and not in embed toggle overlap */}
+          {isVRSupported && (!model.glbUrl || !model.embedUrl) && (
             <div className="absolute top-2 right-2 z-20">
               <Badge className="bg-orange-600/90 text-white text-xs gap-1 py-0.5">
                 <Headset className="h-3 w-3" />

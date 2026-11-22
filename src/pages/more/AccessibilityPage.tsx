@@ -33,7 +33,7 @@ const AccessibilityPage = () => {
   );
 
   return (
-    <MorePageShell title="Accessibility AI" subtitle="Make Lets Explore work for every traveler." icon={AccessibilityIcon} badge="Beta">
+    <MorePageShell title="Accessibility AI" subtitle="Make Let's Explore work for every traveler." icon={AccessibilityIcon} badge="Beta">
       <div className="mx-auto max-w-2xl space-y-3">
         <Toggle on={highContrast} onChange={setHighContrast} label="High contrast mode" desc="Increases contrast across the app." Icon={Contrast} />
         <Toggle on={narrator} onChange={setNarrator} label="Voice narrator" desc="Auto-narrate monument summaries with ElevenLabs." Icon={Volume2} />

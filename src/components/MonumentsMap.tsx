@@ -9,6 +9,7 @@ import DownloadMapButton from "./DownloadMapButton";
 import { useGoogleMaps } from "@/contexts/GoogleMapsContext";
 import PlacesAutocomplete from "./PlacesAutocomplete";
 import OpenStreetMapFallback from "./OpenStreetMapFallback";
+import { fallbackMonuments } from "@/data/fallbackMonuments";
 
 interface RouteData {
   start: { lat: number; lng: number };
@@ -21,11 +22,27 @@ interface MonumentsMapProps {
   selectedMonumentId?: string | null;
 }
 
+interface MonumentRaw {
+  id: string;
+  title: string;
+  latitude: number | null;
+  longitude: number | null;
+  description?: string | null;
+  category?: string;
+  location?: string;
+  image_url?: string | null;
+  rating?: number;
+}
+
 interface Monument {
   id: string;
   name: string;
   position: { lat: number; lng: number };
   description: string;
+  category?: string;
+  location?: string;
+  image_url?: string;
+  rating?: number;
 }
 
 const mapContainerStyle = {
@@ -34,10 +51,10 @@ const mapContainerStyle = {
   borderRadius: '1rem'
 };
 
-// Bhubaneswar coordinates
+// Central Odisha coordinates covering Bhubaneswar, Puri, Konark, Cuttack & Ganjam
 const center = {
-  lat: 20.2961,
-  lng: 85.8245
+  lat: 20.25,
+  lng: 85.50
 };
 
 const MonumentsMap: React.FC<MonumentsMapProps> = ({ routeData, selectedMonumentId }) => {
@@ -47,28 +64,37 @@ const MonumentsMap: React.FC<MonumentsMapProps> = ({ routeData, selectedMonument
   const [selectedMonument, setSelectedMonument] = useState<Monument | null>(null);
   const [directions, setDirections] = useState<google.maps.DirectionsResult | null>(null);
   const [mapCenter, setMapCenter] = useState(center);
-  const [mapZoom, setMapZoom] = useState(9);
+  const [mapZoom, setMapZoom] = useState(8);
   const [trafficLayer, setTrafficLayer] = useState<google.maps.TrafficLayer | null>(null);
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [watchId, setWatchId] = useState<number | null>(null);
 
-  // Fetch monuments with precise lat/lng (no region filter so we get all; filter nulls only)
+  // Fetch monuments with precise lat/lng
   useEffect(() => {
     let cancelled = false;
     const fetchMonuments = async () => {
       try {
-        const response = await fetch(getApiUrl("/api/monuments"));
-        if (!response.ok) throw new Error("Failed to fetch");
-        const allData = await response.json();
+        let allData = [];
+        try {
+          const response = await fetch(getApiUrl("/api/monuments"));
+          if (response.ok) {
+            allData = await response.json();
+          }
+        } catch {
+          allData = [];
+        }
+
+        if (!allData || allData.length === 0) {
+          allData = fallbackMonuments;
+        }
         
         // Filter out those without coords
-        const data = allData.filter(m => m.latitude && m.longitude);
-
+        const data = (allData as MonumentRaw[]).filter((m) => m.latitude && m.longitude);
 
         if (cancelled) return;
 
-        const formattedMonuments: Monument[] = (data || []).map((m) => ({
+        const formattedMonuments: Monument[] = data.map((m) => ({
           id: m.id,
           name: m.title,
           position: {
@@ -76,6 +102,10 @@ const MonumentsMap: React.FC<MonumentsMapProps> = ({ routeData, selectedMonument
             lng: Number(m.longitude) as number,
           },
           description: m.description ?? "",
+          category: m.category ?? "Heritage",
+          location: m.location ?? "Odisha",
+          image_url: m.image_url ?? "/images/monuments/konark-temple.jpg",
+          rating: m.rating ?? 4.8,
         }));
 
         setMonuments(formattedMonuments);
@@ -101,13 +131,9 @@ const MonumentsMap: React.FC<MonumentsMapProps> = ({ routeData, selectedMonument
     }
   }, [map, trafficLayer]);
 
-  // Track user's real-time location
+  // Track user's real-time location (available for "My Location" button)
   useEffect(() => {
-    // Set default location to NIST University, Berhampur as fallback
-    setUserLocation({ lat: 19.2950, lng: 84.8108 });
-
     if (navigator.geolocation) {
-      let isFirstLocation = true;
       const id = navigator.geolocation.watchPosition(
         (position) => {
           const newLocation = {
@@ -115,20 +141,14 @@ const MonumentsMap: React.FC<MonumentsMapProps> = ({ routeData, selectedMonument
             lng: position.coords.longitude
           };
           setUserLocation(newLocation);
-
-          if (isFirstLocation) {
-            setMapCenter(newLocation);
-            setMapZoom(14);
-            isFirstLocation = false;
-          }
         },
         (error) => {
           console.error('Error getting location:', error);
-          // Keep Berhampur as fallback
+          setUserLocation({ lat: 19.2950, lng: 84.8108 });
         },
         {
           enableHighAccuracy: true,
-          maximumAge: 0,
+          maximumAge: 30000,
           timeout: 5000
         }
       );
@@ -139,6 +159,8 @@ const MonumentsMap: React.FC<MonumentsMapProps> = ({ routeData, selectedMonument
           navigator.geolocation.clearWatch(id);
         }
       };
+    } else {
+      setUserLocation({ lat: 19.2950, lng: 84.8108 });
     }
   }, []);
 
@@ -260,27 +282,51 @@ const MonumentsMap: React.FC<MonumentsMapProps> = ({ routeData, selectedMonument
                       position: m.position,
                       title: m.name,
                       description: m.description,
+                      image_url: m.image_url,
                     }))}
                     userLocation={userLocation}
                     onMarkerClick={(id) => {
                       const m = monuments.find((x) => x.id === id);
-                      if (m) setSelectedMonument(m);
+                      if (m) {
+                        setSelectedMonument(m);
+                        setMapCenter(m.position);
+                        setMapZoom(15);
+                      }
                     }}
                   />
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   {monuments.map((monument) => (
                     <div
                       key={monument.id}
-                      className="p-4 rounded-xl glass-panel glass-card-hover cursor-pointer border-transparent"
+                      className="p-3.5 rounded-xl glass-panel glass-card-hover cursor-pointer border border-white/5 flex gap-3.5 items-center group transition-all"
                       onClick={() => {
                         setMapCenter(monument.position);
                         setMapZoom(15);
                         setSelectedMonument(monument);
                       }}
                     >
-                      <h4 className="font-semibold text-base">{monument.name}</h4>
-                      <p className="text-sm text-muted-foreground mt-1">{monument.description}</p>
+                      <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0 bg-muted/40 shadow-sm">
+                        <img
+                          src={monument.image_url || "/images/monuments/konark-temple.jpg"}
+                          alt={monument.name}
+                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).src = "/images/monuments/konark-temple.jpg";
+                          }}
+                        />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <span className="text-[10px] uppercase font-bold text-primary tracking-wider block">
+                          {monument.category || "Monument"}
+                        </span>
+                        <h4 className="font-semibold text-sm truncate text-foreground group-hover:text-primary transition-colors">
+                          {monument.name}
+                        </h4>
+                        <p className="text-xs text-muted-foreground truncate mt-0.5">
+                          {monument.location || monument.description}
+                        </p>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -367,9 +413,19 @@ const MonumentsMap: React.FC<MonumentsMapProps> = ({ routeData, selectedMonument
                         position={selectedMonument.position}
                         onCloseClick={() => setSelectedMonument(null)}
                       >
-                        <div className="p-2 min-w-[200px]">
+                        <div className="p-2 max-w-[240px]">
+                          {selectedMonument.image_url && (
+                            <img
+                              src={selectedMonument.image_url}
+                              alt={selectedMonument.name}
+                              className="w-full h-28 object-cover rounded-md mb-2"
+                              onError={(e) => {
+                                (e.target as HTMLElement).style.display = 'none';
+                              }}
+                            />
+                          )}
                           <h3 className="font-bold text-base mb-1">{selectedMonument.name}</h3>
-                          <p className="text-sm text-muted-foreground">
+                          <p className="text-xs text-muted-foreground line-clamp-3">
                             {selectedMonument.description || "—"}
                           </p>
                         </div>
@@ -379,15 +435,38 @@ const MonumentsMap: React.FC<MonumentsMapProps> = ({ routeData, selectedMonument
                 </div>
 
                 {/* Monument List */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   {monuments.map((monument) => (
                     <div
                       key={monument.id}
-                      className="p-4 rounded-xl glass-panel glass-card-hover cursor-pointer border-transparent"
-                      onClick={() => setSelectedMonument(monument)}
+                      className="p-3.5 rounded-xl glass-panel glass-card-hover cursor-pointer border border-white/5 flex gap-3.5 items-center group transition-all"
+                      onClick={() => {
+                        setMapCenter(monument.position);
+                        setMapZoom(15);
+                        setSelectedMonument(monument);
+                      }}
                     >
-                      <h4 className="font-semibold text-base">{monument.name}</h4>
-                      <p className="text-sm text-muted-foreground mt-1">{monument.description}</p>
+                      <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0 bg-muted/40 shadow-sm">
+                        <img
+                          src={monument.image_url || "/images/monuments/konark-temple.jpg"}
+                          alt={monument.name}
+                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).src = "/images/monuments/konark-temple.jpg";
+                          }}
+                        />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <span className="text-[10px] uppercase font-bold text-primary tracking-wider block">
+                          {monument.category || "Monument"}
+                        </span>
+                        <h4 className="font-semibold text-sm truncate text-foreground group-hover:text-primary transition-colors">
+                          {monument.name}
+                        </h4>
+                        <p className="text-xs text-muted-foreground truncate mt-0.5">
+                          {monument.location || monument.description}
+                        </p>
+                      </div>
                     </div>
                   ))}
                 </div>

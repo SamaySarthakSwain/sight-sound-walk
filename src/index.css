@@ -2,93 +2,104 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/* 
+ * REC NIST CLEAN-TECH DESIGN SYSTEM (VOLUMES 1 - 4)
+ * Authentic Physical Matte Noise Grain & Tactile Material Architecture
+ * Zero-Plasticity: Soft analog tooth, multi-stop soft shadows, chamfered 1px highlights
+ */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 224 71.4% 4.1%;
+    /* Day Mode: Artisanal Cold-Pressed Washi (#F7F9F5) with Natural Cellulose Tooth (σ = 7.2) */
+    --background: 90 14% 97.2%;
+    --foreground: 140 12% 14%; /* Deep Carbon Velvet #1A1E1B */
 
-    --card: 0 0% 100%;
-    --card-foreground: 224 71.4% 4.1%;
+    --card: 120 16% 98.2%; /* Alabaster Pure White #F8FAF8 */
+    --card-foreground: 140 12% 14%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 224 71.4% 4.1%;
+    --popover: 120 16% 98.2%;
+    --popover-foreground: 140 12% 14%;
 
-    --primary: 18 100% 60%; /* Previous Orange */
-    --primary-foreground: 210 20% 98%;
+    --primary: 22 92% 54%; /* Vibrant Tangelo O06 #F47321 */
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 220 14.3% 95.9%;
-    --secondary-foreground: 220.9 39.3% 11%;
+    --secondary: 170 100% 35.3%; /* Persian Jade Teal T04 #00B496 */
+    --secondary-foreground: 0 0% 100%;
 
-    --muted: 220 14.3% 95.9%;
-    --muted-foreground: 220 8.9% 46.1%;
+    --muted: 90 12% 93%;
+    --muted-foreground: 140 8% 44%;
 
-    --accent: 18 100% 60%;
-    --accent-foreground: 220.9 39.3% 11%;
+    --accent: 22 92% 54%;
+    --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 20% 98%;
+    --destructive: 350 84% 58%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
-    --ring: 18 100% 60%;
+    --border: 130 13% 89%; /* Ceramic Mist N09 #E5EBE6 */
+    --input: 130 13% 89%;
+    --ring: 22 92% 54%;
 
     --radius: 1rem;
 
-    --gradient-hero: linear-gradient(135deg, hsl(18 100% 60%) 0%, hsl(25 95% 53%) 100%);
-    --gradient-card: linear-gradient(145deg, hsl(0 0% 100%) 0%, hsl(240 5% 98%) 100%);
-    --gradient-subtle: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(240 5% 96%) 100%);
+    --gradient-hero: linear-gradient(135deg, #F47321 0%, #D95C1E 50%, #B24317 100%);
+    --gradient-card: linear-gradient(145deg, #FFFFFF 0%, #F7F9F5 100%);
+    --gradient-subtle: linear-gradient(180deg, #F8FAF8 0%, #E5EBE6 100%);
 
-    --shadow-soft: 0 4px 20px -2px hsl(25 30% 15% / 0.08);
-    --shadow-medium: 0 8px 30px -4px hsl(25 30% 15% / 0.12);
-    --shadow-glow: 0 0 40px hsl(18 100% 60% / 0.15);
+    /* Multi-stop soft elevation shadows from PDF Volume 1 */
+    --shadow-soft: 0 4px 18px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.03);
+    --shadow-medium: 0 8px 24px rgba(0, 0, 0, 0.08), 0 2px 6px rgba(0, 0, 0, 0.04);
+    --shadow-glow: 0 0 35px rgba(244, 115, 33, 0.14);
 
-    --glow-primary: 18 100% 60%;
-    --glow-secondary: 25 95% 53%;
+    --glow-primary: 22 92% 54%;
+    --glow-secondary: 170 100% 35.3%;
+
+    /* Day Mode Background Noise Texture (Purely on background, never over images or maps) */
+    --bg-noise: url("data:image/svg+xml,%3Csvg%20viewBox%3D%270%200%20200%20200%27%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%3E%3Cfilter%20id%3D%27noiseFilter%27%3E%3CfeTurbulence%20type%3D%27fractalNoise%27%20baseFrequency%3D%270.85%27%20numOctaves%3D%273%27%20stitchTiles%3D%27stitch%27/%3E%3CfeColorMatrix%20type%3D%27matrix%27%20values%3D%270%200%200%200%200%20%200%200%200%200%200%20%200%200%200%200%200%20%200%200%200%200.04%200%27/%3E%3C/filter%3E%3Crect%20width%3D%27100%25%27%20height%3D%27100%25%27%20filter%3D%27url%28%23noiseFilter%29%27/%3E%3C/svg%3E");
   }
 
   .dark {
-    --background: 240 10% 4%;
-    --foreground: 0 0% 88%;
+    /* Night Mode: Obsidian Carbon (#0A0D0B) with Velvety Carbon Micro-Tooth (σ = 6.2) */
+    --background: 140 13% 4.5%; /* Obsidian Carbon N01 #0A0D0B */
+    --foreground: 120 10% 92%; /* Ceramic Mist / Alabaster Cellulose #E5EBE6 */
 
-    --card: 240 8% 7%;
-    --card-foreground: 0 0% 88%;
+    --card: 135 10% 7.8%; /* Pitch Charcoal N02 #121613 */
+    --card-foreground: 120 10% 92%;
 
-    --popover: 240 8% 7%;
-    --popover-foreground: 0 0% 88%;
+    --popover: 135 10% 7.8%;
+    --popover-foreground: 120 10% 92%;
 
-    --primary: 18 100% 60%;
-    --primary-foreground: 240 10% 4%;
+    --primary: 22 92% 54%; /* Vibrant Tangelo O06 #F47321 */
+    --primary-foreground: 140 13% 4.5%;
 
-    --secondary: 240 6% 14%;
-    --secondary-foreground: 0 0% 80%;
+    --secondary: 170 100% 35.3%; /* Persian Jade Teal T04 #00B496 */
+    --secondary-foreground: 0 0% 100%;
 
-    --muted: 240 6% 12%;
-    --muted-foreground: 0 0% 45%;
+    --muted: 140 6% 11%; /* Deep Carton N03 #181D19 */
+    --muted-foreground: 120 5% 58%;
 
-    --accent: 18 100% 60%;
-    --accent-foreground: 240 10% 4%;
+    --accent: 22 92% 54%;
+    --accent-foreground: 140 13% 4.5%;
 
-    --destructive: 0 62.8% 50%;
+    --destructive: 350 75% 50%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 0 0% 12%;
-    --input: 0 0% 12%;
-    --ring: 18 100% 60%;
+    --border: 140 6% 16%; /* Dark Mineral Slate Tooth #232A25 */
+    --input: 140 6% 16%;
+    --ring: 22 92% 54%;
 
-    --gradient-hero: linear-gradient(135deg, hsl(18 100% 60%) 0%, hsl(25 95% 53%) 100%);
-    --gradient-card: linear-gradient(145deg, hsl(240 8% 6%) 0%, hsl(240 6% 9%) 100%);
-    --gradient-subtle: linear-gradient(180deg, hsl(240 10% 3%) 0%, hsl(240 8% 6%) 100%);
+    --gradient-hero: linear-gradient(135deg, #F47321 0%, #D95C1E 50%, #852E10 100%);
+    --gradient-card: linear-gradient(145deg, #121613 0%, #1A1E1B 100%);
+    --gradient-subtle: linear-gradient(180deg, #0A0D0B 0%, #121613 100%);
 
-    --shadow-soft: 0 4px 20px -2px hsl(0 0% 0% / 0.6);
-    --shadow-medium: 0 8px 30px -4px hsl(0 0% 0% / 0.7);
-    --shadow-glow: 0 0 40px hsl(18 100% 60% / 0.15);
+    --shadow-soft: 0 4px 20px -2px rgba(0, 0, 0, 0.70);
+    --shadow-medium: 0 10px 28px rgba(0, 0, 0, 0.85);
+    --shadow-glow: 0 0 40px rgba(244, 115, 33, 0.22);
 
-    --glow-primary: 18 100% 60%;
-    --glow-secondary: 25 95% 53%;
+    --glow-primary: 22 92% 54%;
+    --glow-secondary: 170 100% 35.3%;
+
+    /* Night Mode Background Noise Texture (Purely on background, never over images or maps) */
+    --bg-noise: url("data:image/svg+xml,%3Csvg%20viewBox%3D%270%200%20200%20200%27%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%3E%3Cfilter%20id%3D%27noiseFilter%27%3E%3CfeTurbulence%20type%3D%27fractalNoise%27%20baseFrequency%3D%270.80%27%20numOctaves%3D%273%27%20stitchTiles%3D%27stitch%27/%3E%3CfeColorMatrix%20type%3D%27matrix%27%20values%3D%271%201%201%200%200%20%201%201%201%200%200%20%201%201%201%200%200%20%200%200%200%200.045%200%27/%3E%3C/filter%3E%3Crect%20width%3D%27100%25%27%20height%3D%27100%25%27%20filter%3D%27url%28%23noiseFilter%29%27/%3E%3C/svg%3E");
   }
 }
 
@@ -97,36 +108,137 @@ All colors MUST be HSL.
     @apply border-border;
   }
 
-  body {
-    @apply bg-background text-foreground;
+  body, .bg-background {
+    background-color: hsl(var(--background));
+    background-image: var(--bg-noise);
+    background-repeat: repeat;
+    background-attachment: fixed;
+    color: hsl(var(--foreground));
+  }
+
+  /* 
+   * Strict Isolation for Images, Maps, Videos and 3D Canvases
+   * Completely guarantees ZERO noise on media and Leaflet map tiles
+   */
+  img,
+  video,
+  canvas,
+  iframe,
+  .leaflet-container,
+  .leaflet-tile,
+  .leaflet-pane,
+  .leaflet-map-pane,
+  .map-container {
+    background-image: none !important;
+    mix-blend-mode: normal !important;
+    isolation: isolate;
   }
 }
 
-/* Premium Glassmorphism Utilities */
+/* ==========================================================================
+   REC NIST TACTILE MATERIAL ARCHETYPES (VOLUME 1 OF 4)
+   ========================================================================== */
+
+/* 01. Solar Photovoltaic Wafer (.tex-photovoltaic) - Clean-Tech Hardware (Base #08201C, σ = 3.8) */
+.tex-photovoltaic {
+  background-color: #08201c !important;
+  background-image: 
+    linear-gradient(rgba(0, 180, 150, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 180, 150, 0.08) 1px, transparent 1px),
+    radial-gradient(circle at 50% 0%, rgba(0, 180, 150, 0.15), transparent 70%);
+  border: 1.5px solid rgba(0, 180, 150, 0.28);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.15), 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+/* 02. Artisanal Cold-Pressed Washi (.tex-washi) - Diplomas & Academic Heritage (Base #F7F9F5, σ = 7.2) */
+.tex-washi {
+  background-color: #f7f9f5 !important;
+  background-image: 
+    radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.6) 0%, transparent 60%),
+    radial-gradient(rgba(15, 94, 36, 0.04) 1px, transparent 0);
+  border: 1.5px solid rgba(15, 94, 36, 0.16);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+/* 03. Bead-Blasted Anodized Aluminum (.tex-anodized) - Robotics & Hardware (Base #2B312D, σ = 4.2) */
+.tex-anodized {
+  background-color: #2b312d !important;
+  background-image: radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.10), transparent 70%);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22), 0 10px 28px rgba(0, 0, 0, 0.40);
+}
+
+/* 04. Acid-Etched Smoked Obsidian Glass (.tex-frosted-glass) - Floating Docks (rgba(12,18,14,0.85), blur 20px) */
+.tex-frosted-glass {
+  background-color: rgba(12, 18, 14, 0.85) !important;
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border: 1px solid rgba(174, 228, 84, 0.20);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.18), 0 12px 36px rgba(0, 0, 0, 0.45);
+}
+
+/* 05. Micro-Perforated Acoustic Wool Felt (.tex-perforated-felt) - Audio & Events (#0F421E, σ = 6.8) */
+.tex-perforated-felt {
+  background-color: #0f421e !important;
+  background-image: 
+    radial-gradient(rgba(0, 0, 0, 0.45) 1.5px, transparent 1.5px),
+    radial-gradient(rgba(255, 255, 255, 0.08) 1.5px, transparent 1.5px);
+  background-size: 16px 16px, 16px 16px;
+  background-position: 0 0, 8px 8px;
+  border: 1.5px solid rgba(240, 200, 7, 0.28);
+}
+
+/* 06. Unglazed Terracotta & Diatomaceous Earth (.tex-terracotta) - Earth & Ecology (Base #852E10, σ = 6.2) */
+.tex-terracotta {
+  background-color: #852e10 !important;
+  background-image: radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.10) 0%, transparent 60%);
+  border: 1.5px solid rgba(250, 177, 118, 0.32);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.15), 0 8px 24px rgba(56, 17, 5, 0.30);
+}
+
+/* 07. Technical Drafting Blueprint Vellum (.tex-blueprint) - Schematics & Engineering (#0A1830, σ = 5.0) */
+.tex-blueprint {
+  background-color: #0a1830 !important;
+  background-image: 
+    linear-gradient(rgba(59, 208, 216, 0.12) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(59, 208, 216, 0.12) 1px, transparent 1px);
+  background-size: 40px 40px, 40px 40px;
+  border: 1.5px solid rgba(59, 208, 216, 0.28);
+}
+
+/* 1px Chamfered Highlight for Classy Tactile Edges */
+.chamfer-edge {
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22), 0 4px 18px rgba(0, 0, 0, 0.06);
+}
+.dark .chamfer-edge {
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 10px 28px rgba(0, 0, 0, 0.45);
+}
+
+/* Premium Glassmorphism & Tactile Matte Utilities */
 .glass-panel {
-  @apply bg-white/10 dark:bg-white/[0.03] backdrop-blur-md border border-white/20 dark:border-white/[0.08];
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  @apply bg-white/60 dark:bg-[#121613]/75 backdrop-blur-xl border border-[#E5EBE6] dark:border-[#2B312D]/60;
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.6);
 }
 
 .dark .glass-panel {
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.10);
 }
 
 .glass-navbar {
-  @apply bg-white/70 dark:bg-black/60 backdrop-blur-md border-b border-white/20 dark:border-white/[0.06] shadow-sm transition-all duration-300;
+  @apply bg-[#F7F9F5]/85 dark:bg-[#0A0D0B]/85 backdrop-blur-xl border-b border-[#E5EBE6] dark:border-[#2B312D]/50 shadow-sm transition-all duration-300;
 }
 
 .glass-card {
-  @apply bg-white/40 dark:bg-white/[0.03] backdrop-blur-md border border-white/30 dark:border-white/[0.08] rounded-2xl transition-all duration-500;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+  @apply bg-white/70 dark:bg-[#121613]/80 backdrop-blur-xl border border-[#E5EBE6]/80 dark:border-white/[0.08] rounded-2xl transition-all duration-500;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.6);
 }
 
 .dark .glass-card {
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.09);
 }
 
 .glass-card-hover {
-  @apply hover:-translate-y-1 hover:border-white/50 dark:hover:border-white/[0.12];
+  @apply hover:-translate-y-1 hover:border-[#F47321]/40 dark:hover:border-[#F47321]/40 hover:shadow-lg transition-all;
 }
 
 /* Thin, subtle scrollbar for modal / overlay content */

@@ -47,6 +47,7 @@ const ITOSDashboard = () => {
   const [showIncidents, setShowIncidents] = useState(true);
   const [rlStep, setRlStep] = useState(0);
   const [totalReward, setTotalReward] = useState(0);
+  const [mapStyle, setMapStyle] = useState<"dark" | "osm" | "satellite">("dark");
 
   // Simulate dynamic traffic
   const simulateTraffic = useCallback(() => {
@@ -281,12 +282,64 @@ const ITOSDashboard = () => {
 
       {/* Map */}
       <div className="bg-card/30 backdrop-blur-xl border border-primary/20 rounded-2xl p-5 shadow-[0_8px_32px_0_rgba(31,38,135,0.37)]">
-        <div className="rounded-xl overflow-hidden border border-primary/20" style={{ height: 500 }}>
+        <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-mono font-bold text-foreground">50-NODE TOPOLOGY MATRIX</span>
+            <span className="text-[10px] text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20 font-mono">
+              Real GPS Georeferenced
+            </span>
+          </div>
+          <div className="flex items-center gap-1.5 bg-background/80 p-1 rounded-lg border border-border text-xs">
+            <button
+              onClick={() => setMapStyle("dark")}
+              className={`px-2.5 py-0.5 rounded-md text-xs font-medium transition-all ${
+                mapStyle === "dark" ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              Tactical Dark
+            </button>
+            <button
+              onClick={() => setMapStyle("osm")}
+              className={`px-2.5 py-0.5 rounded-md text-xs font-medium transition-all ${
+                mapStyle === "osm" ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              Street Map
+            </button>
+            <button
+              onClick={() => setMapStyle("satellite")}
+              className={`px-2.5 py-0.5 rounded-md text-xs font-medium transition-all ${
+                mapStyle === "satellite" ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              Satellite
+            </button>
+          </div>
+        </div>
+
+        <div className="rounded-xl overflow-hidden border border-primary/20 relative" style={{ height: 500 }}>
           <MapContainer center={BHUBANESWAR} zoom={13} style={{ height: "100%", width: "100%" }} zoomControl={false}>
-            <TileLayer
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>'
-              url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
-            />
+            {mapStyle === "dark" && (
+              <TileLayer
+                attribution='&copy; <a href="https://www.esri.com">Esri</a>, USGS, NOAA'
+                url="https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}"
+                maxZoom={16}
+              />
+            )}
+            {mapStyle === "osm" && (
+              <TileLayer
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                maxZoom={18}
+              />
+            )}
+            {mapStyle === "satellite" && (
+              <TileLayer
+                attribution='&copy; <a href="https://www.esri.com">Esri</a>, Maxar, Earthstar Geographics'
+                url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+                maxZoom={18}
+              />
+            )}
 
             {/* Road connections as lines */}
             {roads.map((r, i) => {

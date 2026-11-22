@@ -1,0 +1,3098 @@
+{
+  "metadata": {
+    "archive_version": "2.4.0-production",
+    "last_indexed_at": "2026-11-22T10:52:32.199016",
+    "total_monuments": "90",
+    "total_photography_assets": "109",
+    "total_3d_ar_models": "17",
+    "storage_engine": "SQLite 3 + Persistent Public File Vault",
+    "checksum_verification": "SHA-256 Validated",
+    "resilience_level": "100% Offline-Safe / Zero External Dependency"
+  },
+  "monuments": [
+    {
+      "id": "fallback-1-1774097074234",
+      "title": "Tara Tarini Temple",
+      "description": "One of the four major Adi Shakti Peethas in India, Tara Tarini Temple sits atop Kumari Hills near the Rushikulya River. The twin goddesses Tara and Tarini are worshipped here, drawing millions of devotees annually. The temple offers breathtaking panoramic views of the lush green valleys and the winding Rushikulya River below. During Chaitra month, a grand fair attracts visitors from across Odisha.",
+      "location": "Purushottampur, Ganjam, Odisha",
+      "state": "Odisha",
+      "category": "Temple",
+      "latitude": 19.4925,
+      "longitude": 84.9015,
+      "is_featured": true,
+      "facts": [
+        "One of four Adi Shakti Peethas in India",
+        "Twin goddesses Tara and Tarini are worshipped",
+        "Located atop Kumari Hills at 708 feet elevation",
+        "Annual Chaitra Mela draws over 1 lakh devotees",
+        "Connected to Tantric Buddhist traditions"
+      ],
+      "distance_from_berhampur": "30 km",
+      "region": "berhampur",
+      "image_url": "/images/monuments/tara-tarini-temple.jpg",
+      "rating": 4.8,
+      "reviews_count": 120,
+      "created_at": "2026-03-21T12:44:34.234Z"
+    },
+    {
+      "id": "fallback-2-1774097074234",
+      "title": "Gopalpur-on-Sea Beach",
+      "description": "A pristine and serene beach town that was once a bustling seaport for maritime trade with Southeast Asia. Gopalpur Beach features golden sands stretching for kilometers, with gentle waves perfect for swimming. The old lighthouse stands as a testament to its trading past. The beach is famous for its spectacular sunrises and the annual Olive Ridley turtle nesting season.",
+      "location": "Gopalpur, Ganjam, Odisha",
+      "state": "Odisha",
+      "category": "Beach",
+      "latitude": 19.2612,
+      "longitude": 84.9077,
+      "is_featured": true,
+      "facts": [
+        "Former major seaport for Southeast Asian trade",
+        "Home to an old colonial-era lighthouse",
+        "Olive Ridley turtles nest here annually",
+        "Known for spectacular sunrise views",
+        "One of the cleanest beaches in Odisha"
+      ],
+      "distance_from_berhampur": "16 km",
+      "region": "gopalpur",
+      "image_url": "/images/monuments/gopalpur-beach.jpg",
+      "rating": 4.8,
+      "reviews_count": 120,
+      "created_at": "2026-03-21T12:44:34.235Z"
+    },
+    {
+      "id": "fallback-3-1774097074235",
+      "title": "Jaugada Fort & Ashoka Rock Edict",
+      "description": "An ancient fortified site where Emperor Ashoka's famous rock edicts were discovered, dating back to the 3rd century BCE. The edicts contain Ashoka's messages of Dhamma (righteousness) and non-violence. The fort ruins include massive stone walls, bastions, and a moat. Excavations have revealed artifacts from the Mauryan period, making it one of the most important archaeological sites in eastern India.",
+      "location": "Jaugada, Purushottampur, Ganjam, Odisha",
+      "state": "Odisha",
+      "category": "Fort",
+      "latitude": 19.5255,
+      "longitude": 84.8322,
+      "is_featured": true,
+      "facts": [
+        "Contains Emperor Ashoka's rock edicts from 3rd century BCE",
+        "One of the most important Mauryan archaeological sites in eastern India",
+        "Massive stone fortification walls still visible",
+        "Artifacts from multiple historical periods found",
+        "Mentioned in ancient texts as Samapa"
+      ],
+      "distance_from_berhampur": "30 km",
+      "region": "berhampur",
+      "image_url": "/images/monuments/fort-monument.jpg",
+      "rating": 4.8,
+      "reviews_count": 120,
+      "created_at": "2026-03-21T12:44:34.235Z"
+    },
+    {
+      "id": "fallback-4-1774097074235",
+      "title": "Bhairabi Temple",
+      "description": "An ancient temple dedicated to Goddess Bhairabi, a fierce form of Shakti. Located in the heart of Berhampur city, this temple is one of the most revered religious sites in southern Odisha. The temple architecture showcases traditional Kalinga style with intricate carvings. During Durga Puja and Navratri, the temple comes alive with elaborate celebrations and cultural programs.",
+      "location": "Berhampur, Ganjam, Odisha",
+      "state": "Odisha",
+      "category": "Temple",
+      "latitude": 19.2086,
+      "longitude": 84.7335,
+      "is_featured": true,
+      "facts": [
+        "One of the most revered temples in southern Odisha",
+        "Features traditional Kalinga architectural style",
+        "Major celebrations during Durga Puja and Navratri",
+        "Located in the heart of Berhampur city",
+        "Ancient temple with centuries of worship history"
+      ],
+      "distance_from_berhampur": "0 km",
+      "region": "berhampur",
+      "image_url": "/images/monuments/bhairabi-temple.jpg",
+      "rating": 4.8,
+      "reviews_count": 120,
+      "created_at": "2026-03-21T12:44:34.235Z"
+    },
+    {
+      "id": "fallback-5-1774097074235",
+      "title": "Taptapani Hot Springs",
+      "description": "A natural hot water spring nestled in the Eastern Ghats at an altitude of 500 meters. The sulphur-rich water maintains a constant temperature of about 56°C and is believed to have medicinal properties for skin diseases and joint pain. Surrounded by dense forests, Taptapani is also home to a wildlife sanctuary with diverse flora and fauna including elephants and deer.",
+      "location": "Taptapani, Ganjam, Odisha",
+      "state": "Odisha",
+      "category": "Natural Wonder",
+      "latitude": 19.4883,
+      "longitude": 84.3986,
+      "is_featured": true,
+      "facts": [
+        "Hot spring water maintains constant 56°C temperature",
+        "Sulphur-rich water believed to cure skin diseases",
+        "Located at 500 meters altitude in Eastern Ghats",
+        "Adjacent wildlife sanctuary with elephants and deer",
+        "One of the few natural hot springs in Odisha"
+      ],
+      "distance_from_berhampur": "51 km",
+      "region": "berhampur",
+      "image_url": "/images/monuments/taptapani-springs.jpg",
+      "rating": 4.8,
+      "reviews_count": 120,
+      "created_at": "2026-03-21T12:44:34.235Z"
+    },
+    {
+      "id": "fallback-6-1774097074235",
+      "title": "Chilika Lake (Rambha)",
+      "description": "Asia's largest brackish water lagoon, Chilika Lake near Rambha offers stunning natural beauty. The Rambha side is famous for its scenic boat rides, migratory bird watching (over 160 species), and Irrawaddy dolphin sightings. Nalabana Bird Sanctuary within the lake is a paradise for ornithologists. The lake supports a rich ecosystem with over 225 fish species and is a Ramsar Wetland of International Importance.",
+      "location": "Rambha, Ganjam, Odisha",
+      "state": "Odisha",
+      "category": "Lake",
+      "latitude": 19.5222,
+      "longitude": 85.0994,
+      "is_featured": true,
+      "facts": [
+        "Asia's largest brackish water lagoon",
+        "Over 160 migratory bird species visit annually",
+        "Home to endangered Irrawaddy dolphins",
+        "Ramsar Wetland of International Importance",
+        "Supports over 225 species of fish"
+      ],
+      "distance_from_berhampur": "50 km",
+      "region": "chilika",
+      "image_url": "/images/monuments/chilika-lake.jpg",
+      "rating": 4.8,
+      "reviews_count": 120,
+      "created_at": "2026-03-21T12:44:34.235Z"
+    },
+    {
+      "id": "fallback-7-1774097074235",
+      "title": "Narayani Temple",
+      "description": "A prominent Hindu temple dedicated to Goddess Narayani situated in the Ganjam district. The temple is known for its vibrant festivثals and spiritual significance. Devotees believe that prayers offered here are especially powerful for removing obstacles and bringing prosperity. The temple complex includes beautiful gardens and meditation spaces.",
+      "location": "Berhampur, Ganjam, Odisha",
+      "state": "Odisha",
+      "category": "Temple",
+      "latitude": 19.782,
+      "longitude": 85.163,
+      "is_featured": false,
+      "facts": [
+        "Dedicated to Goddess Narayani",
+        "Popular for removing obstacles and bringing prosperity",
+        "Vibrant festival celebrations throughout the year",
+        "Beautiful temple gardens and meditation areas",
+        "Important pilgrimage site for southern Odisha"
+      ],
+      "distance_from_berhampur": "2 km",
+      "region": "chilika",
+      "image_url": "/images/monuments/narayani-temple.jpg",
+      "rating": 4.8,
+      "reviews_count": 120,
+      "created_at": "2026-03-21T12:44:34.235Z"
+    },
+    {
+      "id": "fallback-8-1774097074235",
+      "title": "Aryapalli Beach",
+      "description": "A hidden gem among Odisha's coastline, Aryapalli Beach offers untouched golden sands and crystal-clear waters. Less commercialized than other beaches, it provides a peaceful retreat with stunning natural beauty. The beach is famous for its dramatic rock formations, tide pools teeming with marine life, and spectacular sunset views over the Bay of Bengal.",
+      "location": "Aryapalli, Ganjam, Odisha",
+      "state": "Odisha",
+      "category": "Beach",
+      "latitude": 19.3082,
+      "longitude": 84.9754,
+      "is_featured": false,
+      "facts": [
+        "One of the most pristine beaches in Odisha",
+        "Famous for dramatic rock formations and tide pools",
+        "Spectacular sunset views over Bay of Bengal",
+        "Less commercialized and peaceful retreat",
+        "Rich marine life visible in shallow waters"
+      ],
+      "distance_from_berhampur": "22 km",
+      "region": "berhampur",
+      "image_url": "/images/monuments/aryapalli-beach.jpg",
+      "rating": 4.8,
+      "reviews_count": 120,
+      "created_at": "2026-03-21T12:44:34.235Z"
+    },
+    {
+      "id": "fallback-9-1774097074235",
+      "title": "Rushikulya River Mouth",
+      "description": "The Rushikulya River mouth is one of the three mass nesting sites of Olive Ridley sea turtles in India. Every year between January and March, hundreds of thousands of turtles arrive for nesting in a spectacular natural phenomenon called Arribada. The riverbank also offers serene picnic spots, mangrove forests, and excellent birdwatching opportunities.",
+      "location": "Rushikulya, Ganjam, Odisha",
+      "state": "Odisha",
+      "category": "Natural Wonder",
+      "latitude": 19.367,
+      "longitude": 85.078,
+      "is_featured": true,
+      "facts": [
+        "One of three mass Olive Ridley turtle nesting sites in India",
+        "Hundreds of thousands of turtles arrive during Arribada",
+        "Best viewing between January and March",
+        "Mangrove forests along the riverbank",
+        "Important ecological conservation zone"
+      ],
+      "distance_from_berhampur": "35 km",
+      "region": "berhampur",
+      "image_url": "/images/monuments/rushikulya-river.jpg",
+      "rating": 4.8,
+      "reviews_count": 120,
+      "created_at": "2026-03-21T12:44:34.235Z"
+    },
+    {
+      "id": "fallback-10-1774097074235",
+      "title": "Potagarh Fort",
+      "description": "A historical fort built during the Bhoi dynasty period, Potagarh Fort served as a strategic military outpost. The ruins include massive laterite walls, watchtowers, and remnants of royal quarters. The fort sits on elevated ground offering commanding views of the surrounding countryside. Local legends speak of hidden tunnels connecting it to nearby temples.",
+      "location": "Potagarh, Ganjam, Odisha",
+      "state": "Odisha",
+      "category": "Fort",
+      "latitude": 19.3688,
+      "longitude": 85.0601,
+      "is_featured": false,
+      "facts": [
+        "Built during the Bhoi dynasty period",
+        "Massive laterite walls still standing",
+        "Strategic military outpost with watchtowers",
+        "Legends of hidden tunnels to nearby temples",
+        "Panoramic views of surrounding countryside"
+      ],
+      "distance_from_berhampur": "12 km",
+      "region": "berhampur",
+      "image_url": "/images/monuments/potagarh-fort.jpg",
+      "rating": 4.8,
+      "reviews_count": 120,
+      "created_at": "2026-03-21T12:44:34.235Z"
+    },
+    {
+      "id": "fallback-11-1774097074235",
+      "title": "Nirmaljhar Waterfall",
+      "description": "A beautiful seasonal waterfall located in the Eastern Ghats near Aska. The waterfall cascades over multiple levels of rock formations, creating natural pools perfect for bathing. Surrounded by dense deciduous forest, the area is rich in biodiversity. A small Shiva temple near the waterfall adds spiritual significance to this natural wonder. Best visited during monsoon and post-monsoon seasons.",
+      "location": "Aska, Ganjam, Odisha",
+      "state": "Odisha",
+      "category": "Waterfall",
+      "latitude": 19.6105,
+      "longitude": 85.056,
+      "is_featured": false,
+      "facts": [
+        "Multi-level cascade creating natural bathing pools",
+        "Surrounded by dense deciduous forest",
+        "Small Shiva temple adjacent to the waterfall",
+        "Best visited during and after monsoon season",
+        "Rich biodiversity in surrounding Eastern Ghats"
+      ],
+      "distance_from_berhampur": "40 km",
+      "region": "khallikote",
+      "image_url": "/images/monuments/nirmaljhar.jpg",
+      "rating": 4.8,
+      "reviews_count": 120,
+      "created_at": "2026-03-21T12:44:34.235Z"
+    },
+    {
+      "id": "fallback-12-1774097074235",
+      "title": "Budhakhol Caves & Waterfalls",
+      "description": "A stunning natural formation featuring ancient rock-cut caves alongside seasonal waterfalls in a pristine forest setting. The caves show evidence of habitation dating back thousands of years. The area is a popular trekking destination with well-marked trails through dense forest. During monsoon, the waterfall transforms into a magnificent cascade surrounded by lush greenery.",
+      "location": "Budhakhol, Ganjam, Odisha",
+      "state": "Odisha",
+      "category": "Cave",
+      "latitude": 19.7828,
+      "longitude": 84.5888,
+      "is_featured": false,
+      "facts": [
+        "Ancient rock-cut caves with evidence of early habitation",
+        "Stunning seasonal waterfall in pristine forest",
+        "Popular trekking destination with marked trails",
+        "Spectacular during monsoon season",
+        "Rich biodiversity in surrounding forest area"
+      ],
+      "distance_from_berhampur": "55 km",
+      "region": "buguda",
+      "image_url": "/images/monuments/budhakhol-caves.jpg",
+      "rating": 4.8,
+      "reviews_count": 120,
+      "created_at": "2026-03-21T12:44:34.235Z"
+    },
+    {
+      "id": "fallback-13-1774097074235",
+      "title": "Mahuri Kalua Temple",
+      "description": "An ancient Shaivite temple located atop a hill, offering panoramic views of the Ganjam countryside. The temple is dedicated to Lord Shiva and is particularly revered during Maha Shivaratri. The climb to the temple through forested hillside is itself a spiritual journey. Ancient stone inscriptions found here provide valuable historical insights.",
+      "location": "Mahuri Kalua, Ganjam, Odisha",
+      "state": "Odisha",
+      "category": "Temple",
+      "latitude": 19.2842,
+      "longitude": 84.6975,
+      "is_featured": false,
+      "facts": [
+        "Ancient Shaivite temple atop a scenic hill",
+        "Panoramic views of Ganjam countryside",
+        "Major celebrations during Maha Shivaratri",
+        "Ancient stone inscriptions with historical significance",
+        "Forested hillside climb adds to spiritual experience"
+      ],
+      "distance_from_berhampur": "18 km",
+      "region": "berhampur",
+      "image_url": "/images/monuments/mahurikalua-temple.jpg",
+      "rating": 4.8,
+      "reviews_count": 120,
+      "created_at": "2026-03-21T12:44:34.235Z"
+    },
+    {
+      "id": "fallback-14-1774097074235",
+      "title": "Tampara Lake",
+      "description": "A freshwater lake surrounded by lush greenery and hills, Tampara Lake is one of the most serene natural attractions near Berhampur. The lake is ideal for boating, fishing, and picnicking. It supports diverse aquatic life and attracts numerous migratory birds during winter. The surrounding area features walking trails and viewpoints perfect for nature photography.",
+      "location": "Tampara, Ganjam, Odisha",
+      "state": "Odisha",
+      "category": "Lake",
+      "latitude": 19.3892,
+      "longitude": 84.9815,
+      "is_featured": false,
+      "facts": [
+        "Beautiful freshwater lake surrounded by hills",
+        "Popular for boating, fishing, and picnics",
+        "Migratory birds visit during winter months",
+        "Walking trails and viewpoints for nature photography",
+        "One of the most serene spots near Berhampur"
+      ],
+      "distance_from_berhampur": "25 km",
+      "region": "chhatrapur",
+      "image_url": "/images/monuments/tampara-lake.jpg",
+      "rating": 4.8,
+      "reviews_count": 120,
+      "created_at": "2026-03-21T12:44:34.235Z"
+    },
+    {
+      "id": "fallback-15-1774097074235",
+      "title": "Dhabaleswar Temple",
+      "description": "A revered Shiva temple located on a hilltop in Ganjam district, known for its ancient architecture and spiritual ambiance. The temple attracts devotees throughout the year and is especially crowded during Shravan month. The stone carvings on the temple walls depict scenes from Hindu mythology and are fine examples of Odisha's temple art tradition.",
+      "location": "Ganjam, Odisha",
+      "state": "Odisha",
+      "category": "Temple",
+      "latitude": 19.2785,
+      "longitude": 84.935,
+      "is_featured": false,
+      "facts": [
+        "Ancient Shiva temple with traditional architecture",
+        "Fine stone carvings depicting Hindu mythology",
+        "Especially popular during Shravan month",
+        "Hilltop location with spiritual ambiance",
+        "Example of Odisha temple art tradition"
+      ],
+      "distance_from_berhampur": "15 km",
+      "region": "berhampur",
+      "image_url": "/images/monuments/dhabaleswar-temple.jpg",
+      "rating": 4.8,
+      "reviews_count": 120,
+      "created_at": "2026-03-21T12:44:34.235Z"
+    },
+    {
+      "id": "fallback-16-1774097074235",
+      "title": "Mahodadhi Nagar Beach",
+      "description": "A clean and well-maintained beach area in the Berhampur-Gopalpur stretch, Mahodadhi Nagar offers a relaxed coastal experience. The beach features soft sands, gentle waves, and coconut palm groves. Local fishermen can be seen with traditional boats, adding to the coastal charm. Street food stalls along the beach road serve fresh seafood and local delicacies.",
+      "location": "Gopalpur Road, Ganjam, Odisha",
+      "state": "Odisha",
+      "category": "Beach",
+      "latitude": 19.264,
+      "longitude": 84.9065,
+      "is_featured": false,
+      "facts": [
+        "Clean and well-maintained beach",
+        "Coconut palm groves along the shore",
+        "Traditional fishing boats add coastal charm",
+        "Fresh seafood available at beach stalls",
+        "Relaxed atmosphere away from crowds"
+      ],
+      "distance_from_berhampur": "14 km",
+      "region": "gopalpur",
+      "image_url": "/images/monuments/mahodadhi-beach.jpg",
+      "rating": 4.8,
+      "reviews_count": 120,
+      "created_at": "2026-03-21T12:44:34.235Z"
+    },
+    {
+      "id": "fallback-17-1774097074235",
+      "title": "Biranchi Narayan Temple",
+      "description": "One of the oldest and most significant temples in the Ganjam region, dedicated to Lord Vishnu in his Narayan form. The temple showcases excellent Kalinga architecture with ornate carvings of celestial beings and mythological narratives. The annual Rath Yatra here is celebrated with great fervor. Historical records date the temple to the 9th century.",
+      "location": "Buguda, Ganjam, Odisha",
+      "state": "Odisha",
+      "category": "Temple",
+      "latitude": 19.813,
+      "longitude": 84.796,
+      "is_featured": false,
+      "facts": [
+        "One of the oldest temples in Ganjam region",
+        "Excellent Kalinga architecture with ornate carvings",
+        "Dating back to the 9th century",
+        "Annual Rath Yatra celebrated with great fervor",
+        "Dedicated to Lord Vishnu as Narayan"
+      ],
+      "distance_from_berhampur": "35 km",
+      "region": "buguda",
+      "image_url": "/images/monuments/biranchi-narayan.jpg",
+      "rating": 4.8,
+      "reviews_count": 120,
+      "created_at": "2026-03-21T12:44:34.235Z"
+    },
+    {
+      "id": "fallback-18-1774097074235",
+      "title": "Seranga Fort",
+      "description": "A medieval fort that served as the seat of the Seranga chieftains who ruled parts of southern Odisha. The fort complex includes ruins of palaces, temples, granaries, and defensive walls. The architecture reflects a blend of Hindu and Islamic influences, unique for this region. The fort is surrounded by agricultural land and offers insights into medieval Odisha history.",
+      "location": "Seranga, Ganjam, Odisha",
+      "state": "Odisha",
+      "category": "Fort",
+      "latitude": 19.012,
+      "longitude": 84.185,
+      "is_featured": false,
+      "facts": [
+        "Medieval fort of Seranga chieftains",
+        "Blend of Hindu and Islamic architectural influences",
+        "Ruins of palaces, temples, and granaries",
+        "Important for understanding medieval Odisha history",
+        "Surrounded by scenic agricultural landscape"
+      ],
+      "distance_from_berhampur": "28 km",
+      "region": "gajapati",
+      "image_url": "/images/monuments/seranga-fort.jpg",
+      "rating": 4.8,
+      "reviews_count": 120,
+      "created_at": "2026-03-21T12:44:34.235Z"
+    },
+    {
+      "id": "fallback-19-1774097074235",
+      "title": "Bateswar Temple",
+      "description": "An ancient temple complex featuring multiple small shrines dedicated to Lord Shiva. The temples display classical Odishan architecture with beautifully carved vimanas (temple towers). Archaeological surveys have dated these structures to the 7th-8th century CE, making them among the oldest surviving temples in the Ganjam district. The tranquil setting amidst mango groves adds to the charm.",
+      "location": "Bateswar, Ganjam, Odisha",
+      "state": "Odisha",
+      "category": "Temple",
+      "latitude": 19.335,
+      "longitude": 84.925,
+      "is_featured": false,
+      "facts": [
+        "Multiple ancient shrines from 7th-8th century CE",
+        "Classical Odishan architecture with carved vimanas",
+        "Among the oldest surviving temples in Ganjam",
+        "Tranquil setting amidst mango groves",
+        "Important archaeological heritage site"
+      ],
+      "distance_from_berhampur": "20 km",
+      "region": "gopalpur",
+      "image_url": "/images/monuments/bateswar-temple.jpg",
+      "rating": 4.8,
+      "reviews_count": 120,
+      "created_at": "2026-03-21T12:44:34.235Z"
+    },
+    {
+      "id": "fallback-20-1774097074235",
+      "title": "Maa Budhi Thakurani Temple",
+      "description": "The presiding deity temple of Berhampur city, Maa Budhi Thakurani is one of the most important cultural institutions of southern Odisha. The biennial Thakurani Yatra is the largest cultural festival of the region, featuring elaborate processions, traditional music, and theatrical performances lasting 21 days. The temple represents the deep-rooted Shakti worship tradition of the region.",
+      "location": "Berhampur, Ganjam, Odisha",
+      "state": "Odisha",
+      "category": "Temple",
+      "latitude": 19.312,
+      "longitude": 84.795,
+      "is_featured": true,
+      "facts": [
+        "Presiding deity of Berhampur city",
+        "Biennial Thakurani Yatra lasts 21 days",
+        "Largest cultural festival of southern Odisha",
+        "Deep-rooted Shakti worship tradition",
+        "Elaborate processions with traditional music and theatre"
+      ],
+      "distance_from_berhampur": "0 km",
+      "region": "berhampur",
+      "image_url": "/images/monuments/budhi-thakurani-temple.jpg",
+      "rating": 4.8,
+      "reviews_count": 120,
+      "created_at": "2026-03-21T12:44:34.235Z"
+    },
+    {
+      "id": "fallback-21-1774097074235",
+      "title": "Gandahati Waterfall",
+      "description": "A magnificent waterfall hidden in the dense forests of the Eastern Ghats, Gandahati cascades from a height of about 60 meters. The surrounding forest is home to tribal communities who maintain traditional ways of life. The trek to the waterfall passes through bamboo groves and sal forests, offering encounters with diverse wildlife. A natural pool at the base is perfect for swimming.",
+      "location": "Gajapati, Odisha",
+      "state": "Odisha",
+      "category": "Waterfall",
+      "latitude": 18.8872,
+      "longitude": 84.2704,
+      "is_featured": false,
+      "facts": [
+        "Cascades from about 60 meters height",
+        "Surrounded by dense Eastern Ghat forests",
+        "Home to traditional tribal communities",
+        "Natural swimming pool at the base",
+        "Trek through bamboo groves and sal forests"
+      ],
+      "distance_from_berhampur": "75 km",
+      "region": "gajapati",
+      "image_url": "/images/monuments/gandahati-falls.jpg",
+      "rating": 4.8,
+      "reviews_count": 120,
+      "created_at": "2026-03-21T12:44:34.235Z"
+    },
+    {
+      "id": "fallback-22-1774097074235",
+      "title": "Mahendragiri Hills",
+      "description": "The second highest peak of Odisha at 1,501 meters, Mahendragiri is steeped in mythology and natural beauty. According to the Ramayana, it was part of the mountain Hanuman carried. The peak houses ancient temples, rare orchids, medicinal plants, and endemic species. The Eastern Ghats Biosphere Reserve here is home to diverse tribal cultures. Trekking to the summit offers views extending to the Bay of Bengal.",
+      "location": "Mahendragiri, Gajapati, Odisha",
+      "state": "Odisha",
+      "category": "Hill",
+      "latitude": 18.9667,
+      "longitude": 84.3667,
+      "is_featured": true,
+      "facts": [
+        "Second highest peak in Odisha at 1,501 meters",
+        "Connected to Ramayana legends of Hanuman",
+        "Home to rare orchids and medicinal plants",
+        "Part of Eastern Ghats Biosphere Reserve",
+        "Views extend to Bay of Bengal from summit"
+      ],
+      "distance_from_berhampur": "90 km",
+      "region": "gajapati",
+      "image_url": "/images/monuments/mahendragiri-hills.jpg",
+      "rating": 4.8,
+      "reviews_count": 120,
+      "created_at": "2026-03-21T12:44:34.235Z"
+    },
+    {
+      "id": "fallback-23-1774097074235",
+      "title": "Desia Art Village",
+      "description": "A unique cultural village showcasing the traditional art, craft, and lifestyle of the Desia tribal community. Visitors can experience traditional dance performances, handloom weaving, bamboo craft, and tribal cuisine. The village preserves centuries-old artistic traditions and offers immersive cultural experiences. It serves as a living museum of tribal heritage.",
+      "location": "Gajapati, Odisha",
+      "state": "Odisha",
+      "category": "Cultural Site",
+      "latitude": 18.85,
+      "longitude": 84.31,
+      "is_featured": false,
+      "facts": [
+        "Showcases Desia tribal art and culture",
+        "Traditional dance and handloom weaving demonstrations",
+        "Bamboo craft workshops available",
+        "Authentic tribal cuisine experiences",
+        "Living museum of tribal heritage"
+      ],
+      "distance_from_berhampur": "80 km",
+      "region": "gajapati",
+      "image_url": "/images/monuments/desia-art-village.jpg",
+      "rating": 4.8,
+      "reviews_count": 120,
+      "created_at": "2026-03-21T12:44:34.235Z"
+    },
+    {
+      "id": "fallback-24-1774097074235",
+      "title": "Srikurmam Temple",
+      "description": "One of the only three temples in India dedicated to Lord Vishnu in the Kurma (tortoise) avatar. This ancient temple dates back to the 2nd century and features remarkable Chalukya and Eastern Ganga dynasty architecture. The temple's inner sanctum houses a unique tortoise-shaped deity carved from a single stone. The annual Chandanotsava festival is a major draw.",
+      "location": "Srikurmam, Srikakulam, near Ganjam border",
+      "state": "Odisha",
+      "category": "Temple",
+      "latitude": 18.27,
+      "longitude": 84.015,
+      "is_featured": false,
+      "facts": [
+        "One of only three Kurma avatar temples in India",
+        "Dates back to the 2nd century",
+        "Chalukya and Eastern Ganga dynasty architecture",
+        "Unique tortoise-shaped deity from single stone",
+        "Annual Chandanotsava festival is major attraction"
+      ],
+      "distance_from_berhampur": "95 km",
+      "region": "border",
+      "image_url": "/images/monuments/srikurmam-temple.jpg",
+      "rating": 4.8,
+      "reviews_count": 120,
+      "created_at": "2026-03-21T12:44:34.235Z"
+    },
+    {
+      "id": "fallback-25-1774097074235",
+      "title": "Laxmipur Beach",
+      "description": "An untouched beach stretch near Berhampur offering raw coastal beauty. The beach is known for its black sand patches, casuarina plantations, and fishing villages. Local fishermen use traditional catamarans and nets, providing a glimpse into the maritime heritage of coastal Odisha. The beach is an emerging eco-tourism destination with minimal infrastructure.",
+      "location": "Laxmipur, Ganjam, Odisha",
+      "state": "Odisha",
+      "category": "Beach",
+      "latitude": 19.288,
+      "longitude": 84.918,
+      "is_featured": false,
+      "facts": [
+        "Untouched beach with raw coastal beauty",
+        "Black sand patches and casuarina plantations",
+        "Traditional fishing communities using catamarans",
+        "Emerging eco-tourism destination",
+        "Glimpse into maritime heritage of coastal Odisha"
+      ],
+      "distance_from_berhampur": "18 km",
+      "region": "gopalpur",
+      "image_url": "/images/monuments/laxmipur-beach.jpg",
+      "rating": 4.8,
+      "reviews_count": 120,
+      "created_at": "2026-03-21T12:44:34.235Z"
+    },
+    {
+      "id": "fallback-26-1774097074235",
+      "title": "Maa Ghanteshwari Temple",
+      "description": "A hilltop temple dedicated to Goddess Ghanteshwari, known for the melodious sound of temple bells echoing through the valleys. The temple sits at the convergence of two streams and is surrounded by dense forest. The annual festival draws thousands of tribal and non-tribal devotees. The temple is believed to grant wishes and is considered very powerful.",
+      "location": "Ganjam, Odisha",
+      "state": "Odisha",
+      "category": "Temple",
+      "latitude": 19.75,
+      "longitude": 84.62,
+      "is_featured": false,
+      "facts": [
+        "Hilltop temple with echoing bell sounds",
+        "Located at convergence of two streams",
+        "Surrounded by dense forest",
+        "Annual festival draws thousands of devotees",
+        "Believed to be especially powerful for granting wishes"
+      ],
+      "distance_from_berhampur": "35 km",
+      "region": "ganjam",
+      "image_url": "/images/monuments/ghanteshwari-temple.jpg",
+      "rating": 4.8,
+      "reviews_count": 120,
+      "created_at": "2026-03-21T12:44:34.235Z"
+    },
+    {
+      "id": "fallback-27-1774097074235",
+      "title": "Siddheshwar Temple",
+      "description": "An important Shaivite temple in Berhampur featuring classical Odishan temple architecture. The temple is known for its elaborately carved entrance and the peaceful inner courtyard. Regular pujas and religious ceremonies maintain its spiritual vibrancy. The temple complex includes a sacred tank and multiple subsidiary shrines.",
+      "location": "Berhampur, Ganjam, Odisha",
+      "state": "Odisha",
+      "category": "Temple",
+      "latitude": 19.318,
+      "longitude": 84.788,
+      "is_featured": false,
+      "facts": [
+        "Important Shaivite temple in Berhampur",
+        "Classical Odishan architecture",
+        "Elaborately carved entrance gateway",
+        "Sacred tank within the temple complex",
+        "Multiple subsidiary shrines in the complex"
+      ],
+      "distance_from_berhampur": "1 km",
+      "region": "berhampur",
+      "image_url": "/images/monuments/siddheshwar-temple.jpg",
+      "rating": 4.8,
+      "reviews_count": 120,
+      "created_at": "2026-03-21T12:44:34.235Z"
+    },
+    {
+      "id": "fallback-28-1774097074235",
+      "title": "Sonapur Beach",
+      "description": "Named for its golden sand, Sonapur Beach is an emerging tourist destination along the southern Odisha coast. The beach stretches for several kilometers with clean, wide sands and moderate waves. Rocky outcrops at either end create sheltered coves. The nearby fishing village offers fresh seafood, and the area is being developed as an eco-tourism hub.",
+      "location": "Sonapur, Ganjam, Odisha",
+      "state": "Odisha",
+      "category": "Beach",
+      "latitude": 19.112,
+      "longitude": 84.785,
+      "is_featured": false,
+      "facts": [
+        "Named for its golden sand color",
+        "Several kilometer stretch of clean wide beach",
+        "Rocky outcrops create sheltered coves",
+        "Fresh seafood from nearby fishing village",
+        "Emerging eco-tourism destination"
+      ],
+      "distance_from_berhampur": "20 km",
+      "region": "berhampur",
+      "image_url": "/images/monuments/sonapur-beach.jpg",
+      "rating": 4.8,
+      "reviews_count": 120,
+      "created_at": "2026-03-21T12:44:34.235Z"
+    },
+    {
+      "id": "fallback-29-1774097074235",
+      "title": "Raghunath Jew Temple",
+      "description": "A significant Vaishnavite temple in Berhampur dedicated to Lord Rama. The temple is known for its beautiful Rath Yatra celebrations and traditional Odissi music performances during festivals. The architecture combines traditional Odishan and colonial influences, reflecting the temple's historical evolution. The temple campus serves as a cultural center for the community.",
+      "location": "Berhampur, Ganjam, Odisha",
+      "state": "Odisha",
+      "category": "Temple",
+      "latitude": 19.31,
+      "longitude": 84.792,
+      "is_featured": false,
+      "facts": [
+        "Significant Vaishnavite temple dedicated to Lord Rama",
+        "Beautiful Rath Yatra celebrations",
+        "Traditional Odissi music during festivals",
+        "Architecture combines Odishan and colonial styles",
+        "Community cultural center"
+      ],
+      "distance_from_berhampur": "0 km",
+      "region": "berhampur",
+      "image_url": "/images/monuments/raghunath-jew.jpg",
+      "rating": 4.8,
+      "reviews_count": 120,
+      "created_at": "2026-03-21T12:44:34.235Z"
+    },
+    {
+      "id": "fallback-30-1774097074235",
+      "title": "Daringbadi Hill Station",
+      "description": "Known as the Kashmir of Odisha, Daringbadi is a hill station at an altitude of 3,000 feet in the Eastern Ghats. It is the only place in Odisha that experiences snowfall. The area features pine forests, coffee plantations, waterfalls, and tribal villages. Doluri River valley, Lover's Point, and the Hill View Park are major attractions. The cool climate offers respite from coastal heat.",
+      "location": "Daringbadi, Kandhamal, Odisha",
+      "state": "Odisha",
+      "category": "Hill Station",
+      "latitude": 19.9077,
+      "longitude": 84.1311,
+      "is_featured": true,
+      "facts": [
+        "Known as the Kashmir of Odisha",
+        "Only place in Odisha that experiences snowfall",
+        "Located at 3,000 feet altitude",
+        "Features pine forests and coffee plantations",
+        "Cool climate with multiple waterfalls"
+      ],
+      "distance_from_berhampur": "95 km",
+      "region": "kandhamal",
+      "image_url": "/images/monuments/daringbadi.jpg",
+      "rating": 4.8,
+      "reviews_count": 120,
+      "created_at": "2026-03-21T12:44:34.235Z"
+    },
+    {
+      "id": "fallback-31-1774097074235",
+      "title": "Padmapani Temple",
+      "description": "An ancient temple showcasing Buddhist-Hindu syncretic traditions, featuring exquisite stone carvings of Padmapani (Avalokiteshvara). The temple reflects the historical coexistence of Buddhist and Hindu traditions in this region. The carvings are considered masterpieces of early medieval sculpture. The peaceful surroundings make it an ideal spot for meditation and reflection.",
+      "location": "Ganjam, Odisha",
+      "state": "Odisha",
+      "category": "Temple",
+      "latitude": 19.43,
+      "longitude": 84.81,
+      "is_featured": false,
+      "facts": [
+        "Buddhist-Hindu syncretic temple",
+        "Exquisite stone carvings of Padmapani",
+        "Masterpieces of early medieval sculpture",
+        "Reflects historical Buddhist-Hindu coexistence",
+        "Peaceful setting for meditation"
+      ],
+      "distance_from_berhampur": "22 km",
+      "region": "berhampur",
+      "image_url": "/images/monuments/padmapani-temple.jpg",
+      "rating": 4.8,
+      "reviews_count": 120,
+      "created_at": "2026-03-21T12:44:34.235Z"
+    },
+    {
+      "id": "fallback-32-1774097074235",
+      "title": "Gokuldham Temple",
+      "description": "A modern temple complex dedicated to Lord Krishna in Berhampur. The temple features colorful depictions of Krishna's life, well-maintained gardens, and a peaceful atmosphere. It has become a popular spiritual and community gathering spot. The temple hosts regular bhajan sessions and celebrations during Janmashtami and Holi with great enthusiasm.",
+      "location": "Berhampur, Ganjam, Odisha",
+      "state": "Odisha",
+      "category": "Temple",
+      "latitude": 19.315,
+      "longitude": 84.796,
+      "is_featured": false,
+      "facts": [
+        "Modern Krishna temple complex",
+        "Colorful depictions of Krishna's life",
+        "Well-maintained gardens and peaceful atmosphere",
+        "Regular bhajan sessions",
+        "Grand Janmashtami and Holi celebrations"
+      ],
+      "distance_from_berhampur": "1 km",
+      "region": "berhampur",
+      "image_url": "/images/monuments/gokuldham-temple.jpg",
+      "rating": 4.8,
+      "reviews_count": 120,
+      "created_at": "2026-03-21T12:44:34.235Z"
+    },
+    {
+      "id": "fallback-33-1774097074235",
+      "title": "Surangi Waterfall",
+      "description": "A picturesque waterfall located in the Gajapati district, Surangi Falls cascades through a narrow gorge surrounded by tropical forests. The waterfall is especially spectacular during the monsoon months when the water volume increases dramatically. The trek to reach the falls passes through tribal hamlets and offers encounters with diverse bird species. A hidden gem for adventure seekers.",
+      "location": "Gajapati, Odisha",
+      "state": "Odisha",
+      "category": "Waterfall",
+      "latitude": 19.15,
+      "longitude": 84.28,
+      "is_featured": false,
+      "facts": [
+        "Picturesque waterfall in narrow gorge",
+        "Spectacular during monsoon months",
+        "Trek passes through tribal hamlets",
+        "Diverse bird species along the trail",
+        "Hidden gem for adventure seekers"
+      ],
+      "distance_from_berhampur": "85 km",
+      "region": "gajapati",
+      "image_url": "/images/monuments/surangi-waterfall.jpg",
+      "rating": 4.8,
+      "reviews_count": 120,
+      "created_at": "2026-03-21T12:44:34.235Z"
+    },
+    {
+      "id": "fallback-34-1774097074235",
+      "title": "Narendrapur Sasan",
+      "description": "A historical Jain pilgrimage site with ancient cave temples and rock-cut sculptures. The site contains inscriptions dating back to the 1st century BCE, making it one of the oldest Jain heritage sites in eastern India. The rock-cut elephant figures and standing Tirthankara sculptures are remarkable examples of early Indian art.",
+      "location": "Narendrapur, Ganjam, Odisha",
+      "state": "Odisha",
+      "category": "Cave",
+      "latitude": 19.48,
+      "longitude": 84.92,
+      "is_featured": false,
+      "facts": [
+        "Ancient Jain pilgrimage site",
+        "Cave temples from 1st century BCE",
+        "One of oldest Jain sites in eastern India",
+        "Rock-cut elephant figures and Tirthankara sculptures",
+        "Important examples of early Indian art"
+      ],
+      "distance_from_berhampur": "25 km",
+      "region": "ganjam",
+      "image_url": "/images/monuments/narendrapur-sasan.jpg",
+      "rating": 4.8,
+      "reviews_count": 120,
+      "created_at": "2026-03-21T12:44:34.235Z"
+    },
+    {
+      "id": "fallback-35-1774097074235",
+      "title": "Berhampur Silk Weaving Center",
+      "description": "The renowned Berhampur silk sarees are famous across India for their distinctive designs and superior quality. The weaving center showcases the traditional ikat and tie-dye techniques used to create these masterpieces. Visitors can watch artisans at work on handlooms, creating intricate patterns passed down through generations. The center also has a showroom for purchasing authentic Berhampur silks.",
+      "location": "Berhampur, Ganjam, Odisha",
+      "state": "Odisha",
+      "category": "Cultural Site",
+      "latitude": 19.31,
+      "longitude": 84.785,
+      "is_featured": false,
+      "facts": [
+        "Berhampur silk sarees famous across India",
+        "Traditional ikat and tie-dye techniques",
+        "Watch artisans work on handlooms",
+        "Patterns passed down through generations",
+        "Showroom for authentic Berhampur silks"
+      ],
+      "distance_from_berhampur": "0 km",
+      "region": "berhampur",
+      "image_url": "/images/monuments/berhampur-silk-weaving.jpg",
+      "rating": 4.8,
+      "reviews_count": 120,
+      "created_at": "2026-03-21T12:44:34.235Z"
+    },
+    {
+      "id": "fallback-36-1774097074235",
+      "title": "Kuanl Jhari Waterfall",
+      "description": "A hidden waterfall deep in the Eastern Ghats forest, Kuanl Jhari is a paradise for trekkers and nature lovers. The waterfall drops about 30 meters into a natural pool surrounded by moss-covered rocks. The surrounding forest is rich in medicinal herbs used by local tribal healers. The remote location means fewer crowds and a more intimate nature experience.",
+      "location": "Eastern Ghats, Ganjam, Odisha",
+      "state": "Odisha",
+      "category": "Waterfall",
+      "latitude": 19.38,
+      "longitude": 84.45,
+      "is_featured": false,
+      "facts": [
+        "Hidden waterfall in Eastern Ghats forest",
+        "30-meter drop into natural pool",
+        "Moss-covered rocks surround the pool",
+        "Forest rich in medicinal herbs",
+        "Remote location with fewer crowds"
+      ],
+      "distance_from_berhampur": "60 km",
+      "region": "ganjam",
+      "image_url": "/images/monuments/kuanl-jhari.jpg",
+      "rating": 4.8,
+      "reviews_count": 120,
+      "created_at": "2026-03-21T12:44:34.235Z"
+    },
+    {
+      "id": "fallback-37-1774097074235",
+      "title": "Samangala Fort",
+      "description": "An ancient hilltop fortification associated with the legendary warrior kings of Kalinga. The fort ruins include stone walls, ramparts, and the remains of a palace complex. Archaeological evidence suggests the fort was active from the 3rd century BCE through the medieval period. The hilltop offers 360-degree panoramic views of the surrounding landscape.",
+      "location": "Ganjam, Odisha",
+      "state": "Odisha",
+      "category": "Fort",
+      "latitude": 19.42,
+      "longitude": 84.76,
+      "is_featured": false,
+      "facts": [
+        "Associated with warrior kings of Kalinga",
+        "Stone walls and ramparts still visible",
+        "Active from 3rd century BCE to medieval period",
+        "360-degree panoramic views from hilltop",
+        "Important archaeological significance"
+      ],
+      "distance_from_berhampur": "20 km",
+      "region": "ganjam",
+      "image_url": "/images/monuments/samangala-fort.jpg",
+      "rating": 4.8,
+      "reviews_count": 120,
+      "created_at": "2026-03-21T12:44:34.235Z"
+    },
+    {
+      "id": "fallback-38-1774097074235",
+      "title": "Kodala Jagannath Temple",
+      "description": "A significant temple dedicated to Lord Jagannath in the Ganjam district, following the traditions of the famous Puri Jagannath Temple. The temple celebrates its own Rath Yatra with three beautifully decorated chariots. The annual car festival is the biggest event in the Kodala area, drawing devotees from surrounding districts. The temple architecture is a smaller replica of the Puri temple.",
+      "location": "Kodala, Ganjam, Odisha",
+      "state": "Odisha",
+      "category": "Temple",
+      "latitude": 19.62,
+      "longitude": 84.94,
+      "is_featured": false,
+      "facts": [
+        "Follows traditions of Puri Jagannath Temple",
+        "Own Rath Yatra with three decorated chariots",
+        "Biggest annual event in Kodala area",
+        "Architecture replicates Puri temple style",
+        "Draws devotees from surrounding districts"
+      ],
+      "distance_from_berhampur": "40 km",
+      "region": "kodala",
+      "image_url": "/images/monuments/jagannath-temple.jpg",
+      "rating": 4.8,
+      "reviews_count": 120,
+      "created_at": "2026-03-21T12:44:34.235Z"
+    },
+    {
+      "id": "fallback-39-1774097074235",
+      "title": "Sana Jhada Peetha",
+      "description": "A revered tantric shrine located in a dense forest, associated with powerful spiritual practices. The shrine features an ancient banyan tree under which rituals have been performed for centuries. Local devotees believe the site possesses extraordinary spiritual energy. The forest setting adds to the mystical atmosphere of this unique pilgrimage destination.",
+      "location": "Ganjam, Odisha",
+      "state": "Odisha",
+      "category": "Temple",
+      "latitude": 19.39,
+      "longitude": 84.73,
+      "is_featured": false,
+      "facts": [
+        "Revered tantric shrine in dense forest",
+        "Ancient banyan tree at the center",
+        "Centuries of ritual practice at this site",
+        "Believed to possess extraordinary spiritual energy",
+        "Mystical forest atmosphere"
+      ],
+      "distance_from_berhampur": "15 km",
+      "region": "ganjam",
+      "image_url": "/images/monuments/sana-jhada.jpg",
+      "rating": 4.8,
+      "reviews_count": 120,
+      "created_at": "2026-03-21T12:44:34.235Z"
+    },
+    {
+      "id": "fallback-40-1774097074235",
+      "title": "Lingaraja Temple",
+      "description": "The largest and most prominent temple in Bhubaneswar, Lingaraja Temple is a masterpiece of Kalinga architecture dating back to the 11th century. The 180-feet tall deul (tower) dominates the city skyline. The temple complex contains over 100 subsidiary shrines within its massive compound walls. The temple is dedicated to Harihara, a combined form of Shiva and Vishnu, representing the unique syncretism of Odisha.",
+      "location": "Bhubaneswar, Odisha",
+      "state": "Odisha",
+      "category": "Temple",
+      "latitude": 20.2382,
+      "longitude": 85.8338,
+      "is_featured": true,
+      "facts": [
+        "Largest temple in Bhubaneswar at 180 feet tall",
+        "Masterpiece of 11th century Kalinga architecture",
+        "Over 100 subsidiary shrines in the complex",
+        "Dedicated to Harihara (Shiva-Vishnu combined)",
+        "Non-Hindus can view from a raised platform outside"
+      ],
+      "distance_from_berhampur": "350 km",
+      "region": "bhubaneswar",
+      "image_url": "/images/monuments/lingaraja-temple.jpg",
+      "rating": 4.8,
+      "reviews_count": 120,
+      "created_at": "2026-03-21T12:44:34.235Z"
+    },
+    {
+      "id": "fallback-41-1774097074235",
+      "title": "Konark Sun Temple",
+      "description": "A UNESCO World Heritage Site built in the 13th century by King Narasimhadeva I, the Sun Temple at Konark is designed as a colossal chariot of the Sun God with 24 elaborately carved stone wheels and seven horses. The temple is renowned for its exquisite stone carvings depicting every aspect of medieval life. The annual Konark Dance Festival celebrates classical dance forms against this magnificent backdrop.",
+      "location": "Konark, Puri, Odisha",
+      "state": "Odisha",
+      "category": "Temple",
+      "latitude": 19.8876,
+      "longitude": 86.0945,
+      "is_featured": true,
+      "facts": [
+        "UNESCO World Heritage Site since 1984",
+        "Built in 13th century as a colossal chariot",
+        "24 elaborately carved stone wheels serve as sundials",
+        "Exquisite erotic and celestial carvings",
+        "Annual Konark Dance Festival held here"
+      ],
+      "distance_from_berhampur": "380 km",
+      "region": "puri",
+      "image_url": "/images/monuments/konark-temple.jpg",
+      "rating": 4.8,
+      "reviews_count": 120,
+      "created_at": "2026-03-21T12:44:34.235Z"
+    },
+    {
+      "id": "fallback-42-1774097074235",
+      "title": "Udayagiri & Khandagiri Caves",
+      "description": "Ancient Jain rock-cut caves dating back to the 2nd century BCE, commissioned by Emperor Kharavela of the Chedi dynasty. The 33 caves (18 on Udayagiri, 15 on Khandagiri) feature intricate carvings depicting court scenes, processions, and religious symbols. Hathi Gumpha (Elephant Cave) contains the famous inscription of King Kharavela, one of the most important historical documents in Indian history.",
+      "location": "Bhubaneswar, Odisha",
+      "state": "Odisha",
+      "category": "Cave",
+      "latitude": 20.2585,
+      "longitude": 85.7865,
+      "is_featured": true,
+      "facts": [
+        "Dating back to 2nd century BCE",
+        "Commissioned by Emperor Kharavela",
+        "33 rock-cut caves across two hills",
+        "Hathi Gumpha inscription is historically invaluable",
+        "Depicts court scenes and religious ceremonies"
+      ],
+      "distance_from_berhampur": "350 km",
+      "region": "bhubaneswar",
+      "image_url": "/images/monuments/udayagiri-caves.jpg",
+      "rating": 4.8,
+      "reviews_count": 120,
+      "created_at": "2026-03-21T12:44:34.235Z"
+    },
+    {
+      "id": "fallback-43-1774097074235",
+      "title": "Mukteshwar Temple",
+      "description": "Often called the Gem of Odishan Architecture, Mukteshwar Temple dates to the 10th century. Its most distinctive feature is the ornate torana (arched gateway), the only one of its kind in Odisha. The temple showcases the evolution from early to mature Kalinga style with its exquisitely carved figures of female ascetics, Nagas, and celestial musicians. Every surface is adorned with intricate geometric and floral patterns.",
+      "location": "Bhubaneswar, Odisha",
+      "state": "Odisha",
+      "category": "Temple",
+      "latitude": 20.2433,
+      "longitude": 85.8344,
+      "is_featured": true,
+      "facts": [
+        "Called the Gem of Odishan Architecture",
+        "10th century temple with unique torana gateway",
+        "Only arched gateway of its kind in Odisha",
+        "Exquisitely carved female ascetics and Nagas",
+        "Showcases evolution of Kalinga architectural style"
+      ],
+      "distance_from_berhampur": "350 km",
+      "region": "bhubaneswar",
+      "image_url": "/images/monuments/mukteswara-temple.jpg",
+      "rating": 4.8,
+      "reviews_count": 120,
+      "created_at": "2026-03-21T12:44:34.236Z"
+    },
+    {
+      "id": "fallback-44-1774097074236",
+      "title": "Rajarani Temple",
+      "description": "A beautifully ornate 11th century temple famous for its stunning sculptures of the eight directional guardian deities (Ashta Dikpalas) and graceful female figures in various poses. The temple gets its name from the local sandstone called Rajarani. Unlike most Bhubaneswar temples, it has no presiding deity, suggesting it may never have been consecrated. The red and gold sandstone gives the temple a warm, glowing appearance.",
+      "location": "Bhubaneswar, Odisha",
+      "state": "Odisha",
+      "category": "Temple",
+      "latitude": 20.245,
+      "longitude": 85.844,
+      "is_featured": true,
+      "facts": [
+        "11th century temple with stunning sculptures",
+        "Named after the local Rajarani sandstone",
+        "No presiding deity - may never have been consecrated",
+        "Beautiful Ashta Dikpala guardian deity carvings",
+        "Red and gold sandstone gives warm glow"
+      ],
+      "distance_from_berhampur": "350 km",
+      "region": "bhubaneswar",
+      "image_url": "/images/monuments/rajarani-temple.jpg",
+      "rating": 4.8,
+      "reviews_count": 120,
+      "created_at": "2026-03-21T12:44:34.236Z"
+    },
+    {
+      "id": "fallback-45-1774097074236",
+      "title": "Dhauli Peace Pagoda (Shanti Stupa)",
+      "description": "Built jointly by Japan and India, the white Peace Pagoda at Dhauli sits atop the hill where Emperor Ashoka fought the bloody Kalinga War in 261 BCE. This battle transformed Ashoka from a ruthless conqueror to a champion of peace and Buddhism. The Dhauli rock edicts here are among the oldest stone-carved edicts in India. The panoramic view from the stupa encompasses the ancient battlefield stretching to the Daya River.",
+      "location": "Dhauli, Bhubaneswar, Odisha",
+      "state": "Odisha",
+      "category": "Stupa",
+      "latitude": 20.1925,
+      "longitude": 85.8394,
+      "is_featured": true,
+      "facts": [
+        "Site of the pivotal Kalinga War of 261 BCE",
+        "Transformed Emperor Ashoka to embrace Buddhism",
+        "Indo-Japanese Peace Pagoda built in 1972",
+        "Among the oldest rock-carved edicts in India",
+        "Panoramic views of the ancient Kalinga battlefield"
+      ],
+      "distance_from_berhampur": "348 km",
+      "region": "bhubaneswar",
+      "image_url": "/images/monuments/dhauli-stupa.jpg",
+      "rating": 4.8,
+      "reviews_count": 120,
+      "created_at": "2026-03-21T12:44:34.236Z"
+    },
+    {
+      "id": "fallback-46-1774097074236",
+      "title": "Nandankanan Zoological Park",
+      "description": "One of India's premier zoos and botanical gardens, Nandankanan spans 437 hectares and is famous for its white tiger breeding program. The zoo houses over 170 species of animals in natural habitats. The Botanical Garden within features over 1,000 species of plants including rare orchids. The zoo also operates a toy train, safari, and boating facilities in Kanjia Lake.",
+      "location": "Bhubaneswar, Odisha",
+      "state": "Odisha",
+      "category": "Park",
+      "latitude": 20.3954,
+      "longitude": 85.8247,
+      "is_featured": true,
+      "facts": [
+        "One of India's premier zoos spanning 437 hectares",
+        "Famous white tiger breeding program",
+        "Over 170 species of animals in natural habitats",
+        "Botanical garden with 1,000+ plant species",
+        "Safari, toy train, and boating in Kanjia Lake"
+      ],
+      "distance_from_berhampur": "350 km",
+      "region": "bhubaneswar",
+      "image_url": "/images/monuments/nandankanan.jpg",
+      "rating": 4.8,
+      "reviews_count": 120,
+      "created_at": "2026-03-21T12:44:34.236Z"
+    },
+    {
+      "id": "fallback-47-1774097074236",
+      "title": "Parasurameswara Temple",
+      "description": "Dating back to the 7th century CE, Parasurameswara Temple is one of the oldest and best-preserved temples in Bhubaneswar. The temple is a perfect example of early Kalinga architecture with its richly carved exterior panels depicting Shiva as Nataraja, Ardhanarisvara, and other forms. The latticed windows and elephant procession friezes are particularly noteworthy. It stands as a complete example of the deul-jagamohana architectural style.",
+      "location": "Bhubaneswar, Odisha",
+      "state": "Odisha",
+      "category": "Temple",
+      "latitude": 20.2425,
+      "longitude": 85.8355,
+      "is_featured": true,
+      "facts": [
+        "One of Bhubaneswar's oldest temples from 7th century",
+        "Best-preserved early Kalinga architecture",
+        "Richly carved panels of Shiva as Nataraja",
+        "Notable latticed windows and elephant friezes",
+        "Complete deul-jagamohana architectural example"
+      ],
+      "distance_from_berhampur": "350 km",
+      "region": "bhubaneswar",
+      "image_url": "/images/monuments/parasurameswara-temple.jpg",
+      "rating": 4.8,
+      "reviews_count": 120,
+      "created_at": "2026-03-21T12:44:34.236Z"
+    },
+    {
+      "id": "fallback-48-1774097074236",
+      "title": "Odisha State Museum",
+      "description": "Established in 1938, the Odisha State Museum houses an impressive collection spanning archaeology, natural history, art, armory, and manuscripts. The museum displays stone sculptures from Bhubaneswar's ancient temples, palm leaf manuscripts, tribal artifacts, and weapons from various periods. The numismatic collection features coins from the Mauryan to British period, tracing 2,500 years of monetary history.",
+      "location": "Bhubaneswar, Odisha",
+      "state": "Odisha",
+      "category": "Museum",
+      "latitude": 20.2625,
+      "longitude": 85.8415,
+      "is_featured": false,
+      "facts": [
+        "Established in 1938 with rich collections",
+        "Stone sculptures from ancient temples",
+        "Palm leaf manuscripts and tribal artifacts",
+        "Numismatic collection spanning 2,500 years",
+        "Covers archaeology, natural history, art, and armory"
+      ],
+      "distance_from_berhampur": "350 km",
+      "region": "bhubaneswar",
+      "image_url": "/images/monuments/odisha-state-museum.jpg",
+      "rating": 4.8,
+      "reviews_count": 120,
+      "created_at": "2026-03-21T12:44:34.236Z"
+    },
+    {
+      "id": "fallback-49-1774097074236",
+      "title": "Brahmeshwara Temple",
+      "description": "An exquisitely carved 9th century Shiva temple known for its finely detailed sculptural panels. The temple introduces the pancha-ratha style to Bhubaneswar temple architecture. The exterior walls feature beautifully carved figures of deities, celestial beings, amorous couples, and mythological scenes. The temple's unique feature is the intricate chain and bell motif running across the facade.",
+      "location": "Bhubaneswar, Odisha",
+      "state": "Odisha",
+      "category": "Temple",
+      "latitude": 20.2428,
+      "longitude": 85.8522,
+      "is_featured": false,
+      "facts": [
+        "9th century Shiva temple",
+        "Introduces pancha-ratha architectural style",
+        "Finely detailed sculptural panels",
+        "Unique chain and bell motif on facade",
+        "Beautiful carvings of celestial beings and couples"
+      ],
+      "distance_from_berhampur": "350 km",
+      "region": "bhubaneswar",
+      "image_url": "/images/monuments/brahmeshwara-temple.jpg",
+      "rating": 4.8,
+      "reviews_count": 120,
+      "created_at": "2026-03-21T12:44:34.236Z"
+    },
+    {
+      "id": "fallback-50-1774097074236",
+      "title": "Bindu Sagar Lake",
+      "description": "The sacred lake at the heart of Bhubaneswar's old town, Bindu Sagar is believed to contain drops of water from every sacred stream in India. The lake is surrounded by numerous ancient temples and forms the center of the city's Temple Zone. During the annual Ashokastami festival, the presiding deity of Lingaraja Temple is brought here for a ceremonial bath. The lake offers serene views of the temple skyline.",
+      "location": "Bhubaneswar, Odisha",
+      "state": "Odisha",
+      "category": "Lake",
+      "latitude": 20.2405,
+      "longitude": 85.8335,
+      "is_featured": false,
+      "facts": [
+        "Sacred lake at the heart of old Bhubaneswar",
+        "Believed to contain drops from every sacred stream in India",
+        "Surrounded by numerous ancient temples",
+        "Ashokastami festival ceremony held here",
+        "Serene views of temple-studded skyline"
+      ],
+      "distance_from_berhampur": "350 km",
+      "region": "bhubaneswar",
+      "image_url": "/images/monuments/bindusagar-lake.jpg",
+      "rating": 4.8,
+      "reviews_count": 120,
+      "created_at": "2026-03-21T12:44:34.236Z"
+    },
+    {
+      "id": "fallback-51-1774097074236",
+      "title": "ISKCON Temple Bhubaneswar",
+      "description": "The magnificent ISKCON temple in Bhubaneswar is dedicated to Sri Sri Radha Krishna Chandra. The temple complex features stunning architecture combining traditional and modern elements, lush gardens, a museum, and a large auditorium. The temple serves free vegetarian meals daily and hosts major festivals like Janmashtami and Ratha Yatra with great grandeur. It's also a center for Vedic education and meditation.",
+      "location": "Bhubaneswar, Odisha",
+      "state": "Odisha",
+      "category": "Temple",
+      "latitude": 20.2952,
+      "longitude": 85.8205,
+      "is_featured": false,
+      "facts": [
+        "Dedicated to Sri Sri Radha Krishna Chandra",
+        "Stunning blend of traditional and modern architecture",
+        "Free vegetarian meals served daily",
+        "Major festivals celebrated with grandeur",
+        "Center for Vedic education and meditation"
+      ],
+      "distance_from_berhampur": "350 km",
+      "region": "bhubaneswar",
+      "image_url": "/images/monuments/iskcon-temple.jpg",
+      "rating": 4.8,
+      "reviews_count": 120,
+      "created_at": "2026-03-21T12:44:34.236Z"
+    },
+    {
+      "id": "fallback-52-1774097074236",
+      "title": "Ram Mandir Bhubaneswar",
+      "description": "A prominent Hindu temple in the heart of Bhubaneswar, Ram Mandir is dedicated to Lord Rama and is one of the city's most visited temples. The temple features traditional Odishan architecture with beautiful wall carvings and a spacious prayer hall. The temple complex includes gardens and cultural spaces. Ram Navami celebrations here are among the most elaborate in the city.",
+      "location": "Bhubaneswar, Odisha",
+      "state": "Odisha",
+      "category": "Temple",
+      "latitude": 20.2762,
+      "longitude": 85.8425,
+      "is_featured": false,
+      "facts": [
+        "Prominent temple in heart of Bhubaneswar",
+        "Dedicated to Lord Rama",
+        "Traditional Odishan architecture with wall carvings",
+        "Ram Navami celebrations are elaborate",
+        "Spacious prayer hall and gardens"
+      ],
+      "distance_from_berhampur": "350 km",
+      "region": "bhubaneswar",
+      "image_url": "/images/monuments/ram-mandir-bbsr.jpg",
+      "rating": 4.8,
+      "reviews_count": 120,
+      "created_at": "2026-03-21T12:44:34.236Z"
+    },
+    {
+      "id": "fallback-53-1774097074236",
+      "title": "Ratnagiri Buddhist Monastery",
+      "description": "One of the three hilltop Buddhist heritage sites in the Diamond Triangle of Odisha, Ratnagiri was a major Mahayana Buddhist center from the 5th to 12th century. Excavations revealed a massive monastery, beautiful sculptures, and a stunning stone gateway. The site museum houses exquisite bronze and stone Buddha images, ornate door frames, and carved bricks. The hill offers beautiful views of the Brahmani River valley.",
+      "location": "Ratnagiri, Jajpur, Odisha",
+      "state": "Odisha",
+      "category": "Monastery",
+      "latitude": 20.6406,
+      "longitude": 86.334,
+      "is_featured": true,
+      "facts": [
+        "Major Mahayana Buddhist center from 5th-12th century",
+        "Part of Diamond Triangle of Buddhist sites",
+        "Stunning stone gateway and monastery ruins",
+        "Exquisite bronze and stone Buddha images",
+        "Beautiful views of Brahmani River valley"
+      ],
+      "distance_from_berhampur": "370 km",
+      "region": "jajpur",
+      "image_url": "/images/monuments/ratnagiri-monastery.jpg",
+      "rating": 4.8,
+      "reviews_count": 120,
+      "created_at": "2026-03-21T12:44:34.236Z"
+    },
+    {
+      "id": "fallback-54-1774097074236",
+      "title": "Lalitgiri Buddhist Complex",
+      "description": "The earliest Buddhist site in the Diamond Triangle, Lalitgiri dates back to the 1st century CE. Excavations uncovered a brick monastery, sculptured panels, and notably a stone relic casket containing actual bone relics believed to be of Buddha. The hilltop stupa and monastery ruins sit amidst green hills, offering a peaceful pilgrimage experience. The site museum showcases remarkable Buddhist antiquities.",
+      "location": "Lalitgiri, Cuttack, Odisha",
+      "state": "Odisha",
+      "category": "Monastery",
+      "latitude": 20.5902,
+      "longitude": 86.252,
+      "is_featured": false,
+      "facts": [
+        "Earliest Buddhist site in Diamond Triangle from 1st century CE",
+        "Stone casket with bone relics believed to be of Buddha",
+        "Brick monastery and sculptured panels",
+        "Hilltop stupa with green hill surroundings",
+        "Museum with remarkable Buddhist antiquities"
+      ],
+      "distance_from_berhampur": "370 km",
+      "region": "cuttack",
+      "image_url": "/images/monuments/lalitgiri-complex.jpg",
+      "rating": 4.8,
+      "reviews_count": 120,
+      "created_at": "2026-03-21T12:44:34.236Z"
+    },
+    {
+      "id": "fallback-55-1774097074236",
+      "title": "Tribal Museum Bhubaneswar",
+      "description": "The Museum of Tribal Arts and Artifacts showcases the rich cultural heritage of Odisha's 62 tribal communities, which constitute nearly 23% of the state's population. Displays include traditional costumes, jewelry, weapons, musical instruments, and models of tribal dwellings. The museum provides insights into the diverse customs, rituals, and art forms of communities like Kondh, Saora, Bonda, and Dongria.",
+      "location": "Bhubaneswar, Odisha",
+      "state": "Odisha",
+      "category": "Museum",
+      "latitude": 20.285,
+      "longitude": 85.815,
+      "is_featured": false,
+      "facts": [
+        "Showcases 62 tribal communities of Odisha",
+        "Tribal communities form 23% of state population",
+        "Traditional costumes, jewelry, and weapons displayed",
+        "Models of tribal dwellings and lifestyle",
+        "Insights into Kondh, Saora, Bonda, Dongria cultures"
+      ],
+      "distance_from_berhampur": "350 km",
+      "region": "bhubaneswar",
+      "image_url": "/images/monuments/tribal-museum.jpg",
+      "rating": 4.8,
+      "reviews_count": 120,
+      "created_at": "2026-03-21T12:44:34.236Z"
+    },
+    {
+      "id": "fallback-56-1774097074236",
+      "title": "Ekamra Kanan Botanical Gardens",
+      "description": "A 217-acre botanical garden and park in Bhubaneswar featuring diverse collections of tropical and sub-tropical plants. The garden includes a rose garden with over 200 varieties, a cactus house, orchid collection, and medicinal plant section. The Japanese Garden within is a peaceful oasis with zen elements. The park also features a musical fountain that operates in the evenings with synchronized light shows.",
+      "location": "Bhubaneswar, Odisha",
+      "state": "Odisha",
+      "category": "Park",
+      "latitude": 20.305,
+      "longitude": 85.812,
+      "is_featured": false,
+      "facts": [
+        "217-acre botanical garden and park",
+        "Rose garden with over 200 varieties",
+        "Japanese Garden with zen elements",
+        "Musical fountain with evening light shows",
+        "Cactus house, orchid, and medicinal plant collections"
+      ],
+      "distance_from_berhampur": "350 km",
+      "region": "bhubaneswar",
+      "image_url": "/images/monuments/ekamra-kanan.jpg",
+      "rating": 4.8,
+      "reviews_count": 120,
+      "created_at": "2026-03-21T12:44:34.236Z"
+    },
+    {
+      "id": "fallback-57-1774097074236",
+      "title": "Dhauligiri Hills Peace Park",
+      "description": "The expanded peace park around the Dhauli Stupa includes beautifully landscaped gardens, the ancient rock-cut elephant sculpture (India's earliest rock-cut sculpture), and meditation halls. The park commemorates the transformation of warfare to peace after the Kalinga War. Evening light and sound shows narrate the story of Emperor Ashoka's transformation. The park is a UNESCO tentative list site.",
+      "location": "Dhauli, Bhubaneswar, Odisha",
+      "state": "Odisha",
+      "category": "Park",
+      "latitude": 20.194,
+      "longitude": 85.838,
+      "is_featured": false,
+      "facts": [
+        "Beautifully landscaped peace park",
+        "India's earliest rock-cut elephant sculpture",
+        "Commemorates Kalinga War transformation",
+        "Evening light and sound shows",
+        "UNESCO tentative list site"
+      ],
+      "distance_from_berhampur": "348 km",
+      "region": "bhubaneswar",
+      "image_url": "/images/monuments/dhauligiri-peace-park.jpg",
+      "rating": 4.8,
+      "reviews_count": 120,
+      "created_at": "2026-03-21T12:44:34.236Z"
+    },
+    {
+      "id": "fallback-58-1774097074236",
+      "title": "Kedar Gouri Temple",
+      "description": "An ancient twin temple complex dedicated to Lord Shiva (Kedar) and Goddess Parvati (Gouri), dating to the 8th century. The temple pair represents the divine marriage of Shiva and Parvati. The carvings showcase transitional Kalinga architecture between early and mature styles. The temple is considered auspicious for marriage ceremonies and is visited by newly married couples.",
+      "location": "Bhubaneswar, Odisha",
+      "state": "Odisha",
+      "category": "Temple",
+      "latitude": 20.243,
+      "longitude": 85.836,
+      "is_featured": false,
+      "facts": [
+        "8th century twin temple complex",
+        "Dedicated to Lord Shiva and Goddess Parvati",
+        "Represents divine marriage of Shiva-Parvati",
+        "Transitional Kalinga architecture",
+        "Auspicious for marriage ceremonies"
+      ],
+      "distance_from_berhampur": "350 km",
+      "region": "bhubaneswar",
+      "image_url": "/images/monuments/kedargouri-temple.jpg",
+      "rating": 4.8,
+      "reviews_count": 120,
+      "created_at": "2026-03-21T12:44:34.236Z"
+    },
+    {
+      "id": "fallback-59-1774097074236",
+      "title": "Pathani Samanta Planetarium",
+      "description": "Named after the legendary astronomer Pathani Samanta, this is one of the largest planetariums in eastern India. The planetarium features a modern projection system showing celestial phenomena, astronomical shows, and 3D documentaries about space exploration. Interactive exhibits about the solar system, galaxies, and black holes make it educational and entertaining for visitors of all ages.",
+      "location": "Bhubaneswar, Odisha",
+      "state": "Odisha",
+      "category": "Museum",
+      "latitude": 20.301,
+      "longitude": 85.827,
+      "is_featured": false,
+      "facts": [
+        "One of largest planetariums in eastern India",
+        "Named after astronomer Pathani Samanta",
+        "Modern projection system for celestial shows",
+        "Interactive exhibits about solar system and galaxies",
+        "3D documentaries about space exploration"
+      ],
+      "distance_from_berhampur": "350 km",
+      "region": "bhubaneswar",
+      "image_url": "/images/monuments/pathani-samanta-planetarium.jpg",
+      "rating": 4.8,
+      "reviews_count": 120,
+      "created_at": "2026-03-21T12:44:34.236Z"
+    },
+    {
+      "id": "fallback-60-1774097074236",
+      "title": "Nicco Park & World",
+      "description": "An amusement and water park offering entertainment for families. Features include roller coasters, water slides, boating, go-karting, and various thrill rides. The park also has a food court, souvenir shops, and regular cultural shows. It's one of the most popular recreational destinations in Bhubaneswar for weekend outings.",
+      "location": "Bhubaneswar, Odisha",
+      "state": "Odisha",
+      "category": "Park",
+      "latitude": 20.291,
+      "longitude": 85.833,
+      "is_featured": false,
+      "facts": [
+        "Popular amusement and water park",
+        "Roller coasters, water slides, and go-karting",
+        "Family entertainment with thrill rides",
+        "Food court and souvenir shops",
+        "Cultural shows and weekend entertainment"
+      ],
+      "distance_from_berhampur": "350 km",
+      "region": "bhubaneswar",
+      "image_url": "/images/monuments/nicco-park-bhubaneswar.jpg",
+      "rating": 4.8,
+      "reviews_count": 120,
+      "created_at": "2026-03-21T12:44:34.236Z"
+    },
+    {
+      "id": "fallback-61-1774097074236",
+      "title": "Ananta Vasudeva Temple",
+      "description": "The only temple in Bhubaneswar dedicated to Lord Vishnu (Krishna), built in the 13th century. The temple follows the traditional Kalinga architectural style and is known for its elaborate rituals and prasad offerings similar to the Jagannath Temple in Puri. The temple kitchen prepares 56 varieties of bhog (food offerings) daily. It's an important site for understanding Vaishnavite traditions in Odisha.",
+      "location": "Bhubaneswar, Odisha",
+      "state": "Odisha",
+      "category": "Temple",
+      "latitude": 20.2395,
+      "longitude": 85.835,
+      "is_featured": false,
+      "facts": [
+        "Only Vishnu temple in Bhubaneswar",
+        "Built in 13th century Kalinga style",
+        "56 varieties of bhog prepared daily",
+        "Rituals similar to Puri Jagannath Temple",
+        "Important for understanding Vaishnavite traditions"
+      ],
+      "distance_from_berhampur": "350 km",
+      "region": "bhubaneswar",
+      "image_url": "/images/monuments/ananta-vasudeva.jpg",
+      "rating": 4.8,
+      "reviews_count": 120,
+      "created_at": "2026-03-21T12:44:34.236Z"
+    },
+    {
+      "id": "fallback-62-1774097074236",
+      "title": "Sisireswara Temple",
+      "description": "An 8th-century Shaivite temple known for its well-preserved carvings and architectural details. The temple stands near Bindu Sagar Lake and features beautiful carved panels depicting mythological scenes. The temple's compact form represents the early phase of Kalinga temple architecture, making it important for studying the evolution of temple design in Bhubaneswar.",
+      "location": "Bhubaneswar, Odisha",
+      "state": "Odisha",
+      "category": "Temple",
+      "latitude": 20.241,
+      "longitude": 85.8355,
+      "is_featured": false,
+      "facts": [
+        "Well-preserved 8th century Shaivite temple",
+        "Near Bindu Sagar Lake",
+        "Beautiful carved mythological panels",
+        "Early phase Kalinga architecture",
+        "Important for temple design evolution study"
+      ],
+      "distance_from_berhampur": "350 km",
+      "region": "bhubaneswar",
+      "image_url": "/images/monuments/sisireswara-temple.jpg",
+      "rating": 4.8,
+      "reviews_count": 120,
+      "created_at": "2026-03-21T12:44:34.236Z"
+    },
+    {
+      "id": "fallback-63-1774097074236",
+      "title": "Khandagiri Jain Temples",
+      "description": "Modern Jain temples built atop Khandagiri Hill alongside the ancient caves. The temples feature beautiful white marble architecture with colorful murals depicting Jain Tirthankaras. The hilltop location offers panoramic views of Bhubaneswar city. The annual Mahamastakabhisheka ceremony attracts Jain pilgrims from across India. The combination of ancient caves and modern temples creates a unique spiritual landscape.",
+      "location": "Khandagiri, Bhubaneswar, Odisha",
+      "state": "Odisha",
+      "category": "Temple",
+      "latitude": 20.258,
+      "longitude": 85.787,
+      "is_featured": false,
+      "facts": [
+        "Modern Jain temples atop ancient hill",
+        "White marble architecture with colorful murals",
+        "Panoramic views of Bhubaneswar city",
+        "Annual Mahamastakabhisheka ceremony",
+        "Unique blend of ancient caves and modern temples"
+      ],
+      "distance_from_berhampur": "350 km",
+      "region": "bhubaneswar",
+      "image_url": "/images/monuments/khandagiri-jain-temples.jpg",
+      "rating": 4.8,
+      "reviews_count": 120,
+      "created_at": "2026-03-21T12:44:34.236Z"
+    },
+    {
+      "id": "fallback-64-1774097074236",
+      "title": "Chandaka Elephant Sanctuary",
+      "description": "A 175 sq km sanctuary established to protect the Asiatic elephants and their habitat on the outskirts of Bhubaneswar. The sanctuary is home to over 60 elephants along with leopards, deer, wild boar, and numerous bird species. Nature trails and watchtowers allow visitors to observe wildlife in natural settings. The sanctuary plays a crucial role in elephant conservation in urban-adjacent forests.",
+      "location": "Chandaka, Bhubaneswar, Odisha",
+      "state": "Odisha",
+      "category": "Sanctuary",
+      "latitude": 20.37,
+      "longitude": 85.72,
+      "is_featured": false,
+      "facts": [
+        "175 sq km elephant sanctuary",
+        "Home to over 60 Asiatic elephants",
+        "Also has leopards, deer, and wild boar",
+        "Nature trails and watchtowers for visitors",
+        "Crucial for urban-adjacent elephant conservation"
+      ],
+      "distance_from_berhampur": "355 km",
+      "region": "bhubaneswar",
+      "image_url": "/images/monuments/chandaka-sanctuary.jpg",
+      "rating": 4.8,
+      "reviews_count": 120,
+      "created_at": "2026-03-21T12:44:34.236Z"
+    },
+    {
+      "id": "fallback-65-1774097074236",
+      "title": "Puri Jagannath Temple",
+      "description": "One of the Char Dham pilgrimage sites, the 12th-century Jagannath Temple in Puri is one of the most sacred Hindu temples in India. The massive temple complex, with its 65-meter-high tower, dominates the Puri skyline. The annual Rath Yatra (Car Festival) is world-famous, with millions participating. The temple's Mahaprasad is prepared in the world's largest kitchen, serving 100,000 people daily.",
+      "location": "Puri, Odisha",
+      "state": "Odisha",
+      "category": "Temple",
+      "latitude": 19.8048,
+      "longitude": 85.818,
+      "is_featured": true,
+      "facts": [
+        "One of the four Char Dham sites",
+        "12th century temple with 65-meter tower",
+        "Annual Rath Yatra is world famous",
+        "World's largest kitchen serves 100,000 daily",
+        "Non-Hindus cannot enter the main temple"
+      ],
+      "distance_from_berhampur": "380 km",
+      "region": "puri",
+      "image_url": "/images/monuments/puri-jagannath-temple.jpg",
+      "rating": 4.8,
+      "reviews_count": 120,
+      "created_at": "2026-03-21T12:44:34.236Z"
+    },
+    {
+      "id": "fallback-66-1774097074236",
+      "title": "Puri Beach",
+      "description": "One of India's most famous beaches, Puri Beach stretches along the Bay of Bengal offering golden sands, rolling waves, and spectacular sunrises. The beach is dotted with colorful fishing boats and hosts the annual Puri Beach Festival featuring sand art competitions, cultural performances, and food fairs. The beach is also known for the international sand art festival where master artists create intricate sculptures.",
+      "location": "Puri, Odisha",
+      "state": "Odisha",
+      "category": "Beach",
+      "latitude": 19.798,
+      "longitude": 85.825,
+      "is_featured": true,
+      "facts": [
+        "One of India's most famous beaches",
+        "Annual Beach Festival with sand art competitions",
+        "International sand art festival destination",
+        "Colorful fishing boats along the shore",
+        "Spectacular sunrise views over Bay of Bengal"
+      ],
+      "distance_from_berhampur": "380 km",
+      "region": "puri",
+      "image_url": "/images/monuments/puri-sea-beach.jpg",
+      "rating": 4.8,
+      "reviews_count": 120,
+      "created_at": "2026-03-21T12:44:34.236Z"
+    },
+    {
+      "id": "fallback-67-1774097074236",
+      "title": "Pipili Applique Village",
+      "description": "Famous for its vibrant applique craft, Pipili is India's most renowned applique craft village. The colorful umbrellas, wall hangings, lamp shades, and decorative items made here are used in the Puri Jagannath Temple's Rath Yatra. The craft involves stitching cut pieces of colorful cloth onto a base to create intricate patterns. Walking through the craft shops lining the main road is a kaleidoscopic experience.",
+      "location": "Pipili, Puri, Odisha",
+      "state": "Odisha",
+      "category": "Cultural Site",
+      "latitude": 20.1172,
+      "longitude": 85.8322,
+      "is_featured": false,
+      "facts": [
+        "India's most famous applique craft village",
+        "Crafts used in Puri Rath Yatra chariots",
+        "Colorful umbrellas, wall hangings, and lamp shades",
+        "Traditional art of stitching cloth patterns",
+        "Kaleidoscopic craft shops along main road"
+      ],
+      "distance_from_berhampur": "370 km",
+      "region": "puri",
+      "image_url": "/images/monuments/pipili-applique.jpg",
+      "rating": 4.8,
+      "reviews_count": 120,
+      "created_at": "2026-03-21T12:44:34.236Z"
+    },
+    {
+      "id": "fallback-68-1774097074236",
+      "title": "Raghurajpur Heritage Village",
+      "description": "A living art village where every household practices the traditional Pattachitra art form. This 700-year-old art involves painting intricate mythological narratives on specially prepared cloth or palm leaves using natural colors. The village also produces tussar paintings, stone carvings, and papier-mâché masks. UNESCO has recognized Raghurajpur as a heritage craft village, preserving one of India's finest art traditions.",
+      "location": "Raghurajpur, Puri, Odisha",
+      "state": "Odisha",
+      "category": "Cultural Site",
+      "latitude": 19.8735,
+      "longitude": 85.8277,
+      "is_featured": false,
+      "facts": [
+        "Every household practices Pattachitra art",
+        "700-year-old traditional painting art form",
+        "Uses natural colors on cloth and palm leaves",
+        "UNESCO recognized heritage craft village",
+        "Also produces tussar paintings and stone carvings"
+      ],
+      "distance_from_berhampur": "375 km",
+      "region": "puri",
+      "image_url": "/images/monuments/raghurajpur-village.jpg",
+      "rating": 4.8,
+      "reviews_count": 120,
+      "created_at": "2026-03-21T12:44:34.236Z"
+    },
+    {
+      "id": "fallback-69-1774097074236",
+      "title": "Satkosia Gorge",
+      "description": "A dramatic gorge where the Mahanadi River cuts through the Eastern Ghats, creating a 22-km long canyon with steep rocky walls rising 200 meters on both sides. The Satkosia Tiger Reserve surrounding the gorge shelters tigers, gharials, mugger crocodiles, and diverse bird species. River camping and crocodile spotting boat rides are popular activities. The gorge is at the meeting point of two distinct ecosystems.",
+      "location": "Satkosia, Angul, Odisha",
+      "state": "Odisha",
+      "category": "Natural Wonder",
+      "latitude": 20.584,
+      "longitude": 84.845,
+      "is_featured": true,
+      "facts": [
+        "22-km gorge with 200-meter rocky walls",
+        "Part of Satkosia Tiger Reserve",
+        "Home to tigers, gharials, and mugger crocodiles",
+        "River camping and boat rides available",
+        "Meeting point of two distinct ecosystems"
+      ],
+      "distance_from_berhampur": "360 km",
+      "region": "angul",
+      "image_url": "/images/monuments/satkosia-gorge.jpg",
+      "rating": 4.8,
+      "reviews_count": 120,
+      "created_at": "2026-03-21T12:44:34.236Z"
+    },
+    {
+      "id": "fallback-70-1774097074236",
+      "title": "Bhitarkanika National Park",
+      "description": "India's second-largest mangrove ecosystem, Bhitarkanika is famous for its saltwater crocodile population, the largest in India. The park hosts the mass nesting of Olive Ridley turtles at Gahirmatha Beach. Over 215 bird species have been recorded here, including the rare white-bellied sea eagle. Boat safaris through mangrove channels offer encounters with monitor lizards, king cobras, and diverse aquatic life.",
+      "location": "Bhitarkanika, Kendrapara, Odisha",
+      "state": "Odisha",
+      "category": "Sanctuary",
+      "latitude": 20.723,
+      "longitude": 86.871,
+      "is_featured": false,
+      "facts": [
+        "India's second-largest mangrove ecosystem",
+        "Largest saltwater crocodile population in India",
+        "Gahirmatha mass turtle nesting site",
+        "Over 215 bird species recorded",
+        "Boat safaris through mangrove channels"
+      ],
+      "distance_from_berhampur": "380 km",
+      "region": "kendrapara",
+      "image_url": "/images/monuments/bhitarkanika.jpg",
+      "rating": 4.8,
+      "reviews_count": 120,
+      "created_at": "2026-03-21T12:44:34.236Z"
+    },
+    {
+      "id": "fallback-71-1774097074236",
+      "title": "Simlipal National Park",
+      "description": "A 2,750 sq km national park and tiger reserve in the Mayurbhanj district, Simlipal is one of India's most beautiful wilderness areas. It features dense sal and teak forests, spectacular waterfalls including Barehipani Falls (399m, India's 2nd highest) and Joranda Falls (181m). The park is home to tigers, elephants, gaur, and the melanistic tiger (black tiger), found almost exclusively here.",
+      "location": "Simlipal, Mayurbhanj, Odisha",
+      "state": "Odisha",
+      "category": "Sanctuary",
+      "latitude": 21.65,
+      "longitude": 86.35,
+      "is_featured": false,
+      "facts": [
+        "2,750 sq km tiger reserve",
+        "Barehipani Falls is India's 2nd highest at 399m",
+        "Home to the rare melanistic black tiger",
+        "Dense sal and teak forests",
+        "Elephants, gaur, and diverse wildlife"
+      ],
+      "distance_from_berhampur": "400 km",
+      "region": "mayurbhanj",
+      "image_url": "/images/monuments/simlipal.jpg",
+      "rating": 4.8,
+      "reviews_count": 120,
+      "created_at": "2026-03-21T12:44:34.236Z"
+    },
+    {
+      "id": "fallback-72-1774097074236",
+      "title": "Vaital Temple",
+      "description": "An 8th-century tantric temple dedicated to Goddess Chamunda, the Vaital Temple is distinguished by its unusual double-storied wagon-roof (khakhara) design, unique in Bhubaneswar. The interior houses a fierce eight-armed image of Chamunda sitting on a corpse, surrounded by skulls. The exterior carvings include elaborate depictions of Durga slaying Mahishasura. It represents tantric worship traditions of medieval Odisha.",
+      "location": "Bhubaneswar, Odisha",
+      "state": "Odisha",
+      "category": "Temple",
+      "latitude": 20.2418,
+      "longitude": 85.8325,
+      "is_featured": false,
+      "facts": [
+        "8th century tantric temple",
+        "Unique khakhara (wagon-roof) design",
+        "Fierce eight-armed Chamunda image inside",
+        "Elaborate Durga Mahishasura carvings outside",
+        "Represents medieval tantric worship traditions"
+      ],
+      "distance_from_berhampur": "350 km",
+      "region": "bhubaneswar",
+      "image_url": "/images/monuments/vaital-temple.jpg",
+      "rating": 4.8,
+      "reviews_count": 120,
+      "created_at": "2026-03-21T12:44:34.237Z"
+    },
+    {
+      "id": "fallback-73-1774097074237",
+      "title": "Chausath Yogini Temple",
+      "description": "One of the rare circular temples in India, the Chausath Yogini Temple at Hirapur dates to the 9th century. The open-air temple features 64 small niches housing yogini figures, each with a distinct pose and attribute. This is one of only four such temples in India. The temple is linked to tantric worship practices and represents an important facet of medieval Indian religious art.",
+      "location": "Hirapur, Bhubaneswar, Odisha",
+      "state": "Odisha",
+      "category": "Temple",
+      "latitude": 20.2295,
+      "longitude": 85.8768,
+      "is_featured": false,
+      "facts": [
+        "Rare circular temple from 9th century",
+        "64 niches with distinct yogini figures",
+        "One of only four such temples in India",
+        "Linked to tantric worship practices",
+        "Important medieval Indian religious art"
+      ],
+      "distance_from_berhampur": "355 km",
+      "region": "bhubaneswar",
+      "image_url": "/images/monuments/chausath-yogini.jpg",
+      "rating": 4.8,
+      "reviews_count": 120,
+      "created_at": "2026-03-21T12:44:34.237Z"
+    },
+    {
+      "id": "fallback-74-1774097074237",
+      "title": "Biju Patnaik Museum of Technology",
+      "description": "A science and technology museum named after the legendary leader Biju Patnaik. The museum features interactive exhibits on aerospace, space technology, renewable energy, and Information Technology. A replica of the Dakota aircraft flown by Biju Patnaik during Indonesia's independence struggle is a highlight. The planetarium section hosts regular astronomy shows for students and visitors.",
+      "location": "Bhubaneswar, Odisha",
+      "state": "Odisha",
+      "category": "Museum",
+      "latitude": 20.275,
+      "longitude": 85.83,
+      "is_featured": false,
+      "facts": [
+        "Named after legendary leader Biju Patnaik",
+        "Interactive aerospace and space technology exhibits",
+        "Replica of Dakota aircraft from Indonesian freedom struggle",
+        "Renewable energy and IT sections",
+        "Regular astronomy shows in planetarium"
+      ],
+      "distance_from_berhampur": "350 km",
+      "region": "bhubaneswar",
+      "image_url": "/images/monuments/biju-patnaik-museum.jpg",
+      "rating": 4.8,
+      "reviews_count": 120,
+      "created_at": "2026-03-21T12:44:34.237Z"
+    },
+    {
+      "id": "fallback-75-1774097074237",
+      "title": "Mangalajodi Wetland",
+      "description": "A critical wetland on the northern edge of Chilika Lake, Mangalajodi has transformed from a poaching hotspot to one of India's best birdwatching destinations. Over 300,000 migratory birds from as far as Siberia, Central Asia, and Europe visit annually. Community-based ecotourism has made it a conservation success story. Early morning boat rides through the marshes offer unparalleled birdwatching experiences.",
+      "location": "Mangalajodi, Khurda, Odisha",
+      "state": "Odisha",
+      "category": "Natural Wonder",
+      "latitude": 19.885,
+      "longitude": 85.42,
+      "is_featured": false,
+      "facts": [
+        "Over 300,000 migratory birds visit annually",
+        "Birds from Siberia, Central Asia, and Europe",
+        "Transformed from poaching to conservation success",
+        "Community-based ecotourism model",
+        "Unparalleled early morning birdwatching"
+      ],
+      "distance_from_berhampur": "355 km",
+      "region": "khurda",
+      "image_url": "/images/monuments/mangalajodi-wetland.jpg",
+      "rating": 4.8,
+      "reviews_count": 120,
+      "created_at": "2026-03-21T12:44:34.237Z"
+    },
+    {
+      "id": "fallback-76-1774097074237",
+      "title": "Chudanga Temple Complex",
+      "description": "A group of medieval temples dating from the Eastern Ganga dynasty period (12th-13th century). The temples showcase mature Kalinga architecture with elaborate carvings. The main temple features a tall shikhara and intricate relief work. The complex provides insights into the religious life and artistic achievements during the golden age of Odishan temple architecture.",
+      "location": "Bhubaneswar, Odisha",
+      "state": "Odisha",
+      "category": "Temple",
+      "latitude": 20.238,
+      "longitude": 85.833,
+      "is_featured": false,
+      "facts": [
+        "Medieval temples from Eastern Ganga period",
+        "12th-13th century Kalinga architecture",
+        "Elaborate carvings and tall shikhara",
+        "Insights into golden age religious life",
+        "Fine examples of mature Odishan temple art"
+      ],
+      "distance_from_berhampur": "350 km",
+      "region": "bhubaneswar",
+      "image_url": "/images/monuments/chudanga-temple.jpg",
+      "rating": 4.8,
+      "reviews_count": 120,
+      "created_at": "2026-03-21T12:44:34.237Z"
+    },
+    {
+      "id": "fallback-77-1774097074237",
+      "title": "State Handicrafts Museum",
+      "description": "Also known as the Museum of Handlooms, this museum showcases the exquisite textile heritage of Odisha including Sambalpuri, Bomkai, and Berhampur silks. Displays include traditional looms, weaving techniques, filigree silver work, dhokra metal craft, stone and wood carvings, and pattachitra paintings. The museum shop offers authentic handicraft purchases directly supporting artisan communities.",
+      "location": "Bhubaneswar, Odisha",
+      "state": "Odisha",
+      "category": "Museum",
+      "latitude": 20.268,
+      "longitude": 85.84,
+      "is_featured": false,
+      "facts": [
+        "Showcases Odisha's textile heritage",
+        "Sambalpuri, Bomkai, and Berhampur silks",
+        "Traditional looms and weaving demonstrations",
+        "Dhokra, filigree, and pattachitra displays",
+        "Museum shop supporting artisan communities"
+      ],
+      "distance_from_berhampur": "350 km",
+      "region": "bhubaneswar",
+      "image_url": "/images/monuments/kala-bhoomi-museum.jpg",
+      "rating": 4.8,
+      "reviews_count": 120,
+      "created_at": "2026-03-21T12:44:34.237Z"
+    },
+    {
+      "id": "fallback-78-1774097074237",
+      "title": "Kapilash Temple & Hills",
+      "description": "A Shaivite pilgrimage site atop Kapilash Hill in Dhenkanal, featuring a temple dedicated to Lord Chandrasekhar (Shiva). The hill rises to 2,239 feet and the trek to the summit passes through dense forests. According to legend, sage Kapila meditated here. The temple area includes natural caves and provides spectacular views. The annual Shiva Ratri celebration draws lakhs of devotees.",
+      "location": "Kapilash, Dhenkanal, Odisha",
+      "state": "Odisha",
+      "category": "Temple",
+      "latitude": 20.6883,
+      "longitude": 85.7667,
+      "is_featured": false,
+      "facts": [
+        "Shaivite temple at 2,239 feet elevation",
+        "Legend of sage Kapila's meditation",
+        "Trek through dense forests to summit",
+        "Natural caves in temple area",
+        "Shiva Ratri draws lakhs of devotees"
+      ],
+      "distance_from_berhampur": "370 km",
+      "region": "dhenkanal",
+      "image_url": "/images/monuments/kapilash-temple.jpg",
+      "rating": 4.8,
+      "reviews_count": 120,
+      "created_at": "2026-03-21T12:44:34.237Z"
+    },
+    {
+      "id": "fallback-79-1774097074237",
+      "title": "Assia Village Heritage Walk",
+      "description": "A heritage walk through one of Bhubaneswar's oldest neighborhoods, passing ancient temples, traditional Odisha-style houses, and community wells that have served residents for centuries. The walk reveals layers of living history from the 7th century onwards. Local guides share stories of traditions, festivals, and culinary heritage. Stone inscriptions found along the route date to various dynasties.",
+      "location": "Old Town, Bhubaneswar, Odisha",
+      "state": "Odisha",
+      "category": "Cultural Site",
+      "latitude": 20.24,
+      "longitude": 85.834,
+      "is_featured": false,
+      "facts": [
+        "Heritage walk through oldest neighborhood",
+        "Ancient temples and traditional Odisha houses",
+        "Community wells centuries old",
+        "Living history from 7th century onwards",
+        "Stone inscriptions from various dynasties"
+      ],
+      "distance_from_berhampur": "350 km",
+      "region": "bhubaneswar",
+      "image_url": "/images/monuments/assia-village.jpg",
+      "rating": 4.8,
+      "reviews_count": 120,
+      "created_at": "2026-03-21T12:44:34.237Z"
+    },
+    {
+      "id": "fallback-80-1774097074237",
+      "title": "Uttara Shiva Temple",
+      "description": "A lesser-known but architecturally significant temple in Bhubaneswar's old town area. The 9th century temple features finely carved figures and ornamental motifs characteristic of the middle phase of Kalinga temple architecture. The peaceful compound away from tourist crowds allows for unhurried appreciation of the stone craftsmanship that defines Bhubaneswar's temple heritage.",
+      "location": "Bhubaneswar, Odisha",
+      "state": "Odisha",
+      "category": "Temple",
+      "latitude": 20.2415,
+      "longitude": 85.8365,
+      "is_featured": false,
+      "facts": [
+        "9th century temple in old town",
+        "Middle phase Kalinga architecture",
+        "Finely carved figures and ornamental motifs",
+        "Peaceful compound away from crowds",
+        "Excellent stone craftsmanship"
+      ],
+      "distance_from_berhampur": "350 km",
+      "region": "bhubaneswar",
+      "image_url": "/images/monuments/uttara-shiva-temple.jpg",
+      "rating": 4.8,
+      "reviews_count": 120,
+      "created_at": "2026-03-21T12:44:34.237Z"
+    },
+    {
+      "id": "fallback-81-1774097074237",
+      "title": "Saptasajya Hills",
+      "description": "Seven interconnected hills steeped in Ramayana legend — Lord Rama is believed to have rested here during his exile. The hills feature ancient rock paintings, medicinal herb forests, and panoramic viewpoints. A natural spring and small temple make it a spiritual retreat. The hills are also home to several rare plant species and offer excellent trekking opportunities.",
+      "location": "Dhenkanal, Odisha",
+      "state": "Odisha",
+      "category": "Hill",
+      "latitude": 20.702,
+      "longitude": 85.715,
+      "is_featured": false,
+      "facts": [
+        "Seven interconnected hills from Ramayana legend",
+        "Lord Rama believed to have rested here",
+        "Ancient rock paintings",
+        "Medicinal herb forests",
+        "Natural spring and temple at the site"
+      ],
+      "distance_from_berhampur": "370 km",
+      "region": "dhenkanal",
+      "image_url": "/images/monuments/saptasajya-hills.jpg",
+      "rating": 4.8,
+      "reviews_count": 120,
+      "created_at": "2026-03-21T12:44:34.237Z"
+    },
+    {
+      "id": "fallback-82-1774097074237",
+      "title": "Pradhanpat Waterfall",
+      "description": "A stunning waterfall near Deogarh in western Odisha, Pradhanpat cascades from a height of 60 meters amidst pristine forest. The waterfall creates a misty ambiance perfect for nature photography. The surrounding area is dotted with tribal villages where traditional crafts and customs are still practiced. The best time to visit is during and immediately after the monsoon season.",
+      "location": "Deogarh, Odisha",
+      "state": "Odisha",
+      "category": "Waterfall",
+      "latitude": 21.53,
+      "longitude": 84.735,
+      "is_featured": false,
+      "facts": [
+        "60-meter waterfall in pristine forest",
+        "Misty ambiance perfect for photography",
+        "Surrounding tribal villages with living traditions",
+        "Best visited during and after monsoon",
+        "One of western Odisha's natural gems"
+      ],
+      "distance_from_berhampur": "380 km",
+      "region": "deogarh",
+      "image_url": "/images/monuments/pradhanpat-falls.jpg",
+      "rating": 4.8,
+      "reviews_count": 120,
+      "created_at": "2026-03-21T12:44:34.237Z"
+    },
+    {
+      "id": "fallback-83-1774097074237",
+      "title": "Baleshwar Beach",
+      "description": "The coastal stretch near Balasore in northern Odisha is known for its wide sandy beaches and fishing heritage. Chandipur Beach here is famous for its unique phenomenon of the sea receding up to 5 kilometers during low tide, allowing visitors to walk on the exposed seabed. The area is also significant as the site of India's Integrated Test Range for missile testing.",
+      "location": "Balasore, Odisha",
+      "state": "Odisha",
+      "category": "Beach",
+      "latitude": 21.468,
+      "longitude": 87.021,
+      "is_featured": false,
+      "facts": [
+        "Sea recedes up to 5 km during low tide",
+        "Can walk on exposed seabed at Chandipur",
+        "Wide sandy beaches with fishing heritage",
+        "Site of India's missile testing range",
+        "Unique tidal phenomenon in India"
+      ],
+      "distance_from_berhampur": "400 km",
+      "region": "balasore",
+      "image_url": "/images/monuments/chandipur-beach.jpg",
+      "rating": 4.8,
+      "reviews_count": 120,
+      "created_at": "2026-03-21T12:44:34.237Z"
+    },
+    {
+      "id": "monument-barabati-fort",
+      "title": "Barabati Fort",
+      "description": "Historic 14th-century fort built by the Ganga dynasty on the banks of the Mahanadi River. Features a 9-storey palace ruin, stone moat, and the grand carved entrance gateway.",
+      "location": "Bidanasi, Cuttack, Odisha",
+      "state": "Odisha",
+      "category": "Fort",
+      "latitude": 20.485,
+      "longitude": 85.8647,
+      "is_featured": true,
+      "facts": [
+        "14th-century Ganga dynasty fortification",
+        "Surrounded by a stone-lined moat",
+        "Adjacent to modern Barabati Stadium",
+        "Gateway built in traditional Kalinga style"
+      ],
+      "distance_from_berhampur": "180 km",
+      "region": "cuttack",
+      "image_url": "/images/monuments/barabati-fort.jpg",
+      "rating": 4.7,
+      "reviews_count": 890,
+      "created_at": "2026-03-21T12:44:34.240Z"
+    },
+    {
+      "id": "monument-cuttack-chandi",
+      "title": "Cuttack Chandi Temple",
+      "description": "The presiding deity of Cuttack city, Goddess Chandi is revered as the living mother of the Millennium City. Famous for Durga Puja celebrations and silver filigree craftsmanship.",
+      "location": "Chandi Chhak, Cuttack, Odisha",
+      "state": "Odisha",
+      "category": "Temple",
+      "latitude": 20.4725,
+      "longitude": 85.8631,
+      "is_featured": true,
+      "facts": [
+        "Living mother deity of Cuttack",
+        "Magnificent Durga Puja and Chandi Puja",
+        "Historic temple worshipped for centuries"
+      ],
+      "distance_from_berhampur": "178 km",
+      "region": "cuttack",
+      "image_url": "/images/monuments/cuttack-chandi.jpg",
+      "rating": 4.8,
+      "reviews_count": 1450,
+      "created_at": "2026-03-21T12:44:34.241Z"
+    },
+    {
+      "id": "monument-biraja-temple",
+      "title": "Maa Biraja Temple",
+      "description": "Historic Shakti Peetha situated in Jajpur on the banks of Vaitarani River. The Goddess is worshipped as Mahishasuramardini and features an ancient chariot festival during Navratri.",
+      "location": "Jajpur, Odisha",
+      "state": "Odisha",
+      "category": "Temple",
+      "latitude": 20.84,
+      "longitude": 86.335,
+      "is_featured": true,
+      "facts": [
+        "One of India's major Shakti Peethas",
+        "Only Goddess in India with a Rath Yatra",
+        "Located on the sacred Vaitarani River"
+      ],
+      "distance_from_berhampur": "240 km",
+      "region": "jajpur",
+      "image_url": "/images/monuments/biraja-temple.jpg",
+      "rating": 4.9,
+      "reviews_count": 920,
+      "created_at": "2026-03-21T12:44:34.242Z"
+    },
+    {
+      "id": "monument-kichakeswari-temple",
+      "title": "Khiching Kichakeswari Temple",
+      "description": "Unique architectural marvel crafted entirely out of lustrous black chlorite stone in Mayurbhanj. Dedicated to Goddess Kichakeswari, the tutelary deity of the Bhanja rulers.",
+      "location": "Khiching, Mayurbhanj, Odisha",
+      "state": "Odisha",
+      "category": "Temple",
+      "latitude": 21.9167,
+      "longitude": 85.8333,
+      "is_featured": true,
+      "facts": [
+        "Built entirely from black chlorite stone",
+        "Reconstructed original 10th-century masterpiece",
+        "Museum houses priceless sculptures"
+      ],
+      "distance_from_berhampur": "320 km",
+      "region": "mayurbhanj",
+      "image_url": "/images/monuments/khiching-temple.jpg",
+      "rating": 4.8,
+      "reviews_count": 780,
+      "created_at": "2026-03-21T12:44:34.243Z"
+    },
+    {
+      "id": "monument-hirakud-dam",
+      "title": "Hirakud Dam & Reservoir",
+      "description": "One of the longest earthen dams in the world across the mighty Mahanadi River in Sambalpur. Features the Gandhi Minar and Nehru Minar viewpoints offering sweeping panoramas.",
+      "location": "Sambalpur, Odisha",
+      "state": "Odisha",
+      "category": "Natural Wonder",
+      "latitude": 21.5282,
+      "longitude": 83.8714,
+      "is_featured": true,
+      "facts": [
+        "Longest earthen dam in the world (25.8 km)",
+        "Vast inland freshwater reservoir",
+        "Panoramic views from Gandhi Minar"
+      ],
+      "distance_from_berhampur": "310 km",
+      "region": "sambalpur",
+      "image_url": "/images/monuments/hirakud-dam.jpg",
+      "rating": 4.8,
+      "reviews_count": 3100,
+      "created_at": "2026-03-21T12:44:34.244Z"
+    },
+    {
+      "id": "monument-samaleswari-temple",
+      "title": "Maa Samaleswari Temple",
+      "description": "Revered 16th-century temple in Sambalpur dedicated to Goddess Samaleswari on the banks of the river Mahanadi. Center of the famous Nuakhai harvest festival.",
+      "location": "Sambalpur, Odisha",
+      "state": "Odisha",
+      "category": "Temple",
+      "latitude": 21.4674,
+      "longitude": 83.9572,
+      "is_featured": true,
+      "facts": [
+        "Tutelary deity of Western Odisha",
+        "Major center of Nuakhai festival",
+        "New Samaleswari heritage river corridor"
+      ],
+      "distance_from_berhampur": "300 km",
+      "region": "sambalpur",
+      "image_url": "/images/monuments/samaleswari-temple.jpg",
+      "rating": 4.9,
+      "reviews_count": 2200,
+      "created_at": "2026-03-21T12:44:34.245Z"
+    },
+    {
+      "id": "monument-chandrabhaga-beach",
+      "title": "Chandrabhaga Beach",
+      "description": "Pristine Blue Flag certified beach near the Konark Sun Temple. Renowned for its calm golden sands, sunrise views, and the annual international sand art festival.",
+      "location": "Konark, Puri, Odisha",
+      "state": "Odisha",
+      "category": "Beach",
+      "latitude": 19.8667,
+      "longitude": 86.1167,
+      "is_featured": true,
+      "facts": [
+        "Blue Flag certified international beach",
+        "Magnificent sunrise over the Bay of Bengal",
+        "Site of the annual Sand Art Festival"
+      ],
+      "distance_from_berhampur": "170 km",
+      "region": "puri",
+      "image_url": "/images/monuments/chandrabhaga-beach.jpg",
+      "rating": 4.8,
+      "reviews_count": 1850,
+      "created_at": "2026-03-21T12:44:34.246Z"
+    }
+  ],
+  "photography_assets": [
+    {
+      "filename": "ananta-vasudeva.jpg",
+      "relative_url": "/images/monuments/ananta-vasudeva.jpg",
+      "file_size_bytes": 168920,
+      "sha256_hash": "e48dbb0c4695a28809bb9f9e6d15b76842829c3df0c120244559a32937c80bb6",
+      "matched_monument_title": "Ananta Vasudeva Temple"
+    },
+    {
+      "filename": "aryapalli-beach.jpg",
+      "relative_url": "/images/monuments/aryapalli-beach.jpg",
+      "file_size_bytes": 3307463,
+      "sha256_hash": "76394e8a506af420ec8a56f94c1d74ecc6b9d1e242be61bb088db6d88e8fdd72",
+      "matched_monument_title": "Aryapalli Beach"
+    },
+    {
+      "filename": "assia-village.jpg",
+      "relative_url": "/images/monuments/assia-village.jpg",
+      "file_size_bytes": 339667,
+      "sha256_hash": "708f0eed601f59592b9178fc175f19e16111cfef9844ff3157265e765a75cbbd",
+      "matched_monument_title": "Assia Village Heritage Walk"
+    },
+    {
+      "filename": "barabati-fort.jpg",
+      "relative_url": "/images/monuments/barabati-fort.jpg",
+      "file_size_bytes": 3353121,
+      "sha256_hash": "d1bde004d3c73769b2f3d971ebe9f4e143205dd0269b83c36feda62edebbd8f1",
+      "matched_monument_title": "Barabati Fort"
+    },
+    {
+      "filename": "bateswar-temple.jpg",
+      "relative_url": "/images/monuments/bateswar-temple.jpg",
+      "file_size_bytes": 165339,
+      "sha256_hash": "54c7d568ac0cfa1fa19d9b1294501c3e3804df55573b9720d1517a011b639318",
+      "matched_monument_title": "Bateswar Temple"
+    },
+    {
+      "filename": "beach-generic.jpg",
+      "relative_url": "/images/monuments/beach-generic.jpg",
+      "file_size_bytes": 42192,
+      "sha256_hash": "99e7e67428b8ba97f06e5a0d244b9029065fae78e6608485042e2a51b352a888",
+      "matched_monument_title": "Beach Generic"
+    },
+    {
+      "filename": "berhampur-silk-weaving.jpg",
+      "relative_url": "/images/monuments/berhampur-silk-weaving.jpg",
+      "file_size_bytes": 669476,
+      "sha256_hash": "198fb88b9e3caae1de93e942737838dbad34e7da613e0673f61e9cbcdbe356ce",
+      "matched_monument_title": "Berhampur Silk Weaving Center"
+    },
+    {
+      "filename": "bhairabi-temple.jpg",
+      "relative_url": "/images/monuments/bhairabi-temple.jpg",
+      "file_size_bytes": 4439379,
+      "sha256_hash": "e226f5f56f940335e1d631e9013dd72afd05fa37d798780ca9bc0111a1a9e3e0",
+      "matched_monument_title": "Bhairabi Temple"
+    },
+    {
+      "filename": "bhitarkanika.jpg",
+      "relative_url": "/images/monuments/bhitarkanika.jpg",
+      "file_size_bytes": 176812,
+      "sha256_hash": "6f4ede4dc7e5e21e05fdfdead6f5676a9081bc25bd43a9a840700ae3302ecb8d",
+      "matched_monument_title": "Bhitarkanika National Park"
+    },
+    {
+      "filename": "biju-patnaik-museum.jpg",
+      "relative_url": "/images/monuments/biju-patnaik-museum.jpg",
+      "file_size_bytes": 263506,
+      "sha256_hash": "60c34ddc962a67bf5ff3202a9e9ff37bd7a32222aed8b3e65082300e60cfb7eb",
+      "matched_monument_title": "Biju Patnaik Museum of Technology"
+    },
+    {
+      "filename": "bindusagar-lake.jpg",
+      "relative_url": "/images/monuments/bindusagar-lake.jpg",
+      "file_size_bytes": 59523,
+      "sha256_hash": "27edea229da6792cb98a4e66058f52377f3640e1181593574f19778da00cc014",
+      "matched_monument_title": "Bindu Sagar Lake"
+    },
+    {
+      "filename": "biraja-temple.jpg",
+      "relative_url": "/images/monuments/biraja-temple.jpg",
+      "file_size_bytes": 4439379,
+      "sha256_hash": "e226f5f56f940335e1d631e9013dd72afd05fa37d798780ca9bc0111a1a9e3e0",
+      "matched_monument_title": "Maa Biraja Temple"
+    },
+    {
+      "filename": "biranchi-narayan.jpg",
+      "relative_url": "/images/monuments/biranchi-narayan.jpg",
+      "file_size_bytes": 196287,
+      "sha256_hash": "14d40a0077b37a35e860b6d597a3a069782248dd003242503fbc67cf9c8f550b",
+      "matched_monument_title": "Biranchi Narayan Temple"
+    },
+    {
+      "filename": "brahmeshwara-temple.jpg",
+      "relative_url": "/images/monuments/brahmeshwara-temple.jpg",
+      "file_size_bytes": 182631,
+      "sha256_hash": "8f5f7088adc0271edf4c312a93090a366df0324d2681bdc3f7aca8cded8adfb1",
+      "matched_monument_title": "Brahmeshwara Temple"
+    },
+    {
+      "filename": "budhakhol-caves.jpg",
+      "relative_url": "/images/monuments/budhakhol-caves.jpg",
+      "file_size_bytes": 3184027,
+      "sha256_hash": "ee7d3e1d2ad54ccbeae9649ea953d5c3d8cb9933b87795b3175ac4996063125a",
+      "matched_monument_title": "Budhakhol Caves & Waterfalls"
+    },
+    {
+      "filename": "budhi-thakurani-temple.jpg",
+      "relative_url": "/images/monuments/budhi-thakurani-temple.jpg",
+      "file_size_bytes": 2167653,
+      "sha256_hash": "edbd1c580417c1ffe00a703023692bd68c74678b9053ccb8a3d56187172d878d",
+      "matched_monument_title": "Maa Budhi Thakurani Temple"
+    },
+    {
+      "filename": "cave-generic.jpg",
+      "relative_url": "/images/monuments/cave-generic.jpg",
+      "file_size_bytes": 100307,
+      "sha256_hash": "4193bb904f8a47b1004c1a50011e313b629e8d2b0b234d193e81a5d5e8249d14",
+      "matched_monument_title": "Cave Generic"
+    },
+    {
+      "filename": "chandaka-sanctuary.jpg",
+      "relative_url": "/images/monuments/chandaka-sanctuary.jpg",
+      "file_size_bytes": 206763,
+      "sha256_hash": "7783d246f78faf07dc5da208d89b6e14ff9f4a6c4c7ed51ff51d3fa639d94c47",
+      "matched_monument_title": "Chandaka Elephant Sanctuary"
+    },
+    {
+      "filename": "chandipur-beach.jpg",
+      "relative_url": "/images/monuments/chandipur-beach.jpg",
+      "file_size_bytes": 168342,
+      "sha256_hash": "e6dfa2c7d34f09dee0fb4f07c491e7fa87b5e11f5eab458b25a4fdbe34f80bf2",
+      "matched_monument_title": "Baleshwar Beach"
+    },
+    {
+      "filename": "chandrabhaga-beach.jpg",
+      "relative_url": "/images/monuments/chandrabhaga-beach.jpg",
+      "file_size_bytes": 103648,
+      "sha256_hash": "8deb4ecdd05c5c5f525f14b00b163349723e7cece2fd1150f244ac81b22f7af0",
+      "matched_monument_title": "Chandrabhaga Beach"
+    },
+    {
+      "filename": "chausath-yogini.jpg",
+      "relative_url": "/images/monuments/chausath-yogini.jpg",
+      "file_size_bytes": 265401,
+      "sha256_hash": "32acfd3914aa135fee7a90e46d16c456448e918bc1ac0767587671bd71102f2c",
+      "matched_monument_title": "Chausath Yogini Temple"
+    },
+    {
+      "filename": "chilika-lake.jpg",
+      "relative_url": "/images/monuments/chilika-lake.jpg",
+      "file_size_bytes": 1893243,
+      "sha256_hash": "3994d494d4c5ad50fb47e47d9f7b13197676b06a2baae9a21a6ea9a3cc517467",
+      "matched_monument_title": "Chilika Lake (Rambha)"
+    },
+    {
+      "filename": "chudanga-temple.jpg",
+      "relative_url": "/images/monuments/chudanga-temple.jpg",
+      "file_size_bytes": 148435,
+      "sha256_hash": "274044354893bb819a5ff02f5a6fc07c1eadec42773296dd1783f2a93cbe3d3e",
+      "matched_monument_title": "Chudanga Temple Complex"
+    },
+    {
+      "filename": "cuttack-chandi.jpg",
+      "relative_url": "/images/monuments/cuttack-chandi.jpg",
+      "file_size_bytes": 718483,
+      "sha256_hash": "53eaa4dafee6095dc0f4bdf08e309f531823c490f13af756f941bc064399c1ae",
+      "matched_monument_title": "Cuttack Chandi Temple"
+    },
+    {
+      "filename": "daringbadi.jpg",
+      "relative_url": "/images/monuments/daringbadi.jpg",
+      "file_size_bytes": 190491,
+      "sha256_hash": "9d833229c7e19a1243a8da88c8896b6af08b339838d8c9632378eeff886500cb",
+      "matched_monument_title": "Daringbadi Hill Station"
+    },
+    {
+      "filename": "desia-art-village.jpg",
+      "relative_url": "/images/monuments/desia-art-village.jpg",
+      "file_size_bytes": 316019,
+      "sha256_hash": "43c3ce23f464e9ab021ac225fe0c4b257cf6e89a0134630ae38fee2859b3bba3",
+      "matched_monument_title": "Desia Art Village"
+    },
+    {
+      "filename": "destination-featured-1.jpg",
+      "relative_url": "/images/monuments/destination-featured-1.jpg",
+      "file_size_bytes": 165873,
+      "sha256_hash": "5cbae56fd4250c638fb584453299ce8a9ae767f0172135936074dcab62fafc03",
+      "matched_monument_title": "Destination Featured 1"
+    },
+    {
+      "filename": "destination-featured-2.jpg",
+      "relative_url": "/images/monuments/destination-featured-2.jpg",
+      "file_size_bytes": 94879,
+      "sha256_hash": "3ea964ddd4040a2e9bdb9ef5d1fee50d87d5ffc07b447bca594192d55c6de065",
+      "matched_monument_title": "Destination Featured 2"
+    },
+    {
+      "filename": "destination-featured-3.jpg",
+      "relative_url": "/images/monuments/destination-featured-3.jpg",
+      "file_size_bytes": 90543,
+      "sha256_hash": "a9b94669ed188f48cdbd0726c38fb91eeb1dc36799ccd2d47c27bed405f720c8",
+      "matched_monument_title": "Destination Featured 3"
+    },
+    {
+      "filename": "dhabaleswar-temple.jpg",
+      "relative_url": "/images/monuments/dhabaleswar-temple.jpg",
+      "file_size_bytes": 102523,
+      "sha256_hash": "0968bacedd0771885bbbe7408ddb3dd646b97d56a42b3c589a2121c06adc1406",
+      "matched_monument_title": "Dhabaleswar Temple"
+    },
+    {
+      "filename": "dhauli-stupa.jpg",
+      "relative_url": "/images/monuments/dhauli-stupa.jpg",
+      "file_size_bytes": 3184027,
+      "sha256_hash": "ee7d3e1d2ad54ccbeae9649ea953d5c3d8cb9933b87795b3175ac4996063125a",
+      "matched_monument_title": "Dhauli Peace Pagoda (Shanti Stupa)"
+    },
+    {
+      "filename": "dhauligiri-peace-park.jpg",
+      "relative_url": "/images/monuments/dhauligiri-peace-park.jpg",
+      "file_size_bytes": 714621,
+      "sha256_hash": "b59c52eb66547fa17902b74eebb6f7bac602516c06711923728d999deee2912f",
+      "matched_monument_title": "Dhauligiri Hills Peace Park"
+    },
+    {
+      "filename": "ekamra-kanan.jpg",
+      "relative_url": "/images/monuments/ekamra-kanan.jpg",
+      "file_size_bytes": 355923,
+      "sha256_hash": "fedc694e606a4e79c49dfbc5604d3c2b7805e2c9d8d1f4010a26856a7946518a",
+      "matched_monument_title": "Ekamra Kanan Botanical Gardens"
+    },
+    {
+      "filename": "fort-generic.jpg",
+      "relative_url": "/images/monuments/fort-generic.jpg",
+      "file_size_bytes": 105923,
+      "sha256_hash": "a9f9cb1d2395fb8a0e375f6634098871942d07309f79932ac5c98a29e595968a",
+      "matched_monument_title": "Fort Generic"
+    },
+    {
+      "filename": "fort-monument.jpg",
+      "relative_url": "/images/monuments/fort-monument.jpg",
+      "file_size_bytes": 113793,
+      "sha256_hash": "cf2ec1dc3224c2ce627c8281753a77b5765fb8b861b78f3a524ef66cee07c2da",
+      "matched_monument_title": "Jaugada Fort & Ashoka Rock Edict"
+    },
+    {
+      "filename": "gandahati-falls.jpg",
+      "relative_url": "/images/monuments/gandahati-falls.jpg",
+      "file_size_bytes": 191938,
+      "sha256_hash": "ed242a89940c10b7fdb4ceedfa6c8eacec97831487d6865cc47d7395f3770467",
+      "matched_monument_title": "Gandahati Waterfall"
+    },
+    {
+      "filename": "ghanteshwari-temple.jpg",
+      "relative_url": "/images/monuments/ghanteshwari-temple.jpg",
+      "file_size_bytes": 322638,
+      "sha256_hash": "3a508f0cc613cd3d453709b8df0781631abefcaaa8f09455a9be98814932ec23",
+      "matched_monument_title": "Maa Ghanteshwari Temple"
+    },
+    {
+      "filename": "gokuldham-temple.jpg",
+      "relative_url": "/images/monuments/gokuldham-temple.jpg",
+      "file_size_bytes": 198113,
+      "sha256_hash": "4b2ac1b41ec9b0051c3bf8d50ae20e5a942ce18dfd97463de6bbcd516bd69f73",
+      "matched_monument_title": "Gokuldham Temple"
+    },
+    {
+      "filename": "gopalpur-beach.jpg",
+      "relative_url": "/images/monuments/gopalpur-beach.jpg",
+      "file_size_bytes": 3307463,
+      "sha256_hash": "76394e8a506af420ec8a56f94c1d74ecc6b9d1e242be61bb088db6d88e8fdd72",
+      "matched_monument_title": "Gopalpur-on-Sea Beach"
+    },
+    {
+      "filename": "hero-cinematic.jpg",
+      "relative_url": "/images/monuments/hero-cinematic.jpg",
+      "file_size_bytes": 156682,
+      "sha256_hash": "1e0ace9b4f3aed8b0034815776c9b8791f2572b23df9bda5805386aa7ad71abc",
+      "matched_monument_title": "Hero Cinematic"
+    },
+    {
+      "filename": "hero-monument.jpg",
+      "relative_url": "/images/monuments/hero-monument.jpg",
+      "file_size_bytes": 214827,
+      "sha256_hash": "b7398a38d64fd71c7ede696d9d628fa89c54aed34e9989e93b367c3e4594c93a",
+      "matched_monument_title": "Hero Monument"
+    },
+    {
+      "filename": "hills-generic.jpg",
+      "relative_url": "/images/monuments/hills-generic.jpg",
+      "file_size_bytes": 60760,
+      "sha256_hash": "04960c4d565f2fa692ffe3b523ad293d6326b0785397cb270152665bd9bc9792",
+      "matched_monument_title": "Hills Generic"
+    },
+    {
+      "filename": "hirakud-dam.jpg",
+      "relative_url": "/images/monuments/hirakud-dam.jpg",
+      "file_size_bytes": 136553,
+      "sha256_hash": "a807593f1dc2d586d4fbe4b7cfb2191eda37339d1e6c0e639bb090a0badcdb0d",
+      "matched_monument_title": "Hirakud Dam & Reservoir"
+    },
+    {
+      "filename": "iskcon-temple.jpg",
+      "relative_url": "/images/monuments/iskcon-temple.jpg",
+      "file_size_bytes": 380990,
+      "sha256_hash": "2900915001cfd6ac7e6302bc99eb3efc3abc7701f4c5fe72505128282e098c52",
+      "matched_monument_title": "ISKCON Temple Bhubaneswar"
+    },
+    {
+      "filename": "jagannath-temple.jpg",
+      "relative_url": "/images/monuments/jagannath-temple.jpg",
+      "file_size_bytes": 131816,
+      "sha256_hash": "d48d64949213d833ec391418cd5cdc6de3a13aebe19be4df862914ababb0c683",
+      "matched_monument_title": "Kodala Jagannath Temple"
+    },
+    {
+      "filename": "kala-bhoomi-museum.jpg",
+      "relative_url": "/images/monuments/kala-bhoomi-museum.jpg",
+      "file_size_bytes": 374907,
+      "sha256_hash": "3f971e72dd6c4d8edaad5210b5fafa20d85076e70650083fd6ed43dd0d8879c3",
+      "matched_monument_title": "State Handicrafts Museum"
+    },
+    {
+      "filename": "kapilash-temple.jpg",
+      "relative_url": "/images/monuments/kapilash-temple.jpg",
+      "file_size_bytes": 372640,
+      "sha256_hash": "51d84be347293f943eef5605954be1d5c7526fd41bfa566bbafed47f6ea67e9c",
+      "matched_monument_title": "Kapilash Temple & Hills"
+    },
+    {
+      "filename": "kedargouri-temple.jpg",
+      "relative_url": "/images/monuments/kedargouri-temple.jpg",
+      "file_size_bytes": 380186,
+      "sha256_hash": "d0fdc5590338ab710a2a8b9ba4edef2914b225e0d3f509c4f82033cef81a6ad4",
+      "matched_monument_title": "Kedar Gouri Temple"
+    },
+    {
+      "filename": "khandagiri-jain-temples.jpg",
+      "relative_url": "/images/monuments/khandagiri-jain-temples.jpg",
+      "file_size_bytes": 62817,
+      "sha256_hash": "186126e2a7034cd6e773fb19545ccd0ab65a9991e2010b8c8cc90671881cba73",
+      "matched_monument_title": "Khandagiri Jain Temples"
+    },
+    {
+      "filename": "khiching-temple.jpg",
+      "relative_url": "/images/monuments/khiching-temple.jpg",
+      "file_size_bytes": 1109727,
+      "sha256_hash": "413402db21e3ee326110d157bf28e1ab9c4ac35870955f26e6708b11f2f1286d",
+      "matched_monument_title": "Khiching Kichakeswari Temple"
+    },
+    {
+      "filename": "konark-temple.jpg",
+      "relative_url": "/images/monuments/konark-temple.jpg",
+      "file_size_bytes": 105454,
+      "sha256_hash": "82f15d2d7f6e196e5ac00ec95ee8f3c6885cbb48b4e7ab4bd716dcbbe5defbee",
+      "matched_monument_title": "Konark Sun Temple"
+    },
+    {
+      "filename": "kuanl-jhari.jpg",
+      "relative_url": "/images/monuments/kuanl-jhari.jpg",
+      "file_size_bytes": 1632437,
+      "sha256_hash": "c1d1ceb48b3316fedee9b5e3bef3223cf6b95ef6243352ff4ed1b581f8c79f22",
+      "matched_monument_title": "Kuanl Jhari Waterfall"
+    },
+    {
+      "filename": "lake-generic.jpg",
+      "relative_url": "/images/monuments/lake-generic.jpg",
+      "file_size_bytes": 34509,
+      "sha256_hash": "d974f57fcba0d4fcfa5f623ff0537b472da99495e3dbe09379709e45ed38dd81",
+      "matched_monument_title": "Lake Generic"
+    },
+    {
+      "filename": "lalitgiri-complex.jpg",
+      "relative_url": "/images/monuments/lalitgiri-complex.jpg",
+      "file_size_bytes": 350079,
+      "sha256_hash": "373acf708422537c2c85820bd54391e8ba6fe02fc6f413ae442ef00901c1c74f",
+      "matched_monument_title": "Lalitgiri Buddhist Complex"
+    },
+    {
+      "filename": "laxmipur-beach.jpg",
+      "relative_url": "/images/monuments/laxmipur-beach.jpg",
+      "file_size_bytes": 216618,
+      "sha256_hash": "0201f61522f402c0f0d0efe650a9444b6a40f4e77dd32f1d919aeea8699c6391",
+      "matched_monument_title": "Laxmipur Beach"
+    },
+    {
+      "filename": "lingaraja-temple.jpg",
+      "relative_url": "/images/monuments/lingaraja-temple.jpg",
+      "file_size_bytes": 4439379,
+      "sha256_hash": "e226f5f56f940335e1d631e9013dd72afd05fa37d798780ca9bc0111a1a9e3e0",
+      "matched_monument_title": "Lingaraja Temple"
+    },
+    {
+      "filename": "mahendragiri-hills.jpg",
+      "relative_url": "/images/monuments/mahendragiri-hills.jpg",
+      "file_size_bytes": 1893243,
+      "sha256_hash": "3994d494d4c5ad50fb47e47d9f7b13197676b06a2baae9a21a6ea9a3cc517467",
+      "matched_monument_title": "Mahendragiri Hills"
+    },
+    {
+      "filename": "mahodadhi-beach.jpg",
+      "relative_url": "/images/monuments/mahodadhi-beach.jpg",
+      "file_size_bytes": 349850,
+      "sha256_hash": "fe33d19efc04534ec8b7cea01fd747f389ef1c69c9148cfa5aa5cc3e59b859d5",
+      "matched_monument_title": "Mahodadhi Nagar Beach"
+    },
+    {
+      "filename": "mahurikalua-temple.jpg",
+      "relative_url": "/images/monuments/mahurikalua-temple.jpg",
+      "file_size_bytes": 4439379,
+      "sha256_hash": "e226f5f56f940335e1d631e9013dd72afd05fa37d798780ca9bc0111a1a9e3e0",
+      "matched_monument_title": "Mahuri Kalua Temple"
+    },
+    {
+      "filename": "mangalajodi-wetland.jpg",
+      "relative_url": "/images/monuments/mangalajodi-wetland.jpg",
+      "file_size_bytes": 202430,
+      "sha256_hash": "8346a2a94cb3630780c9593af2892873c41b39ac53053f1865fd908e2f1c5004",
+      "matched_monument_title": "Mangalajodi Wetland"
+    },
+    {
+      "filename": "mukteswara-temple.jpg",
+      "relative_url": "/images/monuments/mukteswara-temple.jpg",
+      "file_size_bytes": 3543170,
+      "sha256_hash": "6b7b30830fa2650925b7358914038ef1bd9e3a7adf599f875f8749ca6088384c",
+      "matched_monument_title": "Mukteshwar Temple"
+    },
+    {
+      "filename": "nandankanan.jpg",
+      "relative_url": "/images/monuments/nandankanan.jpg",
+      "file_size_bytes": 204371,
+      "sha256_hash": "145364a01b5401dcd0b66a53ccb2e36802d4ed084162731c8653ba88ad9843e4",
+      "matched_monument_title": "Nandankanan Zoological Park"
+    },
+    {
+      "filename": "narayani-temple.jpg",
+      "relative_url": "/images/monuments/narayani-temple.jpg",
+      "file_size_bytes": 207815,
+      "sha256_hash": "9fb4f8a2d4cad3b4cf4457dd76b1bafb637c6b5b13ef6e2f9915fa579003217d",
+      "matched_monument_title": "Narayani Temple"
+    },
+    {
+      "filename": "narendrapur-sasan.jpg",
+      "relative_url": "/images/monuments/narendrapur-sasan.jpg",
+      "file_size_bytes": 75587,
+      "sha256_hash": "89711f7b3f54b047d6671ea91be706717538461ff707955e31d4b80e2159f113",
+      "matched_monument_title": "Narendrapur Sasan"
+    },
+    {
+      "filename": "nicco-park-bhubaneswar.jpg",
+      "relative_url": "/images/monuments/nicco-park-bhubaneswar.jpg",
+      "file_size_bytes": 562088,
+      "sha256_hash": "de61049c85ae91709dc57ea1e5fb8713e38120f2d21b4db5bf399bb2ef43ef0d",
+      "matched_monument_title": "Nicco Park & World"
+    },
+    {
+      "filename": "nirmaljhar.jpg",
+      "relative_url": "/images/monuments/nirmaljhar.jpg",
+      "file_size_bytes": 187256,
+      "sha256_hash": "2dddc1f3eeae2ff302b1b98f9f9b167b99fb1b520000c00fbec0b55b22066eba",
+      "matched_monument_title": "Nirmaljhar Waterfall"
+    },
+    {
+      "filename": "nist-university.jpg",
+      "relative_url": "/images/monuments/nist-university.jpg",
+      "file_size_bytes": 2197597,
+      "sha256_hash": "5d695af0b1e0c46bb943630a4d06b3e2773a799f24709ab3533b91c8aeaf7fe2",
+      "matched_monument_title": "Nist University"
+    },
+    {
+      "filename": "odisha-state-museum.jpg",
+      "relative_url": "/images/monuments/odisha-state-museum.jpg",
+      "file_size_bytes": 383623,
+      "sha256_hash": "f3a9f731e63568da9f8d7e661860ee1ff196901068225a66f422c6c3c2079007",
+      "matched_monument_title": "Odisha State Museum"
+    },
+    {
+      "filename": "padmapani-temple.jpg",
+      "relative_url": "/images/monuments/padmapani-temple.jpg",
+      "file_size_bytes": 614657,
+      "sha256_hash": "360f911b15bb32ef63b4740a5516e4e12bf59f79bc8c49de15c7aa225e2d4a97",
+      "matched_monument_title": "Padmapani Temple"
+    },
+    {
+      "filename": "parasurameswara-temple.jpg",
+      "relative_url": "/images/monuments/parasurameswara-temple.jpg",
+      "file_size_bytes": 181671,
+      "sha256_hash": "103c8980398be9230f65d355a10fcdac8f9c7dfc19ef059b27af5987ebccd605",
+      "matched_monument_title": "Parasurameswara Temple"
+    },
+    {
+      "filename": "pathani-samanta-planetarium.jpg",
+      "relative_url": "/images/monuments/pathani-samanta-planetarium.jpg",
+      "file_size_bytes": 161157,
+      "sha256_hash": "0ff7aa4833050a24c83ccfbdf0222c67ba9f2ce2909c76048e6a184108928c67",
+      "matched_monument_title": "Pathani Samanta Planetarium"
+    },
+    {
+      "filename": "pipili-applique.jpg",
+      "relative_url": "/images/monuments/pipili-applique.jpg",
+      "file_size_bytes": 415483,
+      "sha256_hash": "e759ec71a27095d094ecc9bf7c6d23b868af3bd25ce9dc785ee5426560bb3a50",
+      "matched_monument_title": "Pipili Applique Village"
+    },
+    {
+      "filename": "potagarh-fort.jpg",
+      "relative_url": "/images/monuments/potagarh-fort.jpg",
+      "file_size_bytes": 3353121,
+      "sha256_hash": "d1bde004d3c73769b2f3d971ebe9f4e143205dd0269b83c36feda62edebbd8f1",
+      "matched_monument_title": "Potagarh Fort"
+    },
+    {
+      "filename": "pradhanpat-falls.jpg",
+      "relative_url": "/images/monuments/pradhanpat-falls.jpg",
+      "file_size_bytes": 181764,
+      "sha256_hash": "f2d8b945b531456fc62db4cf6c002662923159dbc6dd7aa6aff8269310b41f47",
+      "matched_monument_title": "Pradhanpat Waterfall"
+    },
+    {
+      "filename": "puri-beach.jpg",
+      "relative_url": "/images/monuments/puri-beach.jpg",
+      "file_size_bytes": 113348,
+      "sha256_hash": "3bc8009e8cf7f83f34ac1e75e617d8434ee48026a107d1661bb13ba393e3f744",
+      "matched_monument_title": "Puri Beach"
+    },
+    {
+      "filename": "puri-jagannath-temple.jpg",
+      "relative_url": "/images/monuments/puri-jagannath-temple.jpg",
+      "file_size_bytes": 316019,
+      "sha256_hash": "43c3ce23f464e9ab021ac225fe0c4b257cf6e89a0134630ae38fee2859b3bba3",
+      "matched_monument_title": "Puri Jagannath Temple"
+    },
+    {
+      "filename": "puri-sea-beach.jpg",
+      "relative_url": "/images/monuments/puri-sea-beach.jpg",
+      "file_size_bytes": 349850,
+      "sha256_hash": "fe33d19efc04534ec8b7cea01fd747f389ef1c69c9148cfa5aa5cc3e59b859d5",
+      "matched_monument_title": "Puri Beach"
+    },
+    {
+      "filename": "raghunath-jew.jpg",
+      "relative_url": "/images/monuments/raghunath-jew.jpg",
+      "file_size_bytes": 211645,
+      "sha256_hash": "8b8a64ecd3e86610922e3af03109d28de8ecb025da3855daa17b506659b2c05b",
+      "matched_monument_title": "Raghunath Jew Temple"
+    },
+    {
+      "filename": "raghurajpur-village.jpg",
+      "relative_url": "/images/monuments/raghurajpur-village.jpg",
+      "file_size_bytes": 309169,
+      "sha256_hash": "75ccdf484d5debe41ab68b305d77c1b41873d66af43e4a61cd8dcf6199dfaa9b",
+      "matched_monument_title": "Raghurajpur Heritage Village"
+    },
+    {
+      "filename": "rajarani-temple.jpg",
+      "relative_url": "/images/monuments/rajarani-temple.jpg",
+      "file_size_bytes": 4413818,
+      "sha256_hash": "1f35361a984bc7d19f0cf41f1eebffe65bba5e31c46b4ccd4c0ff43cb1647e0f",
+      "matched_monument_title": "Rajarani Temple"
+    },
+    {
+      "filename": "ram-mandir-bbsr.jpg",
+      "relative_url": "/images/monuments/ram-mandir-bbsr.jpg",
+      "file_size_bytes": 62817,
+      "sha256_hash": "186126e2a7034cd6e773fb19545ccd0ab65a9991e2010b8c8cc90671881cba73",
+      "matched_monument_title": "Ram Mandir Bhubaneswar"
+    },
+    {
+      "filename": "ram-mandir.jpg",
+      "relative_url": "/images/monuments/ram-mandir.jpg",
+      "file_size_bytes": 158042,
+      "sha256_hash": "2a100ad11b01ac144c62bd493ce20e0b7e0b2da3b03b901ed79c3796561ba0c2",
+      "matched_monument_title": "Ram Mandir"
+    },
+    {
+      "filename": "ratnagiri-buddhist.jpg",
+      "relative_url": "/images/monuments/ratnagiri-buddhist.jpg",
+      "file_size_bytes": 3543170,
+      "sha256_hash": "6b7b30830fa2650925b7358914038ef1bd9e3a7adf599f875f8749ca6088384c",
+      "matched_monument_title": "Ratnagiri Buddhist"
+    },
+    {
+      "filename": "ratnagiri-monastery.jpg",
+      "relative_url": "/images/monuments/ratnagiri-monastery.jpg",
+      "file_size_bytes": 350079,
+      "sha256_hash": "373acf708422537c2c85820bd54391e8ba6fe02fc6f413ae442ef00901c1c74f",
+      "matched_monument_title": "Ratnagiri Buddhist Monastery"
+    },
+    {
+      "filename": "restaurant-generic.jpg",
+      "relative_url": "/images/monuments/restaurant-generic.jpg",
+      "file_size_bytes": 87967,
+      "sha256_hash": "7023c242b4364b59d2c901c4c6de00f7e9f66e35e1a4e01ab09109d79b5321f5",
+      "matched_monument_title": "Restaurant Generic"
+    },
+    {
+      "filename": "rushikulya-river.jpg",
+      "relative_url": "/images/monuments/rushikulya-river.jpg",
+      "file_size_bytes": 1893243,
+      "sha256_hash": "3994d494d4c5ad50fb47e47d9f7b13197676b06a2baae9a21a6ea9a3cc517467",
+      "matched_monument_title": "Rushikulya River Mouth"
+    },
+    {
+      "filename": "samaleswari-temple.jpg",
+      "relative_url": "/images/monuments/samaleswari-temple.jpg",
+      "file_size_bytes": 93174,
+      "sha256_hash": "2b3682fe9e6588ca825427f8ae2a8d03d3b1f4b35824b6c5ce9020cf1207a670",
+      "matched_monument_title": "Maa Samaleswari Temple"
+    },
+    {
+      "filename": "samangala-fort.jpg",
+      "relative_url": "/images/monuments/samangala-fort.jpg",
+      "file_size_bytes": 198113,
+      "sha256_hash": "4b2ac1b41ec9b0051c3bf8d50ae20e5a942ce18dfd97463de6bbcd516bd69f73",
+      "matched_monument_title": "Samangala Fort"
+    },
+    {
+      "filename": "sana-jhada.jpg",
+      "relative_url": "/images/monuments/sana-jhada.jpg",
+      "file_size_bytes": 245767,
+      "sha256_hash": "69c41838b03682aad1777792c63faa019d620f2bc5d48f9f232d3cfae8ef389b",
+      "matched_monument_title": "Sana Jhada Peetha"
+    },
+    {
+      "filename": "saptasajya-hills.jpg",
+      "relative_url": "/images/monuments/saptasajya-hills.jpg",
+      "file_size_bytes": 338021,
+      "sha256_hash": "cd5ea1302a4deb9f1e71cba279bf9380d8a45d9d0d3eb72686c3818c3e981cb4",
+      "matched_monument_title": "Saptasajya Hills"
+    },
+    {
+      "filename": "satkosia-gorge.jpg",
+      "relative_url": "/images/monuments/satkosia-gorge.jpg",
+      "file_size_bytes": 226269,
+      "sha256_hash": "8afcfa2cd93d17f5178954275baa4a892934f0bfa5f96609867f8472c25cec97",
+      "matched_monument_title": "Satkosia Gorge"
+    },
+    {
+      "filename": "seranga-fort.jpg",
+      "relative_url": "/images/monuments/seranga-fort.jpg",
+      "file_size_bytes": 279889,
+      "sha256_hash": "4b138908aa4fe4fbd44b777a259b67a289a4538f1bd648e9e7cbe030d38de1cd",
+      "matched_monument_title": "Seranga Fort"
+    },
+    {
+      "filename": "siddheshwar-temple.jpg",
+      "relative_url": "/images/monuments/siddheshwar-temple.jpg",
+      "file_size_bytes": 230021,
+      "sha256_hash": "fb58aa7931054b1d7bbbee19bd9fdf44fe022495a1d61c60625db12f3348a010",
+      "matched_monument_title": "Siddheshwar Temple"
+    },
+    {
+      "filename": "simlipal.jpg",
+      "relative_url": "/images/monuments/simlipal.jpg",
+      "file_size_bytes": 137946,
+      "sha256_hash": "d20aff3273841567150f17bbe6f12dba919acb41727053b5b4ae2851f41dfc97",
+      "matched_monument_title": "Simlipal National Park"
+    },
+    {
+      "filename": "sisireswara-temple.jpg",
+      "relative_url": "/images/monuments/sisireswara-temple.jpg",
+      "file_size_bytes": 179760,
+      "sha256_hash": "8602dd9f572dba52d1b515e4aad9b8d8aaf739624304c19f22bd5a28df3b15ba",
+      "matched_monument_title": "Sisireswara Temple"
+    },
+    {
+      "filename": "sonapur-beach.jpg",
+      "relative_url": "/images/monuments/sonapur-beach.jpg",
+      "file_size_bytes": 242635,
+      "sha256_hash": "83a49816f70654091204bae53b1bb289e41eb203e041729ce50ec5d285c0bb5d",
+      "matched_monument_title": "Sonapur Beach"
+    },
+    {
+      "filename": "springs-generic.jpg",
+      "relative_url": "/images/monuments/springs-generic.jpg",
+      "file_size_bytes": 80442,
+      "sha256_hash": "d9db9ccfb7022a12c65ea200c2d295d554d0987fad7d58b80fd1e893b1b8c55b",
+      "matched_monument_title": "Springs Generic"
+    },
+    {
+      "filename": "srikurmam-temple.jpg",
+      "relative_url": "/images/monuments/srikurmam-temple.jpg",
+      "file_size_bytes": 547253,
+      "sha256_hash": "cb7b030952510e69eeb530da80c9d3577a00bea1cfabc2a67f0dba5433309a96",
+      "matched_monument_title": "Srikurmam Temple"
+    },
+    {
+      "filename": "street-food-generic.jpg",
+      "relative_url": "/images/monuments/street-food-generic.jpg",
+      "file_size_bytes": 114292,
+      "sha256_hash": "3138c0c6c248c2cc19069e44a0893b5bd599103a7c6f509641f9b4617c11fbae",
+      "matched_monument_title": "Street Food Generic"
+    },
+    {
+      "filename": "stupa-generic.jpg",
+      "relative_url": "/images/monuments/stupa-generic.jpg",
+      "file_size_bytes": 59344,
+      "sha256_hash": "97644884c35d22ed9bc0f8023418f59c64bade3a23843793b6558d91d4b80fe9",
+      "matched_monument_title": "Stupa Generic"
+    },
+    {
+      "filename": "surangi-waterfall.jpg",
+      "relative_url": "/images/monuments/surangi-waterfall.jpg",
+      "file_size_bytes": 149320,
+      "sha256_hash": "296694e83748a546771ba76abc5066a149413c331d9ed2079fe817caa155144f",
+      "matched_monument_title": "Surangi Waterfall"
+    },
+    {
+      "filename": "tampara-lake.jpg",
+      "relative_url": "/images/monuments/tampara-lake.jpg",
+      "file_size_bytes": 3307463,
+      "sha256_hash": "76394e8a506af420ec8a56f94c1d74ecc6b9d1e242be61bb088db6d88e8fdd72",
+      "matched_monument_title": "Tampara Lake"
+    },
+    {
+      "filename": "taptapani-springs.jpg",
+      "relative_url": "/images/monuments/taptapani-springs.jpg",
+      "file_size_bytes": 1893243,
+      "sha256_hash": "3994d494d4c5ad50fb47e47d9f7b13197676b06a2baae9a21a6ea9a3cc517467",
+      "matched_monument_title": "Taptapani Hot Springs"
+    },
+    {
+      "filename": "tara-tarini-temple.jpg",
+      "relative_url": "/images/monuments/tara-tarini-temple.jpg",
+      "file_size_bytes": 4413818,
+      "sha256_hash": "1f35361a984bc7d19f0cf41f1eebffe65bba5e31c46b4ccd4c0ff43cb1647e0f",
+      "matched_monument_title": "Tara Tarini Temple"
+    },
+    {
+      "filename": "temple-generic.jpg",
+      "relative_url": "/images/monuments/temple-generic.jpg",
+      "file_size_bytes": 83163,
+      "sha256_hash": "dcdc394607855ab61b1a669dcd3984a3e73d8f7efd57769e8dc6092fd9e1017a",
+      "matched_monument_title": "Temple Generic"
+    },
+    {
+      "filename": "tribal-museum.jpg",
+      "relative_url": "/images/monuments/tribal-museum.jpg",
+      "file_size_bytes": 62817,
+      "sha256_hash": "186126e2a7034cd6e773fb19545ccd0ab65a9991e2010b8c8cc90671881cba73",
+      "matched_monument_title": "Tribal Museum Bhubaneswar"
+    },
+    {
+      "filename": "udayagiri-caves.jpg",
+      "relative_url": "/images/monuments/udayagiri-caves.jpg",
+      "file_size_bytes": 3184027,
+      "sha256_hash": "ee7d3e1d2ad54ccbeae9649ea953d5c3d8cb9933b87795b3175ac4996063125a",
+      "matched_monument_title": "Udayagiri & Khandagiri Caves"
+    },
+    {
+      "filename": "uttara-shiva-temple.jpg",
+      "relative_url": "/images/monuments/uttara-shiva-temple.jpg",
+      "file_size_bytes": 107399,
+      "sha256_hash": "935e5cb365727de81f907360f65266721a47cc8c54f927462d7893d11fb93f12",
+      "matched_monument_title": "Uttara Shiva Temple"
+    },
+    {
+      "filename": "vaital-temple.jpg",
+      "relative_url": "/images/monuments/vaital-temple.jpg",
+      "file_size_bytes": 250870,
+      "sha256_hash": "5c352b9616ca2b98ad41229c277edd32ab4ecc348ddabd5a4f1bea989ee074f6",
+      "matched_monument_title": "Vaital Temple"
+    }
+  ],
+  "ar_vr_models": [
+    {
+      "id": "taj-mahal",
+      "name": "Taj Mahal",
+      "location": "Agra, Uttar Pradesh",
+      "state": "Uttar Pradesh",
+      "glb_relative_url": "/models/taj-mahal.glb",
+      "file_size_bytes": 5244348,
+      "sha256_hash": "397559cc243f5450710027bf40064cf3418c070daf86a8ac8a486c8c59d65b7d",
+      "backup_status": "LOCAL_VERIFIED"
+    },
+    {
+      "id": "konark-sun-temple",
+      "name": "Sun Temple, Konark",
+      "location": "Konark, Odisha",
+      "state": "Odisha",
+      "glb_relative_url": "/models/konark-sun-temple.glb",
+      "file_size_bytes": 5349332,
+      "sha256_hash": "85df30b67742869ba28b08a86f8dce052195a8ef9070dba9cc28c76e1d5e2773",
+      "backup_status": "LOCAL_VERIFIED"
+    },
+    {
+      "id": "india-gate",
+      "name": "India Gate",
+      "location": "New Delhi",
+      "state": "Delhi",
+      "glb_relative_url": "/models/india-gate.glb",
+      "file_size_bytes": 28892,
+      "sha256_hash": "160e7826cb1ac4838fbebf6f79415f54f94c52dc363b00abff878a7526d98622",
+      "backup_status": "LOCAL_VERIFIED"
+    },
+    {
+      "id": "charminar",
+      "name": "Charminar",
+      "location": "Hyderabad, Telangana",
+      "state": "Telangana",
+      "glb_relative_url": "/models/charminar.glb",
+      "file_size_bytes": 52996,
+      "sha256_hash": "455e36c7ad144bb89d3ef99fcb6fddf18dcc60a21686cca2dbcdfe2f61c8f4d9",
+      "backup_status": "LOCAL_VERIFIED"
+    },
+    {
+      "id": "gateway-of-india",
+      "name": "Gateway of India",
+      "location": "Mumbai, Maharashtra",
+      "state": "Maharashtra",
+      "glb_relative_url": "/models/gateway-of-india.glb",
+      "file_size_bytes": 33092,
+      "sha256_hash": "49d8b0dd61429a729e96b43b39a6739f0619be3caaa4d85d19ed869bd87e97e4",
+      "backup_status": "LOCAL_VERIFIED"
+    },
+    {
+      "id": "red-fort",
+      "name": "Red Fort",
+      "location": "New Delhi",
+      "state": "Delhi",
+      "glb_relative_url": "/models/red-fort.glb",
+      "file_size_bytes": 5611472,
+      "sha256_hash": "21cc4f6b6a60a5f667e86b51e19f2d7188d73fa790c97a00dc63ed00798899a4",
+      "backup_status": "LOCAL_VERIFIED"
+    },
+    {
+      "id": "brihadeeshwara",
+      "name": "Brihadeeshwara Temple",
+      "location": "Thanjavur, Tamil Nadu",
+      "state": "Tamil Nadu",
+      "glb_relative_url": "/models/brihadeeshwara.glb",
+      "file_size_bytes": 27188,
+      "sha256_hash": "e61d4ee64c27e5dd83183a9a161ac0e50907b21651602fc8f5d6836fb8bb826e",
+      "backup_status": "LOCAL_VERIFIED"
+    },
+    {
+      "id": "rani-ki-vav",
+      "name": "Rani Ki Vav",
+      "location": "Patan, Gujarat",
+      "state": "Gujarat",
+      "glb_relative_url": "/models/rani-ki-vav.glb",
+      "file_size_bytes": 54220,
+      "sha256_hash": "4a13ce331c1c0fd25410c8ab66dbbca9bc4620761f807449b4670a45dbb3c13e",
+      "backup_status": "LOCAL_VERIFIED"
+    },
+    {
+      "id": "parasurameswara",
+      "name": "Parasurameswara Temple",
+      "location": "Bhubaneswar, Odisha",
+      "state": "Odisha",
+      "glb_relative_url": "/models/parasurameswara.glb",
+      "file_size_bytes": 9095300,
+      "sha256_hash": "c5e1953ee40b8e30521b6f9d73f9ae7746040199afc2cbe6d17102d10279ee6e",
+      "backup_status": "LOCAL_VERIFIED"
+    },
+    {
+      "id": "south-indian-gopuram",
+      "name": "South Indian Temple Gopuram",
+      "location": "South India",
+      "state": "Tamil Nadu",
+      "glb_relative_url": "/models/south-indian-gopuram.glb",
+      "file_size_bytes": 7373464,
+      "sha256_hash": "08ded74d4a034745585e6d9aca69c2fa9d84e575a247e031809a2ee04f8cd138",
+      "backup_status": "LOCAL_VERIFIED"
+    },
+    {
+      "id": "ajanta-cave-01",
+      "name": "Ajanta Cave 01",
+      "location": "Aurangabad, Maharashtra",
+      "state": "Maharashtra",
+      "glb_relative_url": "/models/ajanta-cave-01.glb",
+      "file_size_bytes": 27636,
+      "sha256_hash": "e0dfb1f86c8ea7e0eb968d8507316e4860168cea0e7b4b0eccef54bba721f923",
+      "backup_status": "LOCAL_VERIFIED"
+    },
+    {
+      "id": "hampi-chariot",
+      "name": "Hampi Stone Chariot",
+      "location": "Hampi, Karnataka",
+      "state": "Karnataka",
+      "glb_relative_url": "/models/hampi-chariot.glb",
+      "file_size_bytes": 30148,
+      "sha256_hash": "045dc65fa35eeb609db006a28982c1d0935594e534013a7dd86276ebd07b2075",
+      "backup_status": "LOCAL_VERIFIED"
+    },
+    {
+      "id": "amaravati-relief",
+      "name": "Amaravati Buddhist Relief",
+      "location": "Amaravati, Andhra Pradesh",
+      "state": "Andhra Pradesh",
+      "glb_relative_url": "/models/amaravati-relief.glb",
+      "file_size_bytes": 17872,
+      "sha256_hash": "b18c6a84aa2baddaf9d01474df6e8c5e166f16813b5e6cc0afe801e5cc6ff423",
+      "backup_status": "LOCAL_VERIFIED"
+    },
+    {
+      "id": "ancient-rajmahal",
+      "name": "Ancient Rajmahal Palace",
+      "location": "Rajasthan, India",
+      "state": "Rajasthan",
+      "glb_relative_url": "/models/ancient-rajmahal.glb",
+      "file_size_bytes": 45280,
+      "sha256_hash": "11daf23a4bd430ac3737be178d1a4b368a3ab52e79a6dc3cc26e206b69a77317",
+      "backup_status": "LOCAL_VERIFIED"
+    },
+    {
+      "id": "mahabodhi-temple",
+      "name": "Mahabodhi Temple",
+      "location": "Bodh Gaya, Bihar",
+      "state": "Bihar",
+      "glb_relative_url": "/models/mahabodhi-temple.glb",
+      "file_size_bytes": 42676,
+      "sha256_hash": "93b772c226fac083b15da38c635f3b87f31ef5f13cd6fced457cdb02183677a8",
+      "backup_status": "LOCAL_VERIFIED"
+    },
+    {
+      "id": "indian-temple-walls",
+      "name": "Mahabaleshwar Temple Walls",
+      "location": "Mahabaleshwar, Maharashtra",
+      "state": "Maharashtra",
+      "glb_relative_url": "/models/indian-temple-walls.glb",
+      "file_size_bytes": 45668,
+      "sha256_hash": "44f457a6155a45a0d1d0b501db163009ad9a2e89377d01f2e75a219f47e4c73a",
+      "backup_status": "LOCAL_VERIFIED"
+    },
+    {
+      "id": "qutub-minar",
+      "name": "Qutub Minar",
+      "location": "Mehrauli, New Delhi",
+      "state": "Delhi",
+      "glb_relative_url": "/models/qutub-minar.glb",
+      "file_size_bytes": 4845212,
+      "sha256_hash": "51fbc23145029def61259a7613942f348b9a2f1b618f06dd44bfb95adbdf684f",
+      "backup_status": "LOCAL_VERIFIED"
+    }
+  ]
+}

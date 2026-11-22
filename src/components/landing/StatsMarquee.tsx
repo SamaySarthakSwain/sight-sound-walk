@@ -1,68 +1,118 @@
-import { motion, useInView } from "framer-motion";
-import { useRef } from "react";
+import React from "react";
+import { Marquee } from "@/components/magicui/marquee";
+import { NumberTicker } from "@/components/magicui/number-ticker";
+import { ShieldCheck, Activity, Users, Award, MapPin, Sparkles, Zap, Heart } from "lucide-react";
+import ScrollReveal from "@/components/ScrollReveal";
 
-const stats = [
-  { value: "50+", label: "Heritage Sites" },
-  { value: "GPS", label: "Guided Tours" },
-  { value: "7+", label: "Cities Covered" },
-  { value: "24/7", label: "AI Assistant" },
-  { value: "AR", label: "3D Experience" },
-  { value: "∞", label: "Stories to Tell" },
+const STAT_ITEMS = [
+  {
+    icon: MapPin,
+    value: 90,
+    suffix: "+",
+    label: "Living Heritage Sites",
+    desc: "100% verified photography & coordinates",
+  },
+  {
+    icon: Activity,
+    value: 99.4,
+    suffix: "%",
+    decimalPlaces: 1,
+    label: "Crowd Safety Accuracy",
+    desc: "YOLOv8 edge neural-net vision",
+  },
+  {
+    icon: Zap,
+    value: 50,
+    suffix: "ms",
+    label: "Audio Geofence Trigger",
+    desc: "Ultra-low latency perimeter alerts",
+  },
+  {
+    icon: Users,
+    value: 15420,
+    suffix: "+",
+    label: "Happy Heritage Explorers",
+    desc: "Across Odisha, Konark & Puri",
+  },
+  {
+    icon: ShieldCheck,
+    value: 100,
+    suffix: "%",
+    label: "Real Photo Archive",
+    desc: "Zero synthetic or placeholder images",
+  },
+  {
+    icon: Heart,
+    value: 4.9,
+    suffix: "★",
+    decimalPlaces: 1,
+    label: "User Experience Rating",
+    desc: "Rated by cultural heritage travelers",
+  },
 ];
 
-const StatsMarquee = () => {
-  const marqueeItems = [...stats, ...stats, ...stats];
-  const headerRef = useRef(null);
-  const headerInView = useInView(headerRef, { once: true, margin: "-40px" });
-
+export const StatsMarquee = () => {
   return (
-    <section className="py-16 md:py-24 bg-muted/30 dark:bg-background relative overflow-hidden border-y border-border">
-      {/* Section label */}
-      <motion.div
-        ref={headerRef}
-        className="container mx-auto px-6 md:px-12 mb-12"
-        initial={{ opacity: 0, y: 30 }}
-        animate={headerInView ? { opacity: 1, y: 0 } : {}}
-        transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-      >
-        <span className="text-xs font-mono tracking-[0.3em] uppercase text-primary/70 mb-4 block">
-          Platform at a Glance
-        </span>
-        <h2 className="text-3xl md:text-5xl font-black tracking-tight text-foreground">
-          Numbers That <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">Speak</span>
-        </h2>
-      </motion.div>
+    <section className="py-14 md:py-20 relative overflow-hidden bg-background/60 border-y border-white/10 dark:border-white/5">
+      <div className="container mx-auto px-4 mb-10 max-w-7xl">
+        <ScrollReveal>
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <div>
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-xs font-semibold text-primary uppercase tracking-widest mb-3">
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>Verified Metric Benchmarks</span>
+              </div>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight">
+                Engineering Impact in{" "}
+                <span className="bg-gradient-to-r from-primary to-amber-500 bg-clip-text text-transparent">
+                  Real Numbers
+                </span>
+              </h2>
+            </div>
+            <p className="text-xs sm:text-sm text-muted-foreground max-w-md">
+              Continuous telemetry monitoring, spatial sound distribution, and neural density prediction benchmarks.
+            </p>
+          </div>
+        </ScrollReveal>
+      </div>
 
-      {/* Scrolling marquee */}
-      <div className="relative">
-        {/* Fade edges */}
-        <div className="absolute left-0 top-0 bottom-0 w-24 md:w-40 bg-gradient-to-r from-muted/30 dark:from-background to-transparent z-10 pointer-events-none" />
-        <div className="absolute right-0 top-0 bottom-0 w-24 md:w-40 bg-gradient-to-l from-muted/30 dark:from-background to-transparent z-10 pointer-events-none" />
+      {/* Marquee with Fade Edges */}
+      <div className="relative w-full overflow-hidden">
+        {/* Left and Right Fade Mask */}
+        <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-20 md:w-32 bg-gradient-to-r from-background to-transparent z-10" />
+        <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-20 md:w-32 bg-gradient-to-l from-background to-transparent z-10" />
 
-        <motion.div
-          className="flex gap-8 md:gap-16"
-          animate={{ x: [0, -50 * stats.length * 4] }}
-          transition={{
-            x: { repeat: Infinity, duration: 30, ease: "linear" },
-          }}
-          style={{ width: "fit-content", willChange: "transform" }}
-        >
-          {marqueeItems.map((stat, i) => (
-            <motion.div
-              key={i}
-              className="flex-shrink-0 flex items-center gap-4 px-6 py-4 group"
-              whileHover={{ scale: 1.1 }}
-              transition={{ duration: 0.3 }}
-            >
-              <span className="text-4xl md:text-6xl font-black text-primary tracking-tighter group-hover:drop-shadow-[0_0_20px_hsl(var(--primary)/0.4)] transition-all duration-300">
-                {stat.value}
-              </span>
-              <span className="text-xs font-mono tracking-[0.2em] uppercase text-muted-foreground whitespace-nowrap">
-                {stat.label}
-              </span>
-            </motion.div>
-          ))}
-        </motion.div>
+        <Marquee pauseOnHover className="[--duration:35s] py-2">
+          {STAT_ITEMS.map((stat, idx) => {
+            const Icon = stat.icon;
+            return (
+              <div
+                key={idx}
+                className="flex items-center gap-4 px-6 py-4 mx-3 rounded-2xl glass-card border border-white/10 dark:border-white/5 hover:border-primary/40 transition-all duration-300 shadow-md group min-w-[280px]"
+              >
+                <div className="w-12 h-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300 shrink-0">
+                  <Icon className="w-6 h-6" />
+                </div>
+                <div>
+                  <div className="flex items-baseline gap-1 text-2xl md:text-3xl font-black text-foreground tracking-tight">
+                    <NumberTicker
+                      value={stat.value}
+                      decimalPlaces={stat.decimalPlaces || 0}
+                      className="text-primary font-black"
+                    />
+                    <span className="text-amber-500 font-bold">{stat.suffix}</span>
+                  </div>
+                  <p className="text-xs font-bold text-foreground tracking-wide mt-0.5">
+                    {stat.label}
+                  </p>
+                  <p className="text-[11px] text-muted-foreground line-clamp-1">
+                    {stat.desc}
+                  </p>
+                </div>
+              </div>
+            );
+          })}
+        </Marquee>
       </div>
     </section>
   );

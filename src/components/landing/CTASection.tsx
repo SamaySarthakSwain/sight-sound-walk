@@ -118,7 +118,7 @@ const CTASection = () => {
           transition={{ duration: 0.6 }}
         >
           <p className="text-muted-foreground/50 text-xs font-mono tracking-[0.2em] uppercase">
-            Lets Explore — Educational Tourism Experience
+            Let's Explore — Educational Tourism Experience
           </p>
         </motion.div>
       </div>

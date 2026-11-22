@@ -7,6 +7,7 @@ export interface OSMMarker {
   position: { lat: number; lng: number };
   title: string;
   description?: string;
+  image_url?: string;
 }
 
 interface OpenStreetMapFallbackProps {
@@ -86,10 +87,15 @@ const OpenStreetMapFallback = ({
 
     markers.forEach((m) => {
       if (!Number.isFinite(m.position.lat) || !Number.isFinite(m.position.lng)) return;
+      const popupHtml = `
+        <div style="min-width:180px; max-width:240px; font-family:system-ui, sans-serif;">
+          ${m.image_url ? `<img src="${m.image_url}" alt="${m.title}" style="width:100%; height:110px; object-fit:cover; border-radius:8px; margin-bottom:8px; display:block;" onerror="this.style.display='none'"/>` : ''}
+          <strong style="font-size:14px; color:#1a1a1a; display:block; margin-bottom:4px; line-height:1.2;">${m.title}</strong>
+          ${m.description ? `<span style="font-size:12px; color:#555; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; line-height:1.4;">${m.description}</span>` : ''}
+        </div>
+      `;
       const marker = L.marker([m.position.lat, m.position.lng], { icon: pinIcon("#e07a3f") })
-        .bindPopup(
-          `<strong>${m.title}</strong>${m.description ? `<br/><span>${m.description}</span>` : ""}`
-        )
+        .bindPopup(popupHtml)
         .addTo(layer);
       marker.on("click", () => onMarkerClick?.(m.id));
     });

@@ -87,10 +87,14 @@ const Soundscape = () => {
       synthNodesRef.current[key].forEach(node => {
         try {
           node.stop();
-        } catch {}
+        } catch (e) {
+          void e;
+        }
         try {
           node.disconnect();
-        } catch {}
+        } catch (e) {
+          void e;
+        }
       });
     });
     synthNodesRef.current = {};

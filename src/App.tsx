@@ -13,6 +13,9 @@ import Index from "./pages/Index";
 import { toast } from "sonner";
 import { AnimatedRoutes } from "@/components/AnimatedRoutes";
 import { GoogleOAuthProvider } from '@react-oauth/google';
+import FloatingNavDock from "@/components/FloatingNavDock";
+import AmbientSoundscapeWidget from "@/components/AmbientSoundscapeWidget";
+import TactileTextureShowcase from "@/components/TactileTextureShowcase";
 
 const GOOGLE_CLIENT_ID = "218816203507-1q868u09qmugc5rh3cmad18fckqu03gt.apps.googleusercontent.com";
 
@@ -103,6 +106,9 @@ const App = () => {
                         <Toaster />
                         <Sonner />
                         <AnimatedRoutes />
+                        <FloatingNavDock />
+                        <AmbientSoundscapeWidget />
+                        <TactileTextureShowcase />
                       </WebRTCProvider>
                     </DetectionProvider>
                   </GoogleMapsProvider>

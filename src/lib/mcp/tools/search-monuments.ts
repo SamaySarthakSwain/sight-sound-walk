@@ -13,7 +13,7 @@ export default defineTool({
   name: "search_monuments",
   title: "Search monuments",
   description:
-    "Search Odisha monuments and historical sites in the Lets Explore catalog. Filter by free-text query (matches title, location, description), city/location, or category.",
+    "Search Odisha monuments and historical sites in the Let's Explore catalog. Filter by free-text query (matches title, location, description), city/location, or category.",
   inputSchema: {
     query: z.string().optional().describe("Free-text search across title, location, description."),
     city: z.string().optional().describe("Filter by city or location (e.g. 'Puri', 'Bhubaneswar')."),

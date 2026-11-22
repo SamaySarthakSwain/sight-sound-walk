@@ -50,7 +50,7 @@ const Hero = () => {
             transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
           >
             <span className="bg-gradient-hero bg-clip-text text-transparent animate-gradient-text bg-[length:200%_200%]">
-              Lets Explore
+              Let's Explore
             </span>
           </motion.h1>
 

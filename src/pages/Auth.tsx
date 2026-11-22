@@ -54,9 +54,10 @@ const Auth = () => {
 
         toast.success(`Welcome back, ${user.name || "Explorer"}!`);
         navigate("/", { replace: true });
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error("Auth error:", err);
-        toast.error(err.message || "Failed to log in with Google.");
+        const msg = err instanceof Error ? err.message : "Failed to log in with Google.";
+        toast.error(msg);
       } finally {
         setLoading(false);
       }
@@ -66,6 +67,20 @@ const Auth = () => {
       toast.error("Google sign in was cancelled or encountered an error.");
     },
   });
+
+  const handleGuestLogin = () => {
+    const guestUser = {
+      id: "guest_explorer",
+      googleId: "guest_explorer",
+      email: "explorer@letsexplore.local",
+      name: "Guest Explorer",
+      picture: null,
+    };
+    localStorage.setItem("auth_token", "token_guest_explorer");
+    localStorage.setItem("user", JSON.stringify(guestUser));
+    toast.success("Welcome, Guest Explorer! Enjoy discovering Odisha.");
+    navigate("/", { replace: true });
+  };
 
   return (
     <div className="min-h-screen flex relative overflow-hidden bg-background">
@@ -107,7 +122,7 @@ const Auth = () => {
             </div>
             
             <h1 className="text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight text-transparent bg-clip-text bg-gradient-hero pb-2">
-              Lets Explore
+              Let's Explore
             </h1>
             <p className="text-xl text-muted-foreground leading-relaxed font-medium">
               Sign in to save travel history & get personalized suggestions
@@ -139,7 +154,7 @@ const Auth = () => {
                 <Map className="w-8 h-8 text-white" />
               </div>
               <h1 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-hero">
-                Lets Explore
+                Let's Explore
               </h1>
               <p className="text-sm text-muted-foreground font-medium">
                 Sign in to save travel history & get personalized suggestions
@@ -197,6 +212,16 @@ const Auth = () => {
                         />
                       </svg>
                       Continue with Google
+                    </Button>
+
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={handleGuestLogin}
+                      className="w-full py-5 text-sm font-semibold flex items-center justify-center gap-2 border border-border/80 hover:bg-primary/10 hover:text-primary transition-all rounded-[1rem]"
+                    >
+                      <Globe2 className="w-4 h-4 text-primary" />
+                      Continue as Guest Explorer
                     </Button>
 
                     <div className="w-full flex items-center gap-4">

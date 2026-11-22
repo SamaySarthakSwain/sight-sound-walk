@@ -2,6 +2,7 @@ import { motion, useInView, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 import { Link } from "react-router-dom";
 import { Landmark, UtensilsCrossed, Car, Building2, Box, Bot, ArrowUpRight, Users, Headphones, Sun, Palette, Trophy } from "lucide-react";
+import SpotlightCard from "@/components/ui/SpotlightCard";
 
 const services = [
   {
@@ -103,49 +104,40 @@ const ServiceCard = ({ service, index }: { service: typeof services[0]; index: n
       style={{ scale, opacity, y, perspective: 1000, willChange: "transform, opacity" }}
     >
       <Link to={service.path}>
-        <motion.div
-          className="rounded-2xl border border-border bg-card p-6 md:p-8 group cursor-pointer relative overflow-hidden h-full"
-          whileHover={{ y: -8, scale: 1.02 }}
-          transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+        <SpotlightCard
+          spotlightColor="rgba(245, 158, 11, 0.2)"
+          spotlightSize={320}
+          className="rounded-3xl border border-white/10 dark:border-white/5 bg-card/60 backdrop-blur-xl p-6 md:p-8 group cursor-pointer relative overflow-hidden h-full hover:border-primary/40 transition-all duration-300"
         >
-          {/* Background gradient on hover */}
-          <div className={`absolute inset-0 bg-gradient-to-br ${service.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-700`} />
-
-          {/* Shine effect */}
-          <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-            <div className="absolute -inset-[100%] bg-gradient-to-r from-transparent via-white/5 to-transparent rotate-12 group-hover:translate-x-[200%] transition-transform duration-1000" />
-          </div>
+          {/* Background subtle gradient on hover */}
+          <div className={`absolute inset-0 bg-gradient-to-br ${service.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none`} />
 
           {/* Content */}
-          <div className="relative z-10">
-            {/* Icon */}
-            <motion.div
-              className="w-12 h-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-6 group-hover:bg-primary/20 group-hover:border-primary/40 transition-all duration-500"
-              whileHover={{ rotate: [0, -10, 10, 0] }}
-              transition={{ duration: 0.5 }}
-            >
-              <Icon className="w-6 h-6 text-primary" />
-            </motion.div>
+          <div className="relative z-10 flex flex-col justify-between h-full">
+            <div>
+              <div className="w-12 h-12 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-5 group-hover:bg-primary group-hover:text-primary-foreground group-hover:scale-110 transition-all duration-300">
+                <Icon className="w-6 h-6 text-primary group-hover:text-primary-foreground transition-colors" />
+              </div>
 
-            {/* Badge */}
-            <span className="inline-block text-[9px] font-mono tracking-[0.3em] uppercase text-primary/50 mb-4">
-              Lets Explore
-            </span>
+              <span className="inline-block text-[10px] font-mono tracking-[0.25em] uppercase text-primary/60 mb-2">
+                Sight-Sound Service
+              </span>
 
-            <h3 className="text-xl md:text-2xl font-bold text-foreground mb-3 group-hover:text-primary transition-colors duration-300">
-              {service.title}
-            </h3>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              {service.desc}
-            </p>
+              <h3 className="text-xl md:text-2xl font-bold text-foreground mb-2 group-hover:text-primary transition-colors duration-300">
+                {service.title}
+              </h3>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                {service.desc}
+              </p>
+            </div>
 
-            {/* Arrow */}
-            <div className="mt-4 flex items-center gap-1 text-primary/0 group-hover:text-primary transition-all duration-300 text-xs font-mono tracking-wider">
-              <span className="translate-x-[-10px] group-hover:translate-x-0 transition-transform duration-300">Explore</span>
-              <ArrowUpRight className="w-3.5 h-3.5 translate-x-[-10px] group-hover:translate-x-0 transition-transform duration-300 delay-75" />
+            {/* Arrow & Action */}
+            <div className="mt-6 pt-4 border-t border-white/10 flex items-center justify-between text-xs font-semibold text-primary">
+              <span className="translate-x-0 group-hover:translate-x-1 transition-transform duration-300">Explore Module</span>
+              <ArrowUpRight className="w-4 h-4 translate-x-0 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform duration-300" />
             </div>
           </div>
-        </motion.div>
+        </SpotlightCard>
       </Link>
     </motion.div>
   );

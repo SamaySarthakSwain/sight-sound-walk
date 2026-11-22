@@ -140,7 +140,7 @@ const Footer = () => {
 
         {/* Bottom Bar */}
         <div className="flex flex-col md:flex-row justify-between items-center pt-8 border-t border-border dark:border-white/10 text-xs text-muted-foreground dark:text-white/60 gap-4">
-          <p>© {new Date().getFullYear()} Lets Explore, Inc. All Rights Reserved</p>
+          <p>© {new Date().getFullYear()} Let's Explore, Inc. All Rights Reserved</p>
           <div className="flex gap-4 md:gap-6">
             <a href="#" onClick={handleComingSoon} className="hover:text-foreground dark:hover:text-white transition-colors">Terms of Service</a>
             <a href="#" onClick={handleComingSoon} className="hover:text-foreground dark:hover:text-white transition-colors">Privacy Policy</a>

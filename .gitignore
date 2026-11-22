@@ -37,3 +37,12 @@ temp_clone*/
 # Env files
 .env
 .env.*
+
+# Android binaries and build artifacts
+*.apk
+*.aab
+android/app/build/
+android/.gradle/
+android/build/
+.gradle/
+

@@ -79,10 +79,75 @@ export const useCabServices = () => {
   return useQuery({
     queryKey: ["cab-services"],
     queryFn: async () => {
-      // Mock data for Hackathon demo
       return [
-        { id: "1", name: "Ola", phone_number: "123", rating: 4.5, is_local: false },
-        { id: "2", name: "Uber", phone_number: "456", rating: 4.6, is_local: false }
+        {
+          id: "1",
+          name: "Ola Cabs",
+          logo_url: null,
+          is_local: false,
+          has_2_wheeler: true,
+          has_3_wheeler: true,
+          has_4_wheeler: true,
+          base_fare_2w: 20,
+          per_km_2w: 6,
+          base_fare_3w: 40,
+          per_km_3w: 12,
+          base_fare_4w: 70,
+          per_km_4w: 16,
+          avg_wait_time_mins: 4,
+          eco_rating: 4.2
+        },
+        {
+          id: "2",
+          name: "Uber",
+          logo_url: null,
+          is_local: false,
+          has_2_wheeler: true,
+          has_3_wheeler: true,
+          has_4_wheeler: true,
+          base_fare_2w: 25,
+          per_km_2w: 7,
+          base_fare_3w: 45,
+          per_km_3w: 13,
+          base_fare_4w: 80,
+          per_km_4w: 18,
+          avg_wait_time_mins: 5,
+          eco_rating: 4.0
+        },
+        {
+          id: "3",
+          name: "Rapido",
+          logo_url: null,
+          is_local: false,
+          has_2_wheeler: true,
+          has_3_wheeler: true,
+          has_4_wheeler: false,
+          base_fare_2w: 15,
+          per_km_2w: 5,
+          base_fare_3w: 35,
+          per_km_3w: 10,
+          base_fare_4w: 0,
+          per_km_4w: 0,
+          avg_wait_time_mins: 3,
+          eco_rating: 4.5
+        },
+        {
+          id: "4",
+          name: "Mo E-Ride (Odisha Eco)",
+          logo_url: null,
+          is_local: true,
+          has_2_wheeler: false,
+          has_3_wheeler: true,
+          has_4_wheeler: true,
+          base_fare_2w: 0,
+          per_km_2w: 0,
+          base_fare_3w: 30,
+          per_km_3w: 8,
+          base_fare_4w: 60,
+          per_km_4w: 12,
+          avg_wait_time_mins: 6,
+          eco_rating: 5.0
+        }
       ] as CabService[];
     },
   });
@@ -92,11 +157,65 @@ export const useVehicleTypes = () => {
   return useQuery({
     queryKey: ["vehicle-types"],
     queryFn: async () => {
-      // Mock vehicle types
-      return [
-        { id: "1", type: "Sedan", capacity: 4, base_rate: 50, rate_per_km: 15 },
-        { id: "2", type: "SUV", capacity: 6, base_rate: 100, rate_per_km: 20 },
-      ] as VehicleType[];
+      const vehicles: VehicleType[] = [];
+      const serviceIds = ["1", "2", "3", "4"];
+
+      serviceIds.forEach((sid) => {
+        // Bike
+        if (sid !== "4") {
+          vehicles.push({
+            id: `${sid}-bike`,
+            cab_service_id: sid,
+            vehicle_type: "2_wheeler",
+            vehicle_name: "Bike Taxi",
+            capacity: 1,
+            base_fare: 20,
+            per_km_rate: 6,
+            per_min_rate: 1,
+            is_eco_friendly: false
+          });
+        }
+        // Auto
+        vehicles.push({
+          id: `${sid}-auto`,
+          cab_service_id: sid,
+          vehicle_type: "3_wheeler",
+          vehicle_name: sid === "4" ? "Electric Auto" : "Auto Rickshaw",
+          capacity: 3,
+          base_fare: 40,
+          per_km_rate: 12,
+          per_min_rate: 1.5,
+          is_eco_friendly: sid === "4"
+        });
+        // Sedan
+        if (sid !== "3") {
+          vehicles.push({
+            id: `${sid}-sedan`,
+            cab_service_id: sid,
+            vehicle_type: "4_wheeler",
+            vehicle_name: sid === "4" ? "Mo Electric Cab" : "Sedan Prime",
+            capacity: 4,
+            base_fare: 70,
+            per_km_rate: 16,
+            per_min_rate: 2,
+            is_eco_friendly: sid === "4"
+          });
+          // SUV
+          vehicles.push({
+            id: `${sid}-suv`,
+            cab_service_id: sid,
+            vehicle_type: "4_wheeler",
+            vehicle_name: "SUV XL",
+            capacity: 6,
+            base_fare: 100,
+            per_km_rate: 22,
+            per_min_rate: 2.5,
+            is_eco_friendly: false
+          });
+        }
+      });
+
+      return vehicles;
     },
   });
 };

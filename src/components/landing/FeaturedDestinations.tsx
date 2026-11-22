@@ -1,4 +1,4 @@
-import { motion, useInView, useScroll, useTransform } from "framer-motion";
+import { motion, useInView, useScroll, useTransform, MotionValue } from "framer-motion";
 import { useRef } from "react";
 import dest1 from "@/assets/destination-featured-1.jpg";
 import dest2 from "@/assets/destination-featured-2.jpg";
@@ -45,6 +45,24 @@ const destinations = [
   },
 ];
 
+const TagItem = ({ tag, j, scrollYProgress }: { tag: { label: string; value: string }; j: number; scrollYProgress: MotionValue<number> }) => {
+  const y = useTransform(scrollYProgress, [0.5, 1], [20 + j * 10, 0]);
+  const tagOpacity = useTransform(scrollYProgress, [0.5, 1], [0, 1]);
+
+  return (
+    <motion.div
+      key={j}
+      className="space-y-1"
+      style={{ y, opacity: tagOpacity }}
+    >
+      <span className="text-[10px] font-mono tracking-[0.2em] uppercase text-muted-foreground/60">
+        {tag.label}
+      </span>
+      <p className="text-sm font-medium text-foreground/80">{tag.value}</p>
+    </motion.div>
+  );
+};
+
 const DestinationCard = ({ dest, index }: { dest: typeof destinations[0]; index: number }) => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-80px" });
@@ -57,6 +75,10 @@ const DestinationCard = ({ dest, index }: { dest: typeof destinations[0]; index:
   const scale = useTransform(scrollYProgress, [0, 1], [0.85, 1]);
   const rotateX = useTransform(scrollYProgress, [0, 1], [15, 0]);
   const opacity = useTransform(scrollYProgress, [0, 1], [0, 1]);
+  const titleY = useTransform(scrollYProgress, [0, 1], [50, 0]);
+  const titleOpacity = useTransform(scrollYProgress, [0, 1], [0, 1]);
+  const descY = useTransform(scrollYProgress, [0, 1], [30, 0]);
+  const descOpacity = useTransform(scrollYProgress, [0.3, 1], [0, 1]);
 
   return (
     <motion.div
@@ -102,8 +124,8 @@ const DestinationCard = ({ dest, index }: { dest: typeof destinations[0]; index:
         <motion.h3
           className="text-3xl md:text-4xl font-bold tracking-tight text-foreground"
           style={{ 
-             y: useTransform(scrollYProgress, [0, 1], [50, 0]), 
-             opacity: useTransform(scrollYProgress, [0, 1], [0, 1]) 
+             y: titleY, 
+             opacity: titleOpacity 
           }}
         >
           {dest.title}
@@ -111,8 +133,8 @@ const DestinationCard = ({ dest, index }: { dest: typeof destinations[0]; index:
         <motion.p
           className="text-muted-foreground leading-relaxed text-sm md:text-base"
           style={{ 
-             y: useTransform(scrollYProgress, [0, 1], [30, 0]), 
-             opacity: useTransform(scrollYProgress, [0.3, 1], [0, 1]) 
+             y: descY, 
+             opacity: descOpacity 
           }}
         >
           {dest.desc}
@@ -120,19 +142,7 @@ const DestinationCard = ({ dest, index }: { dest: typeof destinations[0]; index:
         {/* Tags grid */}
         <div className="grid grid-cols-2 gap-3">
           {dest.tags.map((tag, j) => (
-            <motion.div
-              key={j}
-              className="space-y-1"
-              style={{ 
-                 y: useTransform(scrollYProgress, [0.5, 1], [20 + j * 10, 0]), 
-                 opacity: useTransform(scrollYProgress, [0.5, 1], [0, 1]) 
-              }}
-            >
-              <span className="text-[10px] font-mono tracking-[0.2em] uppercase text-muted-foreground/60">
-                {tag.label}
-              </span>
-              <p className="text-sm font-medium text-foreground/80">{tag.value}</p>
-            </motion.div>
+            <TagItem key={j} tag={tag} j={j} scrollYProgress={scrollYProgress} />
           ))}
         </div>
       </div>

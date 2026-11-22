@@ -110,7 +110,7 @@ const Help = () => {
     }
     // Default: show all
     return allFacilities;
-  }, [cityName]);
+  }, [cityName, allFacilities]);
 
   const getTypeIcon = (type: string) => {
     switch (type) {
@@ -314,11 +314,11 @@ const Help = () => {
           {/* About Section */}
           <Card className="glass-card border-none">
             <CardHeader>
-              <CardTitle>About Lets Explore</CardTitle>
+              <CardTitle>About Let's Explore</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <p className="text-muted-foreground">
-                Lets Explore is an educational tourism app designed for Odisha that combines GPS location tracking with text-to-speech narration to create location-based learning experiences.
+                Let's Explore is an educational tourism app designed for Odisha that combines GPS location tracking with text-to-speech narration to create location-based learning experiences.
               </p>
               <div className="space-y-2">
                 <h3 className="font-semibold">Key Features:</h3>

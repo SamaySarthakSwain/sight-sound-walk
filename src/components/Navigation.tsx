@@ -90,11 +90,18 @@ const Navigation = () => {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-14 md:h-16">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-gradient-hero flex items-center justify-center">
-              <Map className="w-4 h-4 md:w-6 md:h-6 text-white" />
+          <Link to="/" className="flex items-center gap-2.5 group">
+            <div className="w-9 h-9 md:w-10 md:h-10 rounded-2xl bg-gradient-hero flex items-center justify-center shadow-lg shadow-primary/25 group-hover:scale-105 transition-transform duration-300">
+              <Map className="w-5 h-5 text-white" />
             </div>
-            <span className="text-lg md:text-xl font-bold text-primary">Lets Explore</span>
+            <div>
+              <span className="text-lg md:text-xl font-black text-foreground tracking-tight group-hover:text-primary transition-colors">
+                Let&apos;s<span className="text-primary font-black"> Explore</span>
+              </span>
+              <span className="hidden sm:block text-[9px] font-mono tracking-widest uppercase text-muted-foreground -mt-1">
+                Living Heritage AI
+              </span>
+            </div>
           </Link>
 
           {/* Desktop Navigation */}
@@ -220,7 +227,7 @@ const Navigation = () => {
                     <div className="w-8 h-8 rounded-full bg-gradient-hero flex items-center justify-center">
                       <Map className="w-4 h-4 text-white" />
                     </div>
-                    Lets Explore
+                    Let&apos;s Explore
                   </SheetTitle>
                 </SheetHeader>
                 <nav className="flex flex-col gap-2 mt-6">

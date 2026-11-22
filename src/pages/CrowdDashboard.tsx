@@ -18,6 +18,7 @@ import BerhampurMap from "@/components/dashboard/BerhampurMap";
 import AlertsPanel from "@/components/dashboard/AlertsPanel";
 import CongestionMap from "@/components/dashboard/CongestionMap";
 import RouteSuggestions from "@/components/dashboard/RouteSuggestions";
+import IndiaHeritageCrowdMap from "@/components/dashboard/IndiaHeritageCrowdMap";
 
 const SectionTitle = ({ children, subtitle, action }: { children: React.ReactNode; subtitle?: string; action?: React.ReactNode }) => (
   <motion.div
@@ -120,6 +121,14 @@ const CrowdDashboard = () => {
         animate="visible"
         className="max-w-[1400px] mx-auto px-4 pb-20 space-y-12"
       >
+        {/* National Heritage & Regional Live Crowd Map */}
+        <motion.section variants={itemVariants}>
+          <SectionTitle subtitle="Real georeferenced satellite & street surveillance of India's iconic monuments and Odisha corridors">
+            India & Regional Heritage Crowd Surveillance Map
+          </SectionTitle>
+          <IndiaHeritageCrowdMap />
+        </motion.section>
+
         {/* Local Camera + QR/Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
           <motion.section variants={itemVariants} className="h-full">

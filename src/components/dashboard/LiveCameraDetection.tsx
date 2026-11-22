@@ -138,33 +138,52 @@ const LiveCameraDetection = () => {
     if (!ctx) return;
 
     let running = true;
+    let isDetecting = false;
+    let lastDetectTime = 0;
+    let cachedPredictions: cocoSsd.DetectedObject[] = [];
 
     const detect = async () => {
       if (!running || video.readyState < 2) {
-        animFrameRef.current = requestAnimationFrame(detect);
+        if (running) animFrameRef.current = requestAnimationFrame(detect);
         return;
       }
 
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-      const predictions = (await model.detect(video, 40, 0.2)).filter(p => p.score >= 0.2);
-      ctx.drawImage(video, 0, 0);
-
-      const persons = predictions.filter((p) => p.class === "person");
-      const vehicles = predictions.filter((p) => VEHICLE_CLASSES.includes(p.class));
-
-      setPersonCount(persons.length);
-      setVehicleCount(vehicles.length);
-
-      const now = Date.now();
-      if (
-        now - lastMetadataRef.current.time > 1000 &&
-        (persons.length !== lastMetadataRef.current.p || vehicles.length !== lastMetadataRef.current.v)
-      ) {
-        handleMetadataUpdate(persons.length, vehicles.length, undefined, gpsCoords);
-        lastMetadataRef.current = { time: now, p: persons.length, v: vehicles.length };
+      if (canvas.width !== video.videoWidth || canvas.height !== video.videoHeight) {
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
       }
 
+      ctx.drawImage(video, 0, 0);
+
+      const now = Date.now();
+      if (!isDetecting && now - lastDetectTime >= 150) {
+        isDetecting = true;
+        model.detect(video, 30, 0.25).then((preds) => {
+          if (!running) return;
+          cachedPredictions = preds.filter(p => p.score >= 0.25);
+          lastDetectTime = Date.now();
+          isDetecting = false;
+
+          const persons = cachedPredictions.filter((p) => p.class === "person");
+          const vehicles = cachedPredictions.filter((p) => VEHICLE_CLASSES.includes(p.class));
+
+          setPersonCount(persons.length);
+          setVehicleCount(vehicles.length);
+
+          if (
+            lastDetectTime - lastMetadataRef.current.time > 1000 &&
+            (persons.length !== lastMetadataRef.current.p || vehicles.length !== lastMetadataRef.current.v)
+          ) {
+            handleMetadataUpdate(persons.length, vehicles.length, undefined, gpsCoords);
+            lastMetadataRef.current = { time: lastDetectTime, p: persons.length, v: vehicles.length };
+          }
+        }).catch(() => {
+          isDetecting = false;
+        });
+      }
+
+      const persons = cachedPredictions.filter((p) => p.class === "person");
+      const vehicles = cachedPredictions.filter((p) => VEHICLE_CLASSES.includes(p.class));
       const personColor = getPersonColor(persons.length);
 
       persons.forEach((p) => {

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import type { ARModel } from "@/data/arModels";
 import { X, Gamepad2, ChevronUp, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -165,6 +166,45 @@ const VRMonumentViewer = ({ model, onClose }: VRMonumentViewerProps) => {
     obelisk.castShadow = true;
     scene.add(obelisk);
 
+    let displayObject: THREE.Object3D = obelisk;
+
+    // Load authentic 3D GLB model from local database archive
+    if (model.glbUrl) {
+      const gltfLoader = new GLTFLoader();
+      gltfLoader.load(
+        model.glbUrl,
+        (gltf) => {
+          const loadedScene = gltf.scene;
+          const box = new THREE.Box3().setFromObject(loadedScene);
+          const size = new THREE.Vector3();
+          box.getSize(size);
+          const maxDim = Math.max(size.x, size.y, size.z);
+          const targetSize = 4.0;
+          const scale = targetSize / (maxDim || 1);
+          loadedScene.scale.setScalar(scale);
+
+          const center = new THREE.Vector3();
+          box.getCenter(center);
+          loadedScene.position.x = -center.x * scale;
+          loadedScene.position.y = 0.35 - box.min.y * scale;
+          loadedScene.position.z = -center.z * scale;
+
+          loadedScene.traverse((child) => {
+            if ((child as THREE.Mesh).isMesh) {
+              child.castShadow = true;
+              child.receiveShadow = true;
+            }
+          });
+
+          scene.remove(obelisk);
+          scene.add(loadedScene);
+          displayObject = loadedScene;
+        },
+        undefined,
+        (err) => console.warn("Could not load local GLB:", err)
+      );
+    }
+
     // Glowing ring around stand
     const ringGeo = new THREE.TorusGeometry(1.8, 0.06, 16, 64);
     const ringMat = new THREE.MeshStandardMaterial({
@@ -321,8 +361,8 @@ const VRMonumentViewer = ({ model, onClose }: VRMonumentViewerProps) => {
       const dt = clockRef.current.getDelta();
       const elapsed = clockRef.current.getElapsedTime();
 
-      // Animate obelisk rotation
-      obelisk.rotation.y = elapsed * 0.4;
+      // Animate monument rotation
+      displayObject.rotation.y = elapsed * 0.4;
       ring.rotation.z = elapsed * 0.6;
 
       // Animate particles orbiting
@@ -384,7 +424,8 @@ const VRMonumentViewer = ({ model, onClose }: VRMonumentViewerProps) => {
     return () => {
       window.removeEventListener("resize", onResize);
       renderer.setAnimationLoop(null);
-      cancelAnimationFrame(frameIdRef.current);
+      const currentFrameId = frameIdRef.current;
+      cancelAnimationFrame(currentFrameId);
       if (sessionRef.current) {
         sessionRef.current.end().catch(() => {});
       }
