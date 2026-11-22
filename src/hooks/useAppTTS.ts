@@ -1,6 +1,12 @@
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { fetchElevenLabsAudio } from "@/lib/elevenlabsTts";
 import { useTTSVoice } from "@/hooks/useTTSVoice";
+
+declare global {
+  interface Window {
+    __currentSpeechUtterance?: SpeechSynthesisUtterance | null;
+  }
+}
 
 /**
  * App-wide TTS: ElevenLabs (Indian female voice) first, Web Speech as fallback.
@@ -13,10 +19,28 @@ export function useAppTTS() {
   const revokeRef = useRef<(() => void) | null>(null);
   const isElevenLabsRef = useRef(false);
 
+  useEffect(() => {
+    return () => {
+      // Clean up audio on unmount
+      if (typeof window !== "undefined" && "speechSynthesis" in window) {
+        window.speechSynthesis.cancel();
+      }
+      if (audioRef.current) {
+        try {
+          audioRef.current.pause();
+        } catch {
+          // ignore
+        }
+      }
+      revokeRef.current?.();
+    };
+  }, []);
+
   const speakWithWebSpeech = useCallback(
     (text: string) => {
       if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
       window.speechSynthesis.cancel();
+
       const utterance = new SpeechSynthesisUtterance(text);
       if (preferredVoice) {
         utterance.voice = preferredVoice;
@@ -24,11 +48,22 @@ export function useAppTTS() {
       } else {
         utterance.lang = lang;
       }
-      utterance.rate = 0.9;
-      utterance.pitch = 1;
+      utterance.rate = 1.0;
+      utterance.pitch = 1.0;
+
+      // Keep reference to prevent Chromium garbage collection bug
+      window.__currentSpeechUtterance = utterance;
+
       utterance.onstart = () => setIsSpeaking(true);
-      utterance.onend = () => setIsSpeaking(false);
-      utterance.onerror = () => setIsSpeaking(false);
+      utterance.onend = () => {
+        window.__currentSpeechUtterance = null;
+        setIsSpeaking(false);
+      };
+      utterance.onerror = () => {
+        window.__currentSpeechUtterance = null;
+        setIsSpeaking(false);
+      };
+
       window.speechSynthesis.speak(utterance);
       isElevenLabsRef.current = false;
     },
@@ -41,14 +76,15 @@ export function useAppTTS() {
         audioRef.current.pause();
         audioRef.current.currentTime = 0;
       } catch {
-        // ignore pause errors (e.g. already stopped)
+        // ignore pause errors
       }
       revokeRef.current?.();
       audioRef.current = null;
       revokeRef.current = null;
       isElevenLabsRef.current = false;
-    } else {
-      window.speechSynthesis?.cancel();
+    } else if (typeof window !== "undefined" && "speechSynthesis" in window) {
+      window.speechSynthesis.cancel();
+      window.__currentSpeechUtterance = null;
     }
     setIsSpeaking(false);
   }, []);

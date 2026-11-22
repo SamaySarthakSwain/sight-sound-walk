@@ -77,8 +77,20 @@ const speechLangCodes: Record<SupportedLanguage, string> = {
 
 const getVoiceGuideUrl = () => getApiUrl("/api/ai/voice-guide");
 
-const VoiceGuide: FC = () => {
+interface VoiceGuideProps {
+  language?: SupportedLanguage;
+  onLanguageChange?: (lang: SupportedLanguage) => void;
+}
+
+const VoiceGuide: FC<VoiceGuideProps> = ({
+  language: externalLanguage,
+  onLanguageChange,
+}) => {
   const { preferredVoice, lang: ttsLang } = useTTSVoice();
+  const [internalLanguage, setInternalLanguage] = useState<SupportedLanguage>("en");
+  const language = externalLanguage ?? internalLanguage;
+  const setLanguage = onLanguageChange ?? setInternalLanguage;
+
   const [isListening, setIsListening] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -86,8 +98,8 @@ const VoiceGuide: FC = () => {
   const [response, setResponse] = useState("");
   const [textInput, setTextInput] = useState("");
   const [showTextInput, setShowTextInput] = useState(false);
-  const [language, setLanguage] = useState<SupportedLanguage>("en");
   const [cameraActive, setCameraActive] = useState(false);
+
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
   const [conversationHistory, setConversationHistory] = useState<ConversationMessage[]>([]);
   const [isConversationActive, setIsConversationActive] = useState(false);
