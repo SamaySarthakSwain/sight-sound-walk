@@ -2,10 +2,11 @@ import { lazy, Suspense } from "react";
 import Navigation from "@/components/Navigation";
 import HeroSection from "@/components/landing/HeroSection";
 import { AuroraBackground } from "@/components/ui/aurora-background";
-import BentoFeatures from "@/components/landing/BentoFeatures";
-import LiveCrowdRadar from "@/components/landing/LiveCrowdRadar";
-import NeuralCoreShowcase from "@/components/landing/NeuralCoreShowcase";
 
+// Below-the-fold components lazy-loaded for blazing fast initial paint
+const BentoFeatures = lazy(() => import("@/components/landing/BentoFeatures"));
+const LiveCrowdRadar = lazy(() => import("@/components/landing/LiveCrowdRadar"));
+const NeuralCoreShowcase = lazy(() => import("@/components/landing/NeuralCoreShowcase"));
 const FeaturedDestinations = lazy(() => import("@/components/landing/FeaturedDestinations"));
 const StatsMarquee = lazy(() => import("@/components/landing/StatsMarquee"));
 const HowItWorks = lazy(() => import("@/components/landing/HowItWorks"));
@@ -35,13 +36,19 @@ const Index = () => {
       </Suspense>
 
       {/* 3. Flagship Bento Matrix: Crowd Management, 3D AR & Spatial Narration */}
-      <BentoFeatures />
+      <Suspense fallback={<SectionSkeleton />}>
+        <BentoFeatures />
+      </Suspense>
 
       {/* 4. Live Computer Vision Crowd Radar & Safety Sentinel */}
-      <LiveCrowdRadar />
+      <Suspense fallback={<SectionSkeleton />}>
+        <LiveCrowdRadar />
+      </Suspense>
 
       {/* 5. The Multimodal Neural Core Orbital Architecture */}
-      <NeuralCoreShowcase />
+      <Suspense fallback={<SectionSkeleton />}>
+        <NeuralCoreShowcase />
+      </Suspense>
 
       {/* 6. Curated Destinations with 3D Scroll Perspective */}
       <Suspense fallback={<SectionSkeleton />}>

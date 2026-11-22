@@ -13,16 +13,13 @@ import Index from "./pages/Index";
 import { toast } from "sonner";
 import { AnimatedRoutes } from "@/components/AnimatedRoutes";
 import { GoogleOAuthProvider } from '@react-oauth/google';
-import FloatingNavDock from "@/components/FloatingNavDock";
-import AmbientSoundscapeWidget from "@/components/AmbientSoundscapeWidget";
-import TactileTextureShowcase from "@/components/TactileTextureShowcase";
-
-const GOOGLE_CLIENT_ID = "218816203507-1q868u09qmugc5rh3cmad18fckqu03gt.apps.googleusercontent.com";
-
 // Lazy load heavy non-critical components
 const FloatingParticles = lazy(() => import("@/components/FloatingParticles"));
 const ProactiveNudgeTrigger = lazy(() => import("@/components/ProactiveNudgeTrigger"));
 const OfflineBanner = lazy(() => import("@/components/OfflineBanner"));
+const FloatingNavDock = lazy(() => import("@/components/FloatingNavDock"));
+const AmbientSoundscapeWidget = lazy(() => import("@/components/AmbientSoundscapeWidget"));
+const TactileTextureShowcase = lazy(() => import("@/components/TactileTextureShowcase"));
 
 // Optimized QueryClient — cache aggressively, reduce refetches
 const queryClient = new QueryClient({
@@ -106,9 +103,11 @@ const App = () => {
                         <Toaster />
                         <Sonner />
                         <AnimatedRoutes />
-                        <FloatingNavDock />
-                        <AmbientSoundscapeWidget />
-                        <TactileTextureShowcase />
+                        <Suspense fallback={null}>
+                          <FloatingNavDock />
+                          <AmbientSoundscapeWidget />
+                          <TactileTextureShowcase />
+                        </Suspense>
                       </WebRTCProvider>
                     </DetectionProvider>
                   </GoogleMapsProvider>

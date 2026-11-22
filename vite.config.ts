@@ -41,11 +41,27 @@ export default defineConfig(({ mode }) => ({
         ],
       },
       workbox: {
-        mode: "development",
+        mode: "production",
         navigateFallbackDenylist: [/^\/~oauth/],
-        globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2}"],
-        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
+        globPatterns: ["**/*.{js,css,html,ico,svg,woff2}"],
+        maximumFileSizeToCacheInBytes: 3 * 1024 * 1024,
         runtimeCaching: [
+          {
+            urlPattern: /\.(?:png|jpg|jpeg|svg|webp)$/i,
+            handler: "StaleWhileRevalidate",
+            options: {
+              cacheName: "images-cache",
+              expiration: { maxEntries: 100, maxAgeSeconds: 30 * 24 * 60 * 60 },
+            },
+          },
+          {
+            urlPattern: /\.(?:glb|gltf)$/i,
+            handler: "CacheFirst",
+            options: {
+              cacheName: "3d-models-cache",
+              expiration: { maxEntries: 20, maxAgeSeconds: 30 * 24 * 60 * 60 },
+            },
+          },
           {
             urlPattern: /^https:\/\/fsptuiiymuxtwepbumda\.supabase\.co\/rest\/v1\/.*/i,
             handler: "StaleWhileRevalidate",
@@ -70,6 +86,7 @@ export default defineConfig(({ mode }) => ({
     minify: "esbuild",
     cssMinify: true,
     sourcemap: false,
+    chunkSizeWarningLimit: 1000,
     rollupOptions: {
       output: {
         manualChunks: {
@@ -77,6 +94,8 @@ export default defineConfig(({ mode }) => ({
           ui: ["@radix-ui/react-dialog", "@radix-ui/react-dropdown-menu", "@radix-ui/react-tabs", "@radix-ui/react-tooltip"],
           motion: ["framer-motion"],
           query: ["@tanstack/react-query"],
+          lucide: ["lucide-react"],
+          leaflet: ["leaflet", "react-leaflet"],
           tensorflow: ["@tensorflow/tfjs", "@tensorflow-models/coco-ssd"],
         },
       },
