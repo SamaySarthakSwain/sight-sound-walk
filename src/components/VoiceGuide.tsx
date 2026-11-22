@@ -1,8 +1,9 @@
-import { useState, useCallback, useRef, useEffect } from "react";
+import { useState, useCallback, useRef, useEffect, FC } from "react";
 import { getApiUrl } from "@/lib/apiConfig";
-import { Mic, MicOff, Volume2, Loader2, Camera, CameraOff, X, Sparkles, Settings2, AudioLines, Radio, Upload, RefreshCw } from "lucide-react";
+import { Mic, MicOff, Volume2, Loader2, Camera, CameraOff, X, Sparkles, AudioLines, Radio, Upload, RefreshCw, Send, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import { SupportedLanguage, languageLabels } from "@/hooks/useTravelChat";
@@ -16,7 +17,6 @@ import {
 import { Globe } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useTTSVoice } from "@/hooks/useTTSVoice";
-import { fetchElevenLabsAudio } from "@/lib/elevenlabsTts";
 
 // Web Speech API types
 interface SpeechRecognitionEvent extends Event {
@@ -77,13 +77,15 @@ const speechLangCodes: Record<SupportedLanguage, string> = {
 
 const getVoiceGuideUrl = () => getApiUrl("/api/ai/voice-guide");
 
-const VoiceGuide = () => {
+const VoiceGuide: FC = () => {
   const { preferredVoice, lang: ttsLang } = useTTSVoice();
   const [isListening, setIsListening] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [transcript, setTranscript] = useState("");
   const [response, setResponse] = useState("");
+  const [textInput, setTextInput] = useState("");
+  const [showTextInput, setShowTextInput] = useState(false);
   const [language, setLanguage] = useState<SupportedLanguage>("en");
   const [cameraActive, setCameraActive] = useState(false);
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
@@ -96,10 +98,12 @@ const VoiceGuide = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const shouldRestartRef = useRef(false);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-  const analyserRef = useRef<AnalyserNode | null>(null);
-  const animFrameRef = useRef<number>(0);
   
+  // Streaming speech synthesis queue for instant response
+  const speechQueueRef = useRef<string[]>([]);
+  const isCurrentlySpeakingRef = useRef<boolean>(false);
+  const streamFinishedRef = useRef<boolean>(false);
+
   const ring1Ref = useRef<HTMLDivElement>(null);
   const ring2Ref = useRef<HTMLDivElement>(null);
   const ring3Ref = useRef<HTMLDivElement>(null);
@@ -108,6 +112,11 @@ const VoiceGuide = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
+  const isSpeechSupported = typeof window !== "undefined" && Boolean(
+    window.SpeechRecognition || window.webkitSpeechRecognition
+  );
+
+  // Proactive location nudge handler
   useEffect(() => {
     if (location.state?.proactiveMonument) {
       const monument = location.state.proactiveMonument;
@@ -116,8 +125,6 @@ const VoiceGuide = () => {
         shouldRestartRef.current = true;
       }
       handleProactiveNudge(monument.title);
-
-      // Clear the state so it doesn't re-trigger on remount
       navigate(location.pathname, { replace: true, state: {} });
     }
   }, [location.state?.proactiveMonument, isConversationActive, navigate]);
@@ -132,139 +139,154 @@ const VoiceGuide = () => {
       handleProactiveNudge(monument.title);
     };
 
-    window.addEventListener("proactive-nudge", handleNudge);
+    window.addEventListener("proactive-nudge", handleNudge as EventListener);
     return () => {
-      window.removeEventListener("proactive-nudge", handleNudge);
+      window.removeEventListener("proactive-nudge", handleNudge as EventListener);
       stopCamera();
       stopConversation();
-      if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
     };
   }, [isConversationActive, language]);
 
-  // Create speech recognition instance
+  // Audio visualization pulse rings (Crash-proof 60fps RAF animation)
+  useEffect(() => {
+    let animId: number;
+    let t = 0;
+
+    const animateRings = () => {
+      t += 0.05;
+      if (isSpeaking) {
+        // Dynamic voice wave pulses matching speech rhythm
+        const s1 = 1 + Math.abs(Math.sin(t * 1.8)) * 0.22;
+        const s2 = 1 + Math.abs(Math.sin(t * 1.3 + 0.5)) * 0.38;
+        const s3 = 1 + Math.abs(Math.sin(t * 0.9 + 1.0)) * 0.55;
+        if (ring1Ref.current) ring1Ref.current.style.transform = `scale(${s1})`;
+        if (ring2Ref.current) ring2Ref.current.style.transform = `scale(${s2})`;
+        if (ring3Ref.current) ring3Ref.current.style.transform = `scale(${s3})`;
+      } else if (isListening) {
+        // Gentle rhythmic breathing pulse while listening
+        const s1 = 1 + Math.abs(Math.sin(t * 0.9)) * 0.12;
+        const s2 = 1 + Math.abs(Math.sin(t * 0.9)) * 0.22;
+        const s3 = 1 + Math.abs(Math.sin(t * 0.9)) * 0.35;
+        if (ring1Ref.current) ring1Ref.current.style.transform = `scale(${s1})`;
+        if (ring2Ref.current) ring2Ref.current.style.transform = `scale(${s2})`;
+        if (ring3Ref.current) ring3Ref.current.style.transform = `scale(${s3})`;
+      } else {
+        if (ring1Ref.current) ring1Ref.current.style.transform = "scale(1)";
+        if (ring2Ref.current) ring2Ref.current.style.transform = "scale(1)";
+        if (ring3Ref.current) ring3Ref.current.style.transform = "scale(1)";
+      }
+      animId = requestAnimationFrame(animateRings);
+    };
+
+    animId = requestAnimationFrame(animateRings);
+    return () => {
+      if (animId) cancelAnimationFrame(animId);
+    };
+  }, [isSpeaking, isListening]);
+
+  // Speech synthesis sentence player — seamless streaming queue
+  const playNextSentence = useCallback(() => {
+    if (!speechQueueRef.current.length) {
+      isCurrentlySpeakingRef.current = false;
+      if (streamFinishedRef.current) {
+        setIsSpeaking(false);
+        // Automatically resume listening if in active conversation mode
+        if (shouldRestartRef.current) {
+          setTimeout(() => {
+            if (shouldRestartRef.current) {
+              startListening();
+            }
+          }, 350);
+        }
+      }
+      return;
+    }
+
+    const nextSentence = speechQueueRef.current.shift()!;
+    isCurrentlySpeakingRef.current = true;
+    setIsSpeaking(true);
+    setIsProcessing(false);
+
+    if (typeof window === "undefined" || !("speechSynthesis" in window)) {
+      isCurrentlySpeakingRef.current = false;
+      setIsSpeaking(false);
+      return;
+    }
+
+    const clean = nextSentence.replace(/[*#_`~]/g, "").trim();
+    if (!clean) {
+      playNextSentence();
+      return;
+    }
+
+    try {
+      const utterance = new SpeechSynthesisUtterance(clean);
+      if (preferredVoice) {
+        utterance.voice = preferredVoice;
+        utterance.lang = preferredVoice.lang;
+      } else {
+        utterance.lang = speechLangCodes[language] ?? ttsLang ?? "en-IN";
+      }
+      utterance.rate = 1.05;
+      utterance.pitch = 1.0;
+
+      utterance.onend = () => {
+        playNextSentence();
+      };
+
+      utterance.onerror = (e) => {
+        console.warn("Speech synthesis notice:", e);
+        playNextSentence();
+      };
+
+      window.speechSynthesis.speak(utterance);
+    } catch (err) {
+      console.warn("Utterance error:", err);
+      playNextSentence();
+    }
+  }, [language, preferredVoice, ttsLang]);
+
+  const queueSentence = useCallback((sentence: string) => {
+    const clean = sentence.trim();
+    if (!clean) return;
+    speechQueueRef.current.push(clean);
+    if (!isCurrentlySpeakingRef.current) {
+      playNextSentence();
+    }
+  }, [playNextSentence]);
+
+  // Create SpeechRecognition safely
   const createRecognition = useCallback(() => {
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SpeechRecognition) {
-      toast({
-        variant: "destructive",
-        title: "Not Supported",
-        description: "Use Chrome or Edge for voice features.",
-      });
+    try {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRecognition) return null;
+
+      const recognition = new SpeechRecognition();
+      recognition.continuous = false;
+      recognition.interimResults = true;
+      recognition.lang = speechLangCodes[language] || "en-IN";
+      return recognition;
+    } catch (e) {
+      console.warn("SpeechRecognition init error:", e);
       return null;
     }
+  }, [language]);
 
-    const recognition = new SpeechRecognition();
-    recognition.continuous = false;
-    recognition.interimResults = true;
-    recognition.lang = speechLangCodes[language];
-
-    return recognition;
-  }, [language, toast]);
-
-  // ElevenLabs TTS (Indian female voice via shared lib), with Web Speech fallback
-  const speakWithElevenLabs = async (text: string) => {
-    setIsSpeaking(true);
-    try {
-      const result = await fetchElevenLabsAudio(text);
-      if (!result) {
-        speakWithWebSpeech(text);
-        return;
-      }
-      const { audio, revoke } = result;
-
-      // Create audio context for visualization
-      const audioCtx = new AudioContext();
-      const analyser = audioCtx.createAnalyser();
-      analyser.fftSize = 256;
-      analyserRef.current = analyser;
-
-      audioRef.current = audio;
-      const source = audioCtx.createMediaElementSource(audio);
-      source.connect(analyser);
-      analyser.connect(audioCtx.destination);
-
-      const dataArray = new Uint8Array(analyser.frequencyBinCount);
-      const visualize = () => {
-        analyser.getByteFrequencyData(dataArray);
-        const avg = dataArray.reduce((a, b) => a + b, 0) / dataArray.length;
-        const level = avg / 255;
-        
-        if (ring1Ref.current) ring1Ref.current.style.transform = `scale(${1 + level * 0.4})`;
-        if (ring2Ref.current) ring2Ref.current.style.transform = `scale(${1 + level * 0.7})`;
-        if (ring3Ref.current) ring3Ref.current.style.transform = `scale(${1 + level * 1.0})`;
-        
-        animFrameRef.current = requestAnimationFrame(visualize);
-      };
-      visualize();
-
-      audio.onended = () => {
-        setIsSpeaking(false);
-        if (ring1Ref.current) ring1Ref.current.style.transform = 'scale(1)';
-        if (ring2Ref.current) ring2Ref.current.style.transform = 'scale(1)';
-        if (ring3Ref.current) ring3Ref.current.style.transform = 'scale(1)';
-        cancelAnimationFrame(animFrameRef.current);
-        revoke();
-        audioCtx.close();
-        if (isConversationActive && shouldRestartRef.current) {
-          setTimeout(() => startListening(), 300);
-        }
-      };
-
-      audio.onerror = () => {
-        setIsSpeaking(false);
-        if (ring1Ref.current) ring1Ref.current.style.transform = 'scale(1)';
-        if (ring2Ref.current) ring2Ref.current.style.transform = 'scale(1)';
-        if (ring3Ref.current) ring3Ref.current.style.transform = 'scale(1)';
-        cancelAnimationFrame(animFrameRef.current);
-        revoke();
-        audioCtx.close();
-        if (isConversationActive && shouldRestartRef.current) {
-          setTimeout(() => startListening(), 300);
-        }
-      };
-
-      await audio.play();
-    } catch (err) {
-      console.error("ElevenLabs TTS error:", err);
-      setIsSpeaking(false);
-      speakWithWebSpeech(text);
-    }
-  };
-
-  // Fallback Web Speech TTS (uses app TTS voice from src/lib/tts.ts)
-  const speakWithWebSpeech = (text: string) => {
-    if (!("speechSynthesis" in window)) return;
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
-    if (preferredVoice) {
-      utterance.voice = preferredVoice;
-      utterance.lang = preferredVoice.lang;
-    } else {
-      utterance.lang = speechLangCodes[language] ?? ttsLang;
-    }
-    utterance.rate = 1;
-    utterance.pitch = 1;
-    utterance.onstart = () => setIsSpeaking(true);
-    utterance.onend = () => {
-      setIsSpeaking(false);
-      if (isConversationActive && shouldRestartRef.current) {
-        setTimeout(() => startListening(), 300);
-      }
-    };
-    utterance.onerror = () => {
-      setIsSpeaking(false);
-      if (isConversationActive && shouldRestartRef.current) {
-        setTimeout(() => startListening(), 300);
-      }
-    };
-    window.speechSynthesis.speak(utterance);
-  };
-
-  // Handle streaming response
-  const streamResponse = async (userMessage: string, image: string | null) => {
+  // Handle streaming AI response with INSTANT sentence-by-sentence audio playback
+  const streamResponse = useCallback(async (userMessage: string, image: string | null) => {
     setIsProcessing(true);
     setResponse("");
+    speechQueueRef.current = [];
+    isCurrentlySpeakingRef.current = false;
+    streamFinishedRef.current = false;
+
+    // Immediately stop any previously playing speech
+    if (typeof window !== "undefined" && "speechSynthesis" in window) {
+      window.speechSynthesis.cancel();
+    }
+
     let fullResponse = "";
+    let streamBuffer = "";
 
     try {
       const resp = await fetch(getVoiceGuideUrl(), {
@@ -310,12 +332,35 @@ const VoiceGuide = () => {
             if (content) {
               fullResponse += content;
               setResponse(fullResponse);
+              streamBuffer += content;
+
+              // Extract complete sentences on punctuation (. ! ? or newline) for INSTANT speech
+              const sentenceEndRegex = /([.!?\n]+)(\s+|$)/;
+              let match = sentenceEndRegex.exec(streamBuffer);
+              while (match) {
+                const sentenceEnd = match.index + match[1].length;
+                const sentence = streamBuffer.slice(0, sentenceEnd).trim();
+                streamBuffer = streamBuffer.slice(sentenceEnd).trim();
+
+                if (sentence.length > 2) {
+                  queueSentence(sentence);
+                }
+                match = sentenceEndRegex.exec(streamBuffer);
+              }
             }
           } catch {
             buffer = line + "\n" + buffer;
             break;
           }
         }
+      }
+
+      // Stream finished — queue any remaining words
+      streamFinishedRef.current = true;
+      if (streamBuffer.trim().length > 0) {
+        queueSentence(streamBuffer.trim());
+      } else if (!speechQueueRef.current.length && !isCurrentlySpeakingRef.current) {
+        setIsSpeaking(false);
       }
 
       // Update conversation history
@@ -325,38 +370,41 @@ const VoiceGuide = () => {
         { role: "assistant", content: fullResponse },
       ]);
 
-      // Speak with ElevenLabs
-      if (fullResponse) {
-        speakWithElevenLabs(fullResponse);
-      }
-
       setCapturedImage(null);
     } catch (err) {
       console.error("API error:", err);
       toast({
         variant: "destructive",
-        title: "Error",
-        description: "Failed to get response.",
+        title: "Voice Guide Error",
+        description: "Could not retrieve voice response. Please try again.",
       });
-      if (isConversationActive) {
-        setTimeout(() => startListening(), 500);
-      }
-    } finally {
       setIsProcessing(false);
+      setIsSpeaking(false);
+      if (shouldRestartRef.current) {
+        setTimeout(() => startListening(), 800);
+      }
     }
-  };
+  }, [language, conversationHistory, toast, queueSentence]);
 
-  const handleProactiveNudge = async (monumentName: string) => {
+  // Proactive audio guide
+  const handleProactiveNudge = useCallback(async (monumentName: string) => {
     setIsProcessing(true);
     setResponse("");
+    speechQueueRef.current = [];
+    isCurrentlySpeakingRef.current = false;
+    streamFinishedRef.current = false;
+
+    if (typeof window !== "undefined" && "speechSynthesis" in window) {
+      window.speechSynthesis.cancel();
+    }
+
     let fullResponse = "";
+    let streamBuffer = "";
 
     try {
       const resp = await fetch(getVoiceGuideUrl(), {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           isProactive: true,
           monumentName,
@@ -395,6 +443,20 @@ const VoiceGuide = () => {
             if (content) {
               fullResponse += content;
               setResponse(fullResponse);
+              streamBuffer += content;
+
+              const sentenceEndRegex = /([.!?\n]+)(\s+|$)/;
+              let match = sentenceEndRegex.exec(streamBuffer);
+              while (match) {
+                const sentenceEnd = match.index + match[1].length;
+                const sentence = streamBuffer.slice(0, sentenceEnd).trim();
+                streamBuffer = streamBuffer.slice(sentenceEnd).trim();
+
+                if (sentence.length > 2) {
+                  queueSentence(sentence);
+                }
+                match = sentenceEndRegex.exec(streamBuffer);
+              }
             }
           } catch {
             buffer = line + "\n" + buffer;
@@ -403,107 +465,151 @@ const VoiceGuide = () => {
         }
       }
 
+      streamFinishedRef.current = true;
+      if (streamBuffer.trim().length > 0) {
+        queueSentence(streamBuffer.trim());
+      }
+
       setConversationHistory(prev => [
         ...prev,
         { role: "assistant", content: fullResponse },
       ]);
-
-      if (fullResponse) {
-        speakWithElevenLabs(fullResponse);
-      }
     } catch (err) {
       console.error("Proactive API error:", err);
-    } finally {
       setIsProcessing(false);
-    }
-  };
-
-  // Start listening
-  const startListening = useCallback(() => {
-    if (isSpeaking) {
-      audioRef.current?.pause();
-      window.speechSynthesis?.cancel();
       setIsSpeaking(false);
-      setAudioLevel(0);
     }
+  }, [language, conversationHistory, queueSentence]);
 
-    const recognition = createRecognition();
-    if (!recognition) return;
-
-    recognitionRef.current = recognition;
-
-    recognition.onstart = () => {
-      setIsListening(true);
-      setTranscript("");
-    };
-
-    recognition.onresult = (event: SpeechRecognitionEvent) => {
-      let finalTranscript = "";
-      let interimTranscript = "";
-
-      for (let i = event.resultIndex; i < event.results.length; i++) {
-        const result = event.results[i];
-        if (result.isFinal) {
-          finalTranscript += result[0].transcript;
-        } else {
-          interimTranscript += result[0].transcript;
-        }
-      }
-
-      setTranscript(finalTranscript || interimTranscript);
-
-      if (finalTranscript) {
-        streamResponse(finalTranscript, capturedImage);
-      }
-    };
-
-    recognition.onerror = (event) => {
-      console.error("Speech error:", event.error);
-      setIsListening(false);
-
-      if (isConversationActive && shouldRestartRef.current && event.error !== "aborted") {
-        setTimeout(() => startListening(), 1000);
-      }
-    };
-
-    recognition.onend = () => {
-      setIsListening(false);
-    };
-
+  // Start listening safely
+  const startListening = useCallback(() => {
     try {
+      if (isSpeaking || isCurrentlySpeakingRef.current) {
+        speechQueueRef.current = [];
+        window.speechSynthesis?.cancel();
+        isCurrentlySpeakingRef.current = false;
+        setIsSpeaking(false);
+      }
+
+      const recognition = createRecognition();
+      if (!recognition) {
+        setShowTextInput(true);
+        toast({
+          title: "Microphone Voice Input",
+          description: "Speech recognition is unavailable in this browser. You can type below to hear the voice guide!",
+        });
+        setIsListening(false);
+        setIsConversationActive(false);
+        shouldRestartRef.current = false;
+        return;
+      }
+
+      recognitionRef.current = recognition;
+
+      recognition.onstart = () => {
+        setIsListening(true);
+        setTranscript("");
+      };
+
+      recognition.onresult = (event: SpeechRecognitionEvent) => {
+        let finalTranscript = "";
+        let interimTranscript = "";
+
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          const result = event.results[i];
+          if (result.isFinal) {
+            finalTranscript += result[0].transcript;
+          } else {
+            interimTranscript += result[0].transcript;
+          }
+        }
+
+        setTranscript(finalTranscript || interimTranscript);
+
+        if (finalTranscript.trim()) {
+          streamResponse(finalTranscript.trim(), capturedImage);
+        }
+      };
+
+      recognition.onerror = (event) => {
+        console.warn("Speech recognition notice:", event.error);
+        setIsListening(false);
+
+        if (event.error === "not-allowed" || event.error === "service-not-allowed") {
+          toast({
+            variant: "destructive",
+            title: "Microphone Access Required",
+            description: "Please allow microphone permissions in your browser to speak with the guide.",
+          });
+          setIsConversationActive(false);
+          shouldRestartRef.current = false;
+          setShowTextInput(true);
+          return;
+        }
+
+        if (shouldRestartRef.current && event.error !== "aborted") {
+          setTimeout(() => {
+            if (shouldRestartRef.current) startListening();
+          }, 800);
+        }
+      };
+
+      recognition.onend = () => {
+        setIsListening(false);
+      };
+
       recognition.start();
     } catch (e) {
-      console.error("Recognition start error:", e);
+      console.warn("Recognition start catch:", e);
+      setIsListening(false);
     }
-  }, [language, capturedImage, isSpeaking, isConversationActive, createRecognition]);
+  }, [createRecognition, isSpeaking, capturedImage, streamResponse, toast]);
 
-  const stopListening = () => {
-    recognitionRef.current?.abort();
+  const stopListening = useCallback(() => {
+    try {
+      recognitionRef.current?.abort();
+    } catch {
+      // ignore
+    }
     setIsListening(false);
-  };
+  }, []);
 
   const startConversation = () => {
-    setIsConversationActive(true);
-    shouldRestartRef.current = true;
-    startListening();
-    toast({
-      title: "🎙️ Conversation Started",
-      description: "I'm listening — speak naturally!",
-    });
+    try {
+      // Resume audio context/speech synthesis on user click
+      if (typeof window !== "undefined" && "speechSynthesis" in window) {
+        window.speechSynthesis.resume();
+      }
+      setIsConversationActive(true);
+      shouldRestartRef.current = true;
+      startListening();
+      toast({
+        title: "🎙️ Voice Guide Ready",
+        description: "Speak naturally — your travel guide is listening!",
+      });
+    } catch (e) {
+      console.error("Start conversation error:", e);
+    }
   };
 
   const stopConversation = () => {
-    shouldRestartRef.current = false;
-    setIsConversationActive(false);
-    stopListening();
-    audioRef.current?.pause();
-    window.speechSynthesis?.cancel();
-    setIsSpeaking(false);
-    setAudioLevel(0);
-    cancelAnimationFrame(animFrameRef.current);
+    try {
+      shouldRestartRef.current = false;
+      setIsConversationActive(false);
+      stopListening();
+      speechQueueRef.current = [];
+      isCurrentlySpeakingRef.current = false;
+      if (typeof window !== "undefined" && "speechSynthesis" in window) {
+        window.speechSynthesis.cancel();
+      }
+      setIsSpeaking(false);
+      setIsProcessing(false);
+    } catch (e) {
+      console.error("Stop conversation error:", e);
+    }
   };
 
-  // Camera functions
+  // Camera capture with validation
   const startCamera = async () => {
     try {
       let stream: MediaStream;
@@ -520,15 +626,13 @@ const VoiceGuide = () => {
       }
       streamRef.current = stream;
       setCameraActive(true);
-      setTimeout(() => {
-        if (videoRef.current) {
-          videoRef.current.srcObject = stream;
-          videoRef.current.play().catch(console.error);
-        }
-      }, 100);
     } catch (err) {
       console.error("Camera access error:", err);
-      toast({ variant: "destructive", title: "Camera Error", description: "Could not access camera. You can also click 'Upload Photo' to pick an image." });
+      toast({
+        variant: "destructive",
+        title: "Camera Access Error",
+        description: "Could not open camera. You can also click 'Upload Photo' to select an image from your device.",
+      });
     }
   };
 
@@ -539,11 +643,10 @@ const VoiceGuide = () => {
     setCameraActive(false);
   };
 
-  // Automatically attach stream when videoRef mounts
   useEffect(() => {
     if (cameraActive && videoRef.current && streamRef.current) {
       videoRef.current.srcObject = streamRef.current;
-      videoRef.current.play().catch(console.error);
+      videoRef.current.play().catch(() => {});
     }
   }, [cameraActive]);
 
@@ -555,16 +658,32 @@ const VoiceGuide = () => {
     const width = video.videoWidth || video.clientWidth || 640;
     const height = video.videoHeight || video.clientHeight || 480;
 
+    if (width === 0 || height === 0) {
+      toast({
+        variant: "destructive",
+        title: "Camera Initializing",
+        description: "Please wait 1 second for the camera preview to settle.",
+      });
+      return;
+    }
+
     canvas.width = width;
     canvas.height = height;
     const ctx = canvas.getContext("2d");
     if (ctx) {
       ctx.drawImage(video, 0, 0, width, height);
       const dataUrl = canvas.toDataURL("image/jpeg", 0.85);
-      setCapturedImage(dataUrl);
-      stopCamera();
-      // Instantly identify the captured monument!
-      identifyMonumentPhoto(dataUrl);
+      if (dataUrl && dataUrl.length > 500) {
+        setCapturedImage(dataUrl);
+        stopCamera();
+        identifyMonumentPhoto(dataUrl);
+      } else {
+        toast({
+          variant: "destructive",
+          title: "Capture Error",
+          description: "Could not capture image data. Please try again.",
+        });
+      }
     }
   };
 
@@ -574,7 +693,7 @@ const VoiceGuide = () => {
     const reader = new FileReader();
     reader.onload = (event) => {
       const dataUrl = event.target?.result as string;
-      if (dataUrl) {
+      if (dataUrl && dataUrl.length > 500) {
         setCapturedImage(dataUrl);
         identifyMonumentPhoto(dataUrl, file.name);
       }
@@ -584,92 +703,32 @@ const VoiceGuide = () => {
   };
 
   const identifyMonumentPhoto = async (dataUrl: string, fileHint?: string) => {
-    setIsProcessing(true);
-    setResponse("");
-    toast({ title: "🔍 Analyzing Photo...", description: "Identifying monument & historical details..." });
+    const prompt = `Identify this monument or tourist place in Odisha/India from the photo. State the exact monument name, location, and key historical or architectural significance in 2 concise sentences. ${fileHint ? `Photo filename hint: ${fileHint}` : ""}`;
+    toast({ title: "🔍 Identifying Monument...", description: "Analyzing architectural highlights..." });
+    await streamResponse(prompt, dataUrl);
+  };
 
-    try {
-      const prompt = `Identify this monument or tourist place in Odisha/India from the photo. State the exact monument name, location, and key historical or architectural significance in 2 concise sentences. ${fileHint ? `Photo filename hint: ${fileHint}` : ''}`;
-
-      const resp = await fetch(getVoiceGuideUrl(), {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          message: prompt,
-          image: dataUrl,
-          language,
-          conversationHistory: conversationHistory.slice(-4),
-        }),
-      });
-
-      if (!resp.ok) throw new Error("Identification failed");
-
-      const reader = resp.body?.getReader();
-      const decoder = new TextDecoder();
-      let buffer = "";
-      let fullResponse = "";
-
-      while (reader) {
-        const { done, value } = await reader.read();
-        if (done) break;
-
-        buffer += decoder.decode(value, { stream: true });
-        let newlineIndex: number;
-        while ((newlineIndex = buffer.indexOf("\n")) !== -1) {
-          let line = buffer.slice(0, newlineIndex);
-          buffer = buffer.slice(newlineIndex + 1);
-
-          if (line.endsWith("\r")) line = line.slice(0, -1);
-          if (line.startsWith(":") || line.trim() === "") continue;
-          if (!line.startsWith("data: ")) continue;
-
-          const jsonStr = line.slice(6).trim();
-          if (jsonStr === "[DONE]") break;
-
-          try {
-            const parsed = JSON.parse(jsonStr);
-            const content = parsed.choices?.[0]?.delta?.content;
-            if (content) {
-              fullResponse += content;
-              setResponse(fullResponse);
-            }
-          } catch {
-            buffer = line + "\n" + buffer;
-            break;
-          }
-        }
-      }
-
-      setConversationHistory(prev => [
-        ...prev,
-        { role: "user", content: "Identify monument from photo" },
-        { role: "assistant", content: fullResponse },
-      ]);
-
-      if (fullResponse) {
-        speakWithElevenLabs(fullResponse);
-      }
-      toast({ title: "✨ Monument Identified!", description: "Voice guide is reading the explanation." });
-    } catch (err) {
-      console.error("Photo identification error:", err);
-      toast({ variant: "destructive", title: "Identification Error", description: "Could not identify photo. Please try again." });
-    } finally {
-      setIsProcessing(false);
-    }
+  const handleManualSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!textInput.trim() || isProcessing) return;
+    const query = textInput.trim();
+    setTextInput("");
+    setTranscript(query);
+    streamResponse(query, capturedImage);
   };
 
   const isActive = isListening || isSpeaking || isProcessing;
 
   return (
     <div className="max-w-2xl mx-auto p-4">
-      <Card className="glass-card shadow-2xl overflow-hidden border-none text-foreground">
+      <Card className="glass-card shadow-2xl overflow-hidden border-none text-foreground bg-card/60 backdrop-blur-xl">
         <CardHeader className="text-center pb-2 pt-6">
           {/* Language Selector */}
           <div className="flex justify-center mb-6">
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-muted/50 border border-border/50">
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-muted/60 border border-border/50 shadow-sm">
               <Globe className="w-3.5 h-3.5 text-primary" />
               <Select value={language} onValueChange={(val) => setLanguage(val as SupportedLanguage)}>
-                <SelectTrigger className="w-[110px] h-7 text-xs border-0 bg-transparent shadow-none focus:ring-0 px-1">
+                <SelectTrigger className="w-[115px] h-7 text-xs border-0 bg-transparent shadow-none focus:ring-0 px-1">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -685,120 +744,146 @@ const VoiceGuide = () => {
 
           {/* Main Voice Circle with Audio Visualization */}
           <div className="mx-auto mb-6 relative flex items-center justify-center" style={{ width: 180, height: 180 }}>
-            {/* Animated rings */}
+            {/* Animated Dynamic Rings */}
             {isActive && (
               <>
                 <div
                   ref={ring3Ref}
-                  className="absolute inset-0 rounded-full border-2 border-primary/10 transition-transform duration-150"
-                  style={{ opacity: 0.2 }}
+                  className="absolute inset-0 rounded-full border-2 border-primary/20 pointer-events-none transition-transform duration-100 ease-out"
+                  style={{ opacity: 0.25 }}
                 />
                 <div
                   ref={ring2Ref}
-                  className="absolute inset-0 rounded-full border-2 border-primary/20 transition-transform duration-150"
-                  style={{ opacity: 0.3 }}
+                  className="absolute inset-0 rounded-full border-2 border-primary/30 pointer-events-none transition-transform duration-100 ease-out"
+                  style={{ opacity: 0.4 }}
                 />
                 <div
                   ref={ring1Ref}
-                  className="absolute inset-0 rounded-full border-2 border-primary/30 transition-transform duration-150"
-                  style={{ opacity: 0.5 }}
+                  className="absolute inset-0 rounded-full border-2 border-primary/40 pointer-events-none transition-transform duration-100 ease-out"
+                  style={{ opacity: 0.6 }}
                 />
               </>
             )}
 
-            {/* Pulsing glow when active */}
+            {/* Pulsing ambient glow */}
             {isActive && (
               <div className={cn(
-                "absolute inset-2 rounded-full blur-xl transition-opacity duration-500",
+                "absolute inset-2 rounded-full blur-xl transition-opacity duration-300 pointer-events-none",
                 isListening ? "bg-primary/30 animate-pulse" :
-                  isSpeaking ? "bg-accent/30 animate-pulse" :
-                    "bg-muted/20"
+                  isSpeaking ? "bg-accent/40 animate-pulse" :
+                    "bg-primary/20 animate-spin"
               )} />
             )}
 
-            {/* Main button */}
+            {/* Main Interactive Button */}
             <button
               onClick={isConversationActive ? stopConversation : startConversation}
-              disabled={isProcessing}
+              disabled={isProcessing && !isSpeaking}
+              type="button"
               className={cn(
-                "relative w-36 h-36 rounded-full flex flex-col items-center justify-center gap-1 transition-all duration-500 focus:outline-none",
-                isProcessing
+                "relative w-36 h-36 rounded-full flex flex-col items-center justify-center gap-1.5 transition-all duration-300 focus:outline-none select-none",
+                isProcessing && !isSpeaking
                   ? "bg-muted/80 cursor-wait shadow-lg"
                   : isSpeaking
-                    ? "bg-gradient-to-br from-accent to-accent/80 cursor-pointer shadow-[0_0_40px_rgba(var(--accent),0.3)]"
+                    ? "bg-gradient-to-br from-amber-500 to-orange-600 cursor-pointer shadow-[0_0_40px_rgba(249,115,22,0.4)] scale-105 active:scale-95"
                     : isListening
-                      ? "bg-gradient-to-br from-primary to-primary/80 cursor-pointer shadow-[0_0_40px_rgba(var(--primary),0.4)] scale-105"
+                      ? "bg-gradient-to-br from-primary to-primary/80 cursor-pointer shadow-[0_0_40px_rgba(var(--primary),0.5)] scale-105 active:scale-95 animate-pulse"
                       : isConversationActive
-                        ? "bg-primary/60 cursor-pointer shadow-lg hover:bg-primary/70"
-                        : "bg-gradient-to-br from-primary/80 to-primary cursor-pointer shadow-xl hover:shadow-2xl hover:scale-105 active:scale-95"
+                        ? "bg-primary/70 cursor-pointer shadow-lg hover:bg-primary/80"
+                        : "bg-gradient-to-br from-primary to-orange-600 cursor-pointer shadow-xl hover:shadow-2xl hover:scale-105 active:scale-95"
               )}
             >
-              {isProcessing ? (
-                <Loader2 className="w-10 h-10 text-muted-foreground animate-spin" />
+              {isProcessing && !isSpeaking ? (
+                <Loader2 className="w-10 h-10 text-primary-foreground animate-spin" />
               ) : isSpeaking ? (
-                <AudioLines className="w-10 h-10 text-accent-foreground animate-pulse" />
+                <AudioLines className="w-10 h-10 text-white animate-pulse" />
               ) : isListening ? (
-                <Radio className="w-10 h-10 text-primary-foreground animate-pulse" />
+                <Radio className="w-10 h-10 text-white animate-pulse" />
               ) : isConversationActive ? (
-                <MicOff className="w-10 h-10 text-primary-foreground" />
+                <MicOff className="w-10 h-10 text-white" />
               ) : (
-                <Mic className="w-10 h-10 text-primary-foreground" />
+                <Mic className="w-10 h-10 text-white" />
               )}
-              <span className="text-[10px] font-medium text-primary-foreground/80">
-                {isProcessing ? "Thinking" : isSpeaking ? "Speaking" : isListening ? "Listening" : isConversationActive ? "Stop" : "Tap to Talk"}
+              <span className="text-xs font-semibold text-white tracking-wide">
+                {isProcessing && !isSpeaking ? "Thinking..." : isSpeaking ? "Speaking" : isListening ? "Listening..." : isConversationActive ? "Tap to Stop" : "Tap to Talk"}
               </span>
             </button>
 
-            {/* Active indicator dot */}
+            {/* Active pulsing status badge */}
             {isConversationActive && (
-              <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 rounded-full border-2 border-background shadow-md">
-                <div className="absolute inset-0.5 bg-green-400 rounded-full animate-ping opacity-75" />
+              <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-emerald-500 rounded-full border-2 border-background shadow-md">
+                <div className="absolute inset-0.5 bg-emerald-400 rounded-full animate-ping opacity-75" />
               </div>
             )}
           </div>
 
-          <CardTitle className="text-xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+          <CardTitle className="text-xl font-bold bg-gradient-to-r from-primary to-orange-500 bg-clip-text text-transparent">
             Your Travel Guide
           </CardTitle>
-          <CardDescription className="text-sm mt-1 flex items-center justify-center gap-1.5">
-            <Volume2 className="w-3.5 h-3.5" />
-            Powered by ElevenLabs voice
+          <CardDescription className="text-xs mt-1 flex items-center justify-center gap-1.5 text-muted-foreground">
+            <Volume2 className="w-3.5 h-3.5 text-primary" />
+            <span>Instant voice-to-voice narration</span>
           </CardDescription>
         </CardHeader>
 
         <CardContent className="space-y-3 pb-6">
           {/* Transcript Display */}
           {transcript && (
-            <div className="glass-panel rounded-xl p-3 border-transparent">
-              <p className="text-[10px] uppercase tracking-wider text-muted-foreground/70 mb-1 font-semibold">You said</p>
-              <p className="text-xs text-muted-foreground italic">{transcript}</p>
+            <div className="glass-panel rounded-xl p-3 border-transparent bg-muted/30">
+              <p className="text-[10px] uppercase tracking-wider text-muted-foreground/80 mb-0.5 font-semibold">You said</p>
+              <p className="text-xs text-foreground font-medium italic">"{transcript}"</p>
             </div>
           )}
 
           {/* Response Display */}
           {response && (
-            <div className="glass-panel rounded-xl p-3 border-transparent">
+            <div className="glass-panel rounded-xl p-3 border-transparent bg-primary/5 border border-primary/20">
               <div className="flex items-center gap-1.5 mb-1">
-                <Sparkles className="w-3 h-3 text-primary" />
-                <p className="text-[10px] uppercase tracking-wider text-primary/70 font-semibold">Guide</p>
+                <Sparkles className="w-3.5 h-3.5 text-primary" />
+                <p className="text-[10px] uppercase tracking-wider text-primary font-bold">Guide Reply</p>
               </div>
-              <p className="text-xs text-muted-foreground leading-relaxed">{response}</p>
+              <p className="text-xs text-foreground/90 leading-relaxed font-sans">{response}</p>
             </div>
+          )}
+
+          {/* Fallback Type Input when mic is unavailable or user prefers typing */}
+          {(showTextInput || !isSpeechSupported) && (
+            <form onSubmit={handleManualSubmit} className="flex gap-2 pt-1">
+              <Input
+                value={textInput}
+                onChange={(e) => setTextInput(e.target.value)}
+                placeholder="Ask about any temple or place..."
+                disabled={isProcessing}
+                className="h-9 text-xs rounded-xl bg-background/70 border-border/60 focus-visible:ring-primary"
+              />
+              <Button type="submit" size="sm" disabled={!textInput.trim() || isProcessing} className="h-9 px-3 rounded-xl gap-1.5">
+                <Send className="w-3.5 h-3.5" />
+                <span>Ask</span>
+              </Button>
+            </form>
           )}
 
           {/* Camera / Photo Section */}
           {capturedImage && (
-            <div className="relative rounded-2xl overflow-hidden border border-primary/30 shadow-lg bg-black/40">
-              <img src={capturedImage} alt="Captured Monument" className="w-full h-44 object-cover" />
-              <div className="absolute top-2 left-2 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/70 backdrop-blur-md border border-white/20 text-[11px] font-medium text-white">
+            <div className="relative rounded-2xl overflow-hidden border border-primary/30 shadow-lg bg-black/60">
+              <img
+                src={capturedImage}
+                alt="Captured Landmark"
+                className="w-full h-44 object-cover"
+                onError={() => {
+                  setCapturedImage(null);
+                  toast({ variant: "destructive", title: "Image Error", description: "Image preview failed to load." });
+                }}
+              />
+              <div className="absolute top-2 left-2 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/75 backdrop-blur-md border border-white/20 text-[11px] font-medium text-white shadow">
                 <Sparkles className="w-3 h-3 text-primary animate-pulse" />
-                <span>Monument Photo</span>
+                <span>Captured Landmark</span>
               </div>
               <div className="absolute top-2 right-2 flex items-center gap-1.5">
                 <Button
                   size="sm"
                   variant="secondary"
-                  className="h-7 text-xs gap-1 rounded-full bg-black/70 hover:bg-black/90 text-white backdrop-blur-md border border-white/10"
+                  className="h-7 text-xs gap-1 rounded-full bg-black/75 hover:bg-black/90 text-white backdrop-blur-md border border-white/10"
                   onClick={() => identifyMonumentPhoto(capturedImage)}
                 >
                   <RefreshCw className="w-3 h-3" />
@@ -827,7 +912,7 @@ const VoiceGuide = () => {
                 className="w-full h-48 object-cover"
               />
               <div className="absolute inset-x-4 top-4 bottom-14 border border-dashed border-white/30 rounded-xl pointer-events-none flex items-center justify-center">
-                <span className="text-[11px] text-white/70 bg-black/50 px-2 py-0.5 rounded-full backdrop-blur-sm">Point at monument</span>
+                <span className="text-[11px] text-white/90 bg-black/60 px-2.5 py-0.5 rounded-full backdrop-blur-sm">Point at monument</span>
               </div>
               <div className="absolute bottom-2.5 left-1/2 -translate-x-1/2 flex items-center gap-2">
                 <Button onClick={captureImage} size="sm" className="gap-1.5 h-8 text-xs rounded-full px-4 font-semibold shadow-lg">
@@ -864,11 +949,17 @@ const VoiceGuide = () => {
 
           <canvas ref={canvasRef} className="hidden" />
 
-          {/* Tips */}
-          <div className="text-center pt-2">
-            <p className="text-[11px] text-muted-foreground/60">
-              💡 Speak naturally — the conversation flows automatically
-            </p>
+          {/* Quick toggle to type or speak */}
+          <div className="flex items-center justify-between pt-1 px-1 text-[11px] text-muted-foreground/70">
+            <span>💡 Speak naturally — conversation flows automatically</span>
+            <button
+              type="button"
+              onClick={() => setShowTextInput(!showTextInput)}
+              className="text-primary hover:underline flex items-center gap-1 font-medium ml-2"
+            >
+              <MessageSquare className="w-3 h-3" />
+              <span>{showTextInput ? "Hide text" : "Type question"}</span>
+            </button>
           </div>
         </CardContent>
       </Card>
