@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import { getApiUrl } from "@/lib/apiConfig";
-import { Mic, MicOff, Volume2, Loader2, Camera, CameraOff, X, Sparkles, Settings2, AudioLines, Radio } from "lucide-react";
+import { Mic, MicOff, Volume2, Loader2, Camera, CameraOff, X, Sparkles, Settings2, AudioLines, Radio, Upload, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
@@ -93,6 +93,7 @@ const VoiceGuide = () => {
   const recognitionRef = useRef<SpeechRecognition | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const shouldRestartRef = useRef(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -505,15 +506,29 @@ const VoiceGuide = () => {
   // Camera functions
   const startCamera = async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: "environment" },
-        audio: false,
-      });
+      let stream: MediaStream;
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: { ideal: "environment" }, width: { ideal: 1280 }, height: { ideal: 720 } },
+          audio: false,
+        });
+      } catch {
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: true,
+          audio: false,
+        });
+      }
       streamRef.current = stream;
-      if (videoRef.current) videoRef.current.srcObject = stream;
       setCameraActive(true);
-    } catch {
-      toast({ variant: "destructive", title: "Camera Error", description: "Could not access camera." });
+      setTimeout(() => {
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+          videoRef.current.play().catch(console.error);
+        }
+      }, 100);
+    } catch (err) {
+      console.error("Camera access error:", err);
+      toast({ variant: "destructive", title: "Camera Error", description: "Could not access camera. You can also click 'Upload Photo' to pick an image." });
     }
   };
 
@@ -524,19 +539,122 @@ const VoiceGuide = () => {
     setCameraActive(false);
   };
 
+  // Automatically attach stream when videoRef mounts
+  useEffect(() => {
+    if (cameraActive && videoRef.current && streamRef.current) {
+      videoRef.current.srcObject = streamRef.current;
+      videoRef.current.play().catch(console.error);
+    }
+  }, [cameraActive]);
+
   const captureImage = () => {
     if (!videoRef.current || !canvasRef.current) return;
     const video = videoRef.current;
     const canvas = canvasRef.current;
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
+
+    const width = video.videoWidth || video.clientWidth || 640;
+    const height = video.videoHeight || video.clientHeight || 480;
+
+    canvas.width = width;
+    canvas.height = height;
     const ctx = canvas.getContext("2d");
     if (ctx) {
-      ctx.drawImage(video, 0, 0);
-      const dataUrl = canvas.toDataURL("image/jpeg", 0.7);
+      ctx.drawImage(video, 0, 0, width, height);
+      const dataUrl = canvas.toDataURL("image/jpeg", 0.85);
       setCapturedImage(dataUrl);
       stopCamera();
-      toast({ title: "📸 Photo Captured!", description: "Now ask about this place." });
+      // Instantly identify the captured monument!
+      identifyMonumentPhoto(dataUrl);
+    }
+  };
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const dataUrl = event.target?.result as string;
+      if (dataUrl) {
+        setCapturedImage(dataUrl);
+        identifyMonumentPhoto(dataUrl, file.name);
+      }
+    };
+    reader.readAsDataURL(file);
+    e.target.value = "";
+  };
+
+  const identifyMonumentPhoto = async (dataUrl: string, fileHint?: string) => {
+    setIsProcessing(true);
+    setResponse("");
+    toast({ title: "🔍 Analyzing Photo...", description: "Identifying monument & historical details..." });
+
+    try {
+      const prompt = `Identify this monument or tourist place in Odisha/India from the photo. State the exact monument name, location, and key historical or architectural significance in 2 concise sentences. ${fileHint ? `Photo filename hint: ${fileHint}` : ''}`;
+
+      const resp = await fetch(getVoiceGuideUrl(), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          message: prompt,
+          image: dataUrl,
+          language,
+          conversationHistory: conversationHistory.slice(-4),
+        }),
+      });
+
+      if (!resp.ok) throw new Error("Identification failed");
+
+      const reader = resp.body?.getReader();
+      const decoder = new TextDecoder();
+      let buffer = "";
+      let fullResponse = "";
+
+      while (reader) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+        let newlineIndex: number;
+        while ((newlineIndex = buffer.indexOf("\n")) !== -1) {
+          let line = buffer.slice(0, newlineIndex);
+          buffer = buffer.slice(newlineIndex + 1);
+
+          if (line.endsWith("\r")) line = line.slice(0, -1);
+          if (line.startsWith(":") || line.trim() === "") continue;
+          if (!line.startsWith("data: ")) continue;
+
+          const jsonStr = line.slice(6).trim();
+          if (jsonStr === "[DONE]") break;
+
+          try {
+            const parsed = JSON.parse(jsonStr);
+            const content = parsed.choices?.[0]?.delta?.content;
+            if (content) {
+              fullResponse += content;
+              setResponse(fullResponse);
+            }
+          } catch {
+            buffer = line + "\n" + buffer;
+            break;
+          }
+        }
+      }
+
+      setConversationHistory(prev => [
+        ...prev,
+        { role: "user", content: "Identify monument from photo" },
+        { role: "assistant", content: fullResponse },
+      ]);
+
+      if (fullResponse) {
+        speakWithElevenLabs(fullResponse);
+      }
+      toast({ title: "✨ Monument Identified!", description: "Voice guide is reading the explanation." });
+    } catch (err) {
+      console.error("Photo identification error:", err);
+      toast({ variant: "destructive", title: "Identification Error", description: "Could not identify photo. Please try again." });
+    } finally {
+      setIsProcessing(false);
     }
   };
 
@@ -668,31 +786,56 @@ const VoiceGuide = () => {
             </div>
           )}
 
-          {/* Camera Section */}
+          {/* Camera / Photo Section */}
           {capturedImage && (
-            <div className="relative rounded-xl overflow-hidden border border-border/30">
-              <img src={capturedImage} alt="Captured" className="w-full h-32 object-cover" />
-              <Button
-                size="icon"
-                variant="destructive"
-                className="absolute top-2 right-2 h-6 w-6 rounded-full"
-                onClick={() => setCapturedImage(null)}
-              >
-                <X className="w-3 h-3" />
-              </Button>
+            <div className="relative rounded-2xl overflow-hidden border border-primary/30 shadow-lg bg-black/40">
+              <img src={capturedImage} alt="Captured Monument" className="w-full h-44 object-cover" />
+              <div className="absolute top-2 left-2 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/70 backdrop-blur-md border border-white/20 text-[11px] font-medium text-white">
+                <Sparkles className="w-3 h-3 text-primary animate-pulse" />
+                <span>Monument Photo</span>
+              </div>
+              <div className="absolute top-2 right-2 flex items-center gap-1.5">
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  className="h-7 text-xs gap-1 rounded-full bg-black/70 hover:bg-black/90 text-white backdrop-blur-md border border-white/10"
+                  onClick={() => identifyMonumentPhoto(capturedImage)}
+                >
+                  <RefreshCw className="w-3 h-3" />
+                  Re-identify
+                </Button>
+                <Button
+                  size="icon"
+                  variant="destructive"
+                  className="h-7 w-7 rounded-full shadow-md"
+                  onClick={() => setCapturedImage(null)}
+                >
+                  <X className="w-3.5 h-3.5" />
+                </Button>
+              </div>
             </div>
           )}
 
           {cameraActive && (
-            <div className="relative rounded-xl overflow-hidden bg-black border border-border/30">
-              <video ref={videoRef} autoPlay playsInline muted className="w-full h-32 object-cover" />
-              <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-2">
-                <Button onClick={captureImage} size="sm" className="gap-1 h-7 text-xs rounded-full">
-                  <Camera className="w-3 h-3" />
-                  Capture
+            <div className="relative rounded-2xl overflow-hidden bg-black border border-primary/40 shadow-xl">
+              <video
+                ref={videoRef}
+                autoPlay
+                playsInline
+                muted
+                onLoadedMetadata={(e) => (e.target as HTMLVideoElement).play().catch(() => {})}
+                className="w-full h-48 object-cover"
+              />
+              <div className="absolute inset-x-4 top-4 bottom-14 border border-dashed border-white/30 rounded-xl pointer-events-none flex items-center justify-center">
+                <span className="text-[11px] text-white/70 bg-black/50 px-2 py-0.5 rounded-full backdrop-blur-sm">Point at monument</span>
+              </div>
+              <div className="absolute bottom-2.5 left-1/2 -translate-x-1/2 flex items-center gap-2">
+                <Button onClick={captureImage} size="sm" className="gap-1.5 h-8 text-xs rounded-full px-4 font-semibold shadow-lg">
+                  <Camera className="w-3.5 h-3.5" />
+                  Capture & Identify
                 </Button>
-                <Button onClick={stopCamera} size="sm" variant="outline" className="gap-1 h-7 text-xs rounded-full bg-background/80">
-                  <CameraOff className="w-3 h-3" />
+                <Button onClick={stopCamera} size="sm" variant="outline" className="gap-1 h-8 text-xs rounded-full bg-background/80 hover:bg-background">
+                  <CameraOff className="w-3.5 h-3.5" />
                   Cancel
                 </Button>
               </div>
@@ -700,10 +843,23 @@ const VoiceGuide = () => {
           )}
 
           {!cameraActive && !capturedImage && (
-            <Button onClick={startCamera} variant="outline" size="sm" className="w-full gap-2 rounded-xl h-9 border-dashed">
-              <Camera className="w-4 h-4" />
-              Identify Monument
-            </Button>
+            <div className="grid grid-cols-2 gap-2 pt-1">
+              <Button onClick={startCamera} variant="outline" size="sm" className="w-full gap-2 rounded-xl h-10 border-primary/30 hover:border-primary/60 bg-primary/5 hover:bg-primary/10">
+                <Camera className="w-4 h-4 text-primary" />
+                <span>Open Camera</span>
+              </Button>
+              <Button onClick={() => fileInputRef.current?.click()} variant="outline" size="sm" className="w-full gap-2 rounded-xl h-10 border-border/60 hover:border-primary/50">
+                <Upload className="w-4 h-4 text-primary" />
+                <span>Upload Photo</span>
+              </Button>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleFileUpload}
+                className="hidden"
+              />
+            </div>
           )}
 
           <canvas ref={canvasRef} className="hidden" />

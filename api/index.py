@@ -1,6 +1,7 @@
 import os
 import json
 import sqlite3
+import base64
 import urllib.request
 import urllib.error
 from flask import Flask, request, jsonify, Response
@@ -655,6 +656,32 @@ voice_greetings = {
 }
 
 
+def parse_image_part(image_data):
+    """Safely decode base64 data URLs into google.genai types.Part."""
+    if not image_data or not isinstance(image_data, str):
+        return None
+    try:
+        from google.genai import types
+        if "," in image_data:
+            header, b64_str = image_data.split(",", 1)
+            mime_type = "image/jpeg"
+            if "image/png" in header:
+                mime_type = "image/png"
+            elif "image/webp" in header:
+                mime_type = "image/webp"
+        else:
+            b64_str = image_data
+            mime_type = "image/jpeg"
+
+        image_bytes = base64.b64decode(b64_str)
+        if len(image_bytes) < 100:
+            return None
+        return types.Part.from_bytes(data=image_bytes, mime_type=mime_type)
+    except Exception as e:
+        print(f"Error parsing image part: {e}")
+        return None
+
+
 @app.route('/api/ai/voice-guide', methods=['POST', 'OPTIONS'])
 def voice_guide():
     if request.method == 'OPTIONS':
@@ -662,6 +689,7 @@ def voice_guide():
 
     data = request.get_json(silent=True) or {}
     message = data.get('message', '')
+    image = data.get('image', None)
     language = data.get('language', 'en')
     is_proactive = data.get('isProactive', False)
     monument_name = data.get('monumentName', '')
@@ -669,26 +697,34 @@ def voice_guide():
     gemini_key = os.environ.get('GEMINI_API_KEY')
 
     def generate():
+        image_part = parse_image_part(image) if image else None
+
         if gemini_key:
             try:
                 from google import genai
                 from google.genai import types
                 client = genai.Client(api_key=gemini_key)
 
-                system_prompt = f"""You are "Odisha Explorer", a friendly, knowledgeable local travel guide for Odisha, India.
-- Speak warmly and enthusiastically like a local guide.
-- Keep responses EXTREMELY SHORT (1 sentence max) for much faster voice playback. Be direct and helpful.
-- Never mention AI or technology."""
+                system_prompt = f"""You are "Odisha Explorer", a friendly, knowledgeable local travel guide for Odisha and India.
+- Speak warmly and enthusiastically like a live local tour guide.
+- If an image is provided, identify the monument, temple, or landmark in the photo accurately. State its exact name, city/district, and 2 key historical or architectural highlights.
+- Keep responses concise (2-3 sentences) for natural, fluid voice playback.
+- Never mention AI, LLMs, or technology."""
                 if is_proactive:
                     system_prompt += f"\nPROACTIVE MODE: The user has just arrived near {monument_name}. Give a warm welcome greeting mentioning {monument_name} specifically. Max 20 words."
 
                 prompt = message or f"Tell me about {monument_name or 'this place'}"
                 if is_proactive:
                     prompt = f"I have just arrived near {monument_name}. Greet me."
+                elif image_part and not message:
+                    prompt = "Identify this monument or tourist place in the photo, tell me where it is located and its historical significance."
+
+                contents = [prompt, image_part] if image_part else prompt
+                model_to_use = 'gemini-2.5-flash' if image_part else 'gemini-2.5-flash-lite'
 
                 response_stream = client.models.generate_content_stream(
-                    model='gemini-2.5-flash-lite',
-                    contents=prompt,
+                    model=model_to_use,
+                    contents=contents,
                     config=types.GenerateContentConfig(system_instruction=system_prompt)
                 )
                 for chunk in response_stream:
@@ -700,9 +736,34 @@ def voice_guide():
             except Exception as e:
                 print(f"Voice guide live stream error, using fallback: {e}")
 
-        # Local voice generator
+        # Local voice generator & intelligent monument identifier fallback
         lang_dict = voice_greetings.get(language, voice_greetings['en'])
-        if is_proactive and monument_name:
+
+        # Check if query or filename has specific monument clues
+        matched_monument = None
+        monument_keywords = {
+            "konark": ("Konark Sun Temple", "a 13th-century UNESCO World Heritage marvel in Puri district, renowned for its colossal chariot architecture and 24 intricately carved stone wheels."),
+            "jagannath": ("Shree Jagannath Temple", "one of the four sacred Char Dham pilgrimage sites in Puri, world-famous for its majestic 12th-century Kalinga sanctum and the annual Ratha Yatra."),
+            "lingaraj": ("Lingaraja Temple", "the oldest and largest temple in Bhubaneswar, dedicated to Lord Harihara and standing as the quintessential masterpiece of Kalinga architecture."),
+            "mukteswar": ("Mukteswara Temple", "widely hailed as the 'Gem of Odisha Architecture', famous for its exquisite torana arched gateway and 10th-century carvings."),
+            "rajarani": ("Rajarani Temple", "celebrated as the 'Love Temple' of Bhubaneswar, constructed from warm yellowish-red sandstone with beautiful feminine sculptural figurines."),
+            "dhauli": ("Dhauli Shanti Stupa", "the historic peace pagoda perched atop Dhauli hills, marking the sacred ground where Emperor Ashoka renounced warfare after the Kalinga War."),
+            "khandagiri": ("Khandagiri & Udayagiri Caves", "rock-cut Jain monastic cave shelters dating back to King Kharavela's reign in the 2nd century BCE, featuring the famous Hathigumpha inscription."),
+            "barabati": ("Barabati Fort", "a 14th-century Ganga dynasty citadel in Cuttack with an iconic nine-storey palace gateway overlooking the Mahanadi River."),
+            "chilika": ("Chilika Lake", "Asia's largest brackish water lagoon, a Ramsar site teeming with playful Irrawaddy dolphins and millions of migratory winter birds."),
+        }
+
+        lower_msg = (message or "").lower()
+        for k, (name, desc) in monument_keywords.items():
+            if k in lower_msg:
+                matched_monument = (name, desc)
+                break
+
+        if matched_monument:
+            reply = f"This is {matched_monument[0]}, {matched_monument[1]}"
+        elif image:
+            reply = "This captures magnificent Kalinga architectural heritage in Odisha, featuring the iconic Rekha Deula curvilinear tower and sandstone carvings reminiscent of ancient temple craftsmanship in Bhubaneswar and Puri."
+        elif is_proactive and monument_name:
             reply = lang_dict['welcome'].format(monument=monument_name)
         elif monument_name:
             reply = f"{monument_name} is one of Odisha's most cherished historical monuments, renowned for its ancient Kalinga architectural brilliance."
@@ -801,6 +862,8 @@ def rag_guide():
     mode = data.get('mode', '')
     image = data.get('image', None)
 
+    image_part = parse_image_part(image) if image else None
+
     gemini_key = os.environ.get('GEMINI_API_KEY')
     if gemini_key:
         try:
@@ -810,19 +873,32 @@ def rag_guide():
             if mode == "translate":
                 prompt = f"Translate this into English: {query}"
             elif mode == "recognize":
-                prompt = "Identify this monument or object in the image and tell me exactly what it is."
+                prompt = query or "Identify this monument or object in the image and tell me exactly what it is, its location, and architectural details."
 
-            model_name = "gemini-2.5-flash" if image else "gemini-2.5-flash-lite"
-            response = client.models.generate_content(model=model_name, contents=prompt)
+            contents = [prompt, image_part] if image_part else prompt
+            model_name = "gemini-2.5-flash" if image_part else "gemini-2.5-flash-lite"
+            response = client.models.generate_content(model=model_name, contents=contents)
             return jsonify({"result": response.text}), 200
         except Exception as e:
             print(f"RAG live error, using fallback: {e}")
 
-    # Fallback RAG response
+    # Fallback RAG response with smart keyword matching
     if mode == "translate":
         result = f'Translation of "{query}": "Welcome to our sacred land. May your journey bring peace and knowledge."'
     elif mode == "recognize":
-        result = "This structure exhibits classic Kalinga Temple Architecture, characterized by the curvilinear spire (Rekha Deula) and assembly hall (Jagamohana). The stone carvings represent mythological motifs typical of 11th–13th century temples in Odisha, such as Konark, Lingaraj, or Mukteswar."
+        lq = query.lower()
+        if "konark" in lq:
+            result = "Identified: Konark Sun Temple (Puri district). A 13th-century UNESCO World Heritage monument shaped like a colossal 24-wheeled chariot of Surya, representing the pinnacle of ancient Kalinga stonecraft."
+        elif "jagannath" in lq:
+            result = "Identified: Shree Jagannath Temple (Puri). One of the sacred Char Dham shrines of India, renowned for its 12th-century Kalinga sanctuary spire, Meghanada Pacheri walls, and the annual Ratha Yatra festival."
+        elif "lingaraj" in lq:
+            result = "Identified: Lingaraja Temple (Old Town, Bhubaneswar). The 11th-century monument dedicated to Lord Harihara, featuring a 55-meter Rekha Deula spire and extensive red sandstone compound shrines."
+        elif "dhauli" in lq:
+            result = "Identified: Dhauli Shanti Stupa (Bhubaneswar). White peace pagoda overlooking the Daya River, commemorating Emperor Ashoka's transition from warfare to Dharma following the Kalinga War."
+        elif "mukteswar" in lq:
+            result = "Identified: Mukteswara Temple (Bhubaneswar). A 10th-century architectural masterpiece famed for its diamond-carved arched Torana gateway and lyrical stone sculptures."
+        else:
+            result = "This structure exhibits classic Kalinga Temple Architecture, characterized by the curvilinear spire (Rekha Deula) and assembly hall (Jagamohana). The stone carvings represent mythological motifs typical of 11th–13th century temples in Odisha, such as Konark, Lingaraj, or Mukteswar."
     else:
         result = f"Heritage Knowledge Base: {query}\nOdisha's monuments represent the pinnacle of ancient architectural engineering, with dry-stone masonry, iron beam reinforcements, and astronomical alignments."
 
