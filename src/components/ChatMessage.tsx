@@ -87,7 +87,7 @@ const renderBoldText = (text: string) => {
   });
 };
 
-const ChatMessage: FC<ChatMessageProps> = ({ role, content }) => {
+const ChatMessage: FC<ChatMessageProps> = ({ role, content, language = "en" }) => {
   const isUser = role === "user";
   const { speak, stop, isSpeaking } = useAppTTS();
   const [copied, setCopied] = useState(false);
@@ -96,7 +96,7 @@ const ChatMessage: FC<ChatMessageProps> = ({ role, content }) => {
     if (isSpeaking) {
       stop();
     } else {
-      speak(content);
+      speak(content, language);
     }
   };
 

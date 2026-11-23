@@ -20,6 +20,11 @@ const DOCK_ITEMS = [
 export const FloatingNavDock = () => {
   const location = useLocation();
 
+  // Hide floating dock on Assistant page so it never covers the chat input bar or suggestions
+  if (location.pathname.startsWith("/assistant")) {
+    return null;
+  }
+
   return (
     <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 pointer-events-auto">
       <TooltipProvider delayDuration={100}>

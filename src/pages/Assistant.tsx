@@ -19,14 +19,84 @@ import {
 } from "@/components/ui/select";
 import { motion, AnimatePresence } from "framer-motion";
 
-const quickPrompts = [
-  "What are the top temples to visit in Bhubaneswar?",
-  "Tell me the history of Konark Sun Temple",
-  "What are the rituals at Jagannath Temple Puri?",
-  "What authentic Odia dishes should I try?",
-  "How can I travel from Bhubaneswar to Puri and Konark?",
-  "What is the best time of year to visit Chilika Lake?",
-];
+const quickPromptsByLang: Record<SupportedLanguage, string[]> = {
+  en: [
+    "What are the top temples to visit in Bhubaneswar?",
+    "Tell me the history of Konark Sun Temple",
+    "What are the rituals at Jagannath Temple Puri?",
+    "What authentic Odia dishes should I try?",
+    "How can I travel from Bhubaneswar to Puri and Konark?",
+    "What is the best time of year to visit Chilika Lake?",
+  ],
+  or: [
+    "ଭୁବନେଶ୍ୱରର ପ୍ରମୁଖ ମନ୍ଦିରଗୁଡ଼ିକ କ'ଣ କ'ଣ?",
+    "କୋଣାର୍କ ସୂର୍ଯ୍ୟ ମନ୍ଦିରର ଇତିହାସ କୁହନ୍ତୁ",
+    "ପୁରୀ ଜଗନ୍ନାଥ ମନ୍ଦିରର ନୀତିକାନ୍ତି କ'ଣ?",
+    "ଓଡ଼ିଶାର ପ୍ରସିଦ୍ଧ ପାରମ୍ପରିକ ଖାଦ୍ୟ କ'ଣ?",
+    "ଭୁବନେଶ୍ୱରରୁ ପୁରୀ ଏବଂ କୋଣାର୍କ କିପରି ଯିବେ?",
+    "ଚିଲିକା ହ୍ରଦ ପରିଦର୍ଶନ ପାଇଁ ଉପଯୁକ୍ତ ସମୟ କେବେ?",
+  ],
+  hi: [
+    "भुवनेश्वर में घूमने लायक प्रमुख मंदिर कौन से हैं?",
+    "कोणार्क सूर्य मंदिर का इतिहास बताइए",
+    "पुरी जगन्नाथ मंदिर की मुख्य रीतियां क्या हैं?",
+    "ओडिशा के प्रसिद्ध प्रामाणिक व्यंजन कौन से हैं?",
+    "भुवनेश्वर से पुरी और कोणार्क की यात्रा कैसे करें?",
+    "चिल्का झील घूमने का सबसे अच्छा समय कब है?",
+  ],
+  bn: [
+    "ভুবনেশ্বরের প্রধান মন্দিরগুলি কি কি?",
+    "কোণার্ক সূর্য মন্দিরের ইতিহাস বলুন",
+    "পুরী জগন্নাথ মন্দিরের প্রধান রীতিনীতি কি কি?",
+    "ওড়িশার বিখ্যাত ঐতিহ্যবাহী খাবার কি কি?",
+    "ভুবনেশ্বর থেকে পুরী এবং কোণার্ক কিভাবে যাবেন?",
+    "চিল্কা হ্রদ ভ্রমণের সেরা সময় কোনটি?",
+  ],
+  te: [
+    "భువనేశ్వర్‌లో సందర్శించాల్సిన ముఖ్యమైన దేవాలయాలు ఏమిటి?",
+    "కోణార్క్ సూర్య దేవాలయం చరిత్ర చెప్పండి",
+    "పూరీ జగన్నాథ ఆలయ ముఖ్యమైన ఆచారాలు ఏమిటి?",
+    "ఒడిశా ప్రసిద్ధ సాంప్రదాయ వంటకాలు ఏమిటి?",
+    "భువనేశ్వర్ నుండి పూరీ మరియు కోణార్క్ ఎలా వెళ్ళాలి?",
+    "చిలికా సరస్సు సందర్శించడానికి ఉత్తమ సమయం ఏది?",
+  ],
+};
+
+const placeholdersByLang: Record<SupportedLanguage, string> = {
+  en: "Ask about temples, history, food, weather, or rides...",
+  or: "ମନ୍ଦିର, ଇତିହାସ, ଖାଦ୍ୟ, ପାଣିପାଗ କିମ୍ବା ଯାତ୍ରା ବିଷୟରେ ପଚାରନ୍ତୁ...",
+  hi: "मंदिरों, इतिहास, भोजन, मौसम या यात्रा के बारे में पूछें...",
+  bn: "মন্দির, ইতিহাস, খাবার, আবহাওয়া বা ভ্রমণ সম্পর্কে জিজ্ঞাসা করুন...",
+  te: "దేవాలయాలు, చరిత్ర, ఆహారం, వాతావరణం లేదా ప్రయాణం గురించి అడగండి...",
+};
+
+const welcomeTexts: Record<SupportedLanguage, { title: string; subtitle: string; popularQuestions: string }> = {
+  en: {
+    title: "Welcome to Odisha Explorer!",
+    subtitle: "Ask anything about UNESCO heritage monuments, temple rituals, local Odia delicacies, cab routes, or real-time weather.",
+    popularQuestions: "Popular Questions:"
+  },
+  or: {
+    title: "ଓଡ଼ିଶା ଏକ୍ସପ୍ଲୋରରକୁ ସ୍ୱାଗତ!",
+    subtitle: "ୟୁନେସ୍କୋ ଐତିହ୍ୟ ସ୍ମାରକୀ, ମନ୍ଦିର ନୀତିକାନ୍ତି, ଓଡ଼ିଆ ଖାଦ୍ୟ, ଯାତ୍ରା ମାର୍ଗ କିମ୍ବା ଲାଇଭ ପାଣିପାଗ ବିଷୟରେ ପଚାରନ୍ତୁ।",
+    popularQuestions: "ଲୋକପ୍ରିୟ ପ୍ରଶ୍ନ:"
+  },
+  hi: {
+    title: "ओडिशा एक्सप्लोरर में आपका स्वागत है!",
+    subtitle: "यूनेस्को विरासत स्थलों, मंदिर की रीतियों, ओडिया व्यंजनों, यात्रा मार्गों या मौसम के बारे में कुछ भी पूछें।",
+    popularQuestions: "लोकप्रिय प्रश्न:"
+  },
+  bn: {
+    title: "ওড়িশা এক্সপ্লোরারে আপনাকে স্বাগতম!",
+    subtitle: "ইউনেস্কো ঐতিহ্যবাহী স্থান, মন্দিরের রীতিনীতি, ওড়িয়া খাবার বা আবহাওয়া সম্পর্কে যেকোনো প্রশ্ন করুন।",
+    popularQuestions: "জনপ্রিয় প্রশ্ন:"
+  },
+  te: {
+    title: "ఒడిశా ఎక్స్‌ప్లోరర్‌కి స్వాగతం!",
+    subtitle: "యునెస్కో వారసత్వ ప్రదేశాలు, ఆలయ ఆచారాలు, ఒడియా వంటకాలు లేదా వాతావరణం గురించి ఏదైనా అడగండి.",
+    popularQuestions: "ప్రముఖ ప్రశ్నలు:"
+  }
+};
 
 const Assistant = () => {
   const location = useLocation();
@@ -60,7 +130,13 @@ const Assistant = () => {
 
   // Clean up any ongoing TTS speech when switching tabs or unmounting
   useEffect(() => {
-    return () => {
+    const currentQuickPrompts = quickPromptsByLang[language] || quickPromptsByLang.en;
+  const currentWelcome = welcomeTexts[language] || welcomeTexts.en;
+  const currentPlaceholder = isListening
+    ? (language === "or" ? "ଆପଣଙ୍କ ସ୍ୱର ଶୁଣୁଛି..." : language === "hi" ? "आपकी आवाज़ सुन रहा हूँ..." : language === "bn" ? "আপনার কণ্ঠ শুনছি..." : language === "te" ? "మీ స్వరం వింటున్నాను..." : "Listening to your voice...")
+    : (placeholdersByLang[language] || placeholdersByLang.en);
+
+  return () => {
       if (typeof window !== "undefined" && "speechSynthesis" in window) {
         window.speechSynthesis.cancel();
       }
@@ -97,6 +173,12 @@ const Assistant = () => {
       }
     }
   };
+
+  const currentQuickPrompts = quickPromptsByLang[language] || quickPromptsByLang.en;
+  const currentWelcome = welcomeTexts[language] || welcomeTexts.en;
+  const currentPlaceholder = isListening
+    ? (language === "or" ? "ଆପଣଙ୍କ ସ୍ୱର ଶୁଣୁଛି..." : language === "hi" ? "आपकी आवाज़ सुन रहा हूँ..." : language === "bn" ? "আপনার কণ্ঠ শুনছি..." : language === "te" ? "మీ స్వరం వింటున్నాను..." : "Listening to your voice...")
+    : (placeholdersByLang[language] || placeholdersByLang.en);
 
   return (
     <div className="min-h-screen bg-background flex flex-col selection:bg-primary/20">
@@ -191,20 +273,20 @@ const Assistant = () => {
                   </div>
                   <div>
                     <h2 className="text-lg font-bold text-foreground">
-                      Welcome to Odisha Explorer!
+                      {currentWelcome.title}
                     </h2>
                     <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed">
-                      Ask anything about UNESCO heritage monuments, temple rituals, local Odia delicacies, cab routes, or real-time weather.
+                      {currentWelcome.subtitle}
                     </p>
                   </div>
 
                   {/* Starter Suggestions */}
                   <div className="space-y-2 text-left pt-2">
                     <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/80 px-1">
-                      Popular Questions:
+                      {currentWelcome.popularQuestions}
                     </p>
                     <div className="grid gap-2">
-                      {quickPrompts.slice(0, 4).map((q, i) => (
+                      {currentQuickPrompts.slice(0, 4).map((q, i) => (
                         <button
                           key={i}
                           onClick={() => handleSuggestionClick(q)}
@@ -255,7 +337,7 @@ const Assistant = () => {
             {/* Quick Suggestion Chips (Horizontally Scrollable) */}
             {messages.length > 0 && (
               <div className="px-4 py-2 border-t border-border/40 overflow-x-auto whitespace-nowrap scrollbar-none flex gap-2 bg-muted/20">
-                {quickPrompts.map((q, idx) => (
+                {currentQuickPrompts.map((q, idx) => (
                   <button
                     key={idx}
                     onClick={() => handleSuggestionClick(q)}
@@ -290,7 +372,7 @@ const Assistant = () => {
                   ref={inputRef}
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
-                  placeholder={isListening ? "Listening to your voice..." : "Ask about temples, history, food, weather, or rides..."}
+                  placeholder={currentPlaceholder}
                   disabled={isLoading}
                   className="flex-1 h-10 text-xs sm:text-sm rounded-2xl bg-muted/40 border-border/60 focus-visible:ring-primary shadow-inner"
                 />

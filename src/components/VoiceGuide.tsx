@@ -75,6 +75,74 @@ const speechLangCodes: Record<SupportedLanguage, string> = {
   bn: "bn-IN",
 };
 
+const guideTitles: Record<SupportedLanguage, { title: string; subtitle: string; speakNotice: string; tapToTalk: string; tapToStop: string; listening: string; speaking: string; thinking: string; youSaid: string; guideReply: string; placeholder: string }> = {
+  en: {
+    title: "Your Travel Guide",
+    subtitle: "Instant voice-to-voice narration",
+    speakNotice: "💡 Speak naturally — conversation flows automatically",
+    tapToTalk: "Tap to Talk",
+    tapToStop: "Tap to Stop",
+    listening: "Listening...",
+    speaking: "Speaking",
+    thinking: "Thinking...",
+    youSaid: "You said",
+    guideReply: "Guide Reply",
+    placeholder: "Ask about any temple or place..."
+  },
+  or: {
+    title: "ଆପଣଙ୍କ ଭ୍ରମଣ ଗାଇଡ୍",
+    subtitle: "ତତକ୍ଷଣାତ୍ ସ୍ୱର-ଆଧାରିତ ମାର୍ଗଦର୍ଶନ",
+    speakNotice: "💡 ସ୍ୱାଭାବିକ ଭାବେ କୁହନ୍ତୁ — ସିଧାସଳଖ ଓଡ଼ିଆରେ କଥା ହୁଅନ୍ତୁ",
+    tapToTalk: "କଥା ହୁଅନ୍ତୁ",
+    tapToStop: "ବନ୍ଦ କରନ୍ତୁ",
+    listening: "ଶୁଣୁଛି...",
+    speaking: "କହୁଛି",
+    thinking: "ଭାବୁଛି...",
+    youSaid: "ଆପଣ କହିଲେ",
+    guideReply: "ଗାଇଡ୍ ଉତ୍ତର",
+    placeholder: "ମନ୍ଦିର କିମ୍ବା ସ୍ଥାନ ବିଷୟରେ ପଚାରନ୍ତୁ..."
+  },
+  hi: {
+    title: "आपका यात्रा गाइड",
+    subtitle: "त्वरित आवाज़-से-आवाज़ वार्तालाप",
+    speakNotice: "💡 स्वाभाविक रूप से बोलें — बातचीत जारी रहेगी",
+    tapToTalk: "बोलने के लिए टैप करें",
+    tapToStop: "रोकने के लिए टैप करें",
+    listening: "सुन रहा हूँ...",
+    speaking: "बोल रहा हूँ",
+    thinking: "सोच रहा हूँ...",
+    youSaid: "आपने कहा",
+    guideReply: "गाइड का उत्तर",
+    placeholder: "किसी भी मंदिर या स्थान के बारे में पूछें..."
+  },
+  bn: {
+    title: "আপনার ভ্রমণ গাইড",
+    subtitle: "তাত্ক্ষণিক ভয়েস নির্দেশনা",
+    speakNotice: "💡 স্বাভাবিকভাবে বলুন — কথোপকথন চালু থাকবে",
+    tapToTalk: "কথা বলতে ট্যাপ করুন",
+    tapToStop: "থামাতে ট্যাপ করুন",
+    listening: "শুনছি...",
+    speaking: "বলছি",
+    thinking: "ভাবছি...",
+    youSaid: "আপনি বলেছেন",
+    guideReply: "গাইড উত্তর",
+    placeholder: "যেকোনো মন্দির বা স্থান সম্পর্কে জিজ্ঞাসা করুন..."
+  },
+  te: {
+    title: "మీ ప్రయాణ గైడ్",
+    subtitle: "తక్షణ వాయిస్ మార్గదర్శకత్వం",
+    speakNotice: "💡 సహజంగా మాట్లాడండి — సంభాషణ కొనసాగుతుంది",
+    tapToTalk: "మాట్లాడటానికి నొక్కండి",
+    tapToStop: "ఆపడానికి నొక్కండి",
+    listening: "వింటున్నాను...",
+    speaking: "మాట్లాడుతున్నాను",
+    thinking: "ఆలోచిస్తున్నాను...",
+    youSaid: "మీరు చెప్పారు",
+    guideReply: "గైడ్ సమాధానం",
+    placeholder: "ఏదైనా దేవాలయం లేదా ప్రదేశం గురించి అడగండి..."
+  }
+};
+
 const getVoiceGuideUrl = () => getApiUrl("/api/ai/voice-guide");
 
 interface VoiceGuideProps {
@@ -729,6 +797,8 @@ const VoiceGuide: FC<VoiceGuideProps> = ({
     streamResponse(query, capturedImage);
   };
 
+  const currentGuide = guideTitles[language] || guideTitles.en;
+
   const isActive = isListening || isSpeaking || isProcessing;
 
   return (
@@ -817,7 +887,7 @@ const VoiceGuide: FC<VoiceGuideProps> = ({
                 <Mic className="w-10 h-10 text-white" />
               )}
               <span className="text-xs font-semibold text-white tracking-wide">
-                {isProcessing && !isSpeaking ? "Thinking..." : isSpeaking ? "Speaking" : isListening ? "Listening..." : isConversationActive ? "Tap to Stop" : "Tap to Talk"}
+                {isProcessing && !isSpeaking ? currentGuide.thinking : isSpeaking ? currentGuide.speaking : isListening ? currentGuide.listening : isConversationActive ? currentGuide.tapToStop : currentGuide.tapToTalk}
               </span>
             </button>
 
@@ -830,11 +900,11 @@ const VoiceGuide: FC<VoiceGuideProps> = ({
           </div>
 
           <CardTitle className="text-xl font-bold bg-gradient-to-r from-primary to-orange-500 bg-clip-text text-transparent">
-            Your Travel Guide
+            {currentGuide.title}
           </CardTitle>
           <CardDescription className="text-xs mt-1 flex items-center justify-center gap-1.5 text-muted-foreground">
             <Volume2 className="w-3.5 h-3.5 text-primary" />
-            <span>Instant voice-to-voice narration</span>
+            <span>{currentGuide.subtitle}</span>
           </CardDescription>
         </CardHeader>
 
@@ -842,7 +912,7 @@ const VoiceGuide: FC<VoiceGuideProps> = ({
           {/* Transcript Display */}
           {transcript && (
             <div className="glass-panel rounded-xl p-3 border-transparent bg-muted/30">
-              <p className="text-[10px] uppercase tracking-wider text-muted-foreground/80 mb-0.5 font-semibold">You said</p>
+              <p className="text-[10px] uppercase tracking-wider text-muted-foreground/80 mb-0.5 font-semibold">{currentGuide.youSaid}</p>
               <p className="text-xs text-foreground font-medium italic">"{transcript}"</p>
             </div>
           )}
@@ -852,7 +922,7 @@ const VoiceGuide: FC<VoiceGuideProps> = ({
             <div className="glass-panel rounded-xl p-3 border-transparent bg-primary/5 border border-primary/20">
               <div className="flex items-center gap-1.5 mb-1">
                 <Sparkles className="w-3.5 h-3.5 text-primary" />
-                <p className="text-[10px] uppercase tracking-wider text-primary font-bold">Guide Reply</p>
+                <p className="text-[10px] uppercase tracking-wider text-primary font-bold">{currentGuide.guideReply}</p>
               </div>
               <p className="text-xs text-foreground/90 leading-relaxed font-sans">{response}</p>
             </div>
@@ -864,7 +934,7 @@ const VoiceGuide: FC<VoiceGuideProps> = ({
               <Input
                 value={textInput}
                 onChange={(e) => setTextInput(e.target.value)}
-                placeholder="Ask about any temple or place..."
+                placeholder={currentGuide.placeholder}
                 disabled={isProcessing}
                 className="h-9 text-xs rounded-xl bg-background/70 border-border/60 focus-visible:ring-primary"
               />
@@ -963,7 +1033,7 @@ const VoiceGuide: FC<VoiceGuideProps> = ({
 
           {/* Quick toggle to type or speak */}
           <div className="flex items-center justify-between pt-1 px-1 text-[11px] text-muted-foreground/70">
-            <span>💡 Speak naturally — conversation flows automatically</span>
+            <span>{currentGuide.speakNotice}</span>
             <button
               type="button"
               onClick={() => setShowTextInput(!showTextInput)}

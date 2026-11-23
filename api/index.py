@@ -14,6 +14,27 @@ CORS(app)
 base_dir = os.path.dirname(os.path.abspath(__file__))
 models_dir = os.path.join(base_dir, 'models')
 
+# Load environment variables from .env if present
+for env_path in [
+    os.path.join(base_dir, '..', '.env'),
+    os.path.join(base_dir, '.env'),
+    os.path.join(base_dir, '..', '.env.local')
+]:
+    if os.path.exists(env_path):
+        try:
+            with open(env_path, 'r', encoding='utf-8') as f:
+                for line in f:
+                    line = line.strip()
+                    if line and not line.startswith('#') and '=' in line:
+                        k, v = line.split('=', 1)
+                        k = k.strip()
+                        v = v.strip().strip('"').strip("'")
+                        if k not in os.environ:
+                            os.environ[k] = v
+        except Exception:
+            pass
+
+
 # Load ML Models and Datasets
 tfidf_vectorizer = None
 tfidf_matrix = None
@@ -538,34 +559,380 @@ def estimate_fare():
 
 
 # ==============================================================================
-# AI Travel Assistant (Streaming SSE)
+# Multilingual Knowledge Base & Response Engine
 # ==============================================================================
-def get_offline_travel_reply(user_msg: str, weather_info: bool = False, location: str = "") -> str:
-    msg = user_msg.lower()
+import re
 
-    if weather_info or "weather" in msg or "temperature" in msg:
+MULTILINGUAL_KNOWLEDGE = {
+    "quotes": {
+        "en": (
+            "Famous Inspirational Quotes & Sayings of Odisha:\n\n"
+            "• \"Misu mora deha e desha matire, deshabasi chalijantu pithire...\" (\"Let my body mingle with the soil of this motherland, and let my countrymen walk forward over my back into freedom...\") — Utkalmani Gopabandhu Das (The supreme national motto of selfless service).\n"
+            "• \"Bhasha hi jatira prana\" (\"Language is the soul of a nation\") — Vyasakabi Fakir Mohan Senapati, father of modern Odia literature.\n"
+            "• \"Jai Jagannath!\" — The timeless heartbeat and spiritual essence of Odisha, symbolizing universal brotherhood and compassion."
+        ),
+        "or": (
+            "ଓଡ଼ିଶାର ପ୍ରସିଦ୍ଧ ଓ ପ୍ରେରଣାଦାୟୀ ଉକ୍ତି / ପଦ୍ୟାଂଶ:\n\n"
+            "• \"ମିଶୁ ମୋର ଦେହ ଏ ଦେଶ ମାଟିରେ, ଦେଶବାସୀ ଚାଲିଯାଆନ୍ତୁ ପିଠିରେ। ଦେଶର ସ୍ୱରାଜ୍ୟ ପଥେ ଯେତେ ଗାଡ଼, ପୂରୁ ତହିଁ ମୋର ମାଂସ ରକ୍ତ ହାଡ଼।\" — ଉତ୍କଳମଣି ଗୋପବନ୍ଧୁ ଦାସ (ଏହା ଓଡ଼ିଶାର ସର୍ବଶ୍ରେଷ୍ଠ ଦେଶପ୍ରେମ ଓ ଆତ୍ମବଳିଦାନର ପ୍ରତୀକ)।\n"
+            "• \"ଭାଷା ହିଁ ଜାତିର ପ୍ରାଣ\" — ବ୍ୟାସକବି ଫକୀର ମୋହନ ସେନାପତି (ଓଡ଼ିଆ ସାହିତ୍ୟର ଅମର ବାଣୀ)।\n"
+            "• \"ଜୟ ଜଗନ୍ନାଥ!\" — ସମଗ୍ର ଓଡ଼ିଆ ଜାତିର ପ୍ରାଣସ୍ପନ୍ଦନ ତଥା ବିଶ୍ୱ ଭ୍ରାତୃତ୍ୱର ପବିତ୍ର ଉଦ୍ଘୋଷ।"
+        ),
+        "hi": (
+            "ओडिशा के प्रसिद्ध और प्रेरणादायक सुविचार / पंक्तियाँ:\n\n"
+            "• \"मिशु मोर देह ए देश माटिर...\" (\"मेरा शरीर इस देश की पावन मिट्टी में मिल जाए और देशवासी मेरी पीठ पर चलकर आगे बढ़ें...\") — उत्कलमणि गोपबंधु दास (निःस्वार्थ राष्ट्रसेवा का सर्वोच्च प्रतीक)।\n"
+            "• \"भाषा ही जातिरा प्राण\" (\"मातृभाषा ही किसी राष्ट्र की वास्तविक आत्मा होती है\") — व्यासकवि फकीर मोहन सेनापति।\n"
+            "• \"जय जगन्नाथ!\" — ओडिशा की आध्यात्मिक पहचान और विश्व बंधुत्व का सर्वकालिक मूल मंत्र।"
+        ),
+        "bn": (
+            "ওড়িশার বিখ্যাত ও ঐতিহাসিক বাণী / উক্তি:\n\n"
+            "• \"মিশু মোর দেহ এ দেশ মাটিতে...\" (\"আমার দেহ এই দেশের মাটিতে মিশে যাক, আর দেশবাসী আমার পিঠের ওপর দিয়ে এগিয়ে যাক...\") — উৎকলমণি গোপবন্ধু দাস (নিঃস্বার্থ দেশপ্রেমের প্রতীক)।\n"
+            "• \"ভাষা হি জাতির প্রাণ\" (\"ভাষাই হলো জাতির প্রকৃত প্রাণ\") — ব্যাসকবি ফকির মোহন সেনাপতি।\n"
+            "• \"জয় জগন্নাথ!\" — ওড়িশার আধ্যাত্মিক হৃদয় ও বিশ্ব ভ্রাতৃত্বের চিরন্তন ধ্বনি।"
+        ),
+        "te": (
+            "ఒడిశా ప్రసిద్ధ మరియు స్ఫూర్తిదాయక సూక్తులు:\n\n"
+            "• \"మిశు మోర దేహ ఎ దేశ మాటిరె...\" (\"నా దేహం ఈ దేశ మట్టిలో కలిసిపోనివ్వండి, నా దేశవాసులు నా వీపుపై నడిచి ముందుకు సాగనివ్వండి...\") — ఉత్కళమణి గోపబంధు దాస్.\n"
+            "• \"భాష హి జాతిర ప్రాణ\" (\"మాతృభాషే జాతి యొక్క ప్రాణం\") — వ్యాసకవి ఫకీర్ మోహన్ సేనాపతి.\n"
+            "• \"జై జగన్నాథ్!\" — ఒడిశా ఆధ్యాత్మిక సంస్కృతి మరియు విశ్వ సౌభ్రాతృత్వానికి పవిత్ర నినాదం."
+        )
+    },
+    "food": {
+        "en": (
+            "Authentic World-Famous Cuisine & Delicacies of Odisha:\n\n"
+            "• Chhena Poda: The world's first baked cottage cheese dessert with caramelized crust, originating from Nayagarh.\n"
+            "• Pahala Rasagola: Soft, warm, melt-in-mouth brown rasagolas celebrated along the Bhubaneswar-Cuttack highway.\n"
+            "• Dalma: Wholesome lentil stew slow-cooked with fresh local vegetables, seasoned with roasted cumin and ghee.\n"
+            "• Pakhala Bhata: Refreshing fermented rice steeped in curd and water, served with badi chura and fried veggies (celebrated on Pakhala Dibasa).\n"
+            "• Cuttack Dahi Bara Aloodum: Famous street food featuring light lentil fritters in yogurt broth topped with spicy potato curry and ghuguni."
+        ),
+        "or": (
+            "ଓଡ଼ିଶାର ପ୍ରସିଦ୍ଧ ପାରମ୍ପରିକ ଖାଦ୍ୟ ଓ ମିଠା:\n\n"
+            "• ଛେନାପୋଡ଼: ନୟାଗଡ଼ର ପ୍ରସିଦ୍ଧ ପୋଡ଼ା ପନୀର ମିଠା, ଯାହା ସାରା ବିଶ୍ୱରେ ଖୁବ୍ ଲୋକପ୍ରିୟ।\n"
+            "• ପାହାଳ ରସଗୋଲା: ତାଜା, ନରମ ଓ ରସାଳ ପାରମ୍ପରିକ ଓଡ଼ିଆ ରସଗୋଲା।\n"
+            "• ଡାଲମା: ବିଭିନ୍ନ ଦେଶୀ ପନିପରିବା ଓ ଡାଲିରେ ପ୍ରସ୍ତୁତ ପୌଷ୍ଟିକ ତଥା ସୁସ୍ୱାଦୁ ବ୍ୟଞ୍ଜନ।\n"
+            "• ପଖାଳ ଭାତ: ଖରାଦିନେ ଦହି, ଶାଗ, ବଡ଼ି ଚୂରା ଓ ଆଳୁ ଭଜା ସହ ଓଡ଼ିଆଙ୍କ ସବୁଠାରୁ ପ୍ରିୟ ଖାଦ୍ୟ।\n"
+            "• କଟକ ଦହିବରା ଆଳୁଦମ୍: ଓଡ଼ିଶାର ନମ୍ବର ୧ ଷ୍ଟ୍ରିଟ୍ ଫୁଡ୍, ଯାହାର ଚଟପଟା ସ୍ୱାଦ ଅତୁଳନୀୟ।"
+        ),
+        "hi": (
+            "ओडिशा के विश्व प्रसिद्ध पारंपरिक व्यंजन और मिठाइयाँ:\n\n"
+            "• छेना पोड़ा: नयागढ़ की प्रसिद्ध भुनी हुई पनीर की मिठाई जो दुनिया भर में मशहूर है।\n"
+            "• पहाला रसगुल्ला: भुवनेश्वर-कटक मार्ग का प्रसिद्ध, नर्म और मुंह में घुल जाने वाला रसगुल्ला।\n"
+            "• दालमा: ताज़ी मौसमी सब्जियों और दाल से बना पारंपरिक पौष्टिक व्यंजन।\n"
+            "• पखाला भात: दही, तड़का और भुनी सब्जियों के साथ गर्मियों में खाया जाने वाला लोकप्रिय भोजन।\n"
+            "• कटक दहीबड़ा आलूदम: ओडिशा का सबसे लोकप्रिय, चटपटा और स्वादिष्ट स्ट्रीट फूड।"
+        ),
+        "bn": (
+            "ওড়িশার সুস্বাদু ও ঐতিহাসিক ঐতিহ্যবাহী খাবার:\n\n"
+            "• ছানাপোড়া: নয়গড়ের বিশ্ববিখ্যাত বেকড পনিরের পোড়া মিষ্টি।\n"
+            "• পাহালা রসগোল্লা: নরম, তুলতুলে ও অত্যন্ত সুস্বাদু খাঁটি ওড়িশা রসগোল্লা।\n"
+            "• ডালমা: ডাল ও বিভিন্ন দেশি সবজি দিয়ে রান্না করা পুষ্টিকর ও সুস্বাদু ব্যঞ্জন।\n"
+            "• পাখালা ভাত: দই, বড়ি পোড়া ও ভাজা সহযোগে পরিবেশিত ওড়িশার জাতীয় স্বাদের পান্তা ভাত।\n"
+            "• কটক দইবড়া আলুদম: মশলাদার আলুদম ও ঘুঘনি মিশ্রিত দারুণ স্ট্রিট ফুড।"
+        ),
+        "te": (
+            "ఒడిశా ప్రసిద్ధ సాంప్రదాయ వంటకాలు మరియు రుచికరమైన మిఠాయిలు:\n\n"
+            "• ఛేనా పోడా: కాల్చిన జున్నుతో తయారుచేసే నయగఢ్ ప్రసిద్ధ తీపి వంటకం.\n"
+            "• పహాలా రసగుల్లా: మెత్తని, నోట్లో కరిగిపోయే సాంప్రదాయ రసగుల్లాలు.\n"
+            "• దాల్మా: కూరగాయలు మరియు పప్పుతో నెయ్యి పోపుతో చేసే పౌష్టిక ఆహారం.\n"
+            "• పఖాలా భాతా: చల్లని మజ్జిగ అన్నం, కూరగాయల వేపుళ్లతో తినే ప్రియమైన ఆహారం.\n"
+            "• కటక్ దహి బరా ఆలూదమ్: కారంగా ఉండే ఆలూదమ్ తో కలిపి వడ్డించే ప్రసిద్ధ స్ట్రీట్ ఫుడ్."
+        )
+    },
+    "temples": {
+        "en": (
+            "Top Sacred Temples & Architectural Wonders of Odisha:\n\n"
+            "• Konark Sun Temple: 13th-century UNESCO World Heritage Site shaped like a grand chariot with 24 stone wheels.\n"
+            "• Jagannath Temple, Puri: One of the 4 holy Char Dhams, famous for Ratha Yatra and the sacred Mahaprasad.\n"
+            "• Lingaraj Temple, Bhubaneswar: Majestic 11th-century masterpiece of Kalinga sandstone architecture dedicated to Lord Harihara.\n"
+            "• Mukteswara Temple: Known as the 'Gem of Odishan Architecture', famed for its ornate arched torana gateway.\n"
+            "• Dhauli Shanti Stupa: Historic Buddhist peace pagoda marking the transformation of Emperor Ashoka after the Kalinga War."
+        ),
+        "or": (
+            "ଓଡ଼ିଶାର ପ୍ରସିଦ୍ଧ ଧାର୍ମିକ ପୀଠ ଓ ପ୍ରାଚୀନ କଳିଙ୍ଗ ମନ୍ଦିର:\n\n"
+            "• କୋଣାର୍କ ସୂର୍ଯ୍ୟ ମନ୍ଦିର: ତ୍ରୟୋଦଶ ଶତାବ୍ଦୀର ୟୁନେସ୍କୋ ବିଶ୍ୱ ଐତିହ୍ୟ, ଯାହା ୨୪ଟି ପଥର ଚକ ବିଶିଷ୍ଟ ଏକ ବିରାଟ ରଥ ସଦୃଶ।\n"
+            "• ଶ୍ରୀ ଜଗନ୍ନାଥ ମନ୍ଦିର, ପୁରୀ: ଭାରତର ଚାରି ଧାମ ମଧ୍ୟରୁ ଅନ୍ୟତମ, ଯାହା ବିଶ୍ୱପ୍ରସିଦ୍ଧ ରଥଯାତ୍ରା ଓ ମହାପ୍ରସାଦ ପାଇଁ ପ୍ରସିଦ୍ଧ।\n"
+            "• ଲିଙ୍ଗରାଜ ମନ୍ଦିର, ଭୁବନେଶ୍ୱର: ଏକାଦଶ ଶତାବ୍ଦୀର ପ୍ରଭୁ ହରିହରଙ୍କ ପ୍ରାଚୀନ ତଥା ଭବ୍ୟ କଳିଙ୍ଗ ସ୍ଥାପତ୍ୟ କଳା।\n"
+            "• ମୁକ୍ତେଶ୍ୱର ମନ୍ଦିର: ଓଡ଼ିଶାର 'ସ୍ଥାପତ୍ୟ ରତ୍ନ', ଯାହାର ସୁନ୍ଦର ତୋରଣ ଦେଖିବାକୁ ବେଶ୍ ମନମୁଗ୍ଧକର।\n"
+            "• ଧଉଳି ଶାନ୍ତି ସ୍ତୂପ: କଳିଙ୍ଗ ଯୁଦ୍ଧ ପରେ ଚଣ୍ଡାଶୋକରୁ ଧର୍ମାଶୋକ ହେବାର ଐତିହାସିକ ଶାନ୍ତିପୀଠ।"
+        ),
+        "hi": (
+            "ओडिशा के प्रमुख पवित्र मंदिर और कलिंग वास्तुकला के चमत्कार:\n\n"
+            "• कोणार्क सूर्य मंदिर: 13वीं सदी का यूनेस्को विश्व धरोहर स्थल, जो 24 विशाल नक्काशीदार पहियों वाले रथ के आकार में बना है।\n"
+            "• श्री जगन्नाथ मंदिर, पुरी: हिंदू धर्म के चार पवित्र धामों में से एक, जो वार्षिक रथयात्रा और महाप्रसाद के लिए विख्यात है।\n"
+            "• लिंगराज मंदिर, भुवनेश्वर: 11वीं सदी का भव्य शिव मंदिर जो कलिंग स्थापत्य कला का सर्वश्रेष्ठ उदाहरण है।\n"
+            "• मुक्तेश्वर मंदिर: अपने अलंकृत मेहराबदार तोरण के कारण इसे 'ओडिशा वास्तुकला का रत्न' कहा जाता है।\n"
+            "• धौली शांति स्तूप: ऐतिहासिक बौद्ध शांति स्तूप जहाँ कलिंग युद्ध के बाद सम्राट अशोक ने अहिंसा का मार्ग अपनाया था।"
+        ),
+        "bn": (
+            "ওড়িশার প্রধান ধর্মীয় তীর্থ ও প্রাচীন স্থাপত্য কীর্তি:\n\n"
+            "• কোনার্ক সূর্য মন্দির: ত্রয়োদশ শতাব্দীর ইউনেস্কো ওয়ার্ল্ড হেরিটেজ সাইট, যা ২৪টি চাকাযুক্ত বিশাল রথের আদলে নির্মিত।\n"
+            "• শ্রী জগন্নাথ মন্দির, পুরী: ভারতের অন্যতম প্রধান চার ধাম, যা রথযাত্রা ও মহাপ্রসাদের জন্য ভুবনখ্যাত।\n"
+            "• লিঙ্গরাজ মন্দির, ভুবনেশ্বর: একাদশ শতাব্দীর সুবিশাল কলিঙ্গ স্থাপত্যশৈলীর অনন্য নিদর্শন।\n"
+            "• মুক্তেশ্বর মন্দির: সূক্ষ্ম খোদাই করা তোরণের জন্য একে 'ওড়িশা স্থাপত্যের রত্ন' বলা হয়।\n"
+            "• ধৌলি শান্তি স্তূপ: ঐতিহাসিক বৌদ্ধ স্তূপ, যেখানে সম্রাট অশোক যুদ্ধের পর অহিংসা গ্রহণ করেছিলেন।"
+        ),
+        "te": (
+            "ఒడిశా ప్రసిద్ధ పుణ్యక్షేత్రాలు మరియు చారిత్రక దేవాలయాలు:\n\n"
+            "• కోణార్క్ సూర్య దేవాలయం: 13వ శతాబ్దానికి చెందిన యునెస్కో ప్రపంచ వారసత్వ సంపద, 24 రాతి చక్రాలతో కూడిన రథాకారం.\n"
+            "• జగన్నాథ ఆలయం, పూరీ: హిందూ పవిత్ర చార్ ధామ్ లలో ఒకటి, రథయాత్ర మరియు మహాప్రసాదానికి ప్రసిద్ధి.\n"
+            "• లింగరాజ దేవాలయం, భువనేశ్వర్: 11వ శతాబ్దపు అద్భుతమైన కళింగ వాస్తుశిల్ప కళాఖండం.\n"
+            "• ముక్తేశ్వర దేవాలయం: అద్భుతమైన తోరణంతో కూడిన 'ఒడిశా వాస్తు రత్నం'.\n"
+            "• ధౌళి శాంతి స్తూపం: కళింగ యుద్ధం తరువాత అశోక చక్రవర్తి శాంతి మార్గాన్ని ఎంచుకున్న పవిత్ర ప్రదేశం."
+        )
+    },
+    "beaches": {
+        "en": (
+            "Breathtaking Coastal & Wildlife Destinations in Odisha:\n\n"
+            "• Puri Golden Beach: Prestigious eco-certified Blue Flag beach with golden sand and golden sunrise views.\n"
+            "• Chilika Lake: Asia's largest brackish water lagoon, home to playful Irrawaddy dolphins and millions of migratory birds at Mangalajodi.\n"
+            "• Chandrabhaga Beach: Pristine, tranquil shoreline near Konark with cultural significance for sacred dips.\n"
+            "• Gopalpur-on-Sea: Charming historic seaport town with vintage lighthouse and calm coconut groves.\n"
+            "• Bhitarkanika National Park: Lush mangrove ecosystem sheltering giant saltwater crocodiles and kingfishers."
+        ),
+        "or": (
+            "ଓଡ଼ିଶାର ପ୍ରାକୃତିକ ବେଳାଭୂମି ଓ ବନ୍ୟପ୍ରାଣୀ ଅଭୟାରଣ୍ୟ:\n\n"
+            "• ପୁରୀ ଗୋଲ୍ଡେନ୍ ବିଚ୍: ଅନ୍ତର୍ଜାତୀୟ ବ୍ଲୁ-ଫ୍ଲାଗ୍ ମାନ୍ୟତାପ୍ରାପ୍ତ ସ୍ୱଚ୍ଛ ଓ ସୁନ୍ଦର ସମୁଦ୍ରକୂଳ।\n"
+            "• ଚିଲିକା ହ୍ରଦ: ଏସିଆର ସର୍ବବୃହତ ଲୁଣିଆ ହ୍ରଦ, ଯେଉଁଠାରେ ଇରାୱାଡ଼ି ଡଲଫିନ ଏବଂ ପ୍ରବାସୀ ପକ୍ଷୀଙ୍କ ସମାଗମ ହୁଏ।\n"
+            "• ଚନ୍ଦ୍ରଭାଗା ବେଳାଭୂମି: କୋଣାର୍କ ନିକଟରେ ଅବସ୍ଥିତ ଏକ ଶାନ୍ତ, ସୁନ୍ଦର ତଥା ପବିତ୍ର ବେଳାଭୂମି।\n"
+            "• ଗୋପାଳପୁର ସମୁଦ୍ରକୂଳ: ଐତିହାସିକ ଲାଇଟହାଉସ ଏବଂ ନୀଳ ଜଳରାଶି ପାଇଁ ପ୍ରସିଦ୍ଧ।\n"
+            "• ଭିତରକନିକା ଜାତୀୟ ଉଦ୍ୟାନ: ବିରାଟ ଲୁଣା ଜଙ୍ଗଲ ଏବଂ କୁମ୍ଭୀରମାନଙ୍କ ପାଇଁ ପ୍ରସିଦ୍ଧ।"
+        ),
+        "hi": (
+            "ओडिशा के प्रमुख समुद्री तट और प्राकृतिक वन्यजीव स्थल:\n\n"
+            "• पुरी गोल्डन बीच: अंतरराष्ट्रीय 'ब्लू फ्लैग' प्रमाणित स्वच्छ और सुरक्षित सुनहरी रेत का समुद्र तट।\n"
+            "• चिल्का झील: एशिया की सबसे बड़ी खारे पानी की झील, जहाँ दुर्लभ इरावाडी डॉल्फ़िन और प्रवासी पक्षी पाए जाते हैं।\n"
+            "• चंद्रभागा बीच: कोणार्क के पास स्थित शांत, स्वच्छ और मनोरम समुद्री किनारा।\n"
+            "• गोपालपुर-ऑन-सी: ऐतिहासिक लाइटहाउस और नारियल के बागों से घिरा सुंदर तटीय शहर।\n"
+            "• भितरकनिका राष्ट्रीय उद्यान: भारत का प्रमुख मैंग्रोव वन जो विशालकाय मगरमच्छों का घर है।"
+        ),
+        "bn": (
+            "ওড়িশার মনোরম সমুদ্রতট ও বন্যপ্রাণী অভয়ারণ্য:\n\n"
+            "• পুরী গোল্ডেন বিচ: আন্তর্জাতিক ব্লু ফ্ল্যাগ শংসাপত্রপ্রাপ্ত পরিচ্ছন্ন ও নয়নাভিরাম সমুদ্র সৈকত।\n"
+            "• চিল্কা হ্রদ: এশিয়ার বৃহত্তম উপকূলীয় হ্রদ, যা ইরাবতী ডলফিন ও লক্ষ লক্ষ পরিযায়ী পাখির আবাস।\n"
+            "• চন্দ্রভাগা সৈকত: কোনার্কের নিকটবর্তী মনোরম ও শান্ত প্রাকৃতিক সমুদ্রতট।\n"
+            "• গোপালপুর সৈকত: প্রাচীন বাতিঘর ও নারকেল কুঞ্জে ঘেরা এক প্রশান্ত সৈকত।\n"
+            "• ভিতরকনিকা জাতীয় উদ্যান: ম্যানগ্রোভ অরণ্য এবং বিশাল নোনা জলের কুমিরের জন্য বিখ্যাত।"
+        ),
+        "te": (
+            "ఒడిశా అందమైన తీరప్రాంతాలు మరియు వన్యప్రాణుల కేంద్రాలు:\n\n"
+            "• పూరీ గోల్డెన్ బీచ్: పర్యావరణహిత బ్లూ ఫ్లాగ్ గుర్తింపు పొందిన పరిశుభ్రమైన బీచ్.\n"
+            "• చిల్కా సరస్సు: ఆసియాలోనే అతిపెద్ద ఉప్పునీటి సరస్సు, ఇరావాడీ డాల్ఫిన్ లకు ప్రసిద్ధి.\n"
+            "• చంద్రభాగ బీచ్: కోణార్క్ సమీపంలో ప్రశాంతమైన మరియు మనోహరమైన తీరం.\n"
+            "• గోపాల్ పూర్: పురాతన లైట్ హౌస్ మరియు కొబ్బరి తోటలతో కూడిన విహార కేంద్రం.\n"
+            "• భితర్ కనిక నేషనల్ పార్క్: విస్తారమైన మడ అడవులు మరియు మొసళ్లకు ప్రసిద్ధి."
+        )
+    },
+    "festivals": {
+        "en": (
+            "Vibrant Festivals & Classical Arts of Odisha:\n\n"
+            "• Ratha Yatra (Puri): World-famous chariot festival drawing millions of pilgrims as the Holy Trinity visits Gundicha Temple.\n"
+            "• Raja Parba: 3-day monsoon celebration honoring Mother Earth and womanhood with swings, music, and pithas.\n"
+            "• Bali Yatra (Cuttack): Asia's largest open-air maritime trade fair commemorating ancient Kalinga sea merchants sailing to Bali and Sumatra.\n"
+            "• Odissi Dance: Classical dance heritage of India noted for its lyrical grace, sculpturesque poses, and devotion to Lord Jagannath.\n"
+            "• Pattachitra & Silver Filigree (Tarakasi): Renowned cloth scroll paintings from Raghurajpur and intricate silver artwork from Cuttack."
+        ),
+        "or": (
+            "ଓଡ଼ିଶାର ଗୌରବମୟ ପର୍ବପର୍ବାଣୀ ଓ ସାଂସ୍କୃତିକ କଳା:\n\n"
+            "• ପୁରୀ ରଥଯାତ୍ରା: ବିଶ୍ୱପ୍ରସିଦ୍ଧ ଘୋଷଯାତ୍ରା, ଯେଉଁଥିରେ ଚତୁର୍ଦ୍ଧାମୂର୍ତ୍ତି ବଡ଼ଦାଣ୍ଡରେ ଭକ୍ତମାନଙ୍କୁ ଦର୍ଶନ ଦିଅନ୍ତି।\n"
+            "• ରଜ ପର୍ବ: ଧରଣୀ ମାତା ଏବଂ ନାରୀତ୍ୱର ୩ ଦିନିଆ ପାରମ୍ପରିକ ଉତ୍ସବ, ଯେଉଁଥିରେ ଦୋଳି, ପିଠାପଣା ମୁଖ୍ୟ ଆକର୍ଷଣ।\n"
+            "• ବାଲିଯାତ୍ରା: କଟକ ମହାନଦୀ କୂଳରେ ଅନୁଷ୍ଠିତ ଏସିଆର ସର୍ବବୃହତ ମୁକ୍ତାକାଶ ବାଣିଜ୍ୟ ମେଳା।\n"
+            "• ଓଡ଼ିଶୀ ନୃତ୍ୟ: ଭାରତର ପ୍ରମୁଖ ଶାସ୍ତ୍ରୀୟ ନୃତ୍ୟ, ଯାହା ମନ୍ଦିର ଭାସ୍କର୍ଯ୍ୟ ଏବଂ ଭାବପୂର୍ଣ୍ଣ ଅଭିନୟ ପାଇଁ ଜଣାଶୁଣା।\n"
+            "• ପଟ୍ଟଚିତ୍ର ଓ ତାରକସି କାମ: ରଘୁରାଜପୁରର ତାଳପତ୍ର ଓ କପଡ଼ା ଚିତ୍ର ଏବଂ କଟକର ରୂପା ତାରକସି କଳା।"
+        ),
+        "hi": (
+            "ओडिशा के रंगारंग त्योहार और शास्त्रीय कलाएँ:\n\n"
+            "• पुरी रथयात्रा: विश्वप्रसिद्ध रथ महोत्सव जहाँ भगवान जगन्नाथ अपने भाई-बहन के साथ बड़दांड पर दर्शन देते हैं।\n"
+            "• रज पर्व: धरती माता और नारी शक्ति को समर्पित 3 दिवसीय मानसून उत्सव, जिसमें झूले और स्वादिष्ट पीठा प्रमुख हैं।\n"
+            "• बाली यात्रा (कटक): महानदी के तट पर लगने वाला एशिया का सबसे बड़ा खुला व्यापार मेला।\n"
+            "• ओडिसी नृत्य: भारत की प्रमुख शास्त्रीय नृत्य शैली जो अपनी मूर्तिकला जैसी मुद्राओं और लालित्य के लिए प्रसिद्ध है।\n"
+            "• पट्टचित्र और तारकसी: रघुराजपुर की पारंपरिक हस्तकला और कटक का चांदी की तारकसी (फिलिग्री) काम।"
+        ),
+        "bn": (
+            "ওড়িশার বর্ণাঢ্য উৎসব ও ধ্রুপদী সংস্কৃতি:\n\n"
+            "• পুরী রথযাত্রা: বিশ্বখ্যাত রথ উৎসব যাতে লাখ লাখ ভক্ত জগন্নাথদেবের রথের রশি স্পর্শ করতে আসেন।\n"
+            "• রজ উৎসব: ধরিত্রী ও নারীত্বের সম্মানে ৩ দিনের লোকউৎসব, যাতে দোলনা ও পিঠার প্রাচুর্য থাকে।\n"
+            "• বালিযাত্রা: কটকে অনুষ্ঠিত এশিয়ার বৃহত্তম মুক্ত বাণিজ্য মেলা।\n"
+            "• ওড়িশি নৃত্য: ভারতের প্রাচীন ধ্রুপদী নৃত্য যা সূক্ষ্ম ভাব ও অঙ্গভঙ্গির জন্য প্রশংসিত।\n"
+            "• পটচিত্র ও তারকসি: রঘুরাজপুরের পটচিত্র ও কটকের রুপোর তারকসি শিল্পকর্ম।"
+        ),
+        "te": (
+            "ఒడిశా గొప్ప పండుగలు మరియు సంస్కృతి:\n\n"
+            "• పూరీ రథయాత్ర: ప్రపంచ ప్రసిద్ధ రథోత్సవం, భక్తులు తరించే మహత్తర ఉత్సవం.\n"
+            "• రజా పండుగ: భూమాతను ఆరాధించే 3 రోజుల సాంప్రదాయ పండుగ, ఊయలలు మరియు పిండివంటలు ప్రత్యేకం.\n"
+            "• బాలి యాత్ర (కటక్): ఆసియాలోనే అతిపెద్ద ఓపెన్-ఎయిర్ వాణిజ్య ఉత్సవం.\n"
+            "• ఒడిస్సీ నృత్యం: శిల్ప సౌందర్యం ఉట్టిపడే ప్రాచీన భారతీయ శాస్త్రీయ నృత్యం.\n"
+            "• పట్టచిత్ర మరియు వెండి తారకసి: రఘురాజ్ పూర్ సాంప్రదాయ చిత్రాలు మరియు కటక్ వెండి కళాఖండాలు."
+        )
+    },
+    "transport": {
+        "en": (
+            "Travel, Cabs & Connectivity in Odisha:\n\n"
+            "• In-City Transit: Auto rickshaws, Mo Bus transit, and app cabs (Ola, Uber, Rapido) provide effortless local travel in Bhubaneswar and Cuttack.\n"
+            "• Golden Triangle Route: Regular express buses, private cabs, and trains smoothly connect Bhubaneswar, Puri, and Konark (approx. 60 km each).\n"
+            "• Airports & Rail: Biju Patnaik International Airport (BBI) in Bhubaneswar and extensive East Coast Railway connectivity across all districts."
+        ),
+        "or": (
+            "ଓଡ଼ିଶାରେ ଯାତାୟାତ ଓ ଯାତ୍ରା ସୁବିଧା:\n\n"
+            "• ସହର ଭିତରେ ଯାତାୟାତ: ଭୁବନେଶ୍ୱର ଓ କଟକରେ 'ମୋ ବସ୍', ଅଟୋ ରିକ୍ସା ଏବଂ ଓଲା/ଉବର କ୍ୟାବ୍ ସହଜରେ ଉପଲବ୍ଧ।\n"
+            "• ଗୋଲ୍ଡେନ୍ ଟ୍ରାଏଙ୍ଗଲ୍ (ଭୁବନେଶ୍ୱର-ପୁରୀ-କୋଣାର୍କ): ରାଜ୍ୟ ପରିବହନ ବସ୍, ପ୍ରାଇଭେଟ୍ ଟ୍ୟାକ୍ସି ଏବଂ ଟ୍ରେନ୍ ଦ୍ୱାରା ଏହି ସ୍ଥାନଗୁଡ଼ିକ ସୁନ୍ଦର ଭାବେ ସଂଯୁକ୍ତ।\n"
+            "• ବିମାନ ଓ ରେଳବାଇ: ଭୁବନେଶ୍ୱରସ୍ଥିତ ବିଜୁ ପଟ୍ଟନାୟକ ଅନ୍ତର୍ଜାତୀୟ ବିମାନବନ୍ଦର ଏବଂ ପୂର୍ବତଟ ରେଳବାଇ ପ୍ରମୁଖ ମାଧ୍ୟମ।"
+        ),
+        "hi": (
+            "ओडिशा में यात्रा, परिवहन और कनेक्टिविटी:\n\n"
+            "• शहर के भीतर: भुवनेश्वर और कटक में 'मो बस', ऑटो रिक्शा और ओला/उबर कैब की बेहतरीन सुविधा उपलब्ध है।\n"
+            "• स्वर्ण त्रिभुज मार्ग (भुवनेश्वर-पुरी-कोणार्क): नियमित बसें, निजी टैक्सियाँ और ट्रेनें इन तीनों शहरों को आपस में जोड़ती हैं।\n"
+            "• हवाई और रेल सेवा: भुवनेश्वर का बीजू पटनायक अंतरराष्ट्रीय हवाई अड्डा (BBI) और पूर्वी तट रेलवे की व्यापक सेवा उपलब्ध है।"
+        ),
+        "bn": (
+            "ওড়িশায় যাতায়াত ও পরিবহন ব্যবস্থা:\n\n"
+            "• শহরের ভিতরে: ভুবনেশ্বর ও কটকে 'মো বাস', অটো ও ওলা/উবের ক্যাব খুব সহজেই পাওয়া যায়।\n"
+            "• গোল্ডেন ট্রায়াঙ্গল (ভুবনেশ্বর-পুরী-কোনার্ক): এক্সপ্রেস বাস, ব্যক্তিগত গাড়ি ও ট্রেন দিয়ে খুব সহজে ভ্রমণ করা যায়।\n"
+            "• বিমান ও রেল: ভুবনেশ্বরের বিজু পট্টনায়ক আন্তর্জাতিক বিমানবন্দর এবং পূর্ব উপকূল রেলওয়ে প্রধান মাধ্যম।"
+        ),
+        "te": (
+            "ఒడిశాలో ప్రయాణ సదుపాయాలు మరియు రవాణా:\n\n"
+            "• నగరంలో ప్రయాణం: భువనేశ్వర్, కటక్ లలో 'మో బస్', ఆటోలు మరియు క్యాబ్ లు సులభంగా లభిస్తాయి.\n"
+            "• గోల్డెన్ ట్రయాంగిల్ (భువనేశ్వర్-పూరీ-కోణార్క్): బస్సులు, రైళ్లు మరియు ప్రైవేట్ ట్యాక్సీలు నిరంతరం నడుస్తాయి.\n"
+            "• విమాన మరియు రైలు సేవలు: భువనేశ్వర్ బిజూ పట్నాయక్ అంతర్జాతీయ విమానాశ్రయం మరియు ఈస్ట్ కోస్ట్ రైల్వే సౌకర్యాలు ఉన్నాయి."
+        )
+    },
+    "weather": {
+        "en": (
+            "Climate & Weather in Odisha:\n\n"
+            "• Coastal regions (Bhubaneswar, Puri, Konark) enjoy tropical coastal climate with comfortable winters (18°C - 28°C) between October and March.\n"
+            "• Monsoons (July - September) bring lush greenery, making waterfalls in Koraput and Similipal magnificent.\n"
+            "• Best travel season is October through March for outdoor monument exploration!"
+        ),
+        "or": (
+            "ଓଡ଼ିଶାର ଜଳବାୟୁ ଓ ପାଣିପାଗ ସୂଚନା:\n\n"
+            "• ଉପକୂଳ ଓଡ଼ିଶା (ଭୁବନେଶ୍ୱର, ପୁରୀ, କୋଣାର୍କ) ରେ ଅକ୍ଟୋବରରୁ ମାର୍ଚ୍ଚ ମଧ୍ୟରେ ଶୀତଳ ଓ ମନୋରମ ପାଣିପାଗ (୧୮°C - ୨୮°C) ରହିଥାଏ।\n"
+            "• ବର୍ଷା ଋତୁ (ଜୁଲାଇରୁ ସେପ୍ଟେମ୍ବର) ରେ କୋରାପୁଟ, ମୟୂରଭଞ୍ଜ ଓ ଶିମିଳିପାଳର ଜଳପ୍ରପାତ ବେଶ୍ ଆକର୍ଷଣୀୟ ଦେଖାଯାଏ।\n"
+            "• ମନ୍ଦିର ଓ ଐତିହ୍ୟ ଭ୍ରମଣ ପାଇଁ ଅକ୍ଟୋବରରୁ ମାର୍ଚ୍ଚ ସର୍ବୋତ୍ତମ ସମୟ!"
+        ),
+        "hi": (
+            "ओडिशा की जलवायु और मौसम:\n\n"
+            "• तटीय ओडिशा (भुवनेश्वर, पुरी, कोणार्क) में अक्टूबर से मार्च के बीच मौसम सुहावना (18°C - 28°C) रहता है।\n"
+            "• मानसून (जुलाई - सितंबर) के दौरान कोरापुट और सिमलीपाल के झरने अपने पूरे शबाब पर होते हैं।\n"
+            "• ऐतिहासिक स्मारकों और मंदिरों के दर्शन के लिए अक्टूबर से मार्च का समय सबसे उत्तम माना जाता है।"
+        ),
+        "bn": (
+            "ওড়িশার আবহাওয়া ও ভ্রমণের সেরা সময়:\n\n"
+            "• উপকূলীয় ওড়িশায় (ভুবনেশ্বর, পুরী, কোনার্ক) অক্টোবর থেকে মার্চ মাস ভ্রমণের জন্য সবচেয়ে মনোরম (১৮°C - ২৮°C)।\n"
+            "• বর্ষাকালে (জুলাই - সেপ্টেম্বর) শিমলিপাল ও কোরাপুট পাহাড়ের জলপ্রপাত অপূর্ব রূপ ধারণ করে।\n"
+            "• সমুদ্র ও মন্দির পরিদর্শনের জন্য অক্টোবর থেকে মার্চ আদর্শ সময়।"
+        ),
+        "te": (
+            "ఒడిశా వాతావరణం మరియు పర్యటనకు ఉత్తమ సమయం:\n\n"
+            "• తీరప్రాంతాలలో (భువనేశ్వర్, పూరీ, కోణార్క్) అక్టోబర్ నుండి మార్చి వరకు వాతావరణం ఆహ్లాదకరంగా (18°C - 28°C) ఉంటుంది.\n"
+            "• వర్షాకాలంలో సిమిలిపాల్ మరియు కోరాపుట్ జలపాతాలు కనువిందు చేస్తాయి.\n"
+            "• ఆలయాలు మరియు చారిత్రక ప్రదేశాలు సందర్శించడానికి అక్టోబర్ నుండి మార్చి అత్యంత అనుకూలం."
+        )
+    },
+    "default": {
+        "en": (
+            "Welcome to Odisha Explorer — India's best kept secret!\n\n"
+            "I am your local AI travel guide. You can ask me about:\n"
+            "• Ancient Kalinga Temples (Konark, Jagannath Puri, Lingaraj)\n"
+            "• Famous Odia Delicacies (Chhena Poda, Dalma, Rasagola)\n"
+            "• Inspiring Quotes & Cultural Heritage\n"
+            "• Beaches, Lakes (Chilika) & Wildlife (Bhitarkanika)\n"
+            "• Weather forecasts and cab routes across Odisha.\n\n"
+            "What would you like to explore next?"
+        ),
+        "or": (
+            "ଓଡ଼ିଶା ଏକ୍ସପ୍ଲୋରରକୁ ଆପଣଙ୍କୁ ସ୍ୱାଗତ — ଭାରତର ଅତୁଳନୀୟ ଐତିହ୍ୟ!\n\n"
+            "ମୁଁ ଆପଣଙ୍କ ଓଡ଼ିଶା ଏଆଇ ଗାଇଡ୍। ଆପଣ ମୋତେ ପଚାରିପାରିବେ:\n"
+            "• ପ୍ରସିଦ୍ଧ ମନ୍ଦିର (କୋଣାର୍କ ସୂର୍ଯ୍ୟ ମନ୍ଦିର, ଶ୍ରୀଜଗନ୍ନାଥ ମନ୍ଦିର, ଲିଙ୍ଗରାଜ)\n"
+            "• ଓଡ଼ିଶାର ପ୍ରସିଦ୍ଧ ଖାଦ୍ୟ ଓ ମିଠା (ଛେନାପୋଡ଼, ଡାଲମା, ରସଗୋଲା, ଦହିବରା)\n"
+            "• ଓଡ଼ିଶାର ଐତିହାସିକ ଉକ୍ତି, କଳା ଓ ସଂସ୍କୃତି\n"
+            "• ଚିଲିକା ହ୍ରଦ, ବେଳାଭୂମି ଓ ଅଭୟାରଣ୍ୟ\n"
+            "• ବିଭିନ୍ନ ସହରର ପାଣିପାଗ ଏବଂ ଯାତାୟାତ ସୂଚନା।\n\n"
+            "ଆପଣ ଆଜି କେଉଁ ବିଷୟରେ ଜାଣିବାକୁ ଚାହାଁନ୍ତି?"
+        ),
+        "hi": (
+            "ओडिशा एक्सप्लोरर में आपका स्वागत है — भारत की सांस्कृतिक धरोहर!\n\n"
+            "मैं आपका स्थानीय एआई गाइड हूँ। आप मुझसे पूछ सकते हैं:\n"
+            "• प्राचीन कलिंग मंदिर (कोणार्क, पुरी जगन्नाथ, लिंगराज)\n"
+            "• ओडिशा के स्वादिष्ट व्यंजन (छेना पोड़ा, दालमा, रसगुल्ला)\n"
+            "• प्रसिद्ध सुविचार, संस्कृति और परंपराएँ\n"
+            "• चिल्का झील, समुद्र तट और वन्यजीव अभयारण्य\n"
+            "• मौसम और कैब/परिवहन की सटीक जानकारी।\n\n"
+            "आप ओडिशा के बारे में क्या जानना चाहते हैं?"
+        ),
+        "bn": (
+            "ওড়িশা এক্সপ্লোরারে আপনাকে স্বাগতম — ভারতের এক অপূর্ব ঐতিহ্য!\n\n"
+            "আমি আপনার স্থানীয় এআই গাইড। আপনি জানতে চাইতে পারেন:\n"
+            "• প্রাচীন মন্দির (কোনার্ক, পুরী জগন্নাথ, লিঙ্গরাজ)\n"
+            "• ওড়িশার ঐতিহ্যবাহী খাবার ও মিষ্টি (ছানাপোড়া, ডালমা, রসগোল্লা)\n"
+            "• বিখ্যাত উক্তি ও ওড়িশি সংস্কৃতি\n"
+            "• চিল্কা হ্রদ, সমুদ্রতট ও বন্যপ্রাণী\n"
+            "• আবহাওয়া ও ভ্রমণ নির্দেশিকা।\n\n"
+            "আপনি কোন বিষয়ে জানতে আগ্রহী?"
+        ),
+        "te": (
+            "ఒడిశా ఎక్స్ ప్లోరర్ కు స్వాగతం — భారతీయ సంస్కృతికి నిలయం!\n\n"
+            "నేను మీ లోకల్ ఏఐ గైడ్ ని. మీరు నన్ను అడగవచ్చు:\n"
+            "• ప్రాచీన ఆలయాలు (కోణార్క్, పూరీ జగన్నాథ్, లింగరాజ)\n"
+            "• ప్రసిద్ధ వంటకాలు (ఛేనా పోడా, దాల్మా, రసగుల్లా)\n"
+            "• ప్రముఖ సూక్తులు మరియు సంస్కృతి\n"
+            "• చిల్కా సరస్సు, సముద్ర తీరాలు\n"
+            "• వాతావరణం మరియు ప్రయాణ వివరాలు.\n\n"
+            "మీరు దేని గురించి తెలుసుకోవాలనుకుంటున్నారు?"
+        )
+    }
+}
+
+
+def get_offline_travel_reply(user_msg: str, language: str = "en", weather_info: bool = False, location: str = "") -> str:
+    lang = language if language in ["en", "hi", "or", "te", "bn"] else "en"
+    raw_tokens = set(re.findall(r'[a-zA-Z0-9_\u0900-\u0D7F]+', user_msg.lower()))
+    full_text = user_msg.lower()
+
+    # 1. Weather intent check
+    if weather_info or any(w in raw_tokens for w in ["weather", "temperature", "rain", "climate", "forecast", "monsoon", "heat", "cold", "hot", "ପାଣିପାଗ", "ତାପମାତ୍ରା", "मौसम", "तापमान"]):
         loc = location.title() if location else "Bhubaneswar"
-        return f"The weather in {loc} today is pleasant with a temperature around 28°C to 32°C. Humidity is moderate, making it great for sightseeing in the mornings and late afternoons. Remember to carry water and wear comfortable cotton clothing!"
+        if lang == "or":
+            return f"ଆଜି {loc} ରେ ପାଣିପାଗ ଅନୁକୂଳ ରହିଛି ଏବଂ ତାପମାତ୍ରା ପ୍ରାୟ ୨୮°C ରୁ ୩୨°C ମଧ୍ୟରେ ଅଛି। ସକାଳ କିମ୍ବା ସନ୍ଧ୍ୟା ସମୟରେ ମନ୍ଦିର ଓ ପର୍ଯ୍ୟଟନ ସ୍ଥଳୀ ଭ୍ରମଣ କରିବା ଖୁବ୍ ଭଲ। ସାଙ୍ଗରେ ପାନୀୟ ଜଳ ରଖନ୍ତୁ ଏବଂ ଆରାମଦାୟକ ପୋଷାକ ପରିଧାନ କରନ୍ତୁ!"
+        elif lang == "hi":
+            return f"आज {loc} में मौसम सुहावना है और तापमान लगभग 28°C से 32°C के बीच है। सुबह और शाम का समय दर्शनीय स्थलों की यात्रा के लिए सबसे उत्तम है। पर्याप्त पानी पिएं और सूती कपड़े पहनें!"
+        elif lang == "bn":
+            return f"আজ {loc} এ আবহাওয়া মনোরম, তাপমাত্রা প্রায় ২৮°C থেকে ৩২°C। সকাল বা বিকেলে ঐতিহাসিক স্থান ও সমুদ্রতট ভ্রমণের সেরা সময়। পর্যাপ্ত জল সাথে রাখবেন!"
+        elif lang == "te":
+            return f"ఈ రోజు {loc} లో వాతావరణం ఆహ్లాదకరంగా ఉంది, ఉష్ణోగ్రత 28°C నుండి 32°C వరకు ఉంటుంది. ఉదయం మరియు సాయంత్రం వేళల్లో దర్శనీయ ప్రదేశాలు చూడటం ఉత్తమం!"
+        else:
+            return f"The weather in {loc} today is pleasant with a temperature around 28°C to 32°C. Humidity is moderate, making it great for sightseeing in the mornings and late afternoons. Remember to carry water and wear comfortable cotton clothing!"
 
-    if "konark" in msg or "sun temple" in msg:
-        return "Konark Sun Temple is a 13th-century CE architectural marvel built by King Narasimhadeva I. Shaped like a colossal stone chariot with 24 intricately carved wheels drawn by 7 horses, it is a UNESCO World Heritage Site celebrated worldwide for its stunning Kalinga architecture."
+    # 2. Quotes / Sayings / Literature intent (Priority before generic words)
+    quote_keywords = ["quote", "quotes", "saying", "sayings", "ukti", "shloka", "prabodha", "katha", "proverb", "proverbs", "gopabandhu", "poetry", "poem", "poet", "literature", "ବାଣୀ", "ଉକ୍ତି", "ପଦ୍ୟ", "କବିତା", "ପ୍ରବଚନ", "सुविचार", "पंक्ति", "पंक्तियाँ", "कहावत", "উক্তি", "বাণী", "సూక్తి", "సూక్తులు"]
+    if any(k in raw_tokens for k in quote_keywords) or "famous quote" in full_text or "famous quotes" in full_text or "quotes of odisha" in full_text:
+        return MULTILINGUAL_KNOWLEDGE["quotes"][lang]
 
-    if "jagannath" in msg or "puri" in msg:
-        return "The Sacred Jagannath Temple in Puri is one of the four sacred Char Dham pilgrimage sites. Famous for the annual Ratha Yatra (Chariot Festival) and the world's largest open-air kitchen (Mahaprasad), it stands as the spiritual heart of Odisha."
+    # 3. Food / Sweets / Cuisine intent (Token boundary check so 'odisha' does not trigger 'dish'!)
+    food_keywords = ["food", "foods", "eat", "eating", "dish", "dishes", "cuisine", "recipe", "recipes", "delicacy", "delicacies", "sweet", "sweets", "mitha", "chhena", "chhenapoda", "rasagola", "dalma", "pakhala", "dahibara", "khaja", "arisa", "kakara", "machha", "ଖାଦ୍ୟ", "ମିଠା", "ରସଗୋଲା", "ଛେନାପୋଡ଼", "ପଖାଳ", "ଦହିବରା", "खाना", "व्यंजन", "मिठाई", "রসগোল্লা", "ছানাপোড়া", "వంటకాలు", "మిఠాయిలు"]
+    if any(k in raw_tokens for k in food_keywords) or "famous food" in full_text or "gamous food" in full_text or "local food" in full_text:
+        return MULTILINGUAL_KNOWLEDGE["food"][lang]
 
-    if "food" in msg or "eat" in msg or "dish" in msg or "chhena" in msg or "sweet" in msg:
-        return "Odisha is famous for authentic culinary gems! Must-try dishes include Chhena Poda (baked cottage cheese dessert), Pahala Rasagola, Dalma (lentils slow-cooked with vegetables), Machha Besara (fish in mustard gravy), and authentic street-style Cuttack Dahi Bara Aloodum."
+    # 4. Temples / Heritage / Konark / Puri / Bhubaneswar
+    temple_keywords = ["temple", "temples", "mandir", "deula", "konark", "jagannath", "puri", "lingaraj", "mukteswar", "rajarani", "dhauli", "peace pagoda", "caves", "khandagiri", "udayagiri", "sun temple", "architecture", "monument", "monuments", "ମନ୍ଦିର", "କୋଣାର୍କ", "ଜଗନ୍ନାଥ", "ଲିଙ୍ଗରାଜ", "ଧଉଳି", "ମୁକ୍ତେଶ୍ୱର", "ଗୁମ୍ଫା", "मंदिर", "कोणार्क", "जगन्नाथ", "দেউল", "గుడి", "దేవాలయం"]
+    if any(k in raw_tokens for k in temple_keywords) or "sun temple" in full_text or "temple city" in full_text:
+        return MULTILINGUAL_KNOWLEDGE["temples"][lang]
 
-    if "temple" in msg or "bhubaneswar" in msg:
-        return "Bhubaneswar, the 'Temple City of India', boasts over 500 ancient temples spanning centuries. Top highlights include the majestic 11th-century Lingaraj Temple, the exquisite Rajarani Temple known for its delicate sculptures, Mukteswar Temple ('Gem of Odishan Architecture'), and the rock-cut caves of Udayagiri and Khandagiri."
+    # 5. Beaches / Lakes / Wildlife (Chilika, Gopalpur, Similipal)
+    beach_keywords = ["beach", "beaches", "sea", "ocean", "chilika", "gopalpur", "chandrabhaga", "lake", "similipal", "bhitarkanika", "dolphin", "dolphins", "waterfall", "waterfalls", "nature", "wildlife", "safari", "ସମୁଦ୍ର", "ବେଳାଭୂମି", "ଚିଲିକା", "ଡଲଫିନ", "समुद्र", "बीच", "झील", "সৈকত", "হ্রদ", "తీరం", "సరస్సు"]
+    if any(k in raw_tokens for k in beach_keywords):
+        return MULTILINGUAL_KNOWLEDGE["beaches"][lang]
 
-    if "beach" in msg or "gopalpur" in msg or "chilika" in msg:
-        return "For coastal beauty, explore Puri Golden Beach (Blue Flag certified), the serene Gopalpur-on-Sea with its historic lighthouse, Chandrabhaga Beach near Konark, and Chilika Lake — Asia's largest brackish water lagoon, home to playful Irrawaddy dolphins and migratory birds at Mangalajodi."
+    # 6. Festivals / Dance / Arts / Handloom
+    fest_keywords = ["festival", "festivals", "ratha yatra", "rath yatra", "raja", "bali yatra", "boita", "dance", "odissi", "chhau", "pattachitra", "handicraft", "handicrafts", "silver filigree", "tarakasi", "pipili", "culture", "art", "craft", "ପର୍ବ", "ରଥଯାତ୍ରା", "ରଜ", "ବାଲିଯାତ୍ରା", "ଓଡ଼ିଶୀ", "ଉତ୍ସବ", "ତାରକସି", "त्योहार", "उत्सव", "नृत्य", "উৎসব", "পండుగ"]
+    if any(k in raw_tokens for k in fest_keywords) or "ratha yatra" in full_text or "rath yatra" in full_text:
+        return MULTILINGUAL_KNOWLEDGE["festivals"][lang]
 
-    if "cab" in msg or "ride" in msg or "transport" in msg or "travel" in msg:
-        return "Traveling across Odisha is convenient! In cities like Bhubaneswar and Cuttack, auto rickshaws, app cabs (Ola, Uber, Rapido), and the Mo Bus network provide smooth connectivity. For intercity routes (Bhubaneswar-Puri-Konark), cabs and express trains are easily accessible."
+    # 7. Transport / Cabs / Travel Routes / Hotels
+    travel_keywords = ["cab", "cabs", "taxi", "ride", "travel", "bus", "fare", "train", "route", "how to reach", "airport", "hotel", "hotels", "stay", "car", "auto", "ଭଡ଼ା", "ଯାତ୍ରା", "କ୍ୟାବ୍", "गाड़ी", "किराया", "হোটেল", "రవాణా"]
+    if any(k in raw_tokens for k in travel_keywords):
+        return MULTILINGUAL_KNOWLEDGE["transport"][lang]
 
-    return "Welcome to Odisha — India's best kept secret! Whether you want to explore ancient Kalinga temples, relax on golden beaches, savor authentic Odia delicacies, or book travel rides, I am here to guide your journey. What would you like to explore next?"
+    return MULTILINGUAL_KNOWLEDGE["default"][lang]
 
 
 @app.route('/api/ai/travel-assistant', methods=['POST', 'OPTIONS'])
@@ -575,6 +942,7 @@ def travel_assistant():
 
     data = request.get_json(silent=True) or {}
     messages = data.get('messages', [])
+    language = data.get('language', 'en')
     include_weather = data.get('includeWeather', False)
     weather_location = data.get('weatherLocation', '')
 
@@ -594,7 +962,26 @@ def travel_assistant():
                 from google.genai import types
                 client = genai.Client(api_key=gemini_key)
 
-                system_prompt = "You are a helpful travel assistant for Odisha. Provide concise, friendly answers about Odisha's culture, food, and places."
+                lang_names = {
+                    "en": "English",
+                    "hi": "Hindi (हिंदी)",
+                    "or": "Odia (ଓଡ଼ିଆ)",
+                    "te": "Telugu (తెలుగు)",
+                    "bn": "Bengali (বাংলা)"
+                }
+                target_lang = lang_names.get(language, "English")
+
+                system_prompt = f"""You are "Odisha Explorer", an expert, friendly AI travel guide for Odisha, India.
+CRITICAL LANGUAGE REQUIREMENT: You MUST reply entirely in {target_lang}.
+- If target language is Odia (or), write authentic, natural Odia script (ଓଡ଼ିଆ ଲିପି).
+- If target language is Hindi (hi), write natural Devanagari Hindi (हिंदी).
+- If target language is Bengali (bn), write natural Bengali script (বাংলা).
+- If target language is Telugu (te), write natural Telugu script (తెలుగు).
+- If target language is English (en), write fluent, warm English.
+- Always answer the user's specific question directly with rich, interesting cultural or travel details.
+- If asked about quotes/proverbs of Odisha, provide iconic quotes (such as Utkalmani Gopabandhu Das, Jayadeva, or Jagannath traditions) with explanation.
+- Format with clear bullet points or clean paragraphs."""
+
                 gemini_contents = []
                 for m in messages:
                     if m.get('role') != 'system':
@@ -617,8 +1004,8 @@ def travel_assistant():
             except Exception as e:
                 print(f"Gemini live stream error, falling back to local engine: {e}")
 
-        # High quality offline streaming fallback
-        reply = get_offline_travel_reply(last_user_msg, include_weather, weather_location)
+        # High quality multilingual offline streaming engine
+        reply = get_offline_travel_reply(last_user_msg, language=language, weather_info=include_weather, location=weather_location)
         words = reply.split(" ")
         for i in range(0, len(words), 3):
             sub = " ".join(words[i:i+3]) + " "
@@ -691,6 +1078,8 @@ def voice_guide():
     message = data.get('message', '')
     image = data.get('image', None)
     language = data.get('language', 'en')
+    if language not in ["en", "hi", "or", "te", "bn"]:
+        language = "en"
     is_proactive = data.get('isProactive', False)
     monument_name = data.get('monumentName', '')
 
@@ -699,6 +1088,15 @@ def voice_guide():
     def generate():
         image_part = parse_image_part(image) if image else None
 
+        lang_names = {
+            "en": "English",
+            "hi": "Hindi (हिंदी)",
+            "or": "Odia (ଓଡ଼ିଆ)",
+            "te": "Telugu (తెలుగు)",
+            "bn": "Bengali (বাংলা)"
+        }
+        target_lang = lang_names.get(language, "English")
+
         if gemini_key:
             try:
                 from google import genai
@@ -706,18 +1104,24 @@ def voice_guide():
                 client = genai.Client(api_key=gemini_key)
 
                 system_prompt = f"""You are "Odisha Explorer", a friendly, knowledgeable local travel guide for Odisha and India.
+CRITICAL LANGUAGE REQUIREMENT: You MUST reply entirely in {target_lang}.
+- If target language is Odia (or), write authentic, natural Odia script (ଓଡ଼ିଆ ଲିପି).
+- If target language is Hindi (hi), write natural Devanagari Hindi (हिंदी).
+- If target language is Bengali (bn), write natural Bengali script (বাংলা).
+- If target language is Telugu (te), write natural Telugu script (తెలుగు).
+- If target language is English (en), write fluent, warm English.
 - Speak warmly and enthusiastically like a live local tour guide.
 - If an image is provided, identify the monument, temple, or landmark in the photo accurately. State its exact name, city/district, and 2 key historical or architectural highlights.
 - Keep responses concise (2-3 sentences) for natural, fluid voice playback.
 - Never mention AI, LLMs, or technology."""
                 if is_proactive:
-                    system_prompt += f"\nPROACTIVE MODE: The user has just arrived near {monument_name}. Give a warm welcome greeting mentioning {monument_name} specifically. Max 20 words."
+                    system_prompt += f"\nPROACTIVE MODE: The user has just arrived near {monument_name}. Give a warm welcome greeting mentioning {monument_name} specifically in {target_lang}. Max 20 words."
 
                 prompt = message or f"Tell me about {monument_name or 'this place'}"
                 if is_proactive:
-                    prompt = f"I have just arrived near {monument_name}. Greet me."
+                    prompt = f"I have just arrived near {monument_name}. Greet me in {target_lang}."
                 elif image_part and not message:
-                    prompt = "Identify this monument or tourist place in the photo, tell me where it is located and its historical significance."
+                    prompt = f"Identify this monument or tourist place in the photo, tell me where it is located and its historical significance in {target_lang}."
 
                 contents = [prompt, image_part] if image_part else prompt
                 model_to_use = 'gemini-2.5-flash' if image_part else 'gemini-2.5-flash-lite'
@@ -736,39 +1140,86 @@ def voice_guide():
             except Exception as e:
                 print(f"Voice guide live stream error, using fallback: {e}")
 
-        # Local voice generator & intelligent monument identifier fallback
+        # Local voice generator & intelligent multilingual monument identifier fallback
         lang_dict = voice_greetings.get(language, voice_greetings['en'])
 
-        # Check if query or filename has specific monument clues
-        matched_monument = None
-        monument_keywords = {
-            "konark": ("Konark Sun Temple", "a 13th-century UNESCO World Heritage marvel in Puri district, renowned for its colossal chariot architecture and 24 intricately carved stone wheels."),
-            "jagannath": ("Shree Jagannath Temple", "one of the four sacred Char Dham pilgrimage sites in Puri, world-famous for its majestic 12th-century Kalinga sanctum and the annual Ratha Yatra."),
-            "lingaraj": ("Lingaraja Temple", "the oldest and largest temple in Bhubaneswar, dedicated to Lord Harihara and standing as the quintessential masterpiece of Kalinga architecture."),
-            "mukteswar": ("Mukteswara Temple", "widely hailed as the 'Gem of Odisha Architecture', famous for its exquisite torana arched gateway and 10th-century carvings."),
-            "rajarani": ("Rajarani Temple", "celebrated as the 'Love Temple' of Bhubaneswar, constructed from warm yellowish-red sandstone with beautiful feminine sculptural figurines."),
-            "dhauli": ("Dhauli Shanti Stupa", "the historic peace pagoda perched atop Dhauli hills, marking the sacred ground where Emperor Ashoka renounced warfare after the Kalinga War."),
-            "khandagiri": ("Khandagiri & Udayagiri Caves", "rock-cut Jain monastic cave shelters dating back to King Kharavela's reign in the 2nd century BCE, featuring the famous Hathigumpha inscription."),
-            "barabati": ("Barabati Fort", "a 14th-century Ganga dynasty citadel in Cuttack with an iconic nine-storey palace gateway overlooking the Mahanadi River."),
-            "chilika": ("Chilika Lake", "Asia's largest brackish water lagoon, a Ramsar site teeming with playful Irrawaddy dolphins and millions of migratory winter birds."),
+        monument_knowledge = {
+            "konark": {
+                "en": "This is Konark Sun Temple, a 13th-century UNESCO World Heritage marvel in Puri district, renowned for its colossal chariot architecture and 24 intricately carved stone wheels.",
+                "or": "ଏହା ହେଉଛି କୋଣାର୍କର ପ୍ରସିଦ୍ଧ ସୂର୍ଯ୍ୟ ମନ୍ଦିର, ଯାହା ତ୍ରୟୋଦଶ ଶତାବ୍ଦୀର ୟୁନେସ୍କୋ ବିଶ୍ୱ ଐତିହ୍ୟ। ଏହା ୨୪ଟି ପଥର ଚକ ବିଶିଷ୍ଟ ଏକ ବିରାଟ ସୌର ରଥ ସଦୃଶ ନିର୍ମିତ।",
+                "hi": "यह कोणार्क का सूर्य मंदिर है, जो 13वीं सदी का यूनेस्को विश्व धरोहर स्थल है। यह 24 विशाल नक्काशीदार पहियों वाले सूर्य रथ के रूप में विश्वप्रसिद्ध है।",
+                "bn": "এটি কোণার্ক সূর্য মন্দির, ত্রয়োদশ শতাব্দীর ইউনেস্কো ওয়ার্ল্ড হেরিটেজ সাইট। এটি ২৪টি চাকাযুক্ত সুবিশাল রথের আকারে নির্মিত।",
+                "te": "ఇది కోణార్క్ సూర్య దేవాలయం, 13వ శతాబ్దపు యునెస్కో ప్రపంచ వారసత్వ సంపద. ఇది 24 రాతి చక్రాలతో కూడిన రథం శైలిలో నిర్మించబడింది."
+            },
+            "jagannath": {
+                "en": "This is Shree Jagannath Temple in Puri, one of the four sacred Char Dham pilgrimage sites, world-famous for its majestic 12th-century sanctum and the annual Ratha Yatra.",
+                "or": "ଏହା ହେଉଛି ପୁରୀ ଶ୍ରୀ ଜଗନ୍ନାଥ ମନ୍ଦିର, ଭାରତର ପବିତ୍ର ଚାରି ଧାମ ମଧ୍ୟରୁ ଅନ୍ୟତମ। ଏହା ଦ୍ୱାଦଶ ଶତାବ୍ଦୀର ଭବ୍ୟ କଳିଙ୍ଗ ମନ୍ଦିର ଏବଂ ବିଶ୍ୱପ୍ରସିଦ୍ଧ ରଥଯାତ୍ରା ପାଇଁ ଖ୍ୟାତ।",
+                "hi": "यह पुरी का श्री जगन्नाथ मंदिर है, जो चार पवित्र धामों में से एक है। यह 12वीं सदी के भव्य कलिंग मंदिर और वार्षिक रथयात्रा के लिए दुनिया भर में प्रसिद्ध है।",
+                "bn": "এটি পুরীর শ্রী জগন্নাথ মন্দির, ভারতের অন্যতম পবিত্র চার ধাম। এটি দ্বাদশ শতাব্দীর কলিঙ্গ স্থাপত্য ও রথযাত্রার জন্য ভুবনখ্যাত।",
+                "te": "ఇది పూరీ శ్రీ జగన్నాథ దేవాలయం, నాలుగు పవిత్ర పుణ్యక్షేత్రాలలో ఒకటి. ఇది 12వ శతాబ్దపు ఆలయ నిర్మాణం మరియు ప్రసిద్ధ రథయాత్రకు ప్రసిద్ధి."
+            },
+            "lingaraj": {
+                "en": "This is Lingaraja Temple in Bhubaneswar, an 11th-century sandstone masterpiece dedicated to Lord Harihara and the crowning jewel of Kalinga architecture.",
+                "or": "ଏହା ହେଉଛି ଭୁବନେଶ୍ୱରସ୍ଥିତ ପ୍ରଭୁ ଲିଙ୍ଗରାଜ ମହାପ୍ରଭୁଙ୍କ ମନ୍ଦିର। ଏକାଦଶ ଶତାବ୍ଦୀର ଏହି ପବିତ୍ର ଶୈବପୀଠ କଳିଙ୍ଗ ସ୍ଥାପତ୍ୟ କଳାର ସର୍ବଶ୍ରେଷ୍ଠ ନିଦର୍ଶନ।",
+                "hi": "यह भुवनेश्वर का प्रसिद्ध लिंगराज मंदिर है। 11वीं सदी का यह भव्य शिव मंदिर कलिंग स्थापत्य कला का शिखर माना जाता है।",
+                "bn": "এটি ভুবনেশ্বরের লিঙ্গরাজ মন্দির। একাদশ শতাব্দীর এই প্রাচীন শিব মন্দিরটি কলিঙ্গ স্থাপত্যকলার শ্রেষ্ঠ নিদর্শন।",
+                "te": "ఇది భువనేశ్వర్‌లోని లింగరాజ దేవాలయం. 11వ శతాబ్దానికి చెందిన ఈ శివాలయం కళింగ వాస్తు శిల్ప కళాఖండం."
+            },
+            "mukteswar": {
+                "en": "This is Mukteswara Temple, celebrated as the 'Gem of Odishan Architecture', famous for its exquisite arched torana gateway.",
+                "or": "ଏହା ହେଉଛି ମୁକ୍ତେଶ୍ୱର ମନ୍ଦିର, ଯାହାକୁ ଓଡ଼ିଶା ସ୍ଥାପତ୍ୟର ରତ୍ନ କୁହାଯାଏ। ଏହାର ସୁନ୍ଦର ତୋରଣ ଦ୍ୱାର ସାରା ବିଶ୍ୱରେ ପ୍ରସିଦ୍ଧ।",
+                "hi": "यह मुक्तेश्वर मंदिर है, जिसे 'ओडिशा वास्तुकला का रत्न' कहा जाता है। यह अपने अलंकृत तोरण द्वार के लिए प्रसिद्ध है।",
+                "bn": "এটি মুক্তেশ্বর মন্দির, যা 'ওড়িশা স্থাপত্যের রত্ন' নামে খ্যাত। এর সূক্ষ্ম খোদাই করা তোরণ ফটক অত্যন্ত মনোরম।",
+                "te": "ఇది ముక్తేశ్వర దేవాలయం, దీనిని 'ఒడిశా వాస్తు రత్నం' అని పిలుస్తారు. దీని అందమైన తోరణం ఎంతో ప్రసిద్ధి చెందినది."
+            },
+            "dhauli": {
+                "en": "This is Dhauli Shanti Stupa, the historic peace pagoda perched atop Dhauli hills where Emperor Ashoka renounced war and embraced Buddhism.",
+                "or": "ଏହା ହେଉଛି ଧଉଳି ଶାନ୍ତି ସ୍ତୂପ, ଯେଉଁଠାରେ ଐତିହାସିକ କଳିଙ୍ଗ ଯୁଦ୍ଧ ପରେ ସମ୍ରାଟ ଅଶୋକ ଯୁଦ୍ଧ ତ୍ୟାଗ କରି ବୌଦ୍ଧ ଧର୍ମ ଗ୍ରହଣ କରିଥିଲେ।",
+                "hi": "यह धौली शांति स्तूप है, जहाँ कलिंग युद्ध के बाद सम्राट अशोक ने युद्ध का त्याग कर बौद्ध धर्म और अहिंसा का मार्ग अपनाया था।",
+                "bn": "এটি ধৌলি শান্তি স্তূপ, যেখানে কলিঙ্গ যুদ্ধের পর সম্রাট অশোক যুদ্ধ ত্যাগ করে অহিংসা ও বৌদ্ধ ধর্ম গ্রহণ করেছিলেন।",
+                "te": "ఇది ధౌళి శాంతి స్తూపం, ఇక్కడే కళింగ యుద్ధం తర్వాత అశోక చక్రవర్తి శాంతి మార్గాన్ని స్వీకరించారు."
+            },
+            "khandagiri": {
+                "en": "This is Khandagiri and Udayagiri caves, rock-cut Jain monastic cave shelters dating back to King Kharavela in the 2nd century BCE.",
+                "or": "ଏହା ହେଉଛି ଖଣ୍ଡଗିରି ଏବଂ ଉଦୟଗିରି ଗୁମ୍ଫା, ଖ୍ରୀଷ୍ଟପୂର୍ବ ଦ୍ୱିତୀୟ ଶତାବ୍ଦୀର ମହାମେଘବାହନ ଖାରବେଳଙ୍କ ସମୟର ପ୍ରାଚୀନ ଶୈଳଖୋଦିତ ଜୈନ ଗୁମ୍ଫା।",
+                "hi": "यह खंडगिरि और उदयगिरि की गुफाएं हैं, जो ईसा पूर्व दूसरी शताब्दी में राजा खारवेल के काल की प्राचीन जैन गुफाएं हैं।",
+                "bn": "এটি খণ্ডগিরি ও উদয়গিরি গুহা, খ্রিস্টপূর্ব দ্বিতীয় শতকের রাজা খারবেলের সময়কার প্রাচীন জৈন গুহা।",
+                "te": "ఇది ఖండగిరి మరియు ఉదయగిరి గుహలు, క్రీస్తుపూర్వం రెండవ శతాబ్దానికి చెందిన రాతితో చెక్కిన జైన గుహలు."
+            },
+            "chilika": {
+                "en": "This is Chilika Lake, Asia's largest brackish lagoon, teeming with rare Irrawaddy dolphins and millions of migratory birds.",
+                "or": "ଏହା ହେଉଛି ଚିଲିକା ହ୍ରଦ, ଏସିଆର ସର୍ବବୃହତ ଲୁଣିଆ ହ୍ରଦ, ଯାହା ଇରାୱାଡ଼ି ଡଲଫିନ ଏବଂ ପ୍ରବାସୀ ବିଦେଶୀ ପକ୍ଷୀଙ୍କ ପାଇଁ ପ୍ରସିଦ୍ଧ।",
+                "hi": "यह चिल्का झील है, जो एशिया की सबसे बड़ी खारे पानी की झील है। यह दुर्लभ डॉल्फ़िन और प्रवासी पक्षियों का प्रमुख केंद्र है।",
+                "bn": "এটি চিল্কা হ্রদ, এশিয়ার বৃহত্তম উপহ্রদ, যা ইরাবতী ডলফিন ও পরিযায়ী পাখির জন্য পরিচিত।",
+                "te": "ఇది చిలికా సరస్సు, ఆసియాలోనే అతిపెద్ద ఉప్పునీటి సరస్సు, ఇరావాడీ డాల్ఫిన్ లకు ప్రసిద్ధి."
+            },
+            "image_default": {
+                "en": "This captures magnificent Kalinga architectural heritage in Odisha, featuring the iconic curvilinear tower and intricate sandstone carvings reminiscent of ancient temples in Bhubaneswar and Puri.",
+                "or": "ଏହି ଫଟୋଟି ଓଡ଼ିଶାର ଗୌରବମୟ କଳିଙ୍ଗ ସ୍ଥାପତ୍ୟ କଳାକୁ ପ୍ରତିଫଳିତ କରୁଛି, ଯେଉଁଥିରେ ପଥର ଉପରେ ଚିତ୍ତାକର୍ଷକ ଖୋଦେଇ ଏବଂ ପାରମ୍ପରିକ ରେଖା ଦେଉଳ ଶୈଳୀ ପ୍ରଦର୍ଶିତ।",
+                "hi": "यह तस्वीर ओडिशा की कलिंग वास्तुकला को दर्शाती है, जिसमें बलुआ पत्थर की बारीक नक्काशी और ऐतिहासिक मंदिर शैली स्पष्ट दिखाई देती है।",
+                "bn": "এই ছবিটি ওড়িশার কলিঙ্গ স্থাপত্যশৈলীর প্রতিফলন, যাতে বেলেপাথরের সুন্দর খোদাই ও ঐতিহাসিক মন্দিরের গঠন দৃশ্যমান।",
+                "te": "ఈ చిత్రం ఒడిశాలోని అద్భుతమైన కళింగ వాస్తు శిల్ప శైలిని, ఎర్రరాతిపై అందమైన శిల్పాలను ప్రతిబింబిస్తుంది."
+            }
         }
 
+        matched_key = None
         lower_msg = (message or "").lower()
-        for k, (name, desc) in monument_keywords.items():
+        for k in ["konark", "jagannath", "lingaraj", "mukteswar", "dhauli", "khandagiri", "chilika"]:
             if k in lower_msg:
-                matched_monument = (name, desc)
+                matched_key = k
                 break
 
-        if matched_monument:
-            reply = f"This is {matched_monument[0]}, {matched_monument[1]}"
+        if matched_key:
+            reply = monument_knowledge[matched_key].get(language, monument_knowledge[matched_key]['en'])
         elif image:
-            reply = "This captures magnificent Kalinga architectural heritage in Odisha, featuring the iconic Rekha Deula curvilinear tower and sandstone carvings reminiscent of ancient temple craftsmanship in Bhubaneswar and Puri."
+            reply = monument_knowledge["image_default"].get(language, monument_knowledge["image_default"]['en'])
         elif is_proactive and monument_name:
             reply = lang_dict['welcome'].format(monument=monument_name)
         elif monument_name:
-            reply = f"{monument_name} is one of Odisha's most cherished historical monuments, renowned for its ancient Kalinga architectural brilliance."
+            reply = f"{monument_name} - {monument_knowledge['image_default'].get(language, monument_knowledge['image_default']['en'])}"
         else:
-            reply = lang_dict['default']
+            # Check user query in get_offline_travel_reply
+            reply = get_offline_travel_reply(message, language=language)
 
         words = reply.split(" ")
         for i in range(0, len(words), 2):

@@ -36,17 +36,34 @@ export function useAppTTS() {
     };
   }, []);
 
+  const langMap: Record<string, string> = {
+    en: "en-IN",
+    hi: "hi-IN",
+    or: "or-IN",
+    te: "te-IN",
+    bn: "bn-IN",
+  };
+
   const speakWithWebSpeech = useCallback(
-    (text: string) => {
+    (text: string, langCode: string = "en") => {
       if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
       window.speechSynthesis.cancel();
 
+      const targetLang = langMap[langCode] || langCode || "en-IN";
       const utterance = new SpeechSynthesisUtterance(text);
-      if (preferredVoice) {
+      
+      const voices = window.speechSynthesis.getVoices();
+      // Try to find a voice matching the target language
+      const matchVoice = voices.find(v => v.lang.toLowerCase().startsWith(targetLang.split("-")[0].toLowerCase()));
+
+      if (matchVoice) {
+        utterance.voice = matchVoice;
+        utterance.lang = matchVoice.lang;
+      } else if (preferredVoice && (targetLang.startsWith("en") || !preferredVoice.lang.startsWith("en"))) {
         utterance.voice = preferredVoice;
         utterance.lang = preferredVoice.lang;
       } else {
-        utterance.lang = lang;
+        utterance.lang = targetLang;
       }
       utterance.rate = 1.0;
       utterance.pitch = 1.0;
@@ -90,7 +107,7 @@ export function useAppTTS() {
   }, []);
 
   const speak = useCallback(
-    async (text: string) => {
+    async (text: string, langCode: string = "en") => {
       const cleanText = text
         .replace(/\*\*/g, "")
         .replace(/\*/g, "")
@@ -103,45 +120,47 @@ export function useAppTTS() {
 
       stop();
 
-      const result = await fetchElevenLabsAudio(cleanText);
-      if (!result) {
-        speakWithWebSpeech(cleanText);
-        return;
+      // Only attempt ElevenLabs for English; use native Web Speech for Indic languages for 100% accuracy
+      if (langCode === "en") {
+        const result = await fetchElevenLabsAudio(cleanText);
+        if (result) {
+          const { audio, revoke } = result;
+          audioRef.current = audio;
+          revokeRef.current = revoke;
+          isElevenLabsRef.current = true;
+
+          audio.onended = () => {
+            revoke();
+            audioRef.current = null;
+            revokeRef.current = null;
+            isElevenLabsRef.current = false;
+            setIsSpeaking(false);
+          };
+          audio.onerror = () => {
+            revoke();
+            audioRef.current = null;
+            revokeRef.current = null;
+            isElevenLabsRef.current = false;
+            setIsSpeaking(false);
+            speakWithWebSpeech(cleanText, langCode);
+          };
+
+          setIsSpeaking(true);
+          try {
+            await audio.play();
+            return;
+          } catch (err) {
+            console.error("ElevenLabs play error:", err);
+            revoke();
+            audioRef.current = null;
+            revokeRef.current = null;
+            isElevenLabsRef.current = false;
+            setIsSpeaking(false);
+          }
+        }
       }
 
-      const { audio, revoke } = result;
-      audioRef.current = audio;
-      revokeRef.current = revoke;
-      isElevenLabsRef.current = true;
-
-      audio.onended = () => {
-        revoke();
-        audioRef.current = null;
-        revokeRef.current = null;
-        isElevenLabsRef.current = false;
-        setIsSpeaking(false);
-      };
-      audio.onerror = () => {
-        revoke();
-        audioRef.current = null;
-        revokeRef.current = null;
-        isElevenLabsRef.current = false;
-        setIsSpeaking(false);
-        speakWithWebSpeech(cleanText);
-      };
-
-      setIsSpeaking(true);
-      try {
-        await audio.play();
-      } catch (err) {
-        console.error("ElevenLabs play error:", err);
-        revoke();
-        audioRef.current = null;
-        revokeRef.current = null;
-        isElevenLabsRef.current = false;
-        setIsSpeaking(false);
-        speakWithWebSpeech(cleanText);
-      }
+      speakWithWebSpeech(cleanText, langCode);
     },
     [stop, speakWithWebSpeech]
   );
