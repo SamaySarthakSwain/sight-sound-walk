@@ -3,9 +3,9 @@
 @tailwind utilities;
 
 /* 
- * REC NIST CLEAN-TECH DESIGN SYSTEM (VOLUMES 1 - 4)
- * Authentic Physical Matte Noise Grain & Tactile Material Architecture
- * Zero-Plasticity: Soft analog tooth, multi-stop soft shadows, chamfered 1px highlights
+ * REC NIST CLEAN-TECH DESIGN SYSTEM
+ * Refined Velvety Matte & Tactile Spatial Architecture
+ * Smooth microdot matrix, multi-stop soft shadows, chamfered 1px highlights
  */
 
 @layer base {
@@ -53,8 +53,10 @@
     --glow-primary: 22 92% 54%;
     --glow-secondary: 170 100% 35.3%;
 
-    /* Day Mode Background Noise Texture (Purely on background, never over images or maps) */
-    --bg-noise: url("data:image/svg+xml,%3Csvg%20viewBox%3D%270%200%20200%20200%27%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%3E%3Cfilter%20id%3D%27noiseFilter%27%3E%3CfeTurbulence%20type%3D%27fractalNoise%27%20baseFrequency%3D%270.85%27%20numOctaves%3D%273%27%20stitchTiles%3D%27stitch%27/%3E%3CfeColorMatrix%20type%3D%27matrix%27%20values%3D%270%200%200%200%200%20%200%200%200%200%200%20%200%200%200%200%200%20%200%200%200%200.04%200%27/%3E%3C/filter%3E%3Crect%20width%3D%27100%25%27%20height%3D%27100%25%27%20filter%3D%27url%28%23noiseFilter%29%27/%3E%3C/svg%3E");
+    /* Day Mode Background Texture: Crisp warm alabaster with subtle ambient illumination & clean micro-grid */
+    --bg-texture: 
+      radial-gradient(ellipse 80% 60% at 50% -10%, rgba(244, 115, 33, 0.04), transparent 70%),
+      radial-gradient(circle at 1px 1px, rgba(0, 0, 0, 0.03) 1px, transparent 0);
   }
 
   .dark {
@@ -98,8 +100,10 @@
     --glow-primary: 22 92% 54%;
     --glow-secondary: 170 100% 35.3%;
 
-    /* Night Mode Background Noise Texture (Purely on background, never over images or maps) */
-    --bg-noise: url("data:image/svg+xml,%3Csvg%20viewBox%3D%270%200%20200%20200%27%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%3E%3Cfilter%20id%3D%27noiseFilter%27%3E%3CfeTurbulence%20type%3D%27fractalNoise%27%20baseFrequency%3D%270.80%27%20numOctaves%3D%273%27%20stitchTiles%3D%27stitch%27/%3E%3CfeColorMatrix%20type%3D%27matrix%27%20values%3D%271%201%201%200%200%20%201%201%201%200%200%20%201%201%201%200%200%20%200%200%200%200.045%200%27/%3E%3C/filter%3E%3Crect%20width%3D%27100%25%27%20height%3D%27100%25%27%20filter%3D%27url%28%23noiseFilter%29%27/%3E%3C/svg%3E");
+    /* Night Mode Background Texture: Velvety Obsidian Carbon with warm heritage glow & delicate microdot grid */
+    --bg-texture: 
+      radial-gradient(ellipse 80% 60% at 50% -10%, rgba(244, 115, 33, 0.08), transparent 75%),
+      radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.035) 1px, transparent 0);
   }
 }
 
@@ -110,8 +114,10 @@
 
   body, .bg-background {
     background-color: hsl(var(--background));
-    background-image: var(--bg-noise);
-    background-repeat: repeat;
+    background-image: var(--bg-texture);
+    background-size: 100% 100%, 28px 28px;
+    background-position: 0 0, 0 0;
+    background-repeat: no-repeat, repeat;
     background-attachment: fixed;
     color: hsl(var(--foreground));
   }
