@@ -78,13 +78,25 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boole
 
 
 const App = () => {
-  // Global unhandled promise rejection handler
+  // Global unhandled promise rejection handler & legacy tile cache purge
   useEffect(() => {
     const handler = (event: PromiseRejectionEvent) => {
       console.error("Unhandled rejection:", event.reason);
       event.preventDefault(); // Prevent crash
     };
     window.addEventListener("unhandledrejection", handler);
+
+    // Purge any legacy watermarked basemap tile caches from older Carto versions
+    if (typeof window !== "undefined" && "caches" in window) {
+      caches.keys().then((keys) => {
+        keys.forEach((key) => {
+          if (key === "images-cache" || key.includes("carto")) {
+            caches.delete(key);
+          }
+        });
+      });
+    }
+
     return () => window.removeEventListener("unhandledrejection", handler);
   }, []);
 

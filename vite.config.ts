@@ -53,7 +53,7 @@ export default defineConfig(({ mode }) => ({
             urlPattern: /\.(?:png|jpg|jpeg|svg|webp)$/i,
             handler: "StaleWhileRevalidate",
             options: {
-              cacheName: "images-cache",
+              cacheName: "images-cache-v2",
               expiration: { maxEntries: 100, maxAgeSeconds: 30 * 24 * 60 * 60 },
             },
           },
