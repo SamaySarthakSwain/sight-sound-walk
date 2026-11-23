@@ -13,6 +13,9 @@ import Index from "./pages/Index";
 import { toast } from "sonner";
 import { AnimatedRoutes } from "@/components/AnimatedRoutes";
 import { GoogleOAuthProvider } from '@react-oauth/google';
+
+const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || "218816203507-1q868u09qmugc5rh3cmad18fckqu03gt.apps.googleusercontent.com";
+
 // Lazy load heavy non-critical components
 const FloatingParticles = lazy(() => import("@/components/FloatingParticles"));
 const ProactiveNudgeTrigger = lazy(() => import("@/components/ProactiveNudgeTrigger"));
